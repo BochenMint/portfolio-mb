@@ -6,3 +6,10 @@
 | 2026-05-29 22:22 | Cycle 2 (B): editorial grain overlay, dark accent, hero ch.01, case study pull quote + panel gradient | OK |
 | 2026-05-29 22:28 | Cycle 3 (C): LiveSitesRibbon, hero Mint/Plumm chips, sticky dual CTA, VisitSite aria-label | OK |
 | 2026-05-29 22:34 | Cycle 4 (D/E): content-visibility sections, safe-area main pad, work card asymmetry, opacity scrub | OK |
+
+## Overnight loop
+
+- **Armed:** 2026-05-29 22:36
+- **PID:** 52336
+- **Interval:** 1200s (20 min)
+- **Shell:** PowerShell `AGENT_LOOP_TICK_PORTFOLIO` on `D:\PORTFOLIO MB`
