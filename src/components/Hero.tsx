@@ -65,6 +65,26 @@ export function Hero() {
               {site.ctaSecondary}
             </a>
           </div>
+          <div data-hero-fade className="mt-5 flex flex-wrap gap-2">
+            <a
+              href="https://mintapartments.pl"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-rule inline-flex items-center gap-1.5 border px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors hover:border-accent hover:text-accent"
+            >
+              mintapartments.pl
+              <span aria-hidden>↗</span>
+            </a>
+            <a
+              href="https://plumm.pl"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-rule inline-flex items-center gap-1.5 border px-3 py-1.5 text-[11px] font-medium tracking-wide uppercase transition-colors hover:border-accent hover:text-accent"
+            >
+              plumm.pl
+              <span aria-hidden>↗</span>
+            </a>
+          </div>
         </div>
 
         <figure data-hero-fade className="relative lg:-mb-8">

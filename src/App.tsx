@@ -3,6 +3,7 @@ import { CaseStudies } from './components/CaseStudies'
 import { Contact } from './components/Contact'
 import { FAQ } from './components/FAQ'
 import { Hero } from './components/Hero'
+import { LiveSitesRibbon } from './components/LiveSitesRibbon'
 import { Nav } from './components/Nav'
 import { Process } from './components/Process'
 import { ScrollProgress } from './components/ScrollProgress'
@@ -48,6 +49,7 @@ function App() {
           <Hero />
           <About />
           <Work />
+          <LiveSitesRibbon />
           <CaseStudies />
           <Services />
           <Process />

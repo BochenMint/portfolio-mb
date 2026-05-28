@@ -22,6 +22,7 @@ export function VisitSiteButton({
         href={project.url}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label={`Otwórz stronę ${project.title} — ${project.domain} (nowa karta)`}
         className={`btn-fill text-sm ${className}`}
       >
         {label}
