@@ -27,7 +27,7 @@ export function useScrollAnimations() {
 
           if (reduce) {
             showFinal()
-            gsap.set('[data-progress-bar]', { scaleX: 1 })
+            gsap.set('[data-progress-bar], [data-work-progress-bar]', { scaleX: 1 })
             document.querySelector('[data-curtain]')?.remove()
             return
           }
@@ -191,17 +191,56 @@ export function useScrollAnimations() {
             const workTrack = document.querySelector('[data-work-track]') as HTMLElement | null
             if (workPin && workTrack) {
               const getScroll = () => Math.max(0, workTrack.scrollWidth - window.innerWidth + 48)
+              const cards = gsap.utils.toArray<HTMLElement>('[data-work-track] [data-project-card]')
+              const progressBar = document.querySelector('[data-work-progress-bar]')
+              const progressLabel = document.querySelector('[data-work-progress-label]')
+
+              const workSt = ScrollTrigger.create({
+                trigger: workPin,
+                pin: true,
+                scrub: SCRUB,
+                end: () => `+=${getScroll()}`,
+                anticipatePin: 1,
+                invalidateOnRefresh: true,
+                onUpdate(self) {
+                  const total = cards.length || 1
+                  const idx = Math.min(total - 1, Math.floor(self.progress * total))
+                  if (progressLabel) {
+                    progressLabel.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`
+                  }
+                },
+              })
+
               gsap.to(workTrack, {
                 x: () => -getScroll(),
                 ease: 'none',
-                scrollTrigger: {
-                  trigger: workPin,
-                  pin: true,
-                  scrub: SCRUB,
-                  end: () => `+=${getScroll()}`,
-                  anticipatePin: 1,
-                  invalidateOnRefresh: true,
-                },
+                scrollTrigger: workSt,
+              })
+
+              if (progressBar) {
+                gsap.to(progressBar, {
+                  scaleX: 1,
+                  ease: 'none',
+                  scrollTrigger: workSt,
+                })
+              }
+
+              cards.forEach((card, i) => {
+                gsap.fromTo(
+                  card,
+                  { scale: 0.94, filter: 'brightness(0.92)' },
+                  {
+                    scale: 1,
+                    filter: 'brightness(1)',
+                    ease: 'none',
+                    scrollTrigger: {
+                      trigger: workPin,
+                      start: () => `top top+=${(getScroll() / Math.max(cards.length, 1)) * i}`,
+                      end: () => `top top+=${(getScroll() / Math.max(cards.length, 1)) * (i + 0.65)}`,
+                      scrub: SCRUB_SOFT,
+                    },
+                  },
+                )
               })
             }
           } else if (motion) {

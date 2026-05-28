@@ -24,8 +24,27 @@ export function Work() {
       <div
         data-work-pin
         className="relative hidden min-h-[100dvh] overflow-hidden lg:block"
-        aria-label="Galeria realizacji — przewiń w dół"
+        aria-label="Galeria realizacji — przewiń w dół, aby przesunąć karty w poziomie"
       >
+        <div
+          data-work-chrome
+          className="pointer-events-none absolute inset-x-0 top-8 z-20 flex items-center justify-between px-[max(1.5rem,calc((100vw-1400px)/2+1.5rem))]"
+          aria-hidden
+        >
+          <p className="section-label text-[10px]">Przewiń · galeria</p>
+          <div className="flex min-w-[9rem] flex-col items-end gap-2">
+            <span data-work-progress-label className="font-display text-sm tabular-nums">
+              01 / {String(projects.length).padStart(2, '0')}
+            </span>
+            <div className="h-px w-full origin-left bg-rule">
+              <div
+                data-work-progress-bar
+                className="bg-accent h-full w-full origin-left"
+                style={{ transform: 'scaleX(0)' }}
+              />
+            </div>
+          </div>
+        </div>
         <div
           data-work-track
           className="flex h-[100dvh] items-center gap-8 px-[max(1.5rem,calc((100vw-1400px)/2+1.5rem))] will-change-transform"
