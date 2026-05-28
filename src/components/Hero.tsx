@@ -27,6 +27,12 @@ export function Hero() {
       data-hero
       className="section-pad relative flex min-h-[100dvh] flex-col justify-end pt-28 md:pt-32"
     >
+      <span
+        className="chapter-num pointer-events-none absolute top-20 right-6 select-none opacity-[0.14] md:top-24 md:right-12 lg:right-[max(1.5rem,calc((100vw-1400px)/2+1.5rem))]"
+        aria-hidden
+      >
+        01
+      </span>
       <div className="mx-auto grid w-full max-w-[1400px] flex-1 gap-10 lg:grid-cols-[1fr_minmax(280px,42%)] lg:items-end lg:gap-16">
         <div className="flex flex-col justify-center">
           <p data-hero-fade className="section-label">

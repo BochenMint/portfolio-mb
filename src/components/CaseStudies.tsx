@@ -7,15 +7,23 @@ export function CaseStudies() {
   const rest = projects.filter((p) => !p.flagship)
 
   return (
-    <section id="case-studies" data-section className="section-pad editorial-rule border-t bg-surface">
+    <section id="case-studies" data-section className="section-pad editorial-rule editorial-panel border-t">
       <div className="mx-auto max-w-[1400px]">
         <p data-reveal className="section-label">
           04 — Case studies
         </p>
-        <h2 data-reveal className="font-display mt-4 max-w-3xl text-4xl leading-tight md:text-5xl">
-          Problem → podejście →{' '}
-          <span className="text-accent italic">wynik biznesowy</span>
-        </h2>
+        <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <h2 data-reveal className="font-display max-w-3xl text-4xl leading-tight md:text-5xl">
+            Problem → podejście →{' '}
+            <span className="text-accent italic">wynik biznesowy</span>
+          </h2>
+          <p
+            data-reveal
+            className="text-muted max-w-xs text-xs leading-relaxed tracking-wide uppercase lg:text-right"
+          >
+            Mint i Plumm — produkcja, nie mockupy
+          </p>
+        </div>
 
         <article
           data-case-flagship
@@ -49,6 +57,10 @@ export function CaseStudies() {
                 <dd className="text-accent mt-2 font-medium">{flagship.result}</dd>
               </div>
             </dl>
+
+            <blockquote className="border-rule mt-8 border-l-2 py-1 pl-5">
+              <p className="font-hand text-accent text-xl leading-snug md:text-2xl">{flagship.pullQuote}</p>
+            </blockquote>
 
             <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
