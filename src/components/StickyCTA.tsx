@@ -4,10 +4,10 @@ export function StickyCTA() {
   const href = site.calendly || '#kontakt'
 
   return (
-    <div className="fixed right-0 bottom-0 left-0 z-50 border-t border-line bg-ink/90 p-3 backdrop-blur-xl md:hidden">
+    <div className="fixed right-0 bottom-0 left-0 z-50 border-t border-rule bg-paper/95 p-3 backdrop-blur-sm md:hidden">
       <a
         href={href}
-        className="flex w-full items-center justify-center rounded-full bg-mint py-3.5 text-sm font-bold text-ink"
+        className="btn-fill flex w-full justify-center"
         {...(site.calendly ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       >
         {site.ctaSticky}

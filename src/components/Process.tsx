@@ -2,25 +2,17 @@ import { process } from '../data/content'
 
 export function Process() {
   return (
-    <section id="proces" data-section className="border-line border-t bg-surface/40 px-5 py-24 md:px-10 md:py-32">
-      <div className="mx-auto max-w-7xl">
-        <p data-reveal className="text-mint text-xs font-semibold tracking-[0.3em] uppercase">
-          Jak pracuję
-        </p>
-        <h2 data-reveal className="font-display mt-4 max-w-2xl text-4xl font-bold md:text-5xl">
-          Od rozmowy do efektu wow — bez chaosu w środku.
-        </h2>
+    <section className="section-pad editorial-rule border-t">
+      <div className="mx-auto max-w-[1400px]">
+        <p className="section-label reveal">06 — Jak to wygląda</p>
+        <h2 className="font-display reveal mt-4 text-3xl md:text-4xl">Proces bez ceremonii</h2>
 
-        <ol className="mt-16 grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:grid-cols-4">
-          {process.map((item) => (
-            <li
-              key={item.step}
-              data-reveal
-              className="bg-surface-2 flex flex-col p-8 transition-colors hover:bg-surface"
-            >
-              <span className="font-display text-mint text-4xl font-bold">{item.step}</span>
-              <h3 className="font-display mt-6 text-xl font-bold">{item.title}</h3>
-              <p className="text-muted mt-3 text-sm leading-relaxed">{item.text}</p>
+        <ol className="mt-14 grid gap-0 md:grid-cols-2 lg:grid-cols-4">
+          {process.map((step) => (
+            <li key={step.step} className="reveal editorial-rule border-t p-6 md:border-l md:first:border-l-0">
+              <span className="font-display text-accent text-2xl italic">{step.step}</span>
+              <h3 className="mt-4 font-medium">{step.title}</h3>
+              <p className="text-muted mt-2 text-sm leading-relaxed">{step.text}</p>
             </li>
           ))}
         </ol>

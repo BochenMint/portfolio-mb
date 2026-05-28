@@ -1,48 +1,71 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --color-ink: #050508;
-  --color-surface: #0c0c10;
-  --color-surface-2: #14141c;
-  --color-cream: #f4f2ed;
-  --color-muted: #8a8798;
-  --color-mint: #3ee8c4;
-  --color-gold: #c9a962;
-  --color-line: rgba(244, 242, 237, 0.08);
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-hand: 'Caveat', cursive;
+
+  --color-paper: #f7f4ef;
+  --color-ink: #1c1b19;
+  --color-ink-muted: #5c5852;
+  --color-night: #121110;
+  --color-cream: #f0ebe3;
+  --color-accent: #b85c38;
+  --color-accent-deep: #8f4529;
+  --color-rule: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  --color-surface: color-mix(in srgb, var(--color-ink) 4%, var(--color-paper));
 }
 
 @layer base {
   html {
-    @apply scroll-smooth bg-ink text-cream antialiased;
+    @apply antialiased;
     font-family: var(--font-body);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    scroll-behavior: smooth;
+  }
+
+  [data-theme='dark'] {
+    --color-paper: #121110;
+    --color-ink: #f0ebe3;
+    --color-ink-muted: #a39e96;
+    --color-rule: color-mix(in srgb, var(--color-cream) 16%, transparent);
+    --color-surface: color-mix(in srgb, var(--color-cream) 6%, var(--color-night));
   }
 
   body {
     @apply overflow-x-hidden;
-  }
-
-  body.cursor-custom,
-  body.cursor-custom a,
-  body.cursor-custom button {
-    cursor: none;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    transition:
+      background-color 0.35s ease,
+      color 0.35s ease;
   }
 
   ::selection {
-    @apply bg-mint/30 text-cream;
+    background: color-mix(in srgb, var(--color-accent) 28%, transparent);
+    color: var(--color-ink);
   }
 
   summary::-webkit-details-marker {
     display: none;
   }
 
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
     }
-    .motion-safe\:animate-pulse-slow {
-      animation: none !important;
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
   }
 }
@@ -52,35 +75,130 @@
     font-family: var(--font-display);
   }
 
+  .font-hand {
+    font-family: var(--font-hand);
+  }
+
   .text-balance {
     text-wrap: balance;
   }
 
-  .glass {
-    @apply border border-line bg-white/[0.03] backdrop-blur-xl;
+  .text-muted {
+    color: var(--color-ink-muted);
   }
 
-  .gradient-mesh {
-    background:
-      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(62, 232, 196, 0.18), transparent 55%),
-      radial-gradient(ellipse 60% 40% at 90% 20%, rgba(201, 169, 98, 0.12), transparent 50%),
-      radial-gradient(ellipse 50% 60% at 50% 100%, rgba(62, 232, 196, 0.08), transparent 60%),
-      var(--color-ink);
+  .border-rule {
+    border-color: var(--color-rule);
   }
 
-  .noise::after {
-    content: '';
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9998;
-    opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  .bg-surface {
+    background: var(--color-surface);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+
+  .bg-paper {
+    background-color: var(--color-paper);
+  }
+
+  .bg-rule {
+    background-color: var(--color-rule);
+  }
+
+  .editorial-rule {
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .section-pad {
+    @apply px-6 py-20 md:px-12 md:py-28 lg:px-16;
+  }
+
+  .section-label {
+    color: var(--color-ink-muted);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .chapter-num {
+    font-family: var(--font-display);
+    color: var(--color-accent);
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 1;
+    font-style: italic;
+  }
+
+  .btn-soft {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-rule);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition-property: color, border-color;
+    transition-duration: 150ms;
+    color: var(--color-ink);
+  }
+
+  .btn-soft:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .btn-fill {
+    @apply inline-flex items-center gap-2 px-6 py-3 text-sm font-medium;
+    background: var(--color-accent);
+    color: var(--color-paper);
+  }
+
+  .btn-fill:hover {
+    background: var(--color-accent-deep);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .noise::after {
-      display: none;
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .page-enter {
+    animation: page-enter 0.6s ease forwards;
+  }
+
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-enter {
+      animation: none;
     }
   }
 
@@ -89,21 +207,5 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-
-  @keyframes pulse-slow {
-    0%,
-    100% {
-      opacity: 0.35;
-      transform: translate(-50%, 0) scale(1);
-    }
-    50% {
-      opacity: 0.55;
-      transform: translate(-50%, -3%) scale(1.06);
-    }
-  }
-
-  .motion-safe\:animate-pulse-slow {
-    animation: pulse-slow 9s ease-in-out infinite;
   }
 }
