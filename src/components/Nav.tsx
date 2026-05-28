@@ -1,21 +1,24 @@
 import { site } from '../data/content'
+import { MagneticButton } from './MagneticButton'
 
 const links = [
   { href: '#realizacje', label: 'Realizacje' },
-  { href: '#uslugi', label: 'Usługi' },
-  { href: '#proces', label: 'Proces' },
+  { href: '#case-studies', label: 'Case studies' },
+  { href: '#inwestycja', label: 'Cennik' },
   { href: '#kontakt', label: 'Kontakt' },
 ]
 
 export function Nav() {
+  const ctaHref = site.calendly || '#kontakt'
+
   return (
-    <header className="fixed top-0 right-0 left-0 z-50 px-5 py-5 md:px-10">
-      <nav className="glass mx-auto flex max-w-7xl items-center justify-between rounded-2xl px-5 py-3 md:px-6">
+    <header className="fixed top-0 right-0 left-0 z-50 px-4 py-4 md:px-8">
+      <nav className="glass mx-auto flex max-w-7xl items-center justify-between rounded-2xl px-4 py-2.5 md:px-6 md:py-3">
         <a href="#" className="font-display text-sm font-bold tracking-tight md:text-base">
-          {site.name}
+          {site.brand}
           <span className="text-mint">.</span>
         </a>
-        <ul className="hidden items-center gap-8 md:flex">
+        <ul className="hidden items-center gap-6 lg:flex">
           {links.map((link) => (
             <li key={link.href}>
               <a
@@ -27,12 +30,13 @@ export function Nav() {
             </li>
           ))}
         </ul>
-        <a
-          href="#kontakt"
-          className="rounded-full bg-mint px-4 py-2 text-xs font-semibold text-ink transition-transform hover:scale-[1.03] active:scale-[0.98] md:text-sm"
+        <MagneticButton
+          href={ctaHref}
+          external={!!site.calendly}
+          className="rounded-full bg-mint px-3 py-2 text-[11px] font-bold text-ink md:px-5 md:text-sm"
         >
-          {site.ctaSecondary}
-        </a>
+          Audyt 20 min
+        </MagneticButton>
       </nav>
     </header>
   )

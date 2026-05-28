@@ -6,19 +6,14 @@ export function Services() {
       <div className="mx-auto max-w-7xl">
         <div className="max-w-3xl">
           <p data-reveal className="text-mint text-xs font-semibold tracking-[0.3em] uppercase">
-            Dla kogo pracuję
+            Co dostarczam
           </p>
           <h2 data-reveal className="font-display mt-4 text-4xl font-bold tracking-tight md:text-6xl">
-            Technologia, która{' '}
+            Nie „usługi WWW”.{' '}
             <span className="bg-gradient-to-r from-mint to-gold bg-clip-text text-transparent">
-              zarabia
+              Przychód i spokój operacyjny.
             </span>
-            , nie tylko wygląda.
           </h2>
-          <p data-reveal className="text-muted mt-6 text-lg leading-relaxed">
-            Wspieram właścicieli małych firm — apartamenty, floty, biura rachunkowe, usługi lokalne.
-            Nie sprzedaję „strony za 3 dni”. Buduję produkty, które trzymają standard Twojej marki.
-          </p>
         </div>
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
@@ -27,7 +22,6 @@ export function Services() {
               key={service.title}
               data-reveal
               className="glass group rounded-3xl p-8 transition-colors hover:border-mint/25"
-              style={{ transitionDelay: `${i * 50}ms` }}
             >
               <span className="font-display text-muted text-5xl font-bold opacity-20">
                 0{i + 1}
@@ -36,8 +30,8 @@ export function Services() {
               <p className="text-mint mt-2 text-sm">{service.subtitle}</p>
               <ul className="mt-6 space-y-3">
                 {service.points.map((point) => (
-                  <li key={point} className="text-cream/75 flex gap-2 text-sm leading-relaxed">
-                    <span className="text-mint mt-1 shrink-0">→</span>
+                  <li key={point} className="flex gap-2 text-sm leading-relaxed text-cream/75">
+                    <span className="mt-1 shrink-0 text-mint">→</span>
                     {point}
                   </li>
                 ))}

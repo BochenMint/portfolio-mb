@@ -1,21 +1,32 @@
-# Portfolio MB — szkic premium
+# Portfolio MB — Bochen Studio
 
-Animowane portfolio (React + Vite + GSAP + Lenis) prezentujące produkty: **Plumm.pl**, **Mintapartments.pl**, **iDrive Cars**, **Agentic OS**.
+Portfolio **nastawione na konwersję** (React + Vite + GSAP + Lenis): case studies PSR, cennik, brief kwalifikacyjny, sticky CTA, custom cursor (desktop).
+
+Produkty: **Plumm.pl**, **Mintapartments.pl**, **iDrive Cars**, **Agentic OS**.
 
 ## Uruchomienie
 
 ```bash
 npm install
+cp .env.example .env   # VITE_CALENDLY_URL=...
 npm run dev
 ```
 
-Build produkcyjny: `npm run build` → folder `dist/`
+Build: `npm run build` → `dist/`
 
-## Do uzupełnienia przed publikacją
+## Konfiguracja sprzedaży
 
-1. **`src/data/content.ts`** — imię/nazwisko, e-mail (`site.email`), ewentualnie linki do idrivecars i Agentic OS
-2. **Zdjęcia / screeny** — zamień `ProjectMock` na prawdziwe hi-res mockupy lub WebP sekwencje (Apple-style scroll)
-3. **Analytics & formularz** — Cal.com, Formspree lub własny endpoint
+| Plik / env | Co ustawić |
+|------------|------------|
+| `src/data/content.ts` | `site.email`, `site.name`, metryki w `results` |
+| `.env` → `VITE_CALENDLY_URL` | Link Cal.com / Calendly — primary CTA |
+| Testimonials | Prawdziwe cytaty + zgoda na publikację |
+
+## Do uzupełnienia (faza 2)
+
+1. **Hi-res screeny** zamiast `ProjectMock` (WebP, scroll sequence)
+2. **Backend formularza** (Formspree / własne API) zamiast mailto
+3. **Analytics** (Plausible / GA4) + eventy na CTA
 
 ## Stack
 

@@ -1,97 +1,125 @@
 import { useLayoutEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
+import { gsap, ScrollTrigger } from '../animation/gsap'
 
 export function useIntroAnimations(ready: boolean) {
   useLayoutEffect(() => {
     if (!ready) return
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduced) {
-      gsap.set('[data-reveal]', { opacity: 1, y: 0 })
-      return
-    }
-
     const ctx = gsap.context(() => {
-      gsap.from('[data-hero-line]', {
-        yPercent: 110,
-        opacity: 0,
-        duration: 1.1,
-        stagger: 0.12,
-        ease: 'power4.out',
-        delay: 0.15,
-      })
+      const mm = gsap.matchMedia()
 
-      gsap.from('[data-hero-fade]', {
-        opacity: 0,
-        y: 24,
-        duration: 0.9,
-        stagger: 0.08,
-        ease: 'power3.out',
-        delay: 0.55,
-      })
+      mm.add(
+        {
+          reduce: '(prefers-reduced-motion: reduce)',
+          desktop: '(min-width: 1024px) and (prefers-reduced-motion: no-preference)',
+          motion: '(prefers-reduced-motion: no-preference)',
+        },
+        (context) => {
+          const { reduce, desktop, motion } = context.conditions!
 
-      gsap.from('[data-marquee]', {
-        opacity: 0,
-        duration: 0.8,
-        delay: 0.9,
-      })
+          if (reduce) {
+            gsap.set('[data-reveal], [data-hero-line], [data-hero-word], [data-stat]', {
+              opacity: 1,
+              y: 0,
+              clearProps: 'transform',
+            })
+            return
+          }
 
-      gsap.utils.toArray<HTMLElement>('[data-section]').forEach((section) => {
-        const targets = section.querySelectorAll('[data-reveal]')
-        if (!targets.length) return
+          if (motion) {
+            gsap.from('[data-hero-line]', {
+              yPercent: 110,
+              opacity: 0,
+              duration: 1.05,
+              stagger: 0.1,
+              ease: 'power4.out',
+              delay: 0.1,
+            })
 
-        gsap.from(targets, {
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 78%',
-            toggleActions: 'play none none reverse',
-          },
-          y: 48,
-          opacity: 0,
-          duration: 0.85,
-          stagger: 0.1,
-          ease: 'power3.out',
-        })
-      })
+            gsap.from('[data-hero-word]', {
+              yPercent: 120,
+              opacity: 0,
+              duration: 0.75,
+              stagger: 0.02,
+              ease: 'power3.out',
+              delay: 0.35,
+            })
 
-      gsap.utils.toArray<HTMLElement>('[data-project-card]').forEach((card, i) => {
-        gsap.from(card, {
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
-          },
-          y: 80,
-          opacity: 0,
-          rotateX: 8,
-          transformPerspective: 900,
-          duration: 1,
-          delay: i * 0.05,
-          ease: 'power3.out',
-        })
-      })
+            gsap.from('[data-hero-fade]', {
+              opacity: 0,
+              y: 20,
+              duration: 0.8,
+              stagger: 0.06,
+              ease: 'power3.out',
+              delay: 0.5,
+            })
 
-      const workPin = document.querySelector('[data-work-pin]')
-      const workTrack = document.querySelector('[data-work-track]') as HTMLElement | null
-      if (workPin && workTrack && window.innerWidth >= 1024) {
-        const getScroll = () => workTrack.scrollWidth - window.innerWidth + 80
+            gsap.from('[data-stat]', {
+              scrollTrigger: { trigger: '[data-stats]', start: 'top 82%' },
+              y: 32,
+              opacity: 0,
+              duration: 0.7,
+              stagger: 0.08,
+              ease: 'power3.out',
+            })
 
-        gsap.to(workTrack, {
-          x: () => -getScroll(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: workPin,
-            pin: true,
-            scrub: 1,
-            end: () => `+=${getScroll()}`,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        })
-      }
+            ScrollTrigger.batch('[data-reveal]', {
+              start: 'top 88%',
+              onEnter: (batch) =>
+                gsap.fromTo(
+                  batch,
+                  { y: 40, opacity: 0 },
+                  { y: 0, opacity: 1, duration: 0.75, stagger: 0.08, ease: 'power3.out', overwrite: true },
+                ),
+              once: true,
+            })
+
+            gsap.utils.toArray<HTMLElement>('[data-project-card]').forEach((card, i) => {
+              gsap.from(card, {
+                scrollTrigger: { trigger: card, start: 'top 88%', once: true },
+                y: 60,
+                opacity: 0,
+                duration: 0.9,
+                delay: i * 0.04,
+                ease: 'power3.out',
+              })
+            })
+          }
+
+          if (desktop && motion) {
+            const workPin = document.querySelector('[data-work-pin]')
+            const workTrack = document.querySelector('[data-work-track]') as HTMLElement | null
+            if (workPin && workTrack) {
+              const getScroll = () => Math.max(0, workTrack.scrollWidth - window.innerWidth + 80)
+              gsap.to(workTrack, {
+                x: () => -getScroll(),
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: workPin,
+                  pin: true,
+                  scrub: 1,
+                  end: () => `+=${getScroll()}`,
+                  anticipatePin: 1,
+                  invalidateOnRefresh: true,
+                },
+              })
+            }
+          }
+
+          if (motion) {
+            gsap.to('[data-progress-bar]', {
+              scaleX: 1,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: document.documentElement,
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.3,
+              },
+            })
+          }
+        },
+      )
     })
 
     return () => ctx.revert()

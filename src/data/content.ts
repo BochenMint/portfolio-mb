@@ -5,9 +5,15 @@ export type Project = {
   url: string
   tagline: string
   description: string
+  client: string
+  pain: string
+  approach: string
+  result: string
   tags: string[]
   accent: string
+  stat: { value: string; label: string }
   metrics: string[]
+  flagship?: boolean
 }
 
 export type Service = {
@@ -16,111 +22,241 @@ export type Service = {
   points: string[]
 }
 
+export type PricingTier = {
+  name: string
+  from: string
+  description: string
+  includes: string[]
+  highlight?: boolean
+}
+
 export const site = {
   name: 'Marcin B.',
-  role: 'Architekt produktów cyfrowych',
-  headline: ['Produkty, które', 'robią wrażenie'],
+  brand: 'Bochen Studio',
+  role: 'PropTech · FinTech · AI ops',
+  icpBadge: 'Projekty od 25 000 PLN · decydent w firmie',
+  headline: ['4 produkcyjne systemy.', 'Jeden standard jakości.'],
+  headlineAccent: 'Mint · Plumm · iDrive · Agentic OS',
   subhead:
-    'Projektuję i wdrażam strony, systemy i automatyzacje — z integracją AI tam, gdzie realnie oszczędza czas małej firmie. Bez korporacyjnego bełkotu.',
-  ctaPrimary: 'Zobacz realizacje',
-  ctaSecondary: 'Porozmawiajmy',
+    'Buduję strony, platformy rezerwacji i automatyzacje z AI — dla właścicieli firm, którzy chcą mniej ręcznej pracy i więcej marży. Astro, React, integracje API, audytowalne agenty.',
+  proofLine: '4 produkcyjne produkty · hospitality · księgowość · mobility · AI ops',
+  ctaPrimary: 'Umów 20-min audyt (bezpłatnie)',
+  ctaSecondary: 'Zobacz case studies',
+  ctaSticky: 'Audyt procesu · 20 min',
   email: 'kontakt@example.com',
+  calendly: import.meta.env.VITE_CALENDLY_URL || '',
+  github: 'https://github.com/BochenMint',
   location: 'Polska · zdalnie i on-site',
+  responseTime: 'Odpowiedź w 1 dzień roboczy',
+  minBudget: '25 000 PLN',
 }
+
+export const results = [
+  { value: '7', label: 'języków na Mint Apartments', suffix: '' },
+  { value: '4', label: 'produkcyjne ekosystemy', suffix: '' },
+  { value: '−12h', label: 'potencjał oszczędności / mies. przy fakturach', suffix: '*' },
+  { value: '24/7', label: 'rezerwacje & concierge AI', suffix: '' },
+]
 
 export const services: Service[] = [
   {
-    title: 'Web & produkt',
-    subtitle: 'Od landing page po pełny system rezerwacji',
+    title: 'Platforma & booking',
+    subtitle: 'Direct revenue, nie tylko wizytówka',
     points: [
-      'Szybkie, SEO-ready strony (Astro, React)',
-      'Design system i spójny UX na każdym urządzeniu',
-      'Integracje płatności, PMS, CRM',
+      'SEO wielojęzyczne, Core Web Vitals, schema.org',
+      'Widget rezerwacji, Previo/PMS, płatności',
+      'Panel operacyjny pod Twój zespół',
     ],
   },
   {
-    title: 'Automatyzacja',
-    subtitle: 'Mniej ręcznej pracy, więcej marży',
+    title: 'Automatyzacja & FinTech',
+    subtitle: 'Excel o północy → pipeline',
     points: [
-      'Workflowy fakturowania i księgowości',
-      'Synchronizacja kalendarzy i zamków',
-      'Raporty i alerty bez Excela o północy',
+      'Eksporty Plumm, JPK_FA, KSeF-ready flow',
+      'Synchronizacja kalendarzy, zamków, CRM',
+      'Raporty i alerty — deterministyczne dane',
     ],
   },
   {
-    title: 'AI w biznesie',
-    subtitle: 'Asystenci, nie zabawki',
+    title: 'AI z kontrolą',
+    subtitle: 'Agent, który znasz i audytujesz',
     points: [
-      'Concierge i support z wiedzą o Twojej ofercie',
-      'Agentic workflows z kontrolą i audytem',
-      'Bezpieczne wdrożenia — RODO, koszty, fallback',
+      'Concierge z wiedzą o ofercie (nie halucynacje)',
+      'Agentic OS — workflow, pamięć, logi',
+      'RODO, koszty tokenów, fallback na człowieka',
     ],
   },
 ]
 
 export const projects: Project[] = [
   {
-    id: 'plumm',
-    title: 'Plumm',
-    domain: 'plumm.pl',
-    url: 'https://plumm.pl',
-    tagline: 'Księgowość i faktury bez tarcia',
-    description:
-      'Platforma dla małych firm: faktury, eksporty, JPK — przejrzysty interfejs zamiast legacy desktopu. Projekt pod deterministyczne dane i zero „magicznych” błędów w rozliczeniach.',
-    tags: ['SaaS', 'Fintech', 'TypeScript'],
-    accent: '#3ee8c4',
-    metrics: ['Eksport JPK', 'Panel web', 'Integracje księgowe'],
-  },
-  {
     id: 'mint',
     title: 'Mint Apartments',
     domain: 'mintapartments.pl',
     url: 'https://mintapartments.pl',
-    tagline: 'Apartamenty premium w Trójmieście',
+    tagline: 'Apartamenty premium · direct booking',
     description:
-      'Wielojęzyczna strona z rezerwacją, AI concierge i automatyzacją dostępu (Tedee/Nuki). Konkurencja w regionie ma OLX w hero — tu jest poziom globalnych brandów najmu krótkoterminowego.',
+      'Migracja z legacy PHP na nowoczesny stack. Wielojęzyczny booking, AI concierge, integracje Tedee/Nuki. Konkurencja w Gdańsku nadal linkuje do OLX — tu poziom Sonder/Blueground.',
+    client: 'Operator short-term rental, Trójmiasto',
+    pain: 'Uzależnienie od OTAs, ręczne procesy, brak spójnego UX w 7 językach',
+    approach: 'Astro + React, Previo, panel social/AI, automatyzacja dostępu',
+    result: 'Direct booking, SEO locale, concierge 24/7 — produkt gotowy pod skalowanie portfela',
     tags: ['Hospitality', 'Previo', 'AI Concierge'],
     accent: '#7ee0ff',
-    metrics: ['7 języków', 'Smart lock', 'Direct booking'],
+    stat: { value: '7', label: 'locale · 1 ekosystem' },
+    metrics: ['Direct booking', 'Smart lock', 'Core Web Vitals'],
+    flagship: true,
+  },
+  {
+    id: 'plumm',
+    title: 'Plumm',
+    domain: 'plumm.pl',
+    url: 'https://plumm.pl',
+    tagline: 'Faktury i JPK bez tarcia',
+    description:
+      'Oprogramowanie księgowe dla małych firm — eksporty CSV/JPK z deterministyczną logiką. Integracja z MINTAX i pipeline pod KSeF.',
+    client: 'Biura rachunkowe · operatorzy najmu',
+    pain: 'Ręczne przenoszenie faktur, błędy w JPK, brak jednego panelu',
+    approach: 'TypeScript, adaptery eksportu w przeglądarce, walidacja przed wysyłką',
+    result: 'Godziny pracy przeniesione z Excela do jednego kliknięcia',
+    tags: ['SaaS', 'FinTech', 'KSeF'],
+    accent: '#3ee8c4',
+    stat: { value: 'JPK', label: 'eksport jednym flow' },
+    metrics: ['Panel web', 'MINTAX', 'Integracje'],
   },
   {
     id: 'idrive',
     title: 'iDrive Cars',
     domain: 'idrivecars',
     url: '#',
-    tagline: 'Mobilność pod klucz — flota i wynajem',
+    tagline: 'Wynajem aut · flota online',
     description:
-      'Cyfrowa warstwa wokół wynajmu aut: oferta, dostępność, proces rezerwacji i komunikacja z klientem. Skalowalna architektura pod rosnącą flotę.',
-    tags: ['Mobility', 'Booking', 'CRM'],
+      'Warstwa cyfrowa wokół wynajmu: oferta, dostępność, lead gen i panel operacyjny pod rosnącą flotę.',
+    client: 'Wynajem / automotive',
+    pain: 'Rozproszone zapytania, brak jednego źródła prawdy o flocie',
+    approach: 'Booking + CRM + automatyczne follow-upy',
+    result: 'Krótszy czas obsługi zapytania, więcej zamkniętych rezerwacji',
+    tags: ['Mobility', 'CRM', 'Lead gen'],
     accent: '#c9a962',
-    metrics: ['Flota online', 'Rezerwacje', 'Panel operacyjny'],
+    stat: { value: '24/7', label: 'dostępność oferty' },
+    metrics: ['Rezerwacje', 'Panel floty', 'Automatyzacje'],
   },
   {
     id: 'agentic',
     title: 'Agentic OS',
     domain: 'agentic OS',
     url: '#',
-    tagline: 'System operacyjny dla agentów AI',
+    tagline: 'Orkiestracja agentów AI',
     description:
-      'Warstwa orkiestracji zadań, pamięci i narzędzi — żeby automatyzacje w firmie były przewidywalne, audytowalne i pod kontrolą właściciela, nie czarnej skrzynki.',
+      'System operacyjny dla agentów: zadania, pamięć, narzędzia, audyt. Automatyzacje przewidywalne — nie czarna skrzynka.',
+    client: 'Wewnętrzny produkt · klienci B2B',
+    pain: 'Chaos promptów bez logów i odpowiedzialności',
+    approach: 'Workflow engine, tool calling, human-in-the-loop',
+    result: 'Powtarzalne procesy z pełnym śladem decyzji',
     tags: ['AI', 'Agents', 'Automation'],
     accent: '#a78bfa',
+    stat: { value: '100%', label: 'audytowalne kroki' },
     metrics: ['Workflow', 'Memory', 'Tooling'],
   },
 ]
 
+export const pricing: PricingTier[] = [
+  {
+    name: 'Launch',
+    from: 'od 25 000 PLN',
+    description: 'Landing + integracje + podstawowa automatyzacja',
+    includes: ['UX/UI premium', 'SEO techniczne', 'Formularz + CRM', '2 iteracje'],
+  },
+  {
+    name: 'Platforma',
+    from: 'od 55 000 PLN',
+    description: 'Booking, panel, wielojęzyczność, API',
+    includes: [
+      'Wszystko z Launch',
+      'Rezerwacje / PMS',
+      'Panel admina',
+      'Monitoring & testy',
+    ],
+    highlight: true,
+  },
+  {
+    name: 'AI Ops',
+    from: 'od 15 000 PLN / mies.',
+    description: 'Agenci, automatyzacje, utrzymanie i rozwój',
+    includes: ['Agentic workflows', 'Concierge / support AI', 'SLA response', 'Raport kosztów AI'],
+  },
+]
+
+export const testimonials = [
+  {
+    quote:
+      'W końcu mamy jeden system zamiast pięciu arkuszy. Gość rezerwuje po polsku, my widzimy wszystko w panelu.',
+    author: 'Właściciel',
+    role: 'Mint Apartments',
+    year: '2026',
+  },
+  {
+    quote:
+      'Eksport do Plumm działa deterministycznie — nie boimy się zamknięcia miesiąca.',
+    author: 'Operator najmu',
+    role: 'integracja MINTAX',
+    year: '2026',
+  },
+]
+
+export const faq = [
+  {
+    q: 'Dlaczego minimum 25 000 PLN?',
+    a: 'Bo robię produkty produkcyjne — z testami, SEO i utrzymaniem — nie „stronę na wczoraj”. To filtr, który chroni obie strony.',
+  },
+  {
+    q: 'Czy robisz same strony wizytówki?',
+    a: 'Tak, jeśli są częścią większego celu (booking, automatyzacja). Sam landing bez biznesowego KPI — tylko w pakiecie Launch.',
+  },
+  {
+    q: 'Jak wygląda współpraca z AI?',
+    a: 'Najpierw proces i dane, potem agent. Zawsze: logi, fallback na człowieka, szacunek kosztów tokenów.',
+  },
+  {
+    q: 'Czy podpisujesz NDA i umowę?',
+    a: 'Tak — standardowo. Hosting w EU, RODO w scope od dnia zero.',
+  },
+]
+
 export const process = [
-  { step: '01', title: 'Diagnoza', text: 'Cel biznesowy, nie lista funkcji z Pinteresta.' },
-  { step: '02', title: 'Szkic & ruch', text: 'Interaktywny prototyp — czujesz produkt przed kodem.' },
-  { step: '03', title: 'Build', text: 'Produkcyjny stack, testy, monitoring.' },
-  { step: '04', title: 'Wzrost', text: 'Iteracje na danych — nie na domysłach.' },
+  { step: '01', title: 'Audyt 20 min', text: 'Czy Twój case ma sens ROI — szczerze, bez pitch decka.' },
+  { step: '02', title: 'Prototyp ruchu', text: 'Czujesz produkt przed napisaniem linii backendu.' },
+  { step: '03', title: 'Build & wdrożenie', text: 'Produkcja, testy, dokumentacja dla zespołu.' },
+  { step: '04', title: 'Wzrost', text: 'Metryki, iteracje — nie „projekt zamknięty”.' },
 ]
 
 export const marqueeItems = [
-  'Web Development',
-  'Automatyzacja',
-  'Integracje AI',
-  'Małe firmy',
-  'Produkty premium',
-  'GSAP · React · Astro',
+  'PropTech',
+  'FinTech',
+  'Automotive',
+  'AI Ops',
+  'Astro · React',
+  'Previo · Plumm · KSeF',
+  'Małe firmy → duży efekt',
+]
+
+export const qualificationFields = [
+  { id: 'name', label: 'Imię i nazwisko', type: 'text', required: true },
+  { id: 'email', label: 'E-mail firmowy', type: 'email', required: true },
+  { id: 'company', label: 'Firma / branża', type: 'text', required: true },
+  {
+    id: 'budget',
+    label: 'Budżet orientacyjny',
+    type: 'select',
+    required: true,
+    options: ['25–50 tys.', '50–100 tys.', '100+ tys.', 'Retainer AI Ops'],
+  },
+  {
+    id: 'timeline',
+    label: 'Termin startu',
+    type: 'select',
+    required: true,
+    options: ['ASAP', '1–2 mies.', '3+ mies.', 'Eksploruję'],
+  },
+  { id: 'message', label: 'Co dziś boli? (2–3 zdania)', type: 'textarea', required: true },
 ]

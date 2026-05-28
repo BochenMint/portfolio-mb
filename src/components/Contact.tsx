@@ -1,35 +1,59 @@
 import { site } from '../data/content'
+import { LeadForm } from './LeadForm'
+import { MagneticButton } from './MagneticButton'
 
 export function Contact() {
-  return (
-    <section id="kontakt" data-section className="gradient-mesh px-5 py-24 md:px-10 md:py-40">
-      <div className="mx-auto max-w-7xl text-center">
-        <p data-reveal className="text-mint text-xs font-semibold tracking-[0.3em] uppercase">
-          Następny krok
-        </p>
-        <h2
-          data-reveal
-          className="font-display mx-auto mt-6 max-w-4xl text-[clamp(2rem,6vw,4.5rem)] leading-tight font-bold"
-        >
-          Masz pomysł na produkt albo chcesz podnieść poziom tego, co już masz?
-        </h2>
-        <p data-reveal className="text-muted mx-auto mt-6 max-w-xl text-lg">
-          Napisz w dwóch zdaniach, czym się zajmujesz — odpowiem z konkretną propozycją, nie
-          automatycznym PDF-em.
-        </p>
+  const ctaHref = site.calendly || `mailto:${site.email}`
 
-        <div data-reveal className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a
-            href={`mailto:${site.email}`}
-            className="font-display inline-flex rounded-full bg-mint px-10 py-4 text-lg font-bold text-ink transition-transform hover:scale-[1.02]"
+  return (
+    <section id="kontakt" data-section className="gradient-mesh px-5 py-24 pb-32 md:px-10 md:py-36 md:pb-28">
+      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <p data-reveal className="text-mint text-xs font-semibold tracking-[0.3em] uppercase">
+            Kontakt
+          </p>
+          <h2
+            data-reveal
+            className="font-display mt-4 text-[clamp(2rem,5vw,3.5rem)] leading-tight font-bold"
           >
-            {site.email}
-          </a>
+            Porozmawiajmy o Twoim procesie — nie o „stronie”.
+          </h2>
+          <p data-reveal className="text-muted mt-6 text-lg leading-relaxed">
+            Wyślij brief albo umów audyt. {site.responseTime}.
+          </p>
+
+          <ul data-reveal className="mt-8 space-y-3 text-sm text-cream/80">
+            <li>✓ Umowa + NDA standard</li>
+            <li>✓ Hosting EU · RODO w scope</li>
+            <li>✓ Możesz wysłać link do Plumm / Previo / Excel</li>
+          </ul>
+
+          <div data-reveal className="mt-10 flex flex-wrap gap-4">
+            <MagneticButton
+              href={ctaHref}
+              external={!!site.calendly}
+              className="rounded-full bg-mint px-8 py-3.5 text-sm font-bold text-ink"
+            >
+              {site.ctaPrimary}
+            </MagneticButton>
+            <a
+              href={site.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glass rounded-full px-6 py-3.5 text-sm text-cream/80 hover:text-mint"
+            >
+              GitHub →
+            </a>
+          </div>
+
+          <p data-reveal className="text-muted mt-12 text-xs">
+            © {new Date().getFullYear()} {site.name} · {site.brand}
+          </p>
         </div>
 
-        <p data-reveal className="text-muted mt-16 text-xs tracking-wide">
-          © {new Date().getFullYear()} {site.name} — szkic portfolio · web · automatyzacja · AI
-        </p>
+        <div data-reveal>
+          <LeadForm />
+        </div>
       </div>
     </section>
   )
