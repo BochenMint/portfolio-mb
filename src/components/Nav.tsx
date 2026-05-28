@@ -1,43 +1,44 @@
-import { site } from '../data/content'
-import { MagneticButton } from './MagneticButton'
-
-const links = [
-  { href: '#realizacje', label: 'Realizacje' },
-  { href: '#case-studies', label: 'Case studies' },
-  { href: '#inwestycja', label: 'Cennik' },
-  { href: '#kontakt', label: 'Kontakt' },
-]
+import { navLinks, site } from '../data/content'
+import { ThemeToggle } from './ThemeToggle'
 
 export function Nav() {
   const ctaHref = site.calendly || '#kontakt'
 
   return (
-    <header className="fixed top-0 right-0 left-0 z-50 px-4 py-4 md:px-8">
-      <nav className="glass mx-auto flex max-w-7xl items-center justify-between rounded-2xl px-4 py-2.5 md:px-6 md:py-3">
-        <a href="#" className="font-display text-sm font-bold tracking-tight md:text-base">
-          {site.brand}
-          <span className="text-mint">.</span>
+    <header className="fixed top-0 right-0 left-0 z-50">
+      <nav
+        className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-6 py-5 md:px-12 lg:px-16"
+        aria-label="Główna nawigacja"
+      >
+        <a href="#" className="font-display text-lg tracking-tight md:text-xl">
+          {site.name}
         </a>
-        <ul className="hidden items-center gap-6 lg:flex">
-          {links.map((link) => (
+
+        <ul className="hidden items-center gap-8 lg:flex">
+          {navLinks.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-muted text-xs tracking-wide uppercase transition-colors hover:text-cream"
+                className="text-muted text-[11px] tracking-[0.18em] uppercase transition-colors hover:text-accent"
               >
                 {link.label}
               </a>
             </li>
           ))}
         </ul>
-        <MagneticButton
-          href={ctaHref}
-          external={!!site.calendly}
-          className="rounded-full bg-mint px-3 py-2 text-[11px] font-bold text-ink md:px-5 md:text-sm"
-        >
-          Audyt 20 min
-        </MagneticButton>
+
+        <div className="flex items-center gap-2 md:gap-4">
+          <ThemeToggle />
+          <a
+            href={ctaHref}
+            className="btn-soft hidden text-xs sm:inline-flex"
+            {...(site.calendly ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            Kontakt
+          </a>
+        </div>
       </nav>
+      <div className="editorial-rule mx-6 md:mx-12 lg:mx-16" />
     </header>
   )
 }

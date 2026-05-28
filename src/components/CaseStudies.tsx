@@ -7,51 +7,52 @@ export function CaseStudies() {
   const rest = projects.filter((p) => !p.flagship)
 
   return (
-    <section id="case-studies" data-section className="border-line border-t bg-ink px-5 py-24 md:px-10 md:py-32">
-      <div className="mx-auto max-w-7xl">
-        <p data-reveal className="text-mint text-xs font-semibold tracking-[0.3em] uppercase">
-          Case studies · PSR
+    <section id="case-studies" data-section className="section-pad editorial-rule border-t bg-surface">
+      <div className="mx-auto max-w-[1400px]">
+        <p data-reveal className="section-label">
+          04 — Case studies
         </p>
-        <h2 data-reveal className="font-display mt-4 max-w-3xl text-4xl font-bold md:text-5xl">
+        <h2 data-reveal className="font-display mt-4 max-w-3xl text-4xl leading-tight md:text-5xl">
           Problem → podejście →{' '}
-          <span className="text-gold">wynik biznesowy</span>
+          <span className="text-accent italic">wynik biznesowy</span>
         </h2>
 
-        {/* Flagship bento */}
         <article
+          data-case-flagship
           data-reveal
-          className="glass mt-12 grid overflow-hidden rounded-3xl lg:grid-cols-2"
+          className="border-rule mt-12 grid overflow-hidden border bg-paper lg:grid-cols-2"
         >
-          <div className="min-h-[280px] p-4 lg:min-h-[360px]">
-            <ProjectImage project={flagship} variant="hero" priority />
+          <div data-case-image className="min-h-[280px] overflow-hidden lg:min-h-[400px]">
+            <div data-case-image-inner className="h-full w-full will-change-transform">
+              <ProjectImage project={flagship} variant="hero" priority className="rounded-none" />
+            </div>
           </div>
-          <div className="flex flex-col justify-center border-t border-line p-8 lg:border-t-0 lg:border-l">
-            <span className="text-mint text-xs font-semibold tracking-widest uppercase">
-              Flagship · {flagship.client}
-            </span>
-            <h3 className="font-display mt-2 text-3xl font-bold">{flagship.title}</h3>
+          <div
+            data-case-copy
+            className="flex flex-col justify-center border-t border-rule p-8 lg:border-t-0 lg:border-l"
+          >
+            <span className="section-label">Flagship · {flagship.client}</span>
+            <h3 className="font-display mt-3 text-3xl">{flagship.title}</h3>
             <p className="text-muted mt-1">{flagship.tagline}</p>
 
             <dl className="mt-8 space-y-4 text-sm">
               <div>
-                <dt className="text-muted text-xs uppercase">Ból</dt>
-                <dd className="mt-1 text-cream/90">{flagship.pain}</dd>
+                <dt className="section-label text-[10px]">Ból</dt>
+                <dd className="mt-2 leading-relaxed">{flagship.pain}</dd>
               </div>
               <div>
-                <dt className="text-muted text-xs uppercase">Podejście</dt>
-                <dd className="mt-1 text-cream/90">{flagship.approach}</dd>
+                <dt className="section-label text-[10px]">Podejście</dt>
+                <dd className="mt-2 leading-relaxed">{flagship.approach}</dd>
               </div>
               <div>
-                <dt className="text-muted text-xs uppercase">Wynik</dt>
-                <dd className="mt-1 font-medium text-mint">{flagship.result}</dd>
+                <dt className="section-label text-[10px]">Wynik</dt>
+                <dd className="text-accent mt-2 font-medium">{flagship.result}</dd>
               </div>
             </dl>
 
             <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="font-display text-4xl font-bold" style={{ color: flagship.accent }}>
-                  {flagship.stat.value}
-                </p>
+                <p className="font-display text-4xl text-accent">{flagship.stat.value}</p>
                 <p className="text-muted text-xs uppercase">{flagship.stat.label}</p>
               </div>
               <VisitSiteButton project={flagship} variant="prominent" />
@@ -59,24 +60,25 @@ export function CaseStudies() {
           </div>
         </article>
 
-        {/* Grid 3 */}
-        <div className="mt-6 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
           {rest.map((p) => (
-            <article key={p.id} data-reveal className="glass flex flex-col overflow-hidden rounded-3xl">
-              <div className="aspect-[16/10] p-3">
-                <ProjectImage project={p} variant="card" />
+            <article
+              key={p.id}
+              data-reveal
+              className="border-rule flex flex-col overflow-hidden border bg-paper"
+            >
+              <div className="aspect-[16/10] overflow-hidden">
+                <ProjectImage project={p} variant="card" className="rounded-none" />
               </div>
               <div className="flex flex-1 flex-col p-6">
-                <p className="text-muted text-[10px] tracking-widest uppercase">{p.client}</p>
-                <h3 className="font-display mt-1 text-xl font-bold">{p.title}</h3>
+                <p className="section-label text-[10px]">{p.client}</p>
+                <h3 className="font-display mt-2 text-xl">{p.title}</h3>
                 <p className="text-muted mt-3 line-clamp-3 flex-1 text-sm leading-relaxed">{p.pain}</p>
-                <p className="mt-4 text-sm font-medium" style={{ color: p.accent }}>
-                  {p.result}
-                </p>
+                <p className="text-accent mt-4 text-sm font-medium">{p.result}</p>
                 <VisitSiteButton
                   project={p}
                   variant={p.id === 'plumm' ? 'prominent' : 'compact'}
-                  className={p.id === 'plumm' ? 'mt-6 w-full justify-center sm:w-auto' : ''}
+                  className={p.id === 'plumm' ? 'mt-6' : ''}
                 />
               </div>
             </article>

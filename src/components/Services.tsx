@@ -4,8 +4,10 @@ export function Services() {
   return (
     <section id="uslugi" className="section-pad editorial-rule border-t">
       <div className="mx-auto max-w-[1400px]">
-        <p className="section-label reveal">05 — Zakres</p>
-        <h2 className="font-display reveal mt-4 max-w-3xl text-4xl md:text-5xl">
+        <p data-reveal className="section-label">
+          05 — Zakres
+        </p>
+        <h2 data-reveal className="font-display mt-4 max-w-3xl text-4xl md:text-5xl">
           Trzy obszary, w których pracuję najczęściej
         </h2>
 
@@ -13,7 +15,9 @@ export function Services() {
           {services.map((service, i) => (
             <article
               key={service.title}
-              className="reveal editorial-rule grid gap-6 border-t py-10 md:grid-cols-12 md:gap-10"
+              data-service-row
+              data-reveal
+              className="editorial-rule grid gap-6 border-t py-10 md:grid-cols-12 md:gap-10"
             >
               <div className="md:col-span-4">
                 <span className="text-muted text-xs">0{i + 1}</span>
@@ -35,7 +39,7 @@ export function Services() {
           ))}
         </div>
 
-        <div id="inwestycja" className="reveal mt-24">
+        <div id="inwestycja" data-reveal className="mt-24">
           <p className="section-label">Inwestycja</p>
           <h3 className="font-display mt-4 text-3xl">Orientacyjne widełki</h3>
           <p className="text-muted mt-3 max-w-xl text-sm">

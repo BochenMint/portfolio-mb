@@ -9,19 +9,27 @@ export function Contact() {
     <section id="kontakt" className="section-pad editorial-rule border-t">
       <div className="mx-auto grid max-w-[1400px] gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
-          <p className="section-label reveal">07 — Kontakt</p>
-          <h2 className="font-display reveal mt-4 text-[clamp(2rem,5vw,3.25rem)] leading-tight">
+          <p data-reveal className="section-label">
+            07 — Kontakt
+          </p>
+          <h2
+            data-reveal
+            className="font-display mt-4 text-[clamp(2rem,5vw,3.25rem)] leading-tight"
+          >
             Opowiedz, co dziś nie działa — nie „ile stron”.
           </h2>
-          <p className="reveal text-muted mt-6 leading-relaxed">
+          <p data-reveal className="text-muted mt-6 leading-relaxed">
             Wyślij brief albo umów rozmowę. {site.responseTime}.
           </p>
 
-          <div className="reveal border-rule mt-10 hidden aspect-[16/10] overflow-hidden border lg:block">
-            <ProjectImage project={projects[0]} variant="card" />
+          <div
+            data-reveal
+            className="border-rule mt-10 hidden aspect-[16/10] overflow-hidden border lg:block"
+          >
+            <ProjectImage project={projects[0]} variant="card" className="rounded-none" />
           </div>
 
-          <div className="reveal mt-10 flex flex-wrap gap-4">
+          <div data-contact-cta className="mt-10 flex flex-wrap gap-4">
             <a
               href={ctaHref}
               className="btn-fill"
@@ -42,12 +50,12 @@ export function Contact() {
             </a>
           </div>
 
-          <footer className="reveal text-muted mt-16 text-xs">
+          <footer data-reveal className="text-muted mt-16 text-xs">
             © {new Date().getFullYear()} {site.name} · Polska
           </footer>
         </div>
 
-        <div className="reveal">
+        <div data-contact-cta>
           <LeadForm />
         </div>
       </div>

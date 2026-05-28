@@ -2,10 +2,10 @@ import { projects, site } from '../data/content'
 
 export function ProofBar() {
   return (
-    <section data-section className="border-line border-b bg-surface/60 px-5 py-8 md:px-10">
-      <div className="mx-auto max-w-7xl">
+    <section data-section className="editorial-rule border-b px-5 py-8 md:px-10">
+      <div className="mx-auto max-w-[1400px]">
         <p data-reveal className="text-muted text-center text-xs tracking-[0.2em] uppercase md:text-left">
-          {site.proofLine}
+          {site.role} · {site.location}
         </p>
         <ul
           data-reveal
@@ -14,11 +14,8 @@ export function ProofBar() {
           {projects.map((p) => {
             const inner = (
               <>
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{ backgroundColor: p.accent, boxShadow: `0 0 12px ${p.accent}66` }}
-                />
-                <span className="font-display text-sm font-semibold md:text-base">{p.title}</span>
+                <span className="bg-accent h-2 w-2 rounded-full" />
+                <span className="font-display text-sm md:text-base">{p.title}</span>
                 {p.url !== '#' && (
                   <span className="text-muted text-xs font-normal">· {p.domain}</span>
                 )}
@@ -31,8 +28,7 @@ export function ProofBar() {
                     href={p.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    data-magnetic
-                    className="flex items-center gap-2 transition-colors hover:text-mint"
+                    className="flex items-center gap-2 transition-colors hover:text-accent"
                   >
                     {inner}
                   </a>

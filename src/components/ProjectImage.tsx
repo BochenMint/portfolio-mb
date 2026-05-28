@@ -11,6 +11,7 @@ const HERO_W = 1920
 const CARD_W = 1200
 
 function sceneFor(project: Project, variant: 'hero' | 'card') {
+  if (project.imageScene) return project.imageScene
   return project.id === 'mint' && variant === 'card' ? 'apartment' : 'hero'
 }
 
@@ -31,7 +32,7 @@ export function ProjectImage({
   const height = variant === 'hero' ? 1080 : 675
 
   return (
-    <picture className={`block h-full w-full overflow-hidden rounded-xl ${className}`}>
+    <picture className={`block h-full w-full ${className}`}>
       <source
         type="image/webp"
         srcSet={`${cardSrc} 1200w, ${heroSrc} 1920w`}

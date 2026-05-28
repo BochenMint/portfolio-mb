@@ -1,19 +1,20 @@
 import { projects, site } from '../data/content'
-import { MagneticButton } from './MagneticButton'
+import { ProjectImage } from './ProjectImage'
 
-const liveProducts = projects.filter((p) => p.id === 'mint' || p.id === 'plumm')
+const flagship = projects.find((p) => p.flagship)!
 
-function AccentWords({ text }: { text: string }) {
-  const words = text.split(' ')
+function HeadlineLine({ line }: { line: string }) {
+  const words = line.split(/\s+/).filter(Boolean)
   return (
-    <span className="mt-2 block overflow-hidden text-[clamp(1.25rem,4vw,2.25rem)] font-medium text-mint">
-      {words.map((word, i) => (
-        <span key={`${word}-${i}`} className="mr-[0.25em] inline-block overflow-hidden">
-          <span data-hero-word className="inline-block">
+    <span className="block overflow-hidden py-[0.06em]">
+      <span data-hero-line className="block">
+        {words.map((word, i) => (
+          <span key={`${word}-${i}`} data-hero-word className="inline-block">
             {word}
+            {i < words.length - 1 ? '\u00a0' : ''}
           </span>
-        </span>
-      ))}
+        ))}
+      </span>
     </span>
   )
 }
@@ -22,80 +23,69 @@ export function Hero() {
   const ctaHref = site.calendly || '#kontakt'
 
   return (
-    <section className="gradient-mesh relative flex min-h-[100dvh] flex-col justify-end overflow-hidden px-5 pb-24 pt-28 md:px-10 md:pb-32">
-      <div
-        className="pointer-events-none absolute top-[15%] left-1/2 h-[min(90vw,560px)] w-[min(90vw,560px)] -translate-x-1/2 rounded-full opacity-50 blur-3xl motion-safe:animate-pulse-slow"
-        style={{
-          background:
-            'radial-gradient(circle, rgba(62,232,196,0.28) 0%, rgba(201,169,98,0.08) 45%, transparent 70%)',
-        }}
-        aria-hidden
-      />
-
-      <div className="relative mx-auto w-full max-w-7xl">
-        <div data-hero-fade className="mb-6 flex flex-wrap items-center gap-3">
-          <span className="rounded-full border border-mint/30 bg-mint/10 px-3 py-1 text-[10px] font-semibold tracking-wide text-mint uppercase md:text-xs">
-            {site.icpBadge}
-          </span>
-          <span className="text-muted text-xs tracking-wide uppercase">{site.role}</span>
-        </div>
-
-        <h1 className="font-display max-w-5xl text-[clamp(2.5rem,8.5vw,6.5rem)] leading-[0.95] font-bold tracking-tight">
-          {site.headline.map((line) => (
-            <span key={line} className="block overflow-hidden">
-              <span data-hero-line className="inline-block">
-                {line}
-              </span>
-            </span>
-          ))}
-          <AccentWords text={site.headlineAccent} />
-        </h1>
-
-        <p
-          data-hero-fade
-          className="text-balance mt-8 max-w-2xl text-base leading-relaxed text-cream/85 md:text-xl"
-        >
-          {site.subhead}
-        </p>
-
-        <p data-hero-fade className="text-muted mt-4 text-sm">
-          {site.responseTime} · {site.location}
-        </p>
-
-        <div data-hero-fade className="mt-6 flex flex-wrap gap-3">
-          {liveProducts.map((p) => (
+    <section
+      data-hero
+      className="section-pad relative flex min-h-[100dvh] flex-col justify-end pt-28 md:pt-32"
+    >
+      <div className="mx-auto grid w-full max-w-[1400px] flex-1 gap-10 lg:grid-cols-[1fr_minmax(280px,42%)] lg:items-end lg:gap-16">
+        <div className="flex flex-col justify-center">
+          <p data-hero-fade className="section-label">
+            Portfolio · {site.role}
+          </p>
+          <h1 className="font-display mt-6 text-[clamp(2.75rem,7.5vw,5.5rem)] leading-[1.02] tracking-tight">
+            {site.headline.map((line) => (
+              <HeadlineLine key={line} line={line} />
+            ))}
+          </h1>
+          <p
+            data-hero-fade
+            className="text-balance mt-8 max-w-xl text-base leading-relaxed md:text-lg"
+          >
+            {site.subhead}
+          </p>
+          <p data-hero-fade className="text-muted mt-4 text-sm">
+            {site.responseTime} · {site.location} · {site.minBudget}
+          </p>
+          <div data-hero-fade className="mt-10 flex flex-wrap items-center gap-4">
             <a
-              key={p.id}
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-magnetic
-              className="glass rounded-full border border-line/80 px-4 py-2 text-xs font-medium text-cream/90 transition-colors hover:border-mint/50 hover:text-mint"
+              href={ctaHref}
+              className="btn-fill"
+              {...(site.calendly ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
             >
-              {p.domain} ↗
+              {site.ctaPrimary}
+              <span aria-hidden>→</span>
             </a>
-          ))}
+            <a href="#realizacje" className="btn-soft">
+              {site.ctaSecondary}
+            </a>
+          </div>
         </div>
 
-        <div data-hero-fade className="mt-10 flex flex-wrap items-center gap-4">
-          <MagneticButton
-            href={ctaHref}
-            className="group rounded-full bg-mint px-8 py-4 text-sm font-bold text-ink shadow-[0_0_40px_rgba(62,232,196,0.25)]"
-            external={!!site.calendly}
+        <figure data-hero-fade className="relative lg:-mb-8">
+          <span className="font-hand text-accent absolute -top-4 -left-2 z-10 text-2xl md:text-3xl">
+            Mint · live
+          </span>
+          <div
+            data-hero-media
+            className="border-rule relative aspect-[4/5] overflow-hidden border md:aspect-[3/4] lg:translate-x-6"
           >
-            {site.ctaPrimary}
-            <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </MagneticButton>
-          <MagneticButton
-            href="#case-studies"
-            className="glass rounded-full px-8 py-4 text-sm font-medium text-cream hover:border-mint/40"
-          >
-            {site.ctaSecondary}
-          </MagneticButton>
-        </div>
+            <div data-hero-parallax className="h-[115%] w-full will-change-transform">
+              <ProjectImage project={flagship} variant="hero" priority className="rounded-none" />
+            </div>
+          </div>
+          <figcaption className="text-muted mt-3 max-w-xs text-xs leading-relaxed">
+            Zrzut produkcyjny — {flagship.domain}
+          </figcaption>
+        </figure>
       </div>
+
+      <div data-hero-fade className="editorial-rule mx-auto mt-16 max-w-[1400px] md:mt-20" />
+      <p
+        data-hero-fade
+        className="text-muted mx-auto mt-6 max-w-[1400px] pb-4 text-center text-[11px] tracking-[0.2em] uppercase"
+      >
+        Mint · Plumm · iDrive · Agentic OS
+      </p>
     </section>
   )
 }

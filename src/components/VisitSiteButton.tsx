@@ -1,5 +1,4 @@
 import type { Project } from '../data/content'
-import { MagneticButton } from './MagneticButton'
 
 type Props = {
   project: Project
@@ -19,23 +18,25 @@ export function VisitSiteButton({
 
   if (variant === 'prominent') {
     return (
-      <MagneticButton
+      <a
         href={project.url}
-        external
-        className={`rounded-full bg-mint px-6 py-3 text-sm font-bold text-ink shadow-[0_0_32px_rgba(62,232,196,0.2)] hover:scale-[1.02] ${className}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`btn-fill text-sm ${className}`}
       >
         {label}
-      </MagneticButton>
+      </a>
     )
   }
 
   return (
-    <MagneticButton
+    <a
       href={project.url}
-      external
-      className={`mt-5 inline-flex rounded-full border border-line px-5 py-2.5 text-xs font-semibold transition-colors hover:border-mint hover:text-mint ${className}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`btn-soft mt-5 inline-flex text-xs ${className}`}
     >
       {label}
-    </MagneticButton>
+    </a>
   )
 }

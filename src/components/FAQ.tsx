@@ -4,11 +4,11 @@ export function FAQ() {
   return (
     <section className="section-pad editorial-rule border-t">
       <div className="mx-auto max-w-2xl">
-        <p className="section-label reveal text-center">FAQ</p>
-        <h2 className="font-display reveal mt-4 text-center text-3xl">Pytania, które i tak padają</h2>
+        <p data-reveal className="section-label text-center">FAQ</p>
+        <h2 data-reveal className="font-display mt-4 text-center text-3xl">Pytania, które i tak padają</h2>
         <div className="mt-12 space-y-0">
           {faq.map((item) => (
-            <details key={item.q} className="reveal editorial-rule group border-t py-5">
+            <details key={item.q} data-reveal className="editorial-rule group border-t py-5">
               <summary className="cursor-pointer list-none font-medium marker:content-none">
                 <span className="flex items-start justify-between gap-4">
                   {item.q}

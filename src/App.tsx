@@ -11,40 +11,53 @@ import { StickyCTA } from './components/StickyCTA'
 import { Testimonials } from './components/Testimonials'
 import { Work } from './components/Work'
 import { useKeyboardNav } from './hooks/useKeyboardNav'
-import { useReveal } from './hooks/useReveal'
-import { useScrollProgress } from './hooks/useScrollProgress'
+import { useLenis } from './hooks/useLenis'
+import { useScrollAnimations } from './hooks/useScrollAnimations'
+
+function PageCurtain() {
+  return (
+    <div
+      data-curtain
+      className="bg-paper pointer-events-none fixed inset-0 z-[9999]"
+      aria-hidden
+    />
+  )
+}
 
 function App() {
-  useReveal()
-  useScrollProgress()
+  useLenis()
+  useScrollAnimations()
   useKeyboardNav()
 
   return (
-    <div className="page-enter">
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10003] focus:bg-accent focus:px-4 focus:py-2 focus:text-paper"
-      >
-        Przejdź do treści
-      </a>
-      <p className="sr-only">
-        Skróty klawiaturowe: Alt + strzałka w górę/dół lub j/k — przechodzenie między sekcjami.
-      </p>
-      <ScrollProgress />
-      <Nav />
-      <main id="main">
-        <Hero />
-        <About />
-        <Work />
-        <CaseStudies />
-        <Services />
-        <Process />
-        <Testimonials />
-        <FAQ />
-        <Contact />
-      </main>
-      <StickyCTA />
-    </div>
+    <>
+      <PageCurtain />
+      <div className="page-enter">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10003] focus:bg-accent focus:px-4 focus:py-2 focus:text-paper"
+        >
+          Przejdź do treści
+        </a>
+        <p className="sr-only">
+          Skróty klawiaturowe: Alt + strzałka w górę/dół lub j/k — przechodzenie między sekcjami.
+        </p>
+        <ScrollProgress />
+        <Nav />
+        <main id="main">
+          <Hero />
+          <About />
+          <Work />
+          <CaseStudies />
+          <Services />
+          <Process />
+          <Testimonials />
+          <FAQ />
+          <Contact />
+        </main>
+        <StickyCTA />
+      </div>
+    </>
   )
 }
 
