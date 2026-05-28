@@ -49,8 +49,8 @@ export function Work() {
           data-work-track
           className="flex h-[100dvh] items-center gap-8 px-[max(1.5rem,calc((100vw-1400px)/2+1.5rem))] will-change-transform"
         >
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} variant="horizontal" />
+          {projects.map((project, i) => (
+            <ProjectCard key={project.id} project={project} variant="horizontal" index={i} />
           ))}
         </div>
       </div>
@@ -67,9 +67,11 @@ export function Work() {
 function ProjectCard({
   project,
   variant,
+  index = 0,
 }: {
   project: Project
   variant: 'horizontal' | 'stack'
+  index?: number
 }) {
   const hasLiveSite = project.url !== '#'
   const liveCta = hasLiveSite && (project.id === 'mint' || project.id === 'plumm')
@@ -79,7 +81,9 @@ function ProjectCard({
       data-project-card
       className={
         variant === 'horizontal'
-          ? 'border-rule flex h-[min(78vh,720px)] w-[min(78vw,880px)] shrink-0 flex-col overflow-hidden border bg-paper'
+          ? `border-rule flex h-[min(78vh,720px)] w-[min(78vw,880px)] shrink-0 flex-col overflow-hidden border bg-paper ${
+              index % 2 === 1 ? 'lg:translate-y-8' : 'lg:-translate-y-3'
+            }`
           : 'border-rule flex flex-col overflow-hidden border bg-paper'
       }
     >

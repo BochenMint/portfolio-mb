@@ -13,8 +13,10 @@ export function LiveSitesRibbon() {
     >
       <div className="mx-auto flex max-w-[1400px] flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="section-label">Na produkcji</p>
-          <p className="font-display mt-2 text-2xl leading-tight md:text-3xl">
+          <p data-reveal className="section-label">
+            Na produkcji
+          </p>
+          <p data-reveal className="font-display mt-2 text-2xl leading-tight md:text-3xl">
             Zobacz systemy, które już zarabiają
           </p>
         </div>

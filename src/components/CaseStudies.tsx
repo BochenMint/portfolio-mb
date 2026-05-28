@@ -73,11 +73,13 @@ export function CaseStudies() {
         </article>
 
         <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {rest.map((p) => (
+          {rest.map((p, i) => (
             <article
               key={p.id}
               data-reveal
-              className="border-rule flex flex-col overflow-hidden border bg-paper"
+              className={`border-rule flex flex-col overflow-hidden border bg-paper ${
+                i === 1 ? 'md:mt-10' : i === 2 ? 'md:-mt-6' : ''
+              }`}
             >
               <div className="aspect-[16/10] overflow-hidden">
                 <ProjectImage project={p} variant="card" className="rounded-none" />

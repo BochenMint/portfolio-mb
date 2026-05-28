@@ -228,10 +228,10 @@ export function useScrollAnimations() {
               cards.forEach((card, i) => {
                 gsap.fromTo(
                   card,
-                  { scale: 0.94, filter: 'brightness(0.92)' },
+                  { scale: 0.94, opacity: 0.72 },
                   {
                     scale: 1,
-                    filter: 'brightness(1)',
+                    opacity: 1,
                     ease: 'none',
                     scrollTrigger: {
                       trigger: workPin,

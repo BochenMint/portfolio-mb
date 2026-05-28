@@ -45,7 +45,7 @@ function App() {
         </p>
         <ScrollProgress />
         <Nav />
-        <main id="main">
+        <main id="main" className="pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
           <Hero />
           <About />
           <Work />

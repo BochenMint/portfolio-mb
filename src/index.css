@@ -146,6 +146,15 @@
     @apply px-6 py-20 md:px-12 md:py-28 lg:px-16;
   }
 
+  [data-section] {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 720px;
+  }
+
+  [data-hero] {
+    content-visibility: visible;
+  }
+
   .section-label {
     color: var(--color-ink-muted);
     font-size: 11px;
