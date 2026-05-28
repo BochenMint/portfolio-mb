@@ -104,13 +104,21 @@ function ProjectCard({
             ))}
           </div>
 
-          <ul className="mt-5 flex flex-wrap gap-4 border-t border-line pt-5">
-            {project.metrics.map((m) => (
-              <li key={m} className="text-muted text-xs tracking-wide uppercase">
-                <span className="text-cream font-medium">{m}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-t border-line pt-5">
+            <div>
+              <p className="font-display text-2xl font-bold" style={{ color: project.accent }}>
+                {project.stat.value}
+              </p>
+              <p className="text-muted text-[10px] uppercase">{project.stat.label}</p>
+            </div>
+            <ul className="flex flex-wrap gap-3">
+              {project.metrics.map((m) => (
+                <li key={m} className="rounded-full bg-white/5 px-2.5 py-1 text-[10px] text-cream/80">
+                  {m}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </article>
