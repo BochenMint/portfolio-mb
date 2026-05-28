@@ -8,25 +8,24 @@ Produkty: **Plumm.pl**, **Mintapartments.pl**, **iDrive Cars**, **Agentic OS**.
 
 ```bash
 npm install
-cp .env.example .env   # VITE_CALENDLY_URL=...
+cp .env.example .env
+# Uzupełnij VITE_CALENDLY_URL, VITE_FORM_ACCESS_KEY (Web3Forms)
 npm run dev
 ```
 
 Build: `npm run build` → `dist/`
+
+Regeneracja screenów produktów: `npm run capture:screens`
 
 ## Konfiguracja sprzedaży
 
 | Plik / env | Co ustawić |
 |------------|------------|
 | `src/data/content.ts` | `site.email`, `site.name`, metryki w `results` |
-| `.env` → `VITE_CALENDLY_URL` | Link Cal.com / Calendly — primary CTA |
-| Testimonials | Prawdziwe cytaty + zgoda na publikację |
-
-## Do uzupełnienia (faza 2)
-
-1. **Hi-res screeny** zamiast `ProjectMock` (WebP, scroll sequence)
-2. **Backend formularza** (Formspree / własne API) zamiast mailto
-3. **Analytics** (Plausible / GA4) + eventy na CTA
+| `.env` → `VITE_CALENDLY_URL` | Link Cal.com / Calendly — **wszystkie CTA audytu** |
+| `.env` → `VITE_FORM_ENDPOINT` | `https://api.web3forms.com/submit` lub Formspree URL |
+| `.env` → `VITE_FORM_ACCESS_KEY` | Klucz Web3Forms (nie commituj `.env`) |
+| Testimonials | Prawdziwe cytaty + zgoda — patrz `docs/CONVERSION.md` |
 
 ## Stack
 

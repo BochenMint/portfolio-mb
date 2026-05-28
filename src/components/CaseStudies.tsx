@@ -1,6 +1,6 @@
 import { projects } from '../data/content'
-import { ProjectMock } from './ProjectMock'
-import { MagneticButton } from './MagneticButton'
+import { ProjectImage } from './ProjectImage'
+import { VisitSiteButton } from './VisitSiteButton'
 
 export function CaseStudies() {
   const flagship = projects.find((p) => p.flagship)!
@@ -23,7 +23,7 @@ export function CaseStudies() {
           className="glass mt-12 grid overflow-hidden rounded-3xl lg:grid-cols-2"
         >
           <div className="min-h-[280px] p-4 lg:min-h-[360px]">
-            <ProjectMock project={flagship} />
+            <ProjectImage project={flagship} variant="hero" priority />
           </div>
           <div className="flex flex-col justify-center border-t border-line p-8 lg:border-t-0 lg:border-l">
             <span className="text-mint text-xs font-semibold tracking-widest uppercase">
@@ -70,7 +70,7 @@ export function CaseStudies() {
           {rest.map((p) => (
             <article key={p.id} data-reveal className="glass flex flex-col overflow-hidden rounded-3xl">
               <div className="aspect-[16/10] p-3">
-                <ProjectMock project={p} />
+                <ProjectImage project={p} variant="card" />
               </div>
               <div className="flex flex-1 flex-col p-6">
                 <p className="text-muted text-[10px] tracking-widest uppercase">{p.client}</p>

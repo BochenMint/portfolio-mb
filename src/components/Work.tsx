@@ -1,5 +1,5 @@
 import { projects } from '../data/content'
-import { ProjectMock } from './ProjectMock'
+import { ProjectImage } from './ProjectImage'
 
 export function Work() {
   return (
@@ -67,7 +67,11 @@ function ProjectCard({
         }
       >
         <div className={variant === 'horizontal' ? 'min-h-0 flex-1 p-4' : 'aspect-[16/10] p-3'}>
-          <ProjectMock project={project} />
+          <ProjectImage
+            project={project}
+            variant={project.flagship ? 'hero' : 'card'}
+            priority={project.flagship}
+          />
         </div>
 
         <div className="border-line border-t p-6 md:p-8">
