@@ -1,5 +1,6 @@
 import { projects } from '../data/content'
 import { ProjectImage } from './ProjectImage'
+import { VisitSiteButton } from './VisitSiteButton'
 
 export function Work() {
   return (
@@ -50,7 +51,8 @@ function ProjectCard({
   project: (typeof projects)[0]
   variant: 'horizontal' | 'stack'
 }) {
-  const isLink = project.url !== '#'
+  const hasLiveSite = project.url !== '#'
+  const liveCta = hasLiveSite && (project.id === 'mint' || project.id === 'plumm')
 
   return (
     <article
@@ -81,16 +83,7 @@ function ProjectCard({
               <h3 className="font-display mt-1 text-2xl font-bold md:text-3xl">{project.title}</h3>
               <p className="text-mint mt-1 text-sm">{project.tagline}</p>
             </div>
-            {isLink && (
-              <a
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full border border-line px-4 py-2 text-xs font-medium transition-colors hover:border-mint hover:text-mint"
-              >
-                Otwórz →
-              </a>
-            )}
+            {liveCta && <VisitSiteButton project={project} variant="prominent" className="shrink-0" />}
           </div>
 
           <p className="text-cream/70 mt-4 line-clamp-3 text-sm leading-relaxed md:text-base">

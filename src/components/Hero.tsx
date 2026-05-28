@@ -1,5 +1,7 @@
-import { site } from '../data/content'
+import { projects, site } from '../data/content'
 import { MagneticButton } from './MagneticButton'
+
+const liveProducts = projects.filter((p) => p.id === 'mint' || p.id === 'plumm')
 
 function AccentWords({ text }: { text: string }) {
   const words = text.split(' ')
@@ -59,6 +61,21 @@ export function Hero() {
         <p data-hero-fade className="text-muted mt-4 text-sm">
           {site.responseTime} · {site.location}
         </p>
+
+        <div data-hero-fade className="mt-6 flex flex-wrap gap-3">
+          {liveProducts.map((p) => (
+            <a
+              key={p.id}
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-magnetic
+              className="glass rounded-full border border-line/80 px-4 py-2 text-xs font-medium text-cream/90 transition-colors hover:border-mint/50 hover:text-mint"
+            >
+              {p.domain} ↗
+            </a>
+          ))}
+        </div>
 
         <div data-hero-fade className="mt-10 flex flex-wrap items-center gap-4">
           <MagneticButton

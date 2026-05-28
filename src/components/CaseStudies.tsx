@@ -47,20 +47,14 @@ export function CaseStudies() {
               </div>
             </dl>
 
-            <div className="mt-8 flex items-end justify-between gap-4">
+            <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="font-display text-4xl font-bold" style={{ color: flagship.accent }}>
                   {flagship.stat.value}
                 </p>
                 <p className="text-muted text-xs uppercase">{flagship.stat.label}</p>
               </div>
-              <MagneticButton
-                href={flagship.url}
-                external
-                className="rounded-full border border-line px-5 py-2.5 text-xs font-medium hover:border-mint"
-              >
-                mintapartments.pl →
-              </MagneticButton>
+              <VisitSiteButton project={flagship} variant="prominent" />
             </div>
           </div>
         </article>
@@ -79,16 +73,11 @@ export function CaseStudies() {
                 <p className="mt-4 text-sm font-medium" style={{ color: p.accent }}>
                   {p.result}
                 </p>
-                {p.url !== '#' && (
-                  <a
-                    href={p.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted mt-4 text-xs hover:text-mint"
-                  >
-                    Zobacz produkt →
-                  </a>
-                )}
+                <VisitSiteButton
+                  project={p}
+                  variant={p.id === 'plumm' ? 'prominent' : 'compact'}
+                  className={p.id === 'plumm' ? 'mt-6 w-full justify-center sm:w-auto' : ''}
+                />
               </div>
             </article>
           ))}
