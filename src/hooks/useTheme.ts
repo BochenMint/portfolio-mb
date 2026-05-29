@@ -20,16 +20,10 @@ export function useTheme() {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme)
 
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const onSystem = () => {
-      if (!localStorage.getItem(STORAGE_KEY)) {
-        const next = mq.matches ? 'dark' : 'light'
-        setThemeState(next)
-        applyTheme(next)
-      }
+    if (!localStorage.getItem(STORAGE_KEY)) {
+      applyTheme('light')
+      setThemeState('light')
     }
-    mq.addEventListener('change', onSystem)
-    return () => mq.removeEventListener('change', onSystem)
   }, [])
 
   const setTheme = useCallback((next: Theme) => {

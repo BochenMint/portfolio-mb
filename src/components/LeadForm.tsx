@@ -1,19 +1,52 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { qualificationFields, site } from '../data/content'
+import { contactFields, site } from '../data/content'
+
+const formEndpoint =
+  import.meta.env.VITE_FORM_ENDPOINT || 'https://api.web3forms.com/submit'
+const formAccessKey = import.meta.env.VITE_FORM_ACCESS_KEY || ''
 
 export function LeadForm() {
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setError('')
     const data = new FormData(e.currentTarget)
-    const body = Object.fromEntries(data.entries())
-    const subject = encodeURIComponent(
-      `Portfolio — ${String(body.company ?? 'zapytanie')}`,
-    )
+    const payload = Object.fromEntries(data.entries()) as Record<string, string>
+
+    if (formAccessKey) {
+      setLoading(true)
+      try {
+        const res = await fetch(formEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: formAccessKey,
+            subject: `Portfolio — ${payload.name ?? 'zapytanie'}`,
+            from_name: payload.name,
+            email: payload.email,
+            message: payload.message,
+          }),
+        })
+        const json = (await res.json()) as { success?: boolean; message?: string }
+        if (!res.ok || !json.success) {
+          throw new Error(json.message || 'Nie udało się wysłać formularza.')
+        }
+        setSent(true)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Błąd wysyłki.')
+      } finally {
+        setLoading(false)
+      }
+      return
+    }
+
+    const subject = encodeURIComponent(`Portfolio — ${payload.name ?? 'zapytanie'}`)
     const text = encodeURIComponent(
-      Object.entries(body)
+      Object.entries(payload)
         .map(([k, v]) => `${k}: ${v}`)
         .join('\n'),
     )
@@ -24,79 +57,54 @@ export function LeadForm() {
   if (sent) {
     return (
       <div className="border-rule border p-8">
-        <p className="font-display text-xl">Dzięki — otwórz klienta maila</p>
+        <p className="font-display text-xl">Dzięki za wiadomość</p>
         <p className="text-muted mt-2 text-sm">
-          Jeśli okno się nie otworzyło, napisz na {site.email}
+          {formAccessKey
+            ? 'Odezwę się w ciągu jednego dnia roboczego.'
+            : `Jeśli klient maila się nie otworzył, napisz na ${site.email}`}
         </p>
-        {site.calendly && (
-          <a
-            href={site.calendly}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent mt-6 inline-block text-sm underline"
-          >
-            Albo wybierz termin w kalendarzu →
-          </a>
-        )}
       </div>
     )
   }
 
   return (
     <form onSubmit={onSubmit} className="border-rule space-y-4 border p-6 md:p-8">
-      <p className="font-display text-lg">Brief (ok. 3 min)</p>
-      <p className="text-muted text-sm">
-        Po wysłaniu otworzy się mail — {site.responseTime}. Bez newslettera.
-      </p>
+      <p className="font-display text-lg">Krótki formularz</p>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {qualificationFields.map((field) => (
-          <label
-            key={field.id}
-            className={field.type === 'textarea' ? 'md:col-span-2' : ''}
-          >
-            <span className="text-muted mb-1.5 block text-[10px] tracking-[0.15em] uppercase">
-              {field.label}
-            </span>
-            {field.type === 'select' ? (
-              <select
-                name={field.id}
-                required={field.required}
-                className="border-rule w-full border bg-transparent px-4 py-3 text-sm outline-none focus:border-accent"
-              >
-                <option value="">Wybierz…</option>
-                {field.options?.map((o) => (
-                  <option key={o} value={o}>
-                    {o}
-                  </option>
-                ))}
-              </select>
-            ) : field.type === 'textarea' ? (
-              <textarea
-                name={field.id}
-                required={field.required}
-                rows={4}
-                className="border-rule w-full resize-none border bg-transparent px-4 py-3 text-sm outline-none focus:border-accent"
-                placeholder="Np. faktury w Excelu, rezerwacje z Booking…"
-              />
-            ) : (
-              <input
-                type={field.type}
-                name={field.id}
-                required={field.required}
-                className="border-rule w-full border bg-transparent px-4 py-3 text-sm outline-none focus:border-accent"
-              />
-            )}
-          </label>
-        ))}
-      </div>
+      {contactFields.map((field) => (
+        <label key={field.id} className="block">
+          <span className="text-muted mb-1.5 block text-[10px] tracking-[0.12em] uppercase">
+            {field.label}
+          </span>
+          {field.type === 'textarea' ? (
+            <textarea
+              name={field.id}
+              required={field.required}
+              rows={4}
+              className="border-rule w-full resize-none border bg-transparent px-4 py-3 text-sm outline-none focus:border-accent"
+              placeholder="Co dziś nie działa?"
+            />
+          ) : (
+            <input
+              type={field.type}
+              name={field.id}
+              required={field.required}
+              className="border-rule w-full border bg-transparent px-4 py-3 text-sm outline-none focus:border-accent"
+            />
+          )}
+        </label>
+      ))}
 
-      <button type="submit" className="btn-fill w-full md:w-auto">
-        Wyślij brief →
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+
+      <button type="submit" disabled={loading} className="btn-fill w-full md:w-auto">
+        {loading ? 'Wysyłam…' : 'Wyślij'}
       </button>
-      <p className="text-muted text-[11px]">
-        Dane nie trafiają na serwer — mailto (do czasu backendu formularza).
-      </p>
+      {!formAccessKey ? (
+        <p className="text-muted text-[11px]">
+          Ustaw VITE_FORM_ACCESS_KEY w .env, aby wysyłać przez Web3Forms.
+        </p>
+      ) : null}
     </form>
   )
 }

@@ -1,7 +1,8 @@
 /**
- * Capture live sites + optimize to WebP (hero 1920w, card 1200w).
- * Run: node scripts/capture-and-optimize.mjs
+ * Capture live sites + local dev + optimize to WebP (hero 1920w, card 1200w).
+ * Run: npm run capture:screens
  */
+import { spawn } from 'node:child_process'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -10,63 +11,118 @@ import sharp from 'sharp'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const OUT = join(ROOT, 'public', 'projects')
+const IDRIVE_ROOT = 'D:\\IDRIVECARS 2.0'
+const IDRIVE_PORT = 5191
+const WEBP_QUALITY = 90
 
-const CAPTURES = [
+const LIVE_CAPTURES = [
   {
     id: 'mint',
     name: 'hero',
     url: 'https://mintapartments.pl/',
-    wait: 4000,
-    clip: null,
+    wait: 5000,
   },
   {
     id: 'mint',
     name: 'apartment',
     url: 'https://mintapartments.pl/apartamenty/luksusowy-seaside/',
-    wait: 3500,
-    clip: null,
+    wait: 4500,
+  },
+  {
+    id: 'mint',
+    name: 'booking',
+    url: 'https://mintapartments.pl/rezerwacja/',
+    wait: 5000,
   },
   {
     id: 'plumm',
     name: 'hero',
     url: 'https://plumm.pl/',
-    wait: 4000,
-    clip: null,
+    wait: 5000,
+  },
+  {
+    id: 'idrive',
+    name: 'hero',
+    url: 'https://idrivecars.pl/',
+    wait: 5000,
+    fallbackLocal: true,
   },
 ]
 
-const PLACEHOLDER_HTML = {
-  idrive: `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
-  *{box-sizing:border-box;margin:0}body{font-family:system-ui,sans-serif;background:linear-gradient(145deg,#1a1510,#050508);color:#f5f0e8;min-height:100vh;padding:48px}
-  .badge{color:#c9a962;font-size:11px;letter-spacing:.25em;text-transform:uppercase}
-  h1{font-size:42px;margin:12px 0 8px;font-weight:700}
-  .sub{color:#9ca3af;font-size:15px;max-width:520px;line-height:1.5}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;max-width:640px}
-  .card{border:1px solid rgba(201,169,98,.25);background:rgba(201,169,98,.06);border-radius:16px;padding:24px}
-  .card b{display:block;font-size:28px;color:#c9a962}
-  .car{margin:48px auto 0;width:280px;height:120px;border-radius:12px;background:linear-gradient(180deg,rgba(201,169,98,.35),transparent),#1c1c22;box-shadow:0 24px 48px rgba(201,169,98,.15)}
-  </style></head><body>
-  <div class="badge">iDrive Cars · mobility</div>
-  <h1>Flota online 24/7</h1>
-  <p class="sub">Rezerwacje, dostępność pojazdów i panel operacyjny — warstwa cyfrowa wokół wynajmu.</p>
-  <div class="car"></div>
-  <div class="grid"><div class="card"><b>24/7</b><span style="color:#9ca3af;font-size:12px">Pickup &amp; zwrot</span></div>
-  <div class="card"><b>Fleet</b><span style="color:#9ca3af;font-size:12px">Live status</span></div></div>
-  </body></html>`,
-  agentic: `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
-  *{box-sizing:border-box;margin:0}body{font-family:ui-monospace,monospace;background:#0e0c14;color:#e8e4ff;min-height:100vh;padding:40px}
-  .hdr{display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:20px}
-  .logo{width:40px;height:40px;border-radius:10px;background:rgba(167,139,250,.25)}
-  h1{font-size:18px;font-weight:600}
-  .step{margin-top:16px;margin-left:var(--i);padding:14px 16px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.03);display:flex;align-items:center;gap:10px}
-  .dot{width:8px;height:8px;border-radius:50%;background:#a78bfa}
-  </style></head><body>
-  <div class="hdr"><div class="logo"></div><div><div style="color:#9ca3af;font-size:11px">Agentic OS</div><div style="height:6px;width:120px;background:rgba(255,255,255,.2);border-radius:4px;margin-top:6px"></div></div></div>
-  <div class="step" style="--i:0"><span class="dot"></span>Plan — workflow &amp; tools</div>
-  <div class="step" style="--i:24px"><span class="dot"></span>Execute — tool calling</div>
-  <div class="step" style="--i:48px"><span class="dot"></span>Audit — pełny ślad decyzji</div>
-  </body></html>`,
-}
+const AGENTIC_MOCK_HTML = `<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{font-family:system-ui,-apple-system,sans-serif;background:#f4f5f7;color:#1a1d21;min-height:100vh}
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+  .side{background:#fff;border-right:1px solid #e5e7eb;padding:24px 16px}
+  .logo{font-weight:700;font-size:15px;letter-spacing:-.02em}
+  .logo span{color:#2E54FE}
+  .nav{margin-top:32px;display:flex;flex-direction:column;gap:4px}
+  .nav a{font-size:13px;color:#6b7280;padding:10px 12px;border-radius:8px;text-decoration:none}
+  .nav a.on{background:#eef2ff;color:#2E54FE;font-weight:500}
+  main{padding:28px 32px}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+  h1{font-size:22px;font-weight:600}
+  .sub{color:#6b7280;font-size:13px;margin-top:4px}
+  .pill{font-size:11px;background:#ecfdf5;color:#047857;padding:6px 12px;border-radius:999px;font-weight:500}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px}
+  .card .n{font-size:28px;font-weight:700;letter-spacing:-.03em}
+  .card .l{font-size:12px;color:#6b7280;margin-top:4px}
+  .panel{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden}
+  .panel-h{padding:16px 20px;border-bottom:1px solid #e5e7eb;font-size:13px;font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:12px 20px;border-bottom:1px solid #f3f4f6}
+  th{color:#6b7280;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+  .status{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px}
+  .ok{background:#22c55e}.run{background:#f59e0b}.wait{background:#94a3b8}
+  .tag{font-size:11px;padding:3px 8px;border-radius:6px;background:#f3f4f6;color:#374151}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo">Agentic <span>OS</span></div>
+    <nav class="nav">
+      <a class="on">Workflow</a>
+      <a>Agenci</a>
+      <a>Audyt</a>
+      <a>Narzędzia</a>
+      <a>Ustawienia</a>
+    </nav>
+  </aside>
+  <main>
+    <div class="top">
+      <div>
+        <h1>Orkiestracja — Q2 automatyzacje</h1>
+        <p class="sub">SMB · faktury, CRM, raporty tygodniowe</p>
+      </div>
+      <span class="pill">3 workflow aktywne</span>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="n">847</div><div class="l">Zadania w tym miesiącu</div></div>
+      <div class="card"><div class="n">99.2%</div><div class="l">Kroki z audytem</div></div>
+      <div class="card"><div class="n">12</div><div class="l">Eskalacje do człowieka</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Ostatnie uruchomienia</div>
+      <table>
+        <thead><tr><th>Workflow</th><th>Agent</th><th>Status</th><th>Czas</th></tr></thead>
+        <tbody>
+          <tr><td>Eksport JPK → MINTAX</td><td><span class="tag">plumm-sync</span></td><td><span class="status ok"></span>Zakończone</td><td>2.4s</td></tr>
+          <tr><td>Raport occupancy</td><td><span class="tag">mint-ops</span></td><td><span class="status run"></span>W toku</td><td>—</td></tr>
+          <tr><td>Lead follow-up</td><td><span class="tag">crm-agent</span></td><td><span class="status wait"></span>Kolejka</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>`
 
 async function optimizePng(pngBuffer, projectId, baseName) {
   const dir = join(OUT, projectId)
@@ -84,10 +140,87 @@ async function optimizePng(pngBuffer, projectId, baseName) {
     const outPath = join(dir, `${baseName}-${suffix}.webp`)
     await sharp(pngBuffer)
       .resize(width, null, { withoutEnlargement: true })
-      .webp({ quality: 88 })
+      .webp({ quality: WEBP_QUALITY })
       .toFile(outPath)
     console.log('  ✓', outPath.replace(ROOT, ''))
   }
+}
+
+async function dismissCookies(page) {
+  for (const sel of [
+    'button:has-text("Akceptuj")',
+    'button:has-text("Zgadzam")',
+    'button:has-text("Accept")',
+    '[data-testid="cookie-accept"]',
+  ]) {
+    const btn = page.locator(sel).first()
+    if (await btn.isVisible({ timeout: 600 }).catch(() => false)) {
+      await btn.click().catch(() => {})
+      await page.waitForTimeout(400)
+    }
+  }
+}
+
+async function capturePage(context, cap) {
+  console.log(`\n→ ${cap.id}/${cap.name}: ${cap.url}`)
+  const page = await context.newPage()
+  try {
+    await page.goto(cap.url, { waitUntil: 'networkidle', timeout: 90000 })
+    await page.waitForTimeout(cap.wait ?? 4000)
+    await dismissCookies(page)
+    const png = await page.screenshot({ type: 'png', fullPage: false })
+    await optimizePng(png, cap.id, cap.name)
+    return true
+  } catch (err) {
+    console.error(`  ✗ failed ${cap.url}:`, err.message)
+    return false
+  } finally {
+    await page.close()
+  }
+}
+
+function startIdriveDev() {
+  return new Promise((resolve, reject) => {
+    const child = spawn('npm', ['run', 'dev', '--', '-p', String(IDRIVE_PORT)], {
+      cwd: IDRIVE_ROOT,
+      shell: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: { ...process.env, PORT: String(IDRIVE_PORT) },
+    })
+    let ready = false
+    const onData = (chunk) => {
+      const text = chunk.toString()
+      if (!ready && (text.includes('Ready') || text.includes('started server') || text.includes('Local:'))) {
+        ready = true
+        resolve(child)
+      }
+    }
+    child.stdout?.on('data', onData)
+    child.stderr?.on('data', onData)
+    child.on('error', reject)
+    setTimeout(() => {
+      if (!ready) {
+        ready = true
+        resolve(child)
+      }
+    }, 45000)
+  })
+}
+
+function killProcessOnPort(port) {
+  return new Promise((resolve) => {
+    const killer = spawn(
+      'powershell',
+      [
+        '-NoProfile',
+        '-Command',
+        `$p = Get-NetTCPConnection -LocalPort ${port} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique; if ($p) { $p | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue } }`,
+      ],
+      { shell: true },
+    )
+    killer.on('close', () => resolve())
+    killer.on('error', () => resolve())
+  })
 }
 
 async function captureLive() {
@@ -96,54 +229,44 @@ async function captureLive() {
   const browser = await chromium.launch({ headless: true })
   const context = await browser.newContext({
     viewport: { width: 1920, height: 1080 },
-    deviceScaleFactor: 1,
+    deviceScaleFactor: 2,
     locale: 'pl-PL',
     userAgent:
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
   })
 
-  for (const cap of CAPTURES) {
-    console.log(`\n→ ${cap.id}/${cap.name}: ${cap.url}`)
-    const page = await context.newPage()
-    try {
-      await page.goto(cap.url, { waitUntil: 'networkidle', timeout: 60000 })
-      await page.waitForTimeout(cap.wait)
-      // dismiss cookie banners if present
-      for (const sel of [
-        'button:has-text("Akceptuj")',
-        'button:has-text("Zgadzam")',
-        '[data-testid="cookie-accept"]',
-      ]) {
-        const btn = page.locator(sel).first()
-        if (await btn.isVisible({ timeout: 800 }).catch(() => false)) {
-          await btn.click().catch(() => {})
-          await page.waitForTimeout(500)
-        }
+  for (const cap of LIVE_CAPTURES) {
+    const ok = await capturePage(context, cap)
+    if (!ok && cap.fallbackLocal) {
+      console.log(`  ↻ fallback local :${IDRIVE_PORT}`)
+      let child = null
+      try {
+        child = await startIdriveDev()
+        await new Promise((r) => setTimeout(r, 3000))
+        await capturePage(context, {
+          ...cap,
+          url: `http://127.0.0.1:${IDRIVE_PORT}/`,
+        })
+      } finally {
+        if (child) child.kill('SIGTERM')
+        await killProcessOnPort(IDRIVE_PORT)
       }
-      const png = await page.screenshot({ type: 'png', fullPage: false })
-      await optimizePng(png, cap.id, cap.name)
-    } catch (err) {
-      console.error(`  ✗ failed ${cap.url}:`, err.message)
-    } finally {
-      await page.close()
     }
   }
 
-  // Branded placeholders for idrive + agentic
-  for (const [id, html] of Object.entries(PLACEHOLDER_HTML)) {
-    console.log(`\n→ ${id}/hero: placeholder`)
-    const page = await context.newPage()
-    await page.setContent(html, { waitUntil: 'load' })
-    await page.waitForTimeout(300)
-    const png = await page.screenshot({ type: 'png' })
-    await optimizePng(png, id, 'hero')
-    await page.close()
-  }
+  console.log('\n→ agentic/hero: UI mock')
+  const page = await context.newPage()
+  await page.setContent(AGENTIC_MOCK_HTML, { waitUntil: 'load' })
+  await page.setViewportSize({ width: 1920, height: 1080 })
+  await page.waitForTimeout(400)
+  const agenticPng = await page.screenshot({ type: 'png' })
+  await optimizePng(agenticPng, 'agentic', 'hero')
+  await page.close()
 
   await browser.close()
 }
 
 await mkdir(OUT, { recursive: true })
-console.log('Capturing screenshots…')
+console.log('Capturing screenshots (WebP q=%d)…', WEBP_QUALITY)
 await captureLive()
 console.log('\nDone.')

@@ -1,146 +1,90 @@
 import { projects } from '../data/content'
 import type { Project } from '../data/content'
 import { ProjectImage } from './ProjectImage'
-import { VisitSiteButton } from './VisitSiteButton'
+import { WorkStrip } from './WorkStrip'
+
+function padIndex(n: number) {
+  return String(n).padStart(2, '0')
+}
 
 export function Work() {
   return (
-    <section id="realizacje" data-section className="relative">
-      <div className="section-pad pb-10 md:pb-14">
-        <div className="mx-auto max-w-[1400px]">
-          <p data-reveal className="section-label">
-            03 — Realizacje
-          </p>
-          <h2 data-reveal className="font-display mt-4 text-4xl leading-tight md:text-6xl">
-            Wybrane produkty
-          </h2>
-          <p data-reveal className="text-muted mt-6 max-w-xl text-sm leading-relaxed md:text-base">
-            Cztery ekosystemy — od faktur po agentów AI. Każdy zaprojektowany pod konkretny model
-            biznesowy, nie pod szablon z ThemeForest.
-          </p>
-        </div>
-      </div>
+    <section id="work" data-section className="section-pad border-t border-rule">
+      <div className="mx-auto max-w-6xl">
+        <p data-reveal className="section-label">
+          Selected work
+        </p>
+        <h2 data-reveal className="font-display mt-3 text-4xl leading-tight md:text-5xl">
+          My recent work
+        </h2>
 
-      <div
-        data-work-pin
-        className="relative hidden min-h-[100dvh] overflow-hidden lg:block"
-        aria-label="Galeria realizacji — przewiń w dół, aby przesunąć karty w poziomie"
-      >
-        <div
-          data-work-chrome
-          className="pointer-events-none absolute inset-x-0 top-8 z-20 flex items-center justify-between px-[max(1.5rem,calc((100vw-1400px)/2+1.5rem))]"
-          aria-hidden
-        >
-          <p className="section-label text-[10px]">Przewiń · galeria</p>
-          <div className="flex min-w-[9rem] flex-col items-end gap-2">
-            <span data-work-progress-label className="font-display text-sm tabular-nums">
-              01 / {String(projects.length).padStart(2, '0')}
-            </span>
-            <div className="h-px w-full origin-left bg-rule">
-              <div
-                data-work-progress-bar
-                className="bg-accent h-full w-full origin-left"
-                style={{ transform: 'scaleX(0)' }}
-              />
-            </div>
-          </div>
-        </div>
-        <div
-          data-work-track
-          className="flex h-[100dvh] items-center gap-8 px-[max(1.5rem,calc((100vw-1400px)/2+1.5rem))] will-change-transform"
-        >
-          {projects.map((project, i) => (
-            <ProjectCard key={project.id} project={project} variant="horizontal" index={i} />
+        <WorkStrip />
+
+        <ul className="mt-12 grid gap-10 md:gap-12">
+          {projects.map((project, index) => (
+            <li key={project.id}>
+              <ProjectCard project={project} index={index + 1} />
+            </li>
           ))}
-        </div>
-      </div>
-
-      <div className="section-pad space-y-10 pt-0 lg:hidden">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} variant="stack" />
-        ))}
+        </ul>
       </div>
     </section>
   )
 }
 
-function ProjectCard({
-  project,
-  variant,
-  index = 0,
-}: {
-  project: Project
-  variant: 'horizontal' | 'stack'
-  index?: number
-}) {
-  const hasLiveSite = project.url !== '#'
-  const liveCta = hasLiveSite && (project.id === 'mint' || project.id === 'plumm')
+function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const hasLiveSite = project.url.startsWith('http')
+  const detailHref = `#project-${project.id}`
 
   return (
     <article
       data-project-card
-      className={
-        variant === 'horizontal'
-          ? `border-rule flex h-[min(78vh,720px)] w-[min(78vw,880px)] shrink-0 flex-col overflow-hidden border bg-paper ${
-              index % 2 === 1 ? 'lg:translate-y-8' : 'lg:-translate-y-3'
-            }`
-          : 'border-rule flex flex-col overflow-hidden border bg-paper'
-      }
+      data-reveal
+      className="group border-rule overflow-hidden border bg-surface"
     >
-      <div
-        className={
-          variant === 'horizontal'
-            ? 'grid min-h-0 flex-1 grid-rows-[1fr_auto]'
-            : 'flex flex-col'
-        }
-      >
-        <div className={variant === 'horizontal' ? 'min-h-0 flex-1 p-3 md:p-4' : 'aspect-[16/10] p-3'}>
-          <ProjectImage
-            project={project}
-            variant={project.flagship ? 'hero' : 'card'}
-            priority={project.flagship}
-            className="rounded-none"
-          />
-        </div>
+      <div className="relative aspect-[16/9] overflow-hidden md:aspect-[2/1]">
+        <ProjectImage
+          project={project}
+          variant="card"
+          priority={index === 1}
+          className="rounded-none transition-transform duration-500 group-hover:scale-[1.02]"
+        />
+        <span className="project-index absolute top-4 left-4 bg-paper/90 px-2 py-1 md:top-6 md:left-6">
+          {padIndex(index)}
+        </span>
+      </div>
 
-        <div className="editorial-rule border-t p-6 md:p-8">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-muted text-xs tracking-widest uppercase">{project.domain}</p>
-              <h3 className="font-display mt-1 text-2xl md:text-3xl">{project.title}</h3>
-              <p className="text-accent mt-1 text-sm">{project.tagline}</p>
-            </div>
-            {liveCta && <VisitSiteButton project={project} variant="prominent" className="shrink-0" />}
-          </div>
-
-          <p className="text-muted mt-4 line-clamp-3 text-sm leading-relaxed md:text-base">
-            {project.description}
-          </p>
-
-          <div className="mt-5 flex flex-wrap gap-2">
+      <div className="flex flex-col gap-4 p-6 md:flex-row md:items-end md:justify-between md:p-8">
+        <div>
+          <p className="text-muted text-xs tracking-wide uppercase">{project.domain}</p>
+          <h3 className="font-display mt-1 text-2xl md:text-3xl">{project.title}</h3>
+          <p className="text-muted mt-2 max-w-xl text-sm leading-relaxed">{project.tagline}</p>
+          <div className="mt-4 flex flex-wrap gap-2">
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="border-rule border px-3 py-1 text-[11px] text-muted"
+                className="border-rule border px-2.5 py-0.5 text-[11px] text-muted"
               >
                 {tag}
               </span>
             ))}
           </div>
-
-          <div className="editorial-rule mt-5 flex flex-wrap items-end justify-between gap-4 border-t pt-5">
-            <div>
-              <p className="font-display text-2xl text-accent">{project.stat.value}</p>
-              <p className="text-muted text-[10px] uppercase">{project.stat.label}</p>
-            </div>
-            <ul className="flex flex-wrap gap-2">
-              {project.metrics.map((m) => (
-                <li key={m} className="border-rule border px-2.5 py-1 text-[10px] text-muted">
-                  {m}
-                </li>
-              ))}
-            </ul>
-          </div>
+        </div>
+        <div className="flex shrink-0 flex-wrap items-center gap-3 md:justify-end">
+          <a href={detailHref} className="btn-soft text-xs">
+            Case study
+          </a>
+          {hasLiveSite ? (
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-fill text-xs"
+            >
+              {project.domain}
+              <span aria-hidden>↗</span>
+            </a>
+          ) : null}
         </div>
       </div>
     </article>

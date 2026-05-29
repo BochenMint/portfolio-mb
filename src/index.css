@@ -2,18 +2,16 @@
 
 @theme {
   --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-hand: 'Caveat', cursive;
+  --font-body: 'DM Sans', system-ui, sans-serif;
 
-  --color-paper: #f7f4ef;
-  --color-ink: #1c1b19;
-  --color-ink-muted: #5c5852;
-  --color-night: #121110;
-  --color-cream: #f0ebe3;
-  --color-accent: #b85c38;
-  --color-accent-deep: #8f4529;
-  --color-rule: color-mix(in srgb, var(--color-ink) 14%, transparent);
-  --color-surface: color-mix(in srgb, var(--color-ink) 4%, var(--color-paper));
+  --color-paper: #fafaf8;
+  --color-ink: #1a1a1a;
+  --color-ink-muted: #5c5c5c;
+  --color-night: #0a0a0a;
+  --color-accent: #2e54fe;
+  --color-accent-deep: #2445d4;
+  --color-rule: color-mix(in srgb, var(--color-ink) 10%, transparent);
+  --color-surface: #ffffff;
 }
 
 @layer base {
@@ -26,13 +24,13 @@
   }
 
   [data-theme='dark'] {
-    --color-paper: #121110;
-    --color-ink: #f0ebe3;
-    --color-ink-muted: #a39e96;
-    --color-accent: #d4734f;
-    --color-accent-deep: #b85c38;
-    --color-rule: color-mix(in srgb, var(--color-cream) 16%, transparent);
-    --color-surface: color-mix(in srgb, var(--color-cream) 6%, var(--color-night));
+    --color-paper: #0a0a0a;
+    --color-ink: #f5f5f3;
+    --color-ink-muted: #a3a3a3;
+    --color-accent: #5b7dff;
+    --color-accent-deep: #2e54fe;
+    --color-rule: color-mix(in srgb, var(--color-ink) 12%, transparent);
+    --color-surface: #141414;
   }
 
   body {
@@ -40,34 +38,13 @@
     background: var(--color-paper);
     color: var(--color-ink);
     transition:
-      background-color 0.35s ease,
-      color 0.35s ease;
-  }
-
-  body::after {
-    content: '';
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9997;
-    opacity: 0.04;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-    background-size: 180px 180px;
-  }
-
-  [data-theme='dark'] body::after {
-    opacity: 0.06;
-    mix-blend-mode: soft-light;
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--color-accent) 28%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 25%, transparent);
     color: var(--color-ink);
-  }
-
-  summary::-webkit-details-marker {
-    display: none;
   }
 
   :focus-visible {
@@ -92,10 +69,6 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
-  }
-
-  .font-hand {
-    font-family: var(--font-hand);
   }
 
   .text-balance {
@@ -126,29 +99,13 @@
     background-color: var(--color-paper);
   }
 
-  .bg-rule {
-    background-color: var(--color-rule);
-  }
-
-  .editorial-rule {
-    border-top: 1px solid var(--color-rule);
-  }
-
-  .editorial-panel {
-    background: linear-gradient(
-      165deg,
-      color-mix(in srgb, var(--color-surface) 88%, var(--color-paper)) 0%,
-      var(--color-paper) 48%
-    );
-  }
-
   .section-pad {
-    @apply px-6 py-20 md:px-12 md:py-28 lg:px-16;
+    @apply px-6 py-20 md:px-10 md:py-28 lg:px-16;
   }
 
   [data-section] {
     content-visibility: auto;
-    contain-intrinsic-size: auto 720px;
+    contain-intrinsic-size: auto 560px;
   }
 
   [data-hero] {
@@ -159,16 +116,16 @@
     color: var(--color-ink-muted);
     font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
-  .chapter-num {
-    font-family: var(--font-display);
+  .project-index {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     color: var(--color-accent);
-    font-size: clamp(3rem, 8vw, 5.5rem);
-    line-height: 1;
-    font-style: italic;
   }
 
   .btn-soft {
@@ -176,12 +133,15 @@
     align-items: center;
     gap: 0.5rem;
     border: 1px solid var(--color-rule);
-    padding: 0.75rem 1.5rem;
+    padding: 0.7rem 1.35rem;
     font-size: 0.875rem;
     font-weight: 500;
-    transition-property: color, border-color;
-    transition-duration: 150ms;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease;
     color: var(--color-ink);
+    background: transparent;
   }
 
   .btn-soft:hover {
@@ -192,50 +152,37 @@
   .btn-fill {
     @apply inline-flex items-center gap-2 px-6 py-3 text-sm font-medium;
     background: var(--color-accent);
-    color: var(--color-paper);
+    color: #fff;
+    transition: background-color 0.2s ease;
   }
 
   .btn-fill:hover {
     background: var(--color-accent-deep);
   }
 
-  .reveal {
-    opacity: 0;
-    transform: translateY(1.25rem);
+  [data-project-card] {
     transition:
-      opacity 0.7s ease,
-      transform 0.7s ease;
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.35s ease;
   }
 
-  .reveal.is-visible {
-    opacity: 1;
-    transform: none;
+  [data-project-card]:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px color-mix(in srgb, var(--color-ink) 8%, transparent);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .reveal {
-      opacity: 1;
+    [data-project-card]:hover {
       transform: none;
     }
   }
 
-  .page-enter {
-    animation: page-enter 0.6s ease forwards;
+  .work-strip {
+    scrollbar-width: none;
   }
 
-  @keyframes page-enter {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .page-enter {
-      animation: none;
-    }
+  .work-strip::-webkit-scrollbar {
+    display: none;
   }
 
   .sr-only {
@@ -259,12 +206,5 @@
     overflow: visible;
     clip: auto;
     white-space: normal;
-  }
-
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 }

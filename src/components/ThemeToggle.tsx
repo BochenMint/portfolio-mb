@@ -7,9 +7,9 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="btn-soft px-3 py-2 text-[11px] tracking-[0.14em] uppercase"
+      className="btn-soft border-0 px-3 py-2 text-xs tracking-wide uppercase"
       aria-label={theme === 'light' ? 'Włącz tryb ciemny' : 'Włącz tryb jasny'}
-      aria-pressed={theme === 'dark'}
+      title={theme === 'light' ? 'Tryb ciemny' : 'Tryb jasny'}
     >
       {theme === 'light' ? 'Ciemny' : 'Jasny'}
     </button>

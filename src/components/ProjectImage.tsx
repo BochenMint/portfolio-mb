@@ -23,7 +23,7 @@ export function ProjectImage({
 }: Props) {
   const scene = sceneFor(project, variant)
   const base = `/projects/${project.id}/${scene}`
-  const isFlagshipLcp = priority ?? (project.flagship && variant === 'hero')
+  const isLcp = priority ?? (project.id === 'mint' && variant === 'hero')
 
   const heroSrc = `${base}-hero.webp`
   const cardSrc = `${base}-card.webp`
@@ -47,9 +47,9 @@ export function ProjectImage({
         alt={`${project.title} — ${project.tagline}`}
         width={width}
         height={height}
-        loading={isFlagshipLcp ? 'eager' : 'lazy'}
+        loading={isLcp ? 'eager' : 'lazy'}
         decoding="async"
-        fetchPriority={isFlagshipLcp ? 'high' : 'auto'}
+        fetchPriority={isLcp ? 'high' : 'auto'}
         className="h-full w-full object-cover object-top"
       />
     </picture>

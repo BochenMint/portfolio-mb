@@ -1,0 +1,3 @@
+# Mapa inspiracji
+
+Redesign portfolio to synteza wzorców, nie klon jednej strony. **Gloria Lo** i **Josie Allison** — jasna typografia, przyjazne intro, siatka „recent work” z numerami `01–04` i tagami dyscyplin; **NorthGarden** i **William Dzierson** — minimal B&W, duże zdjęcia produkcyjne, ton „builder/technologist”. Z warstwy motion (oszczędnie): **Juan Mora** — scroll reveal i hover kart; **Victor Furuya** — Vite + GSAP bez WebGL; **Archi Green** — opcjonalny poziomy pasek projektów tylko na desktopie; **Luke Baffait** — subtelna choreografia scrolla. Świadomie pominięto: ciemny-only hero, preloader z %, grain, podwójne sticky CTA i ciężkie shadery (Partizan / Matveyan). Akcent: pojedynczy kobalt `#2E54FE`; jasny domyślny `#FAFAF8`.
