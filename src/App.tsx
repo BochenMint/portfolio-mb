@@ -74,7 +74,7 @@ function App() {
         Przejdź do treści
       </a>
       <Nav />
-      <main id="main" className="bg-[var(--color-ink)] text-[var(--color-paper)]">
+      <main id="main" className="max-w-none bg-[var(--color-ink)] p-0 text-[var(--color-paper)]">
         <Hero />
         <ProofBar />
         <ResultsStrip />

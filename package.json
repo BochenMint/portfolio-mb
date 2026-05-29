@@ -11,7 +11,9 @@
     "capture:screens": "node scripts/capture-and-optimize.mjs",
     "composite:plumm": "node scripts/composite-plumm-diagonal.mjs",
     "test:webgl-hover": "node scripts/test-webgl-hover.mjs",
-    "test:full-bleed": "node scripts/test-full-bleed.mjs"
+    "compare:ripple": "node scripts/compare-ripple-reference.mjs",
+    "test:full-bleed": "node scripts/test-full-bleed.mjs",
+    "verify:fullscreen": "node scripts/verify-fullscreen-visual.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

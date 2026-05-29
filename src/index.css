@@ -98,7 +98,24 @@
     margin-inline: calc(50% - 50vw);
   }
 
-  /** #work visuals sit outside max-w-* — use layout width, not 100vw (scrollbar + overflow-x clip). */
+  /**
+   * Featured project media — viewport-wide breakout (no 100vw on the visual itself).
+   */
+  .featured-bleed {
+    position: relative;
+    left: 50%;
+    width: 100vw;
+    max-width: 100%;
+    margin-inline: 0;
+    transform: translateX(-50%);
+  }
+
+  @supports (width: 100dvw) {
+    .featured-bleed {
+      width: 100dvw;
+    }
+  }
+
   #work [data-featured-visual] {
     width: 100%;
     max-width: none;
@@ -112,10 +129,9 @@
     }
   }
 
-  @media (min-width: 1024px) {
-    #work [data-featured-visual] {
-      min-height: 80vh;
-    }
+  #work [data-featured-visual] .project-interactive__still img {
+    object-fit: cover;
+    object-position: center 28%;
   }
 
   [data-section] {
