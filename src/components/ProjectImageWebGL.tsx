@@ -18,16 +18,6 @@ type Props = {
   onReady?: () => void
 }
 
-function revealCanvas(canvas: HTMLCanvasElement) {
-  canvas.style.opacity = '1'
-  canvas.style.visibility = 'visible'
-}
-
-function hideCanvas(canvas: HTMLCanvasElement) {
-  canvas.style.opacity = '0'
-  canvas.style.visibility = 'hidden'
-}
-
 export function ProjectImageWebGL({
   project,
   variant = 'card',
@@ -54,10 +44,10 @@ export function ProjectImageWebGL({
     const runId = Symbol('webgl-run')
     let activeRun: symbol | null = runId
 
-    hideCanvas(canvas)
     setStatus('loading')
 
     const imageUrl = projectImageTextureUrl(project, variant)
+    const eventRoot = host.closest('.project-interactive') ?? host
 
     void (async () => {
       try {
@@ -87,8 +77,11 @@ export function ProjectImageWebGL({
         const introStart = performance.now()
         const introDuration = 1400
 
-        const onMove = (e: MouseEvent) => {
-          const rect = host.getBoundingClientRect()
+        const pointerRect = () => eventRoot.getBoundingClientRect()
+
+        const onMove = (e: Event) => {
+          if (!(e instanceof PointerEvent)) return
+          const rect = pointerRect()
           if (rect.width < 1 || rect.height < 1) return
           effect.setMouse(
             (e.clientX - rect.left) / rect.width,
@@ -119,11 +112,10 @@ export function ProjectImageWebGL({
         }
         introTick()
 
-        host.addEventListener('mousemove', onMove)
-        host.addEventListener('mouseleave', onLeave)
+        eventRoot.addEventListener('pointermove', onMove)
+        eventRoot.addEventListener('pointerleave', onLeave)
 
         if (!disposed && activeRun === runId) {
-          revealCanvas(canvas)
           setStatus('ready')
           onReadyRef.current?.()
         }
@@ -131,8 +123,8 @@ export function ProjectImageWebGL({
         removeListeners = () => {
           ro.disconnect()
           io.disconnect()
-          host.removeEventListener('mousemove', onMove)
-          host.removeEventListener('mouseleave', onLeave)
+          eventRoot.removeEventListener('pointermove', onMove)
+          eventRoot.removeEventListener('pointerleave', onLeave)
           effect.stop()
           effect.dispose()
         }
@@ -140,7 +132,6 @@ export function ProjectImageWebGL({
         const message = err instanceof Error ? err.message : String(err)
         warnWebGL(project.id, `init failed (${imageUrl})`, message)
         if (!disposed && activeRun === runId) {
-          hideCanvas(canvas)
           setStatus('failed')
           onFallbackRef.current?.()
         }
@@ -152,7 +143,6 @@ export function ProjectImageWebGL({
       activeRun = null
       removeListeners?.()
       removeListeners = undefined
-      hideCanvas(canvas)
       setStatus('idle')
     }
   }, [project, variant, level])
@@ -168,7 +158,11 @@ export function ProjectImageWebGL({
     >
       <canvas
         ref={canvasRef}
-        className="project-webgl__canvas absolute inset-0 h-full w-full touch-none"
+        className={`project-webgl__canvas absolute inset-0 h-full w-full touch-none ${
+          isReady ? 'block' : 'hidden'
+        }`}
+        data-webgl-canvas-ready={isReady ? 'true' : 'false'}
+        aria-hidden={!isReady}
       />
     </div>
   )

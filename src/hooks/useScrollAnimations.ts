@@ -186,8 +186,10 @@ export function useScrollAnimations(ready = true) {
 
           // —— Featured work visuals ——
           gsap.utils.toArray<HTMLElement>('[data-featured-visual]').forEach((visual) => {
+            const stillImg = visual.querySelector('.project-interactive__still img')
+            if (!stillImg) return
             gsap.fromTo(
-              visual.querySelector('img'),
+              stillImg,
               { scale: 1.12, opacity: 0.5 },
               {
                 scale: 1,

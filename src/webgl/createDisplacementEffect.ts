@@ -133,7 +133,7 @@ export async function createDisplacementEffect(
     antialias: true,
     alpha: true,
     powerPreference: 'high-performance',
-    preserveDrawingBuffer: false,
+    preserveDrawingBuffer: true,
   })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
