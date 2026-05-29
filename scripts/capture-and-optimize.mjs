@@ -24,20 +24,40 @@ const LIVE_CAPTURES = [
   },
   {
     id: 'mint',
-    name: 'apartment',
-    url: 'https://mintapartments.pl/apartamenty/luksusowy-seaside/',
+    name: 'listings',
+    url: 'https://mintapartments.pl/apartamenty',
     wait: 4500,
   },
   {
     id: 'mint',
-    name: 'booking',
-    url: 'https://mintapartments.pl/rezerwacja/',
+    name: 'apartment',
+    url: 'https://mintapartments.pl/apartamenty/luksusowy-seaside/',
     wait: 5000,
+  },
+  {
+    id: 'mint',
+    name: 'booking',
+    url: 'https://mintapartments.pl/apartamenty/luksusowy-seaside/',
+    wait: 4000,
+    scrollTo: '[data-booking-widget], form, .booking',
   },
   {
     id: 'plumm',
     name: 'hero',
     url: 'https://plumm.pl/',
+    wait: 6000,
+  },
+  {
+    id: 'plumm',
+    name: 'dashboard',
+    url: 'https://plumm.pl/',
+    wait: 2500,
+    scrollTo: '#platform-preview, [data-section="platform"], h2:has-text("Wszystko w jednym panelu")',
+  },
+  {
+    id: 'plumm',
+    name: 'pricing',
+    url: 'https://plumm.pl/cennik-ksiegowosci-online',
     wait: 5000,
   },
   {
@@ -161,6 +181,21 @@ async function dismissCookies(page) {
   }
 }
 
+async function scrollToTarget(page, selector) {
+  const selectors = selector.split(',').map((s) => s.trim())
+  for (const sel of selectors) {
+    const loc = page.locator(sel).first()
+    if (await loc.isVisible({ timeout: 2500 }).catch(() => false)) {
+      await loc.scrollIntoViewIfNeeded()
+      await page.waitForTimeout(800)
+      return true
+    }
+  }
+  await page.evaluate(() => window.scrollTo(0, Math.floor(document.body.scrollHeight * 0.45)))
+  await page.waitForTimeout(600)
+  return false
+}
+
 async function capturePage(context, cap) {
   console.log(`\n→ ${cap.id}/${cap.name}: ${cap.url}`)
   const page = await context.newPage()
@@ -168,6 +203,9 @@ async function capturePage(context, cap) {
     await page.goto(cap.url, { waitUntil: 'networkidle', timeout: 90000 })
     await page.waitForTimeout(cap.wait ?? 4000)
     await dismissCookies(page)
+    if (cap.scrollTo) {
+      await scrollToTarget(page, cap.scrollTo)
+    }
     const png = await page.screenshot({ type: 'png', fullPage: false })
     await optimizePng(png, cap.id, cap.name)
     return true
