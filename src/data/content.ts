@@ -39,10 +39,41 @@ export const site = {
 }
 
 export const navLinks = [
-  { href: '#work', label: 'Realizacje' },
-  { href: '#case-studies', label: 'Case studies' },
   { href: '#about', label: 'O mnie' },
+  { href: '#services', label: 'Usługi' },
+  { href: '#work', label: 'Realizacje' },
   { href: '#contact', label: 'Kontakt' },
+]
+
+export const menuLinks = [
+  { href: '#about', label: 'O mnie', num: '01' },
+  { href: '#services', label: 'Usługi', num: '02' },
+  { href: '#work', label: 'Realizacje', num: '03' },
+  { href: '#contact', label: 'Kontakt', num: '04' },
+]
+
+export const services = [
+  {
+    num: '01',
+    title: 'Produkty webowe',
+    description:
+      'Strony i panele pod realny ruch: Astro, React, Next.js — szybkość, SEO techniczne i booking bez pośredników tam, gdzie to zarabia.',
+    tags: ['Astro', 'React', 'Direct booking'],
+  },
+  {
+    num: '02',
+    title: 'Automatyzacja procesów',
+    description:
+      'Integracje PMS, smart lock, eksporty JPK/CSV, workflow z logiem — mniej ręcznej pracy, więcej powtarzalności w niedzielę o 23:00.',
+    tags: ['Previo', 'Integracje', 'Workflow'],
+  },
+  {
+    num: '03',
+    title: 'AI z audytem',
+    description:
+      'Concierge z kontekstem oferty, agenci z whitelistą narzędzi i human-in-the-loop — bez chaosu promptów w czacie.',
+    tags: ['Concierge', 'Agentic', 'Audyt kroków'],
+  },
 ]
 
 export const projects: Project[] = [
@@ -135,6 +166,12 @@ export const projects: Project[] = [
     imageScene: 'hero',
   },
 ]
+
+export const caseNavLinks = projects.map((project, index) => ({
+  href: `#project-${project.id}`,
+  label: project.title,
+  num: String(index + 1).padStart(2, '0'),
+}))
 
 export const contactFields = [
   { id: 'name', label: 'Imię', type: 'text' as const, required: true },

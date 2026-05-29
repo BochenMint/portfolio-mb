@@ -5,9 +5,9 @@ export type Theme = 'light' | 'dark'
 const STORAGE_KEY = 'portfolio-theme'
 
 function getInitialTheme(): Theme {
-  if (typeof document === 'undefined') return 'light'
+  if (typeof document === 'undefined') return 'dark'
   const attr = document.documentElement.getAttribute('data-theme')
-  return attr === 'dark' ? 'dark' : 'light'
+  return attr === 'light' ? 'light' : 'dark'
 }
 
 function applyTheme(theme: Theme) {
@@ -21,8 +21,8 @@ export function useTheme() {
 
   useEffect(() => {
     if (!localStorage.getItem(STORAGE_KEY)) {
-      applyTheme('light')
-      setThemeState('light')
+      applyTheme('dark')
+      setThemeState('dark')
     }
   }, [])
 

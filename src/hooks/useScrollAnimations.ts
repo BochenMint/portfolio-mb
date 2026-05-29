@@ -8,28 +8,31 @@ const FINAL_SELECTORS = [
   '[data-hero-word]',
   '[data-hero-portrait]',
   '[data-reveal]',
-  '[data-project-card]',
-  '[data-case-line]',
-  '[data-case-image]',
+  '[data-service-block]',
+  '[data-featured-visual]',
+  '[data-featured-project]',
   '[data-about-portrait]',
   '[data-pull-quote]',
   '[data-form-field]',
   '[data-section-wipe]',
+  '[data-footer-line-inner]',
+  '[data-marquee-track]',
 ].join(', ')
 
-export function useScrollAnimations() {
+export function useScrollAnimations(ready = true) {
   useGSAP(
     () => {
+      if (!ready) return
+
       const mm = gsap.matchMedia()
 
       mm.add(
         {
           reduce: '(prefers-reduced-motion: reduce)',
-          desktop: '(min-width: 1024px) and (prefers-reduced-motion: no-preference)',
           motion: '(prefers-reduced-motion: no-preference)',
         },
         (context) => {
-          const { reduce, desktop, motion } = context.conditions!
+          const { reduce, motion } = context.conditions!
 
           const showFinal = () => {
             gsap.set(FINAL_SELECTORS, {
@@ -41,6 +44,7 @@ export function useScrollAnimations() {
               clearProps: 'transform,opacity,clipPath',
             })
             gsap.set('[data-progress-bar]', { scaleX: 1 })
+            gsap.set('[data-marquee-track]', { x: 0 })
           }
 
           if (reduce) {
@@ -55,7 +59,7 @@ export function useScrollAnimations() {
             yPercent: 110,
             opacity: 0,
             duration: 1.05,
-            stagger: 0.12,
+            stagger: 0.14,
             ease: 'power4.out',
             delay: 0.08,
           })
@@ -81,7 +85,7 @@ export function useScrollAnimations() {
           const portrait = document.querySelector('[data-hero-portrait]')
           if (portrait) {
             gsap.from(portrait, {
-              scale: 0.92,
+              scale: 0.94,
               opacity: 0,
               duration: 1.1,
               ease: 'power3.out',
@@ -89,8 +93,7 @@ export function useScrollAnimations() {
             })
 
             gsap.to(portrait, {
-              y: -48,
-              scale: 0.96,
+              y: -40,
               ease: 'none',
               scrollTrigger: {
                 trigger: '[data-hero]',
@@ -101,20 +104,31 @@ export function useScrollAnimations() {
             })
           }
 
-          // —— Section clip-path wipes (key boundaries) ——
+          // —— Project name marquee ——
+          const marquee = document.querySelector('[data-marquee-track]')
+          if (marquee) {
+            gsap.to(marquee, {
+              xPercent: -50,
+              ease: 'none',
+              duration: 32,
+              repeat: -1,
+            })
+          }
+
+          // —— Section wipes ——
           gsap.utils.toArray<HTMLElement>('[data-section-wipe]').forEach((wipe) => {
             gsap.fromTo(
               wipe,
-              { clipPath: 'inset(0% 100% 0% 0%)', opacity: 0.6 },
+              { scaleX: 0, opacity: 0.4, transformOrigin: 'left center' },
               {
-                clipPath: 'inset(0% 0% 0% 0%)',
+                scaleX: 1,
                 opacity: 1,
                 ease: 'power3.inOut',
                 scrollTrigger: {
                   trigger: wipe,
                   start: 'top 92%',
-                  end: 'top 55%',
-                  scrub: 0.6,
+                  end: 'top 60%',
+                  scrub: 0.5,
                 },
               },
             )
@@ -126,12 +140,12 @@ export function useScrollAnimations() {
             onEnter: (batch) =>
               gsap.fromTo(
                 batch,
-                { y: 36, opacity: 0 },
+                { y: 40, opacity: 0 },
                 {
                   y: 0,
                   opacity: 1,
-                  duration: 0.8,
-                  stagger: 0.06,
+                  duration: 0.85,
+                  stagger: 0.07,
                   ease: 'power3.out',
                   overwrite: true,
                 },
@@ -139,103 +153,46 @@ export function useScrollAnimations() {
             once: true,
           })
 
-          // —— Work grid stagger 01–04 ——
-          ScrollTrigger.batch('[data-project-card]', {
-            start: 'top 90%',
-            onEnter: (batch) =>
-              gsap.fromTo(
-                batch,
-                { y: 72, opacity: 0 },
-                {
-                  y: 0,
-                  opacity: 1,
-                  duration: 0.95,
-                  stagger: 0.12,
-                  ease: 'power3.out',
-                  overwrite: true,
-                },
-              ),
-            once: true,
+          // —— Service blocks ——
+          gsap.utils.toArray<HTMLElement>('[data-service-block]').forEach((block) => {
+            gsap.from(block.querySelectorAll('h3, p, ul'), {
+              y: 32,
+              opacity: 0,
+              duration: 0.8,
+              stagger: 0.08,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: block,
+                start: 'top 82%',
+                once: true,
+              },
+            })
           })
 
-          // —— Desktop horizontal work strip (pinned scrub) ——
-          if (desktop) {
-            const workPin = document.querySelector('[data-work-pin]')
-            const workTrack = document.querySelector('[data-work-track]') as HTMLElement | null
-            if (workPin && workTrack) {
-              const getScroll = () => Math.max(0, workTrack.scrollWidth - window.innerWidth + 96)
-              gsap.to(workTrack, {
-                x: () => -getScroll(),
-                ease: 'none',
-                scrollTrigger: {
-                  trigger: workPin,
-                  pin: true,
-                  scrub: 1,
-                  end: () => `+=${getScroll()}`,
-                  anticipatePin: 1,
-                  invalidateOnRefresh: true,
-                },
-              })
-            }
-          }
-
-          // —— Case studies: parallax + line stagger ——
-          gsap.utils.toArray<HTMLElement>('[data-case-study]').forEach((article, i) => {
-            const img = article.querySelector('[data-case-image]')
-            if (img) {
-              gsap.fromTo(
-                img,
-                { yPercent: -8 },
-                {
-                  yPercent: 8,
-                  ease: 'none',
-                  scrollTrigger: {
-                    trigger: article,
-                    start: 'top bottom',
-                    end: 'bottom top',
-                    scrub: 1.5,
-                  },
-                },
-              )
-            }
-
-            const lines = article.querySelectorAll('[data-case-line]')
-            if (lines.length) {
-              gsap.from(lines, {
-                y: 28,
-                opacity: 0,
-                duration: 0.7,
-                stagger: 0.08,
+          // —— Featured work visuals ——
+          gsap.utils.toArray<HTMLElement>('[data-featured-visual]').forEach((visual) => {
+            gsap.fromTo(
+              visual.querySelector('img'),
+              { scale: 1.12, opacity: 0.5 },
+              {
+                scale: 1,
+                opacity: 1,
+                duration: 1.2,
                 ease: 'power3.out',
                 scrollTrigger: {
-                  trigger: article,
-                  start: 'top 78%',
+                  trigger: visual,
+                  start: 'top 88%',
                   once: true,
                 },
-              })
-            }
-
-            const next = article.querySelector('[data-case-next]')
-            if (next && i < gsap.utils.toArray('[data-case-study]').length - 1) {
-              gsap.from(next, {
-                x: -40,
-                opacity: 0,
-                duration: 0.75,
-                ease: 'power3.out',
-                scrollTrigger: {
-                  trigger: next,
-                  start: 'top 92%',
-                  once: true,
-                },
-              })
-            }
+              },
+            )
           })
 
-          // —— About: portrait from side + pull quote ——
+          // —— About portrait + quote ——
           const aboutPortrait = document.querySelector('[data-about-portrait]')
           if (aboutPortrait) {
             gsap.from(aboutPortrait, {
-              x: -56,
+              y: 48,
               opacity: 0,
               duration: 1,
               ease: 'power3.out',
@@ -251,9 +208,9 @@ export function useScrollAnimations() {
           if (pullQuote) {
             gsap.from(pullQuote, {
               opacity: 0,
-              y: 20,
-              duration: 1.1,
-              ease: 'power2.out',
+              x: -24,
+              duration: 1,
+              ease: 'power3.out',
               scrollTrigger: {
                 trigger: pullQuote,
                 start: 'top 88%',
@@ -262,7 +219,23 @@ export function useScrollAnimations() {
             })
           }
 
-          // —— Contact form fields stagger ——
+          // —— Footer CTA lines ——
+          gsap.utils.toArray<HTMLElement>('[data-footer-line-inner]').forEach((line, i) => {
+            gsap.from(line, {
+              yPercent: 110,
+              opacity: 0,
+              duration: 0.9,
+              delay: i * 0.06,
+              ease: 'power4.out',
+              scrollTrigger: {
+                trigger: '[data-footer-cta]',
+                start: 'top 85%',
+                once: true,
+              },
+            })
+          })
+
+          // —— Contact form ——
           ScrollTrigger.batch('[data-form-field]', {
             start: 'top 92%',
             onEnter: (batch) =>
@@ -281,7 +254,7 @@ export function useScrollAnimations() {
             once: true,
           })
 
-          // —— Scroll progress bar ——
+          // —— Scroll progress ——
           gsap.fromTo(
             '[data-progress-bar]',
             { scaleX: 0, transformOrigin: 'left center' },
@@ -302,6 +275,6 @@ export function useScrollAnimations() {
       ScrollTrigger.refresh()
       return () => mm.revert()
     },
-    { dependencies: [] },
+    { dependencies: [ready] },
   )
 }

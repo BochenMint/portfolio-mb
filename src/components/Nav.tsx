@@ -1,37 +1,62 @@
-import { navLinks, site } from '../data/content'
-import { ThemeToggle } from './ThemeToggle'
+import { useState } from 'react'
+import { site } from '../data/content'
+import { FullscreenMenu } from './FullscreenMenu'
 
 export function Nav() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return (
-    <header className="fixed top-0 right-0 left-0 z-50 border-b border-rule bg-paper/92 backdrop-blur-md">
-      <nav
-        className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4 md:px-10 lg:px-16"
-        aria-label="Główna nawigacja"
+    <>
+      <header
+        className={`nav-bar fixed top-0 right-0 left-0 ${menuOpen ? 'z-[100]' : 'z-[80]'}`}
       >
-        <a href="#" className="font-headline text-lg tracking-tight">
-          {site.name.split(' ')[0]}
-        </a>
-
-        <ul className="hidden items-center gap-6 sm:flex">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="text-muted text-xs font-medium tracking-wide uppercase transition-colors hover:text-accent"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <a href="#contact" className="btn-fill hidden text-xs sm:inline-flex">
-            Kontakt
+        <nav
+          className="mx-auto flex max-w-[100vw] items-center justify-between gap-4 px-6 py-5 md:px-10 lg:px-16"
+          aria-label="Główna nawigacja"
+        >
+          <a
+            href="#"
+            className="font-headline text-lg tracking-tight text-[var(--color-paper)] mix-blend-difference"
+          >
+            {site.name.split(' ')[0]}
           </a>
-        </div>
-      </nav>
-    </header>
+
+          <button
+            type="button"
+            className="nav-menu-trigger group flex items-center gap-3 text-[var(--color-paper)] mix-blend-difference"
+            aria-expanded={menuOpen}
+            aria-controls="fullscreen-menu"
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <span className="sr-only">{menuOpen ? 'Zamknij menu' : 'Otwórz menu'}</span>
+            <span
+              className="flex h-5 w-6 flex-col justify-between"
+              aria-hidden
+            >
+              <span
+                className={`h-px w-full origin-center bg-current transition-transform duration-300 ${
+                  menuOpen ? 'translate-y-[9px] rotate-45' : ''
+                }`}
+              />
+              <span
+                className={`h-px w-full bg-current transition-opacity duration-200 ${
+                  menuOpen ? 'opacity-0' : ''
+                }`}
+              />
+              <span
+                className={`h-px w-full origin-center bg-current transition-transform duration-300 ${
+                  menuOpen ? '-translate-y-[9px] -rotate-45' : ''
+                }`}
+              />
+            </span>
+            <span className="hidden text-[10px] font-semibold tracking-[0.22em] uppercase sm:inline">
+              {menuOpen ? 'Zamknij' : 'Menu'}
+            </span>
+          </button>
+        </nav>
+      </header>
+
+      <FullscreenMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+    </>
   )
 }

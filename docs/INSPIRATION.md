@@ -1,6 +1,15 @@
 # Mapa inspiracji
 
-Redesign to **synteza wzorców**, nie klon jednej strony. Jeden akcent: żółty Koto `#FFE800` na scenach `#060606`; About, Contact i długie case studies zostają jasne.
+Redesign to **synteza wzorców**, nie klon jednej strony. Domyślnie: **editorial dark** (`#000` / `#060606`), typografia cinematic, akcent `#FFE800` oszczędnie (hover menu, indeksy, CTA).
+
+## fromanother.love — nawigacja i pacing (maj 2026)
+
+| Źródło | URL | Wzorzec w buildzie |
+|--------|-----|-------------------|
+| Awwwards Inspiration | [creative-lab-fromanother-love — Navigation Menu](https://www.awwwards.com/inspiration/creative-lab-fromanother-love) | `FullscreenMenu.tsx`: fullscreen overlay, duże linki, numery `01–04`, stagger GSAP in/out, scroll lock, Escape, focus trap |
+| Awwwards Site | [fromanother.love](https://www.awwwards.com/sites/fromanother-love) | `IntroCurtain.tsx` (fade marki ≤1.2s, bez %), chapter breaks (`01`–`03`), hero pełnoekranowy, obrazy `bleed-full`, rytm sekcji `section-pad` 24–36 |
+
+**Świadomie nie klonujemy:** WebGL, długi preloader, all-type bez treści biznesowej. Zostają 4 projekty, portret Marcina, Lenis + ScrollTrigger.
 
 ## Koto (kierunek agency — marzec 2026)
 
@@ -29,7 +38,7 @@ Redesign to **synteza wzorców**, nie klon jednej strony. Jeden akcent: żółty
 
 ## Świadomie pominięto
 
-Partizan (shadery), Matveyan (3D hero), fromanother (all-black), podwójne sticky CTA, kobalt `#2E54FE`, mint-green w UI.
+Partizan (shadery), Matveyan (3D hero), podwójne sticky CTA, kobalt `#2E54FE`, mint-green w UI, preloader z licznikiem %.
 
 ## Oczekuje URL od użytkownika
 
@@ -39,6 +48,8 @@ Druga inspiracja **po Koto** nie została zapisana w repo (`docs/`, `content.ts`
 
 | Sekcja | Synteza |
 |--------|---------|
-| Hero + Work | Scena `#060606`, akcent żółty, portret Marcina |
-| ProjectStories + About + Contact | Jasny paper, czytelny tekst (Muzli / Josie) |
+| Nav | Hamburger → `FullscreenMenu` (fromanother) |
+| Hero | Portret editorial full-bleed + gradient, typ mega |
+| Work + Case studies | Karty edge-to-edge, chapter breaks |
+| About + Contact | Ciemny editorial, duży quote (Muzli / Josie) |
 | Dev | Port **5190**, `strictPort` |

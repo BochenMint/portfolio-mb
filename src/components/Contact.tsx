@@ -1,29 +1,26 @@
 import { site } from '../data/content'
 import { LeadForm } from './LeadForm'
 import { MagneticButton } from './MagneticButton'
+import { SectionIntro } from './SectionIntro'
 
 export function Contact() {
   const ctaHref = site.calendly || `mailto:${site.email}`
 
   return (
-    <section id="contact" data-section className="section-pad border-t border-rule">
+    <section id="contact" data-section className="section-pad">
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
-          <p data-reveal className="section-label">
-            Kontakt
-          </p>
-          <h2
-            data-reveal
-            className="font-headline mt-3 text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] normal-case"
-          >
-            Porozmawiajmy o Twoim projekcie
-          </h2>
-          <p data-reveal className="text-muted mt-6 leading-relaxed">
-            Napisz krótko, co nie działa — odpowiem w jeden dzień roboczy.
-          </p>
+          <SectionIntro
+            num="04"
+            title="Kontakt"
+            lead="Napisz krótko, co nie działa — odpowiem w jeden dzień roboczy."
+          />
 
           <div data-reveal className="mt-8 flex flex-wrap gap-4">
-            <MagneticButton href={`mailto:${site.email}`} className="btn-fill">
+            <MagneticButton
+              href={`mailto:${site.email}`}
+              className="btn-fill border border-[var(--color-paper)] bg-[var(--color-paper)] text-[var(--color-ink)]"
+            >
               {site.email}
             </MagneticButton>
             {site.calendly ? (
@@ -35,15 +32,11 @@ export function Contact() {
               href={site.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-soft"
+              className="btn-soft border-[var(--color-paper)]/25 text-[var(--color-paper)]"
             >
               GitHub
             </a>
           </div>
-
-          <footer data-reveal className="text-muted mt-16 text-xs">
-            © {new Date().getFullYear()} {site.name}
-          </footer>
         </div>
 
         <div data-reveal>
