@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { About } from './components/About'
 import { Contact } from './components/Contact'
 import { FeaturedWork } from './components/FeaturedWork'
@@ -34,8 +34,18 @@ function ChapterBreak({ label }: { label: string }) {
   )
 }
 
+const INTRO_MAX_MS = 1500
+
 function App() {
   const [introDone, setIntroDone] = useState(false)
+  const completeIntro = useCallback(() => {
+    setIntroDone((done) => (done ? done : true))
+  }, [])
+
+  useEffect(() => {
+    const failSafe = window.setTimeout(completeIntro, INTRO_MAX_MS)
+    return () => window.clearTimeout(failSafe)
+  }, [completeIntro])
 
   useLenis()
   useScrollAnimations(introDone)
@@ -43,7 +53,7 @@ function App() {
 
   return (
     <>
-      {!introDone ? <IntroCurtain onComplete={() => setIntroDone(true)} /> : null}
+      {!introDone ? <IntroCurtain onComplete={completeIntro} /> : null}
 
       <div
         data-progress-bar

@@ -3,7 +3,7 @@ import { gsap } from '../animation/gsap'
 import { site } from '../data/content'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 
-const MAX_MS = 1200
+const MAX_MS = 1500
 
 type IntroCurtainProps = {
   onComplete: () => void
@@ -12,43 +12,67 @@ type IntroCurtainProps = {
 export function IntroCurtain({ onComplete }: IntroCurtainProps) {
   const curtainRef = useRef<HTMLDivElement>(null)
   const lineRef = useRef<HTMLParagraphElement>(null)
+  const finishedRef = useRef(false)
+  const onCompleteRef = useRef(onComplete)
   const reduced = useReducedMotion()
 
+  onCompleteRef.current = onComplete
+
   useEffect(() => {
-    const curtain = curtainRef.current
-    const line = lineRef.current
-    if (!curtain || !line) {
-      onComplete()
-      return
+    const finish = () => {
+      if (finishedRef.current) return
+      finishedRef.current = true
+      onCompleteRef.current()
     }
 
     if (reduced) {
-      curtain.remove()
-      onComplete()
+      finish()
       return
     }
 
-    const tl = gsap.timeline({
-      onComplete: () => {
+    const curtain = curtainRef.current
+    const line = lineRef.current
+    if (!curtain || !line) {
+      finish()
+      return
+    }
+
+    let tl: gsap.core.Timeline | null = null
+
+    const teardown = () => {
+      tl?.kill()
+      tl = null
+      if (curtain.isConnected) {
+        gsap.killTweensOf([curtain, line])
         curtain.remove()
-        onComplete()
+      }
+    }
+
+    tl = gsap.timeline({
+      onComplete: () => {
+        teardown()
+        finish()
       },
     })
 
     tl.fromTo(line, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' })
     tl.to(line, { opacity: 0, duration: 0.35, ease: 'power2.in' }, '+=0.25')
-    tl.to(curtain, { opacity: 0, duration: 0.4, ease: 'power2.inOut' }, '-=0.1')
+    tl.to(
+      curtain,
+      { opacity: 0, duration: 0.4, ease: 'power2.inOut', pointerEvents: 'none' },
+      '-=0.1',
+    )
 
     const failSafe = window.setTimeout(() => {
-      if (document.body.contains(curtain)) {
-        tl.kill()
-        curtain.remove()
-        onComplete()
-      }
+      teardown()
+      finish()
     }, MAX_MS)
 
-    return () => window.clearTimeout(failSafe)
-  }, [onComplete, reduced])
+    return () => {
+      window.clearTimeout(failSafe)
+      teardown()
+    }
+  }, [reduced])
 
   if (reduced) return null
 

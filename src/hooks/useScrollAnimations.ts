@@ -19,10 +19,27 @@ const FINAL_SELECTORS = [
   '[data-marquee-track]',
 ].join(', ')
 
+function revealAllFinal() {
+  gsap.set(FINAL_SELECTORS, {
+    opacity: 1,
+    y: 0,
+    x: 0,
+    scale: 1,
+    clipPath: 'inset(0% 0% 0% 0%)',
+    clearProps: 'transform,opacity,clipPath',
+  })
+  gsap.set('[data-progress-bar]', { scaleX: 1 })
+  gsap.set('[data-marquee-track]', { x: 0 })
+}
+
+const FROM_OPTS = { immediateRender: false } as const
+
 export function useScrollAnimations(ready = true) {
   useGSAP(
     () => {
       if (!ready) return
+
+      const revealSafety = window.setTimeout(revealAllFinal, 2500)
 
       const mm = gsap.matchMedia()
 
@@ -35,16 +52,7 @@ export function useScrollAnimations(ready = true) {
           const { reduce, motion } = context.conditions!
 
           const showFinal = () => {
-            gsap.set(FINAL_SELECTORS, {
-              opacity: 1,
-              y: 0,
-              x: 0,
-              scale: 1,
-              clipPath: 'inset(0% 0% 0% 0%)',
-              clearProps: 'transform,opacity,clipPath',
-            })
-            gsap.set('[data-progress-bar]', { scaleX: 1 })
-            gsap.set('[data-marquee-track]', { x: 0 })
+            revealAllFinal()
           }
 
           if (reduce) {
@@ -52,7 +60,10 @@ export function useScrollAnimations(ready = true) {
             return
           }
 
-          if (!motion) return
+          if (!motion) {
+            showFinal()
+            return
+          }
 
           // —— Hero load ——
           gsap.from('[data-hero-line-inner]', {
@@ -62,6 +73,7 @@ export function useScrollAnimations(ready = true) {
             stagger: 0.14,
             ease: 'power4.out',
             delay: 0.08,
+            ...FROM_OPTS,
           })
 
           gsap.from('[data-hero-word]', {
@@ -71,6 +83,7 @@ export function useScrollAnimations(ready = true) {
             stagger: 0.035,
             ease: 'power3.out',
             delay: 0.28,
+            ...FROM_OPTS,
           })
 
           gsap.from('[data-hero-fade]', {
@@ -80,6 +93,7 @@ export function useScrollAnimations(ready = true) {
             stagger: 0.07,
             ease: 'power3.out',
             delay: 0.45,
+            ...FROM_OPTS,
           })
 
           const portrait = document.querySelector('[data-hero-portrait]')
@@ -90,6 +104,7 @@ export function useScrollAnimations(ready = true) {
               duration: 1.1,
               ease: 'power3.out',
               delay: 0.35,
+              ...FROM_OPTS,
             })
 
             gsap.to(portrait, {
@@ -273,7 +288,11 @@ export function useScrollAnimations(ready = true) {
       )
 
       ScrollTrigger.refresh()
-      return () => mm.revert()
+      return () => {
+        window.clearTimeout(revealSafety)
+        mm.revert()
+        revealAllFinal()
+      }
     },
     { dependencies: [ready] },
   )
