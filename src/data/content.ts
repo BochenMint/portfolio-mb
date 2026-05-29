@@ -39,9 +39,10 @@ export const site = {
 }
 
 export const navLinks = [
-  { href: '#work', label: 'Work' },
-  { href: '#about', label: 'About' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#work', label: 'Realizacje' },
+  { href: '#case-studies', label: 'Case studies' },
+  { href: '#about', label: 'O mnie' },
+  { href: '#contact', label: 'Kontakt' },
 ]
 
 export const projects: Project[] = [
@@ -65,7 +66,6 @@ export const projects: Project[] = [
       'Concierge z kontekstem oferty, nie generyczny chatbot',
     ],
     tags: ['Hospitality', 'Previo', 'AI Concierge'],
-    imageScene: 'hero',
     flagship: true,
   },
   {

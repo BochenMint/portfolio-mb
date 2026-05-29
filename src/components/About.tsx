@@ -3,10 +3,10 @@ import { Portrait } from './Portrait'
 
 export function About() {
   return (
-    <section id="about" data-section className="section-pad bg-paper-bright border-t border-rule">
+    <section id="about" data-section className="section-pad border-t border-rule">
       <div className="mx-auto max-w-6xl">
         <p data-reveal className="section-label">
-          About
+          O mnie
         </p>
         <div className="mt-8 grid items-start gap-10 md:grid-cols-[minmax(200px,280px)_1fr] md:gap-12 lg:gap-16">
           <figure

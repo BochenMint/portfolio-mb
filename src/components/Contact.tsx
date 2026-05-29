@@ -9,7 +9,7 @@ export function Contact() {
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
           <p data-reveal className="section-label">
-            Contact
+            Kontakt
           </p>
           <h2
             data-reveal

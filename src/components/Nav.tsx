@@ -3,33 +3,21 @@ import { ThemeToggle } from './ThemeToggle'
 
 export function Nav() {
   return (
-    <header className="section-stage fixed top-0 right-0 left-0 z-50 border-b border-white/10 bg-stage/92 backdrop-blur-md">
+    <header className="fixed top-0 right-0 left-0 z-50 border-b border-rule bg-paper/92 backdrop-blur-md">
       <nav
         className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4 md:px-10 lg:px-16"
         aria-label="Główna nawigacja"
       >
-        <a
-          href="#"
-          className="font-headline flex items-center gap-2.5 text-sm tracking-tight md:text-base"
-        >
-          <img
-            src="/images/marcin-bochenek-400w.webp"
-            alt=""
-            width={32}
-            height={32}
-            className="hidden size-8 shrink-0 rounded-full object-cover object-[center_18%] ring-2 ring-accent/80 sm:block"
-            decoding="async"
-            aria-hidden
-          />
-          <span>{site.name.split(' ')[0]}</span>
+        <a href="#" className="font-headline text-lg tracking-tight">
+          {site.name.split(' ')[0]}
         </a>
 
-        <ul className="flex items-center gap-4 md:gap-8">
+        <ul className="hidden items-center gap-6 sm:flex">
           {navLinks.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-stage-muted text-[10px] font-semibold tracking-[0.14em] uppercase transition-colors hover:text-accent md:text-xs md:tracking-[0.16em]"
+                className="text-muted text-xs font-medium tracking-wide uppercase transition-colors hover:text-accent"
               >
                 {link.label}
               </a>
@@ -39,8 +27,8 @@ export function Nav() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <a href="#contact" className="btn-fill hidden text-[11px] sm:inline-flex">
-            Contact
+          <a href="#contact" className="btn-fill hidden text-xs sm:inline-flex">
+            Kontakt
           </a>
         </div>
       </nav>

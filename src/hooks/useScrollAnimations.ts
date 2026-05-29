@@ -9,17 +9,17 @@ export function useScrollAnimations() {
       mm.add(
         {
           reduce: '(prefers-reduced-motion: reduce)',
-          desktop: '(min-width: 1024px) and (prefers-reduced-motion: no-preference)',
           motion: '(prefers-reduced-motion: no-preference)',
         },
         (context) => {
-          const { reduce, desktop, motion } = context.conditions!
+          const { reduce, motion } = context.conditions!
 
           const showFinal = () => {
-            gsap.set(
-              '[data-hero-line], [data-hero-word], [data-hero-fade], [data-reveal], [data-project-card], [data-strip-card]',
-              { opacity: 1, y: 0, yPercent: 0, scale: 1, clearProps: 'transform' },
-            )
+            gsap.set('[data-hero-fade], [data-reveal], [data-project-card]', {
+              opacity: 1,
+              y: 0,
+              clearProps: 'transform',
+            })
           }
 
           if (reduce) {
@@ -28,109 +28,41 @@ export function useScrollAnimations() {
           }
 
           if (motion) {
-            gsap.from('[data-hero-line]', {
-              yPercent: 110,
-              opacity: 0,
-              duration: 0.95,
-              stagger: 0.08,
-              ease: 'power3.out',
-            })
-
-            gsap.from('[data-hero-word]', {
-              yPercent: 115,
-              opacity: 0,
-              duration: 0.6,
-              stagger: 0.025,
-              ease: 'power3.out',
-              delay: 0.1,
-            })
-
             gsap.from('[data-hero-fade]', {
               opacity: 0,
-              y: 24,
-              duration: 0.7,
+              y: 20,
+              duration: 0.65,
               stagger: 0.06,
-              ease: 'power3.out',
-              delay: 0.18,
+              ease: 'power2.out',
             })
 
             ScrollTrigger.batch('[data-reveal]', {
-              start: 'top 88%',
+              start: 'top 90%',
               onEnter: (batch) =>
                 gsap.fromTo(
                   batch,
-                  { y: 36, opacity: 0 },
+                  { y: 20, opacity: 0 },
                   {
                     y: 0,
                     opacity: 1,
-                    duration: 0.75,
-                    stagger: 0.06,
-                    ease: 'power3.out',
+                    duration: 0.6,
+                    stagger: 0.05,
+                    ease: 'power2.out',
                     overwrite: true,
                   },
                 ),
               once: true,
             })
 
-            gsap.utils.toArray<HTMLElement>('[data-project-card]').forEach((card, i) => {
+            gsap.utils.toArray<HTMLElement>('[data-project-card]').forEach((card) => {
               gsap.from(card, {
-                scrollTrigger: { trigger: card, start: 'top 90%', once: true },
-                y: 48,
+                scrollTrigger: { trigger: card, start: 'top 92%', once: true },
+                y: 16,
                 opacity: 0,
-                duration: 0.85,
-                delay: i * 0.03,
-                ease: 'power3.out',
-              })
-
-              const img = card.querySelector('img')
-              if (img) {
-                gsap.to(img, {
-                  scale: 1.06,
-                  ease: 'none',
-                  scrollTrigger: {
-                    trigger: card,
-                    start: 'top bottom',
-                    end: 'bottom top',
-                    scrub: 0.6,
-                  },
-                })
-              }
-
-              card.addEventListener('mouseenter', () => {
-                gsap.to(card, { scale: 1.01, duration: 0.35, ease: 'power2.out' })
-              })
-              card.addEventListener('mouseleave', () => {
-                gsap.to(card, { scale: 1, duration: 0.4, ease: 'power2.out' })
+                duration: 0.55,
+                ease: 'power2.out',
               })
             })
-
-            gsap.utils.toArray<HTMLElement>('[data-strip-card]').forEach((card) => {
-              card.addEventListener('mouseenter', () => {
-                gsap.to(card, { y: -8, scale: 1.02, duration: 0.35, ease: 'power2.out' })
-              })
-              card.addEventListener('mouseleave', () => {
-                gsap.to(card, { y: 0, scale: 1, duration: 0.4, ease: 'power2.out' })
-              })
-            })
-          }
-
-          if (desktop && motion) {
-            const workPin = document.querySelector('[data-work-pin]')
-            const workTrack = document.querySelector('[data-work-track]') as HTMLElement | null
-            if (workPin && workTrack) {
-              const getScroll = () => Math.max(0, workTrack.scrollWidth - workPin.clientWidth + 48)
-              gsap.to(workTrack, {
-                x: () => -getScroll(),
-                ease: 'none',
-                scrollTrigger: {
-                  trigger: workPin,
-                  start: 'top 75%',
-                  end: () => `+=${Math.max(getScroll(), 320)}`,
-                  scrub: 0.8,
-                  invalidateOnRefresh: true,
-                },
-              })
-            }
           }
         },
       )

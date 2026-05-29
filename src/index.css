@@ -1,21 +1,19 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-headline: 'Syne', system-ui, sans-serif;
+  --font-headline: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
 
-  --color-paper: #f2f2ee;
-  --color-paper-bright: #fafaf8;
-  --color-ink: #060606;
-  --color-ink-muted: #5a5a5a;
-  --color-stage: #060606;
-  --color-stage-muted: #a8a8a8;
-  --color-accent: #ffe800;
-  --color-accent-deep: #e6d100;
+  --color-paper: #faf9f7;
+  --color-paper-bright: #ffffff;
+  --color-ink: #1a1917;
+  --color-ink-muted: #5c5852;
+  --color-accent: #c45c2a;
+  --color-accent-deep: #9e4822;
   --color-rule: color-mix(in srgb, var(--color-ink) 12%, transparent);
   --color-surface: #ffffff;
-  --color-on-accent: #060606;
+  --color-on-accent: #faf9f7;
 }
 
 @layer base {
@@ -28,17 +26,15 @@
   }
 
   [data-theme='dark'] {
-    --color-paper: #0e0e0e;
-    --color-paper-bright: #141414;
-    --color-ink: #f5f5f3;
-    --color-ink-muted: #9a9a9a;
-    --color-stage: #060606;
-    --color-stage-muted: #8a8a8a;
-    --color-accent: #ffe800;
-    --color-accent-deep: #e6d100;
+    --color-paper: #141312;
+    --color-paper-bright: #1c1b19;
+    --color-ink: #f3f1ec;
+    --color-ink-muted: #a8a39c;
+    --color-accent: #e07a4a;
+    --color-accent-deep: #c45c2a;
     --color-rule: color-mix(in srgb, var(--color-ink) 14%, transparent);
-    --color-surface: #121212;
-    --color-on-accent: #060606;
+    --color-surface: #1c1b19;
+    --color-on-accent: #faf9f7;
   }
 
   body {
@@ -51,7 +47,7 @@
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--color-accent) 55%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
     color: var(--color-ink);
   }
 
@@ -77,9 +73,9 @@
 @layer utilities {
   .font-headline {
     font-family: var(--font-headline);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    text-transform: none;
   }
 
   .font-display {
@@ -92,10 +88,6 @@
 
   .text-muted {
     color: var(--color-ink-muted);
-  }
-
-  .text-stage-muted {
-    color: var(--color-stage-muted);
   }
 
   .border-rule {
@@ -122,17 +114,8 @@
     background-color: var(--color-paper-bright);
   }
 
-  .section-stage {
-    background: var(--color-stage);
-    color: #f5f5f3;
-    --color-ink: #f5f5f3;
-    --color-ink-muted: var(--color-stage-muted);
-    --color-rule: color-mix(in srgb, #fff 14%, transparent);
-    --color-surface: #111111;
-  }
-
   .section-pad {
-    @apply px-6 py-20 md:px-10 md:py-28 lg:px-16;
+    @apply px-6 py-20 md:px-10 md:py-24 lg:px-16;
   }
 
   [data-section] {
@@ -148,19 +131,15 @@
     color: var(--color-ink-muted);
     font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-  }
-
-  .section-stage .section-label {
-    color: var(--color-stage-muted);
   }
 
   .project-index {
     font-family: var(--font-body);
     font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     color: var(--color-on-accent);
     background: var(--color-accent);
   }
@@ -170,25 +149,12 @@
     align-items: center;
     gap: 0.65rem;
     font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-weight: 500;
     color: var(--color-ink-muted);
-    transition:
-      color 0.25s ease,
-      gap 0.25s ease;
+    transition: color 0.2s ease;
   }
 
   .project-next:hover {
-    color: var(--color-accent-deep);
-    gap: 1rem;
-  }
-
-  .section-stage .project-next {
-    color: var(--color-stage-muted);
-  }
-
-  .section-stage .project-next:hover {
     color: var(--color-accent);
   }
 
@@ -199,89 +165,36 @@
     border: 1px solid var(--color-rule);
     padding: 0.7rem 1.35rem;
     font-size: 0.875rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-weight: 500;
     transition:
       color 0.2s ease,
-      border-color 0.2s ease,
-      background-color 0.2s ease;
+      border-color 0.2s ease;
     color: var(--color-ink);
     background: transparent;
   }
 
   .btn-soft:hover {
-    border-color: var(--color-accent-deep);
-    color: var(--color-ink);
-    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-  }
-
-  .section-stage .btn-soft {
-    border-color: color-mix(in srgb, #fff 22%, transparent);
-    color: #f5f5f3;
-  }
-
-  .section-stage .btn-soft:hover {
     border-color: var(--color-accent);
     color: var(--color-accent);
-    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
   }
 
   .btn-fill {
-    @apply inline-flex items-center gap-2 px-6 py-3 text-sm font-bold tracking-wide uppercase;
+    @apply inline-flex items-center gap-2 px-6 py-3 text-sm font-medium;
     background: var(--color-accent);
     color: var(--color-on-accent);
-    transition:
-      background-color 0.2s ease,
-      transform 0.2s ease;
+    transition: background-color 0.2s ease;
   }
 
   .btn-fill:hover {
     background: var(--color-accent-deep);
-    transform: translateY(-1px);
-  }
-
-  .btn-fill-on-dark {
-    background: var(--color-accent);
-    color: var(--color-on-accent);
   }
 
   [data-project-card] {
-    transition:
-      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 0.4s ease,
-      border-color 0.3s ease;
+    transition: border-color 0.25s ease;
   }
 
   [data-project-card]:hover {
-    transform: translateY(-8px) scale(1.01);
-    border-color: var(--color-accent);
-    box-shadow:
-      0 28px 56px color-mix(in srgb, var(--color-ink) 12%, transparent),
-      0 0 0 1px color-mix(in srgb, var(--color-accent) 40%, transparent);
-  }
-
-  [data-project-card]:hover .project-index {
-    background: var(--color-accent-deep);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    [data-project-card]:hover {
-      transform: none;
-    }
-  }
-
-  .hero-accent-bar {
-    background: var(--color-accent);
-    height: 4px;
-    width: min(120px, 28vw);
-  }
-
-  .work-strip {
-    scrollbar-width: none;
-  }
-
-  .work-strip::-webkit-scrollbar {
-    display: none;
+    border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-rule));
   }
 
   .sr-only {
