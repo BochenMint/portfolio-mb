@@ -43,18 +43,18 @@ function FeaturedProject({ project, index }: { project: Project; index: number }
         href={hasLiveSite ? project.url : '#contact'}
         target={hasLiveSite ? '_blank' : undefined}
         rel={hasLiveSite ? 'noopener noreferrer' : undefined}
-        className="group block w-full max-w-none"
+        className="group block max-w-none"
       >
         <div
           data-featured-visual
-          className="bleed-full relative aspect-[4/3] w-full max-w-none overflow-hidden bg-[var(--color-paper)]/5 md:aspect-auto md:min-h-[70vh] lg:min-h-[72vh]"
+          className="bleed-full project-card-media relative aspect-[4/3] overflow-hidden bg-[var(--color-paper)]/5 md:aspect-auto md:min-h-[70vh] lg:min-h-[72vh]"
         >
           <ProjectImageInteractive
             project={project}
             variant="hero"
             priority={index === 1}
             interaction={project.flagship ? 'hero' : 'strong'}
-            className="h-full w-full"
+            className="h-full min-h-[inherit] w-full"
           />
           <span className="absolute top-4 left-4 z-10 border border-[var(--color-paper)]/30 bg-[var(--color-ink)]/80 px-3 py-1 font-mono text-[11px] tracking-widest text-[var(--color-paper)] uppercase backdrop-blur-sm md:top-6 md:left-6">
             {padIndex(index)}

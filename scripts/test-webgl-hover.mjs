@@ -111,15 +111,28 @@ async function main() {
     throw new Error(`Expected 4 ready WebGL layers, got ${count}`)
   }
 
-  const visual = page.locator('[data-featured-visual].bleed-full').first()
-  const visualBox = await visual.boundingBox()
-  if (!visualBox) throw new Error('No featured visual box')
   const viewportW = page.viewportSize()?.width ?? 1440
-  if (visualBox.width < viewportW * 0.92) {
-    throw new Error(
-      `Featured image not edge-to-edge: ${Math.round(visualBox.width)}px vs viewport ${viewportW}px`,
-    )
+  const minBleedW = viewportW * 0.95
+
+  const bleedVisuals = page.locator('[data-featured-visual].bleed-full, [data-case-image].bleed-full')
+  const bleedCount = await bleedVisuals.count()
+  if (bleedCount < 4) {
+    throw new Error(`Expected ≥4 bleed-full project visuals, got ${bleedCount}`)
   }
+
+  for (let i = 0; i < bleedCount; i++) {
+    const el = bleedVisuals.nth(i)
+    await el.scrollIntoViewIfNeeded()
+    const box = await el.boundingBox()
+    if (!box) throw new Error(`Bleed visual #${i + 1}: no bounding box`)
+    if (box.width < minBleedW) {
+      throw new Error(
+        `Bleed visual #${i + 1} not viewport-wide: ${Math.round(box.width)}px < ${Math.round(minBleedW)}px (95% of ${viewportW}px)`,
+      )
+    }
+  }
+
+  const visual = page.locator('[data-featured-visual].bleed-full').first()
 
   const projects = await page.locator('[data-featured-project]').all()
   const ratios = []
