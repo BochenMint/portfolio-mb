@@ -12,12 +12,12 @@ export function Nav() {
           {site.name.split(' ')[0]}
         </a>
 
-        <ul className="hidden items-center gap-6 sm:flex md:gap-8">
+        <ul className="flex items-center gap-4 md:gap-8">
           {navLinks.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-muted text-xs tracking-[0.14em] uppercase transition-colors hover:text-accent"
+                className="text-muted text-[10px] tracking-[0.12em] uppercase transition-colors hover:text-accent md:text-xs md:tracking-[0.14em]"
               >
                 {link.label}
               </a>
