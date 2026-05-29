@@ -84,7 +84,7 @@ export function ProjectStories() {
 
                   variant="hero"
 
-                  interaction={project.flagship ? 'hero' : 'subtle'}
+                  interaction={project.flagship ? 'hero' : 'strong'}
 
                   className="h-[115%] w-full max-w-none rounded-none object-cover"
 

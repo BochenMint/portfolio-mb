@@ -1,9 +1,14 @@
+import { lazy, Suspense, useState } from 'react'
 import type { Project } from '../data/content'
-import {
-  useProjectImagePointer,
-  type ImageInteractionLevel,
-} from '../hooks/useProjectImagePointer'
+import { useWebGLCapable } from '../hooks/useWebGLCapable'
+import type { DisplacementLevel } from '../webgl/displacementConfig'
 import { ProjectImage } from './ProjectImage'
+
+const ProjectImageWebGL = lazy(() =>
+  import('./ProjectImageWebGL').then((m) => ({ default: m.ProjectImageWebGL })),
+)
+
+export type ImageInteractionLevel = DisplacementLevel
 
 type Props = {
   project: Project
@@ -18,13 +23,16 @@ export function ProjectImageInteractive({
   variant = 'card',
   className = '',
   priority,
-  interaction = 'subtle',
+  interaction = 'strong',
 }: Props) {
-  const enabled = interaction !== 'off'
-  const level = enabled ? interaction : 'subtle'
-  const { rootRef, interactive } = useProjectImagePointer(level, enabled)
+  const { capable } = useWebGLCapable()
+  const [webglFailed, setWebglFailed] = useState(false)
 
-  if (!enabled || !interactive) {
+  const enabled = interaction !== 'off'
+  const level: DisplacementLevel =
+    interaction === 'off' ? 'subtle' : interaction
+
+  if (!enabled || !capable || webglFailed) {
     return (
       <ProjectImage
         project={project}
@@ -35,29 +43,24 @@ export function ProjectImageInteractive({
     )
   }
 
-  const isHero = interaction === 'hero'
-
   return (
-    <div
-      ref={rootRef}
-      className={`project-interactive h-full w-full ${isHero ? 'project-interactive--hero' : 'project-interactive--subtle'}`}
+    <Suspense
+      fallback={
+        <ProjectImage
+          project={project}
+          variant={variant}
+          className={className}
+          priority={priority}
+        />
+      }
     >
-      <div data-tilt className="project-interactive__tilt relative h-full w-full">
-        <div
-          data-parallax
-          className={`project-interactive__media h-full w-full ${className}`}
-        >
-          <ProjectImage
-            project={project}
-            variant={variant}
-            className="rounded-none"
-            priority={priority}
-          />
-        </div>
-        {isHero ? (
-          <div data-shine className="project-interactive__shine" aria-hidden />
-        ) : null}
-      </div>
-    </div>
+      <ProjectImageWebGL
+        project={project}
+        variant={variant}
+        level={level}
+        className={className}
+        onFallback={() => setWebglFailed(true)}
+      />
+    </Suspense>
   )
 }

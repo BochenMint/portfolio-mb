@@ -102,7 +102,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
           priority={index === 1}
 
-          interaction={project.flagship ? 'hero' : 'subtle'}
+          interaction={project.flagship ? 'hero' : 'strong'}
 
           className="project-card-img rounded-none"
 

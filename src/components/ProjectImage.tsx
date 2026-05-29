@@ -1,4 +1,5 @@
 import type { Project } from '../data/content'
+import { sceneFor } from '../lib/projectImageUrl'
 
 type Props = {
   project: Project
@@ -9,14 +10,6 @@ type Props = {
 
 const HERO_W = 1920
 const CARD_W = 1200
-
-function sceneFor(project: Project, variant: 'hero' | 'card') {
-  if (project.id === 'mint') {
-    return variant === 'card' ? 'apartment' : 'hero'
-  }
-  if (project.imageScene) return project.imageScene
-  return 'hero'
-}
 
 export function ProjectImage({
   project,

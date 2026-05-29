@@ -1,6 +1,6 @@
 import { projects } from '../data/content'
 import type { Project } from '../data/content'
-import { ProjectImage } from './ProjectImage'
+import { ProjectImageInteractive } from './ProjectImageInteractive'
 import { ProjectMarquee } from './ProjectMarquee'
 import { SectionIntro } from './SectionIntro'
 
@@ -47,11 +47,12 @@ function FeaturedProject({ project, index }: { project: Project; index: number }
         data-featured-visual
       >
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--color-paper)]/5 md:aspect-[21/9]">
-          <ProjectImage
+          <ProjectImageInteractive
             project={project}
             variant="hero"
             priority={index === 1}
-            className="h-[108%] max-w-none transition-transform duration-[1.2s] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
+            interaction={project.flagship ? 'hero' : 'strong'}
+            className="h-[108%] max-w-none"
           />
           <span className="absolute top-4 left-4 z-10 border border-[var(--color-paper)]/30 bg-[var(--color-ink)]/80 px-3 py-1 font-mono text-[11px] tracking-widest text-[var(--color-paper)] uppercase backdrop-blur-sm md:top-6 md:left-6">
             {padIndex(index)}
