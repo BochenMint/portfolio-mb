@@ -114,8 +114,6 @@ const LIVE_CAPTURES = [
 
     scrollTo: '.hero-section-v3',
 
-    element: '.hero-card-right, .v3-hero-iphone',
-
   },
 
   {
@@ -145,8 +143,6 @@ const LIVE_CAPTURES = [
     wait: 3000,
 
     scrollTo: '#panel',
-
-    element: '#panel .v3-platform-preview',
 
   },
 
@@ -740,7 +736,23 @@ async function captureLive() {
 
 
 
+  const onlyIds = process.argv
+
+    .find((a) => a.startsWith('--only='))
+
+    ?.slice(7)
+
+    .split(',')
+
+    .map((s) => s.trim())
+
+    .filter(Boolean)
+
+
+
   for (const cap of LIVE_CAPTURES) {
+
+    if (onlyIds?.length && !onlyIds.includes(cap.id)) continue
 
     if (cap.id === 'plumm' && cap.name === 'dashboard' && plummLoggedIn) continue
 

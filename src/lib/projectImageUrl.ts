@@ -5,7 +5,7 @@ export function sceneFor(project: Project, variant: 'hero' | 'card') {
     return variant === 'card' ? 'apartment' : 'hero'
   }
   if (project.id === 'plumm') {
-    return variant === 'card' ? 'app' : 'dashboard'
+    return 'split'
   }
   if (project.imageScene) return project.imageScene
   return 'hero'

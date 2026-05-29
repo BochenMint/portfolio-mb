@@ -220,7 +220,6 @@ export const projects: Project[] = [
       'AI + człowiek przy compliance — szybkość bez ryzyka',
     ],
     tags: ['SaaS', 'KSeF', 'JDG'],
-    imageScene: 'hero',
   },
   {
     id: 'idrive',

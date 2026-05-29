@@ -150,7 +150,7 @@ Generowane przez `npm run capture:screens` → WebP full (3840w) + hero (1920w) 
 | `dashboard-hero.webp` / `dashboard-card.webp` | „Wszystko w jednym panelu" — `.v3-platform-preview` (Firma demo, rozliczenia) | marketing (= post-login UX na stronie) |
 | `pricing-hero.webp` / `pricing-card.webp` | `/cennik-ksiegowosci-online` | marketing |
 
-Portfolio UI: duży kadr case study → `dashboard`, miniatury → `app` (jak Mint: hero vs apartment).
+Portfolio UI: główny kadr FeaturedWork → **`split-*`** (kompozyt przekątny: hero landing + `#panel`, `npm run composite:plumm`); pojedyncze zrzuty `hero` / `dashboard` / `app` zostają w katalogu jako materiał źródłowy.
 
 ---
 
