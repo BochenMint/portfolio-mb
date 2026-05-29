@@ -13,7 +13,7 @@ export function Contact() {
           </p>
           <h2
             data-reveal
-            className="font-display mt-3 text-[clamp(2rem,5vw,3.25rem)] leading-tight"
+            className="font-headline mt-3 text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] normal-case"
           >
             Porozmawiajmy o Twoim projekcie
           </h2>

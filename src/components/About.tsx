@@ -3,7 +3,7 @@ import { Portrait } from './Portrait'
 
 export function About() {
   return (
-    <section id="about" data-section className="section-pad border-t border-rule">
+    <section id="about" data-section className="section-pad bg-paper-bright border-t border-rule">
       <div className="mx-auto max-w-6xl">
         <p data-reveal className="section-label">
           About
@@ -11,7 +11,7 @@ export function About() {
         <div className="mt-8 grid items-start gap-10 md:grid-cols-[minmax(200px,280px)_1fr] md:gap-12 lg:gap-16">
           <figure
             data-reveal
-            className="border-rule mx-auto aspect-[4/5] w-full max-w-[280px] overflow-hidden rounded-2xl border bg-surface md:mx-0"
+            className="border-rule mx-auto aspect-[4/5] w-full max-w-[280px] overflow-hidden rounded-sm border bg-surface md:mx-0"
           >
             <Portrait
               sizes="(min-width: 768px) 280px, 64vw"
@@ -21,7 +21,7 @@ export function About() {
           <div className="min-w-0">
             <h2
               data-reveal
-              className="font-display text-3xl leading-tight md:text-4xl"
+              className="font-display text-3xl leading-tight md:text-[2.25rem]"
             >
               Cześć — buduję produkty, które działają w niedzielę o 23:00.
             </h2>
