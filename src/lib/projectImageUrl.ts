@@ -11,9 +11,13 @@ export function sceneFor(project: Project, variant: 'hero' | 'card') {
   return 'hero'
 }
 
-/** Primary WebP URL for WebGL texture (4K full variant). */
-export function projectImageUrl(project: Project, variant: 'hero' | 'card' = 'card') {
+/** WebGL texture — hero tier (1920px) for fast load and broad GPU support. */
+export function projectImageTextureUrl(project: Project, variant: 'hero' | 'card' = 'card') {
   const scene = sceneFor(project, variant)
-  const base = `/projects/${project.id}/${scene}`
-  return `${base}-full.webp`
+  return `/projects/${project.id}/${scene}-hero.webp`
+}
+
+/** Legacy alias — same as texture URL. */
+export function projectImageUrl(project: Project, variant: 'hero' | 'card' = 'card') {
+  return projectImageTextureUrl(project, variant)
 }

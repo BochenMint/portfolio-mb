@@ -32,7 +32,10 @@ class WebGLImageErrorBoundary extends Component<BoundaryProps, BoundaryState> {
     return { hasError: true }
   }
 
-  componentDidCatch() {
+  componentDidCatch(error: unknown) {
+    if (import.meta.env.DEV) {
+      console.warn('[WebGL] error boundary', error)
+    }
     this.props.onError()
   }
 
@@ -51,25 +54,27 @@ export function ProjectImageInteractive({
 }: Props) {
   const { capable } = useWebGLCapable()
   const [webglFailed, setWebglFailed] = useState(false)
+
   const handleWebglFallback = useCallback(() => setWebglFailed(true), [])
 
   const enabled = interaction !== 'off' && capable && !webglFailed
+  const showCssFallback = interaction !== 'off' && (!capable || webglFailed)
   const level: DisplacementLevel = interaction === 'off' ? 'subtle' : interaction
 
   return (
     <div
-      className={`project-interactive relative h-full w-full overflow-hidden ${className}`}
+      className={`project-interactive relative h-full w-full overflow-hidden ${showCssFallback ? 'project-interactive--css-fallback' : ''} ${className}`}
       data-webgl-enabled={enabled ? 'true' : 'false'}
     >
       <ProjectImage
         project={project}
         variant={variant}
-        className="relative z-0 h-full w-full"
+        className="project-interactive__still relative z-0 h-full w-full"
         priority={priority}
       />
       {enabled ? (
         <Suspense fallback={null}>
-          <WebGLImageErrorBoundary onError={() => setWebglFailed(true)}>
+          <WebGLImageErrorBoundary onError={handleWebglFallback}>
             <ProjectImageWebGL
               project={project}
               variant={variant}

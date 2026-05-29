@@ -162,10 +162,62 @@
     perspective: 900px;
   }
 
-  .project-webgl canvas {
+  .project-webgl__canvas {
     display: block;
     width: 100%;
     height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease;
+  }
+
+  .project-webgl[data-webgl-status='ready'] .project-webgl__canvas {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Static <img> under WebGL — hide once displacement canvas is live */
+  .project-interactive:has([data-webgl-status='ready']) .project-interactive__still {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .project-interactive--css-fallback .project-interactive__still {
+      transition:
+        transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.65s ease;
+      will-change: transform;
+    }
+
+    .project-interactive--css-fallback:hover .project-interactive__still {
+      transform: scale(1.03) perspective(900px) rotateX(2deg) rotateY(-3deg);
+      filter: brightness(1.06) saturate(1.05);
+    }
+
+    .project-interactive--css-fallback::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(
+        115deg,
+        transparent 38%,
+        color-mix(in srgb, var(--color-paper) 22%, transparent) 50%,
+        transparent 62%
+      );
+      transform: translateX(-120%);
+      transition:
+        transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.35s ease;
+    }
+
+    .project-interactive--css-fallback:hover::after {
+      opacity: 1;
+      transform: translateX(120%);
+    }
   }
 
   .marquee-track {
