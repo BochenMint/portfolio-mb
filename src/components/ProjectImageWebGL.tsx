@@ -22,49 +22,62 @@ export function ProjectImageWebGL({
   className = '',
   onFallback,
 }: Props) {
-  const rootRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const hostRef = useRef<HTMLDivElement>(null)
   const effectRef = useRef<DisplacementEffect | null>(null)
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
-    const root = rootRef.current
-    const canvas = canvasRef.current
-    if (!root || !canvas || failed) return
+    const host = hostRef.current
+    if (!host || failed) return
 
     let disposed = false
+    let canvas: HTMLCanvasElement | null = null
     let removeListeners: (() => void) | undefined
+
+    const disposeEffect = () => {
+      removeListeners?.()
+      removeListeners = undefined
+      effectRef.current = null
+    }
 
     const imageUrl = projectImageUrl(project, variant)
     const options = DISPLACEMENT_LEVEL[level]
+    const alt = `${project.title} — ${project.tagline}`
+
+    host.replaceChildren()
+    canvas = document.createElement('canvas')
+    canvas.className = 'absolute inset-0 h-full w-full touch-none'
+    canvas.setAttribute('aria-label', alt)
+    canvas.setAttribute('role', 'img')
+    host.appendChild(canvas)
 
     void (async () => {
       try {
         const { createDisplacementEffect } = await import('../webgl/createDisplacementEffect')
-        if (disposed) return
+        if (disposed || !canvas) return
 
         const effect = await createDisplacementEffect(canvas, imageUrl, options)
-        effectRef.current = effect
         if (disposed) {
           effect.dispose()
-          effectRef.current = null
           return
         }
 
+        effectRef.current = effect
+
         const resize = () => {
-          const rect = root.getBoundingClientRect()
+          const rect = host.getBoundingClientRect()
           effect.setSize(Math.round(rect.width), Math.round(rect.height))
         }
 
         resize()
         const ro = new ResizeObserver(resize)
-        ro.observe(root)
+        ro.observe(host)
 
         const introStart = performance.now()
         const introDuration = 1400
 
         const onMove = (e: MouseEvent) => {
-          const rect = root.getBoundingClientRect()
+          const rect = host.getBoundingClientRect()
           effect.setMouse(
             (e.clientX - rect.left) / rect.width,
             (e.clientY - rect.top) / rect.height,
@@ -83,7 +96,7 @@ export function ProjectImageWebGL({
           },
           { threshold: 0.08 },
         )
-        io.observe(root)
+        io.observe(host)
         effect.start()
 
         const introTick = () => {
@@ -94,17 +107,16 @@ export function ProjectImageWebGL({
         }
         introTick()
 
-        root.addEventListener('mousemove', onMove)
-        root.addEventListener('mouseleave', onLeave)
+        host.addEventListener('mousemove', onMove)
+        host.addEventListener('mouseleave', onLeave)
 
         removeListeners = () => {
           ro.disconnect()
           io.disconnect()
-          root.removeEventListener('mousemove', onMove)
-          root.removeEventListener('mouseleave', onLeave)
+          host.removeEventListener('mousemove', onMove)
+          host.removeEventListener('mouseleave', onLeave)
           effect.stop()
           effect.dispose()
-          effectRef.current = null
         }
       } catch {
         if (!disposed) {
@@ -116,28 +128,20 @@ export function ProjectImageWebGL({
 
     return () => {
       disposed = true
-      removeListeners?.()
-      effectRef.current?.stop()
-      effectRef.current?.dispose()
-      effectRef.current = null
+      disposeEffect()
+      if (host.isConnected) {
+        host.replaceChildren()
+      }
+      canvas = null
     }
   }, [project, variant, level, failed, onFallback])
 
   if (failed) return null
 
-  const alt = `${project.title} — ${project.tagline}`
-
   return (
     <div
-      ref={rootRef}
+      ref={hostRef}
       className={`project-webgl relative h-full w-full overflow-hidden ${className}`}
-    >
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 h-full w-full touch-none"
-        aria-label={alt}
-        role="img"
-      />
-    </div>
+    />
   )
 }

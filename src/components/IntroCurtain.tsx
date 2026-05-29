@@ -44,7 +44,6 @@ export function IntroCurtain({ onComplete }: IntroCurtainProps) {
       tl = null
       if (curtain.isConnected) {
         gsap.killTweensOf([curtain, line])
-        curtain.remove()
       }
     }
 
