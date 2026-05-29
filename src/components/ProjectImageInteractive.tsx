@@ -1,4 +1,4 @@
-import { Component, lazy, Suspense, useState, type ReactNode } from 'react'
+import { Component, lazy, Suspense, useCallback, useState, type ReactNode } from 'react'
 import type { Project } from '../data/content'
 import { useWebGLCapable } from '../hooks/useWebGLCapable'
 import type { DisplacementLevel } from '../webgl/displacementConfig'
@@ -51,12 +51,16 @@ export function ProjectImageInteractive({
 }: Props) {
   const { capable } = useWebGLCapable()
   const [webglFailed, setWebglFailed] = useState(false)
+  const handleWebglFallback = useCallback(() => setWebglFailed(true), [])
 
   const enabled = interaction !== 'off' && capable && !webglFailed
   const level: DisplacementLevel = interaction === 'off' ? 'subtle' : interaction
 
   return (
-    <div className={`relative h-full w-full overflow-hidden ${className}`}>
+    <div
+      className={`project-interactive relative h-full w-full overflow-hidden ${className}`}
+      data-webgl-enabled={enabled ? 'true' : 'false'}
+    >
       <ProjectImage
         project={project}
         variant={variant}
@@ -70,7 +74,7 @@ export function ProjectImageInteractive({
               project={project}
               variant={variant}
               level={level}
-              onFallback={() => setWebglFailed(true)}
+              onFallback={handleWebglFallback}
             />
           </WebGLImageErrorBoundary>
         </Suspense>

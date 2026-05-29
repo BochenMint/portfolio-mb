@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "capture:screens": "node scripts/capture-and-optimize.mjs"
+    "capture:screens": "node scripts/capture-and-optimize.mjs",
+    "test:webgl-hover": "node scripts/test-webgl-hover.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

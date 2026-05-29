@@ -8,6 +8,7 @@ type Props = {
   priority?: boolean
 }
 
+const FULL_W = 3840
 const HERO_W = 1920
 const CARD_W = 1200
 
@@ -21,6 +22,7 @@ export function ProjectImage({
   const base = `/projects/${project.id}/${scene}`
   const isFlagshipLcp = priority ?? (project.flagship && variant === 'hero')
 
+  const fullSrc = `${base}-full.webp`
   const heroSrc = `${base}-hero.webp`
   const cardSrc = `${base}-card.webp`
 
@@ -31,7 +33,7 @@ export function ProjectImage({
     <picture className={`block h-full w-full ${className}`}>
       <source
         type="image/webp"
-        srcSet={`${cardSrc} 1200w, ${heroSrc} 1920w`}
+        srcSet={`${cardSrc} ${CARD_W}w, ${heroSrc} ${HERO_W}w, ${fullSrc} ${FULL_W}w`}
         sizes={
           variant === 'hero'
             ? '(min-width: 1024px) 42vw, 100vw'
