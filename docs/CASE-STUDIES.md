@@ -128,7 +128,7 @@ Potwierdzone w `apps/web`: **pl, en, de, it, es, cs, uk**
 
 ## Screenshoty (public/projects/)
 
-Generowane przez `npm run capture:screens` → WebP hero (1920w) + card (1200w).
+Generowane przez `npm run capture:screens` → WebP full (3840w) + hero (1920w) + card (1200w), viewport Playwright 3840×2160, q≈91.
 
 ### Mint (`public/projects/mint/`)
 
@@ -141,11 +141,16 @@ Generowane przez `npm run capture:screens` → WebP hero (1920w) + card (1200w).
 
 ### Plumm (`public/projects/plumm/`)
 
-| Plik | Widok |
-|------|-------|
-| `hero-hero.webp` / `hero-card.webp` | Landing — hero + mock mobile app |
-| `dashboard-hero.webp` / `dashboard-card.webp` | Sekcja „Wszystko w jednym panelu" |
-| `pricing-hero.webp` / `pricing-card.webp` | Cennik 2026 — plany JDG i spółki |
+Źródło: **Playwright na plumm.pl** (`npm run capture:screens`). Logowanie do `app.plumm.pl` — tylko gdy w `.env` są `PLUMM_DEMO_EMAIL` + `PLUMM_DEMO_PASSWORD` (brak w repo domyślnie). W capture maj 2026: **app.plumm.pl nie rozwiązuje DNS** → dashboard z mocka marketingowego `#panel`.
+
+| Plik | Widok | Typ |
+|------|-------|-----|
+| `hero-hero.webp` / `hero-card.webp` | Hero landing — karuzela mockupu iPhone (dashboard JDG) | marketing |
+| `app-hero.webp` / `app-card.webp` | Sekcja funkcji `#funkcje` — panel rozliczeń (mock desktop) | marketing |
+| `dashboard-hero.webp` / `dashboard-card.webp` | „Wszystko w jednym panelu" — `.v3-platform-preview` (Firma demo, rozliczenia) | marketing (= post-login UX na stronie) |
+| `pricing-hero.webp` / `pricing-card.webp` | `/cennik-ksiegowosci-online` | marketing |
+
+Portfolio UI: duży kadr case study → `dashboard`, miniatury → `app` (jak Mint: hero vs apartment).
 
 ---
 

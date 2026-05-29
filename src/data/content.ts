@@ -109,10 +109,10 @@ export const projects: Project[] = [
       'Polska platforma SaaS łącząca faktury KSeF, rozliczenia PIT/VAT/ZUS, generowanie JPK-V7 i asystenta AI z wiedzą podatkową — dla JDG, freelancerów i spółek, bez tradycyjnego biura rachunkowego.',
     client: 'PLUMM Sp. z o.o. — własny produkt SaaS (twórca: Marcin Bochenek)',
     outcome:
-      'Przedsiębiorca ma jeden panel zamiast Excela, programu do faktur i biura rachunkowego — KSeF gotowy od startu, terminy podatkowe w kalendarzu, zamknięcie miesiąca i JPK jednym kliknięciem.',
+      'Przedsiębiorca ma jeden panel księgowy po zalogowaniu zamiast Excela, programu do faktur i biura rachunkowego — KSeF od startu, terminy w kalendarzu, zamknięcie miesiąca i JPK jednym kliknięciem.',
     pain: 'Faktury, KPiR, ZUS i JPK w osobnych narzędziach; biuro rachunkowe 300–600 zł/mies. za JDG bez natychmiastowej odpowiedzi; jedno przeoczone JPK to kara i stres.',
     contribution:
-      'Platforma webowa Next.js/TypeScript od zera: landing, cennik, panel app.plumm.pl, integracja KSeF, AI asystent podatkowy, automatyczne naliczanie PIT/CIT/VAT/ZUS, pakiety od 0 zł do Enterprise.',
+      'Platforma webowa Next.js/TypeScript od zera: landing z mockupami produktu, cennik, panel księgowy po zalogowaniu (app.plumm.pl), integracja KSeF, AI asystent podatkowy, automatyczne naliczanie PIT/CIT/VAT/ZUS, pakiety od 0 zł do Enterprise.',
     decisions: [
       'Jedna aplikacja zamiast ekosystemu narzędzi — faktury, rozliczenia i AI w jednym UX',
       'KSeF jako fundament, nie dodatek — wysyłanie i odbiór e-faktur bez konfiguracji',
