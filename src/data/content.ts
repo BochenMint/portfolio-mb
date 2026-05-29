@@ -41,7 +41,7 @@ export type Testimonial = {
 
 export const site = {
   name: 'Marcin Bochenek',
-  role: 'Systemy dla MŚP · web · AI w codziennej pracy',
+  role: 'Systemy dla firm · web · AI w codziennej pracy',
   photo: '/images/marcin-bochenek.webp',
   photoAlt:
     'Marcin Bochenek — portret w okularach w oprawkach szylkretowych, uśmiech, biały t-shirt na jasnym tle',
@@ -70,7 +70,7 @@ export const site = {
   github: 'https://github.com/BochenMint',
   location: 'Polska · zdalnie',
   responseTime: 'Odpowiedź w 1 dzień roboczy',
-  icpBadge: 'Dla właścicieli MŚP · projekty od 25 000 PLN',
+  icpBadge: 'Projekty od 25 000 PLN · właściciele i operatorzy',
 }
 
 export const navLinks = [
@@ -250,7 +250,7 @@ export const projects: Project[] = [
     url: '#agentic',
     tagline: 'Powtarzalne procesy · audyt każdego kroku',
     description:
-      'Orkiestracja agentów AI dla MŚP: workflow, narzędzia na whitelistcie, human-in-the-loop. Szacunek: 5–10 h/tydz.* mniej na raportach, synchronizacjach i powtarzalnych zapytaniach — z logiem kto/co/dlaczego.',
+      'Orkiestracja agentów AI: workflow, narzędzia na whitelistcie, human-in-the-loop. Szacunek: 5–10 h/tydz.* mniej na raportach, synchronizacjach i powtarzalnych zapytaniach — z logiem kto/co/dlaczego.',
     client: 'Produkt wewnętrzny · automatyzacja B2B',
     outcome:
       'Zespół odpuszcza ręczne kopiuj-wklej. Każdy krok agenta zapisany — audyt bez „czarnej skrzynki” ChatGPT.',
@@ -262,7 +262,7 @@ export const projects: Project[] = [
       'Whitelist narzędzi — mniej ryzyka niż dowolny shell',
       'Operator przejmuje przy niskiej pewności',
     ],
-    tags: ['AI', 'Workflow', 'MŚP'],
+    tags: ['AI', 'Workflow', 'Automatyzacja'],
     imageScene: 'hero',
   },
 ]

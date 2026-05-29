@@ -74,7 +74,7 @@ export function ProjectStories() {
 
                 data-case-image
 
-                className="project-card-media bleed-full relative aspect-[16/9] overflow-hidden bg-[var(--color-surface)] md:aspect-[21/9]"
+                className="project-card-media bleed-full relative aspect-[16/9] w-full max-w-none overflow-hidden bg-[var(--color-surface)] md:aspect-auto md:min-h-[70vh] lg:min-h-[72vh]"
 
               >
 

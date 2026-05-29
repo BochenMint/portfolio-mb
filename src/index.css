@@ -89,15 +89,22 @@
 
   /** Edge-to-edge within max-width parents (fromanother / Koto pattern) */
   .bleed-full {
+    position: relative;
+    left: 50%;
+    right: 50%;
     width: 100vw;
     max-width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    margin-left: -50vw;
+    margin-right: -50vw;
   }
 
   [data-section] {
     content-visibility: auto;
     contain-intrinsic-size: auto 560px;
+  }
+
+  [data-featured-project] {
+    content-visibility: visible;
   }
 
   [data-hero] {

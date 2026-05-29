@@ -88,11 +88,11 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
       data-project-card
 
-      className="project-card group scroll-mt-28 overflow-hidden bg-[var(--color-surface)] md:scroll-mt-32"
+      className="project-card group scroll-mt-28 bg-[var(--color-surface)] md:scroll-mt-32"
 
     >
 
-      <div className="bleed-full project-card-media relative aspect-[16/9] overflow-hidden md:aspect-[21/9]">
+      <div className="bleed-full project-card-media relative aspect-[16/9] w-full max-w-none overflow-hidden md:aspect-auto md:min-h-[70vh] lg:min-h-[72vh]">
 
         <ProjectImageInteractive
 

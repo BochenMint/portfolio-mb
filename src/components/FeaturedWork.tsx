@@ -43,10 +43,12 @@ function FeaturedProject({ project, index }: { project: Project; index: number }
         href={hasLiveSite ? project.url : '#contact'}
         target={hasLiveSite ? '_blank' : undefined}
         rel={hasLiveSite ? 'noopener noreferrer' : undefined}
-        className="group block"
-        data-featured-visual
+        className="group block w-full max-w-none"
       >
-        <div className="bleed-full relative aspect-[4/3] w-full overflow-hidden bg-[var(--color-paper)]/5 md:aspect-auto md:min-h-[72vh]">
+        <div
+          data-featured-visual
+          className="bleed-full relative aspect-[4/3] w-full max-w-none overflow-hidden bg-[var(--color-paper)]/5 md:aspect-auto md:min-h-[70vh] lg:min-h-[72vh]"
+        >
           <ProjectImageInteractive
             project={project}
             variant="hero"

@@ -21,7 +21,7 @@ async function main() {
     throw new Error(`Expected 4 ready WebGL layers, got ${count}`)
   }
 
-  const visual = page.locator('[data-featured-visual]').first()
+  const visual = page.locator('[data-featured-visual].bleed-full').first()
   const visualBox = await visual.boundingBox()
   if (!visualBox) throw new Error('No featured visual box')
   const viewportW = page.viewportSize()?.width ?? 1440
