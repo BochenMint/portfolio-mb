@@ -18,6 +18,9 @@ const SIM_FRAGMENT = /* glsl */ `
   uniform float uDissipation;
   uniform float uBrushRadius;
   uniform float uVelocity;
+  uniform float uHeightClamp;
+  uniform float uVelocityClamp;
+  uniform float uIdleDamping;
   varying vec2 vUv;
 
   void main() {
@@ -37,6 +40,12 @@ const SIM_FRAGMENT = /* glsl */ `
     float dist = distance(vUv, uMouse);
     vel += smoothstep(uBrushRadius, 0.0, dist) * uVelocity;
 
+    height = clamp(height, -uHeightClamp, uHeightClamp);
+    vel = clamp(vel, -uVelocityClamp, uVelocityClamp);
+
+    height *= uIdleDamping;
+    vel *= uIdleDamping;
+
     gl_FragColor = vec4(height, vel, 0.0, 1.0);
   }
 `
@@ -44,6 +53,7 @@ const SIM_FRAGMENT = /* glsl */ `
 const DISPLAY_VERTEX = /* glsl */ `
   uniform sampler2D uDisplacementMap;
   uniform float uVertexStrength;
+  uniform float uMaxVertexOffset;
   uniform float uProgress;
   uniform float uIntroStrength;
   varying vec2 vUv;
@@ -54,7 +64,8 @@ const DISPLAY_VERTEX = /* glsl */ `
     float disp = texture2D(uDisplacementMap, uv).r;
     float center = length(uv - 0.5);
     float intro = (1.0 - smoothstep(0.0, 0.72, center)) * uIntroStrength * (1.0 - uProgress);
-    pos.z += (disp + intro) * uVertexStrength;
+    float z = clamp((disp + intro) * uVertexStrength, -uMaxVertexOffset, uMaxVertexOffset);
+    pos.z += z;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   }
 `
@@ -64,6 +75,7 @@ const DISPLAY_FRAGMENT = /* glsl */ `
   uniform sampler2D uMap;
   uniform sampler2D uDisplacementMap;
   uniform float uDistortStrength;
+  uniform float uMaxDistort;
   uniform float uProgress;
   uniform float uIntroStrength;
   varying vec2 vUv;
@@ -79,10 +91,10 @@ const DISPLAY_FRAGMENT = /* glsl */ `
 
     float center = length(vUv - 0.5);
     float intro = (1.0 - smoothstep(0.0, 0.65, center)) * uIntroStrength * (1.0 - uProgress);
-    grad += vec2(intro * 0.15);
+    grad += vec2(intro * 0.12);
 
-    vec2 uv = vUv + grad * uDistortStrength;
-    gl_FragColor = texture2D(uMap, uv);
+    vec2 uv = vUv + clamp(grad * uDistortStrength, -uMaxDistort, uMaxDistort);
+    gl_FragColor = texture2D(uMap, clamp(uv, 0.001, 0.999));
   }
 `
 
@@ -93,6 +105,7 @@ export type DisplacementEffect = {
   start: () => void
   stop: () => void
   dispose: () => void
+  readonly ready: boolean
 }
 
 export async function createDisplacementEffect(
@@ -105,11 +118,11 @@ export async function createDisplacementEffect(
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: true,
-    alpha: false,
+    alpha: true,
     powerPreference: 'high-performance',
+    preserveDrawingBuffer: false,
   })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.setClearColor(0x0a0a0a, 1)
 
   const simScene = new THREE.Scene()
   const simCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
@@ -125,6 +138,8 @@ export async function createDisplacementEffect(
   const size = options.simResolution
   let readTarget = new THREE.WebGLRenderTarget(size, size, rtOpts)
   let writeTarget = new THREE.WebGLRenderTarget(size, size, rtOpts)
+  clearRenderTarget(renderer, readTarget)
+  clearRenderTarget(renderer, writeTarget)
 
   const simMaterial = new THREE.ShaderMaterial({
     uniforms: {
@@ -134,6 +149,9 @@ export async function createDisplacementEffect(
       uDissipation: { value: options.dissipation },
       uBrushRadius: { value: options.brushRadius },
       uVelocity: { value: 0 },
+      uHeightClamp: { value: options.heightClamp },
+      uVelocityClamp: { value: options.velocityClamp },
+      uIdleDamping: { value: 1 },
     },
     vertexShader: SIM_VERTEX,
     fragmentShader: SIM_FRAGMENT,
@@ -146,6 +164,8 @@ export async function createDisplacementEffect(
   const displayCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
   displayCamera.position.z = 2.2
 
+  const maxVertexOffset = Math.min(options.vertexStrength * options.heightClamp, 0.42)
+
   const texture = await loadTexture(THREE, imageUrl)
   texture.colorSpace = THREE.SRGBColorSpace
   texture.minFilter = THREE.LinearFilter
@@ -156,24 +176,29 @@ export async function createDisplacementEffect(
       uMap: { value: texture },
       uDisplacementMap: { value: readTarget.texture },
       uVertexStrength: { value: options.vertexStrength },
+      uMaxVertexOffset: { value: maxVertexOffset },
       uDistortStrength: { value: options.distortStrength },
+      uMaxDistort: { value: options.distortStrength * 2.4 },
       uProgress: { value: 0 },
       uIntroStrength: { value: options.introWaveStrength },
     },
     vertexShader: DISPLAY_VERTEX,
     fragmentShader: DISPLAY_FRAGMENT,
+    transparent: true,
   })
 
   const geometry = new THREE.PlaneGeometry(1, 1, options.planeSegments, options.planeSegments)
   const displayMesh = new THREE.Mesh(geometry, displayMaterial)
   displayScene.add(displayMesh)
 
-  let mouse = { x: 0.5, y: 0.5, active: false }
+  let targetMouse = { x: 0.5, y: 0.5, active: false }
+  let smoothMouse = { x: 0.5, y: 0.5 }
   let introProgress = 0
   let width = 1
   let height = 1
   let rafId = 0
   let running = false
+  let ready = false
 
   const fitPlane = () => {
     const imgAspect = texture.image
@@ -188,9 +213,19 @@ export async function createDisplacementEffect(
   }
 
   const stepSimulation = () => {
+    const lerp = targetMouse.active ? 0.22 : 0.12
+    smoothMouse.x += (targetMouse.x - smoothMouse.x) * lerp
+    smoothMouse.y += (targetMouse.y - smoothMouse.y) * lerp
+
+    const idleDamping = targetMouse.active ? 1 : 0.94
+    simMaterial.uniforms.uIdleDamping.value = idleDamping
+    simMaterial.uniforms.uDissipation.value = targetMouse.active
+      ? options.dissipation
+      : Math.min(options.dissipation, 0.94)
+
     simMaterial.uniforms.uTexture.value = readTarget.texture
-    simMaterial.uniforms.uMouse.value.set(mouse.x, 1 - mouse.y)
-    simMaterial.uniforms.uVelocity.value = mouse.active ? options.brushVelocity : 0
+    simMaterial.uniforms.uMouse.value.set(smoothMouse.x, 1 - smoothMouse.y)
+    simMaterial.uniforms.uVelocity.value = targetMouse.active ? options.brushVelocity : 0
 
     renderer.setRenderTarget(writeTarget)
     renderer.render(simScene, simCamera)
@@ -207,11 +242,18 @@ export async function createDisplacementEffect(
     if (!running) return
     stepSimulation()
     displayMaterial.uniforms.uProgress.value = introProgress
+    renderer.setClearColor(0x000000, 0)
     renderer.render(displayScene, displayCamera)
     rafId = requestAnimationFrame(tick)
   }
 
+  ready = true
+
   return {
+    get ready() {
+      return ready
+    },
+
     setSize(w: number, h: number) {
       if (w < 2 || h < 2) return
       width = w
@@ -223,7 +265,13 @@ export async function createDisplacementEffect(
     },
 
     setMouse(x: number, y: number, active: boolean) {
-      mouse = { x, y, active }
+      const cx = Number.isFinite(x) ? Math.min(1, Math.max(0, x)) : 0.5
+      const cy = Number.isFinite(y) ? Math.min(1, Math.max(0, y)) : 0.5
+      targetMouse = { x: cx, y: cy, active }
+      if (!active) {
+        targetMouse.x = 0.5
+        targetMouse.y = 0.5
+      }
     },
 
     setIntroProgress(t: number) {
@@ -257,6 +305,17 @@ export async function createDisplacementEffect(
       ext?.loseContext()
     },
   }
+}
+
+function clearRenderTarget(
+  renderer: import('three').WebGLRenderer,
+  target: import('three').WebGLRenderTarget,
+) {
+  const prev = renderer.getRenderTarget()
+  renderer.setRenderTarget(target)
+  renderer.setClearColor(0x000000, 0)
+  renderer.clear()
+  renderer.setRenderTarget(prev)
 }
 
 function loadTexture(

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react'
+import { Component, lazy, Suspense, useState, type ReactNode } from 'react'
 import type { Project } from '../data/content'
 import { useWebGLCapable } from '../hooks/useWebGLCapable'
 import type { DisplacementLevel } from '../webgl/displacementConfig'
@@ -18,6 +18,30 @@ type Props = {
   interaction?: ImageInteractionLevel | 'off'
 }
 
+type BoundaryProps = {
+  children: ReactNode
+  onError: () => void
+}
+
+type BoundaryState = { hasError: boolean }
+
+class WebGLImageErrorBoundary extends Component<BoundaryProps, BoundaryState> {
+  state: BoundaryState = { hasError: false }
+
+  static getDerivedStateFromError(): BoundaryState {
+    return { hasError: true }
+  }
+
+  componentDidCatch() {
+    this.props.onError()
+  }
+
+  render() {
+    if (this.state.hasError) return null
+    return this.props.children
+  }
+}
+
 export function ProjectImageInteractive({
   project,
   variant = 'card',
@@ -28,39 +52,29 @@ export function ProjectImageInteractive({
   const { capable } = useWebGLCapable()
   const [webglFailed, setWebglFailed] = useState(false)
 
-  const enabled = interaction !== 'off'
-  const level: DisplacementLevel =
-    interaction === 'off' ? 'subtle' : interaction
+  const enabled = interaction !== 'off' && capable && !webglFailed
+  const level: DisplacementLevel = interaction === 'off' ? 'subtle' : interaction
 
-  if (!enabled || !capable || webglFailed) {
-    return (
+  return (
+    <div className={`relative h-full w-full overflow-hidden ${className}`}>
       <ProjectImage
         project={project}
         variant={variant}
-        className={className}
+        className="relative z-0 h-full w-full"
         priority={priority}
       />
-    )
-  }
-
-  return (
-    <Suspense
-      fallback={
-        <ProjectImage
-          project={project}
-          variant={variant}
-          className={className}
-          priority={priority}
-        />
-      }
-    >
-      <ProjectImageWebGL
-        project={project}
-        variant={variant}
-        level={level}
-        className={className}
-        onFallback={() => setWebglFailed(true)}
-      />
-    </Suspense>
+      {enabled ? (
+        <Suspense fallback={null}>
+          <WebGLImageErrorBoundary onError={() => setWebglFailed(true)}>
+            <ProjectImageWebGL
+              project={project}
+              variant={variant}
+              level={level}
+              onFallback={() => setWebglFailed(true)}
+            />
+          </WebGLImageErrorBoundary>
+        </Suspense>
+      ) : null}
+    </div>
   )
 }

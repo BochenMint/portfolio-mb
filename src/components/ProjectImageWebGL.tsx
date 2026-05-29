@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Project } from '../data/content'
 import { projectImageUrl } from '../lib/projectImageUrl'
-import type { DisplacementEffect } from '../webgl/createDisplacementEffect'
 import {
   DISPLACEMENT_LEVEL,
   type DisplacementLevel,
@@ -13,6 +12,7 @@ type Props = {
   level: DisplacementLevel
   className?: string
   onFallback?: () => void
+  onReady?: () => void
 }
 
 export function ProjectImageWebGL({
@@ -21,48 +21,37 @@ export function ProjectImageWebGL({
   level,
   className = '',
   onFallback,
+  onReady,
 }: Props) {
   const hostRef = useRef<HTMLDivElement>(null)
-  const effectRef = useRef<DisplacementEffect | null>(null)
-  const [failed, setFailed] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [canvasVisible, setCanvasVisible] = useState(false)
 
   useEffect(() => {
     const host = hostRef.current
-    if (!host || failed) return
+    const canvas = canvasRef.current
+    if (!host || !canvas) return
 
     let disposed = false
-    let canvas: HTMLCanvasElement | null = null
     let removeListeners: (() => void) | undefined
 
-    const disposeEffect = () => {
-      removeListeners?.()
-      removeListeners = undefined
-      effectRef.current = null
-    }
-
     const imageUrl = projectImageUrl(project, variant)
-    const options = DISPLACEMENT_LEVEL[level]
-    const alt = `${project.title} — ${project.tagline}`
-
-    host.replaceChildren()
-    canvas = document.createElement('canvas')
-    canvas.className = 'absolute inset-0 h-full w-full touch-none'
-    canvas.setAttribute('aria-label', alt)
-    canvas.setAttribute('role', 'img')
-    host.appendChild(canvas)
 
     void (async () => {
       try {
         const { createDisplacementEffect } = await import('../webgl/createDisplacementEffect')
-        if (disposed || !canvas) return
+        if (disposed) return
 
-        const effect = await createDisplacementEffect(canvas, imageUrl, options)
+        const effect = await createDisplacementEffect(canvas, imageUrl, DISPLACEMENT_LEVEL[level])
         if (disposed) {
           effect.dispose()
           return
         }
 
-        effectRef.current = effect
+        if (!effect.ready) {
+          effect.dispose()
+          throw new Error('WebGL texture not ready')
+        }
 
         const resize = () => {
           const rect = host.getBoundingClientRect()
@@ -78,6 +67,7 @@ export function ProjectImageWebGL({
 
         const onMove = (e: MouseEvent) => {
           const rect = host.getBoundingClientRect()
+          if (rect.width < 1 || rect.height < 1) return
           effect.setMouse(
             (e.clientX - rect.left) / rect.width,
             (e.clientY - rect.top) / rect.height,
@@ -110,6 +100,11 @@ export function ProjectImageWebGL({
         host.addEventListener('mousemove', onMove)
         host.addEventListener('mouseleave', onLeave)
 
+        if (!disposed) {
+          setCanvasVisible(true)
+          onReady?.()
+        }
+
         removeListeners = () => {
           ro.disconnect()
           io.disconnect()
@@ -119,29 +114,30 @@ export function ProjectImageWebGL({
           effect.dispose()
         }
       } catch {
-        if (!disposed) {
-          setFailed(true)
-          onFallback?.()
-        }
+        if (!disposed) onFallback?.()
       }
     })()
 
     return () => {
       disposed = true
-      disposeEffect()
-      if (host.isConnected) {
-        host.replaceChildren()
-      }
-      canvas = null
+      removeListeners?.()
+      removeListeners = undefined
+      setCanvasVisible(false)
     }
-  }, [project, variant, level, failed, onFallback])
-
-  if (failed) return null
+  }, [project, variant, level, onFallback, onReady])
 
   return (
     <div
       ref={hostRef}
-      className={`project-webgl relative h-full w-full overflow-hidden ${className}`}
-    />
+      className={`project-webgl pointer-events-auto absolute inset-0 z-[1] overflow-hidden ${className}`}
+      aria-hidden={!canvasVisible}
+    >
+      <canvas
+        ref={canvasRef}
+        className={`absolute inset-0 h-full w-full touch-none transition-opacity duration-500 ${
+          canvasVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+    </div>
   )
 }

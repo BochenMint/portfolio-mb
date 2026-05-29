@@ -52,7 +52,7 @@ function FeaturedProject({ project, index }: { project: Project; index: number }
             variant="hero"
             priority={index === 1}
             interaction={project.flagship ? 'hero' : 'strong'}
-            className="h-[108%] max-w-none"
+            className="h-full w-full"
           />
           <span className="absolute top-4 left-4 z-10 border border-[var(--color-paper)]/30 bg-[var(--color-ink)]/80 px-3 py-1 font-mono text-[11px] tracking-widest text-[var(--color-paper)] uppercase backdrop-blur-sm md:top-6 md:left-6">
             {padIndex(index)}
