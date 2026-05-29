@@ -11,8 +11,11 @@ const HERO_W = 1920
 const CARD_W = 1200
 
 function sceneFor(project: Project, variant: 'hero' | 'card') {
+  if (project.id === 'mint') {
+    return variant === 'card' ? 'apartment' : 'hero'
+  }
   if (project.imageScene) return project.imageScene
-  return project.id === 'mint' && variant === 'card' ? 'apartment' : 'hero'
+  return 'hero'
 }
 
 export function ProjectImage({
@@ -23,7 +26,7 @@ export function ProjectImage({
 }: Props) {
   const scene = sceneFor(project, variant)
   const base = `/projects/${project.id}/${scene}`
-  const isLcp = priority ?? (project.id === 'mint' && variant === 'hero')
+  const isFlagshipLcp = priority ?? (project.flagship && variant === 'hero')
 
   const heroSrc = `${base}-hero.webp`
   const cardSrc = `${base}-card.webp`
@@ -47,9 +50,9 @@ export function ProjectImage({
         alt={`${project.title} — ${project.tagline}`}
         width={width}
         height={height}
-        loading={isLcp ? 'eager' : 'lazy'}
+        loading={isFlagshipLcp ? 'eager' : 'lazy'}
         decoding="async"
-        fetchPriority={isLcp ? 'high' : 'auto'}
+        fetchPriority={isFlagshipLcp ? 'high' : 'auto'}
         className="h-full w-full object-cover object-top"
       />
     </picture>

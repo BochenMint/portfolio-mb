@@ -8,8 +8,20 @@ export function Nav() {
         className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-5 md:px-10 lg:px-16"
         aria-label="Główna nawigacja"
       >
-        <a href="#" className="font-display text-lg tracking-tight md:text-xl">
-          {site.name.split(' ')[0]}
+        <a
+          href="#"
+          className="flex items-center gap-2.5 font-display text-lg tracking-tight md:text-xl"
+        >
+          <img
+            src="/images/marcin-bochenek-400w.webp"
+            alt=""
+            width={32}
+            height={32}
+            className="hidden size-8 shrink-0 rounded-full object-cover object-[center_18%] ring-1 ring-rule sm:block"
+            decoding="async"
+            aria-hidden
+          />
+          <span>{site.name.split(' ')[0]}</span>
         </a>
 
         <ul className="flex items-center gap-4 md:gap-8">

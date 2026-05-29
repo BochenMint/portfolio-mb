@@ -12,11 +12,17 @@ export type Project = {
   decisions: string[]
   tags: string[]
   imageScene?: 'hero' | 'apartment'
+  flagship?: boolean
 }
 
 export const site = {
-  name: 'Marcin Bochen',
+  name: 'Marcin Bochenek',
   role: 'Produkty cyfrowe · web · automatyzacja',
+  photo: '/images/marcin-bochenek.webp',
+  photoAlt:
+    'Marcin Bochenek — portret w okularach w oprawkach szylkretowych, uśmiech, biały t-shirt na jasnym tle',
+  photoWidth: 1024,
+  photoHeight: 1024,
   valueProp:
     'Projektuję i wdrażam strony, panele i automatyzacje dla firm — od direct bookingu apartamentów po faktury i agentów AI z pełnym audytem.',
   aboutLead:
@@ -60,6 +66,7 @@ export const projects: Project[] = [
     ],
     tags: ['Hospitality', 'Previo', 'AI Concierge'],
     imageScene: 'hero',
+    flagship: true,
   },
   {
     id: 'plumm',
