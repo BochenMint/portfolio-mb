@@ -75,16 +75,17 @@ export function useScrollAnimations() {
               const img = card.querySelector('img')
               if (!img) return
               gsap.to(img, {
-                scale: 1.04,
+                scale: 1.05,
                 ease: 'none',
                 scrollTrigger: {
                   trigger: card,
                   start: 'top bottom',
                   end: 'bottom top',
-                  scrub: 0.5,
+                  scrub: 0.45,
                 },
               })
             })
+
           }
         },
       )

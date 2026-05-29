@@ -9,32 +9,31 @@ function padIndex(n: number) {
 
 export function Work() {
   return (
-    <section id="work" data-section className="section-stage section-pad border-t border-rule">
+    <section id="work" data-section className="section-pad bg-paper-bright border-t border-rule">
       <div className="mx-auto max-w-6xl">
         <p data-reveal className="section-label">
           Selected work
         </p>
-        <h2
-          data-reveal
-          className="font-display mt-3 text-4xl leading-[1.02] tracking-tight md:text-5xl lg:text-6xl"
-        >
-          My recent work
+        <h2 data-reveal className="font-headline mt-3 text-4xl leading-[0.95] md:text-6xl">
+          Recent work
         </h2>
 
         <WorkStrip />
 
-        <ul className="mt-12 grid gap-12 md:gap-14">
+        <ul className="mt-14 grid gap-6 md:gap-8">
           {projects.map((project, index) => (
             <li key={project.id}>
               <ProjectCard project={project} index={index + 1} />
               {index < projects.length - 1 ? (
-                <div className="mt-8 flex justify-end border-t border-rule pt-6">
+                <div data-reveal className="flex justify-end border-b border-rule py-6 md:py-8">
                   <a
-                    href={`#project-${projects[index + 1].id}`}
-                    className="link-next"
+                    href={`#work-${projects[index + 1].id}`}
+                    className="project-next"
                   >
-                    Następny projekt
-                    <span aria-hidden>→</span>
+                    Next project
+                    <span className="text-accent text-lg leading-none" aria-hidden>
+                      →
+                    </span>
                   </a>
                 </div>
               ) : null}
@@ -52,32 +51,37 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
   return (
     <article
+      id={`work-${project.id}`}
       data-project-card
       data-reveal
-      className="group overflow-hidden border border-rule bg-surface"
+      className="group border-rule scroll-mt-28 overflow-hidden border bg-surface md:scroll-mt-32"
     >
-      <div className="relative aspect-[16/9] overflow-hidden md:aspect-[2/1]">
+      <div className="relative aspect-[16/9] overflow-hidden md:aspect-[21/9]">
         <ProjectImage
           project={project}
           variant="card"
           priority={index === 1}
-          className="rounded-none transition-transform duration-500 group-hover:scale-[1.03]"
+          className="rounded-none transition-transform duration-700 group-hover:scale-[1.04]"
         />
-        <span className="project-index absolute top-4 left-4 bg-[var(--color-night)] px-2.5 py-1 md:top-6 md:left-6">
+        <span className="project-index absolute top-5 left-5 px-2.5 py-1 md:top-8 md:left-8">
           {padIndex(index)}
         </span>
       </div>
 
-      <div className="flex flex-col gap-4 p-6 md:flex-row md:items-end md:justify-between md:p-8">
+      <div className="flex flex-col gap-4 p-6 md:flex-row md:items-end md:justify-between md:p-10">
         <div>
-          <p className="text-muted text-xs tracking-wide uppercase">{project.domain}</p>
-          <h3 className="font-display mt-1 text-2xl md:text-3xl">{project.title}</h3>
-          <p className="text-muted mt-2 max-w-xl text-sm leading-relaxed">{project.tagline}</p>
-          <div className="mt-4 flex flex-wrap gap-2">
+          <p className="text-muted text-xs font-semibold tracking-[0.14em] uppercase">
+            {project.domain}
+          </p>
+          <h3 className="font-headline mt-2 text-2xl normal-case md:text-4xl">{project.title}</h3>
+          <p className="text-muted mt-3 max-w-xl text-sm leading-relaxed md:text-base">
+            {project.tagline}
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="border border-rule px-2.5 py-0.5 text-[11px] text-muted"
+                className="border-rule border px-2.5 py-0.5 text-[11px] font-medium text-muted transition-colors group-hover:border-accent/50 group-hover:text-ink"
               >
                 {tag}
               </span>

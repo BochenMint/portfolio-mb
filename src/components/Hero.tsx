@@ -6,8 +6,8 @@ function HeadlineLine({ line }: { line: string }) {
   const words = line.split(/\s+/).filter(Boolean)
 
   return (
-    <span className="block overflow-hidden py-[0.05em]">
-      <span data-hero-line className="block font-semibold tracking-[-0.03em]">
+    <span className="block overflow-hidden py-[0.04em]">
+      <span data-hero-line className="block">
         {words.map((word, i) => (
           <span key={`${word}-${i}`} data-hero-word className="inline-block">
             {word}
@@ -25,20 +25,25 @@ export function Hero() {
   return (
     <section
       data-hero
-      className="section-stage section-pad flex min-h-[92dvh] flex-col justify-center pt-28 md:pt-32"
+      className="section-stage section-pad relative flex min-h-[92dvh] flex-col justify-center overflow-hidden pt-24 md:pt-28"
     >
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(260px,380px)] lg:gap-16">
+      <div
+        className="pointer-events-none absolute top-0 right-0 left-0 h-1 bg-accent"
+        aria-hidden
+      />
+
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(260px,400px)] lg:gap-20">
         <div className="min-w-0">
           <div data-hero-fade className="hero-accent-bar" aria-hidden />
-          <p data-hero-fade className="section-label">
+          <p data-hero-fade className="section-label mt-8">
             {site.role}
           </p>
-          <h1 className="font-display mt-4 text-[clamp(2.85rem,8.5vw,5.75rem)] leading-[0.98] tracking-tight">
+          <h1 className="font-headline mt-6 text-[clamp(2.5rem,7.5vw,5.75rem)] leading-[0.95]">
             <HeadlineLine line={site.name} />
           </h1>
           <p
             data-hero-fade
-            className="text-balance mt-8 max-w-2xl text-lg leading-relaxed text-[color-mix(in_srgb,var(--color-stage-ink)_88%,transparent)] md:text-xl"
+            className="text-stage-muted text-balance mt-8 max-w-2xl text-lg leading-relaxed md:text-xl"
           >
             {site.valueProp}
           </p>
@@ -59,9 +64,13 @@ export function Hero() {
 
         <figure
           data-hero-fade
-          className="relative mx-auto aspect-square w-full max-w-[min(380px,72vw)] shrink-0 overflow-hidden rounded-2xl ring-2 ring-[color-mix(in_srgb,var(--color-accent)_55%,transparent)] md:rounded-3xl lg:mx-0 lg:max-w-none"
+          className="relative mx-auto aspect-square w-full max-w-[min(400px,76vw)] shrink-0 overflow-hidden rounded-sm lg:mx-0 lg:max-w-none"
         >
-          <Portrait priority sizes="(min-width: 1024px) 380px, 72vw" className="h-full w-full" />
+          <div
+            className="absolute inset-0 z-10 ring-2 ring-accent/0 transition-[box-shadow,ring-color] duration-500 hover:ring-accent"
+            aria-hidden
+          />
+          <Portrait priority sizes="(min-width: 1024px) 400px, 76vw" className="h-full w-full" />
         </figure>
       </div>
     </section>
