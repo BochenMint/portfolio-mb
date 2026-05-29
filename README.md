@@ -18,7 +18,7 @@ npm run dev
 
 Build: `npm run build` → `dist/`
 
-Regeneracja screenów produktów: `npm run capture:screens`
+Regeneracja screenów produktów (4K WebP): `npm run capture:screens` — viewport 3840×2160, warianty full/hero/card.
 
 ## Konfiguracja sprzedaży
 
