@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 scripts/.test-output
+scripts/screenshots/
 dist
 dist-ssr
 *.local

@@ -46,7 +46,7 @@ function FeaturedProject({ project, index }: { project: Project; index: number }
         className="group block"
         data-featured-visual
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--color-paper)]/5 md:aspect-[21/9]">
+        <div className="bleed-full relative aspect-[4/3] w-full overflow-hidden bg-[var(--color-paper)]/5 md:aspect-auto md:min-h-[72vh]">
           <ProjectImageInteractive
             project={project}
             variant="hero"

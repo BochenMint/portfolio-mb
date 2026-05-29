@@ -34,11 +34,7 @@ export function ProjectImage({
       <source
         type="image/webp"
         srcSet={`${cardSrc} ${CARD_W}w, ${heroSrc} ${HERO_W}w, ${fullSrc} ${FULL_W}w`}
-        sizes={
-          variant === 'hero'
-            ? '(min-width: 1024px) 42vw, 100vw'
-            : '(min-width: 1024px) 50vw, 100vw'
-        }
+        sizes={variant === 'hero' ? '100vw' : '100vw'}
       />
       <img
         src={variant === 'hero' ? heroSrc : cardSrc}

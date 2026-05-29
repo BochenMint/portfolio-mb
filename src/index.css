@@ -87,6 +87,14 @@
     @apply px-6 py-20 md:px-10 md:py-24 lg:px-16;
   }
 
+  /** Edge-to-edge within max-width parents (fromanother / Koto pattern) */
+  .bleed-full {
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+
   [data-section] {
     content-visibility: auto;
     contain-intrinsic-size: auto 560px;
@@ -191,8 +199,8 @@
     }
 
     .project-interactive--css-fallback:hover .project-interactive__still {
-      transform: scale(1.03) perspective(900px) rotateX(2deg) rotateY(-3deg);
-      filter: brightness(1.06) saturate(1.05);
+      transform: scale(1.015);
+      filter: brightness(1.02) saturate(1.02);
     }
 
     .project-interactive--css-fallback::after {
@@ -204,18 +212,18 @@
       opacity: 0;
       background: linear-gradient(
         115deg,
-        transparent 38%,
-        color-mix(in srgb, var(--color-paper) 22%, transparent) 50%,
-        transparent 62%
+        transparent 42%,
+        color-mix(in srgb, var(--color-paper) 10%, transparent) 50%,
+        transparent 58%
       );
       transform: translateX(-120%);
       transition:
-        transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-        opacity 0.35s ease;
+        transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.45s ease;
     }
 
     .project-interactive--css-fallback:hover::after {
-      opacity: 1;
+      opacity: 0.45;
       transform: translateX(120%);
     }
   }
