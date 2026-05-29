@@ -88,16 +88,34 @@
   }
 
   /**
-   * Viewport-wide bleed — must not pair with Tailwind w-full (overrides width).
-   * Breaks out of max-w-* and section horizontal padding.
+   * Break out of max-w-* / section-pad ancestors. Do not add Tailwind w-full on the same node.
    */
   .bleed-full {
     position: relative;
     box-sizing: border-box;
     width: 100vw;
-    max-width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    max-width: none;
+    margin-inline: calc(50% - 50vw);
+  }
+
+  /** #work visuals sit outside max-w-* — use layout width, not 100vw (scrollbar + overflow-x clip). */
+  #work [data-featured-visual] {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+    min-height: min(70vh, 100dvh);
+  }
+
+  @media (min-width: 768px) {
+    #work [data-featured-visual] {
+      min-height: 75vh;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    #work [data-featured-visual] {
+      min-height: 80vh;
+    }
   }
 
   [data-section] {
@@ -105,8 +123,17 @@
     contain-intrinsic-size: auto 560px;
   }
 
+  #work[data-section] {
+    content-visibility: visible;
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+
   [data-featured-project] {
     content-visibility: visible;
+    width: 100%;
+    max-width: none;
+    overflow: visible;
   }
 
   [data-hero] {

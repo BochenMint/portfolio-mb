@@ -114,7 +114,7 @@ async function main() {
   const viewportW = page.viewportSize()?.width ?? 1440
   const minBleedW = viewportW * 0.95
 
-  const bleedVisuals = page.locator('[data-featured-visual].bleed-full, [data-case-image].bleed-full')
+  const bleedVisuals = page.locator('#work [data-featured-visual]')
   const bleedCount = await bleedVisuals.count()
   if (bleedCount < 4) {
     throw new Error(`Expected ≥4 bleed-full project visuals, got ${bleedCount}`)
@@ -132,7 +132,7 @@ async function main() {
     }
   }
 
-  const visual = page.locator('[data-featured-visual].bleed-full').first()
+  const visual = page.locator('#work [data-featured-visual]').first()
 
   const projects = await page.locator('[data-featured-project]').all()
   const ratios = []

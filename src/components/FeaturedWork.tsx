@@ -10,7 +10,11 @@ function padIndex(n: number) {
 
 export function FeaturedWork() {
   return (
-    <section id="work" data-section className="border-t border-[var(--color-paper)]/15">
+    <section
+      id="work"
+      data-section
+      className="w-full overflow-visible border-t border-[var(--color-paper)]/15"
+    >
       <div className="section-pad mx-auto max-w-6xl">
         <SectionIntro
           num={sections.work.num}
@@ -43,11 +47,11 @@ function FeaturedProject({ project, index }: { project: Project; index: number }
         href={hasLiveSite ? project.url : '#contact'}
         target={hasLiveSite ? '_blank' : undefined}
         rel={hasLiveSite ? 'noopener noreferrer' : undefined}
-        className="group block max-w-none"
+        className="group block w-full max-w-none"
       >
         <div
           data-featured-visual
-          className="bleed-full project-card-media relative aspect-[4/3] overflow-hidden bg-[var(--color-paper)]/5 md:aspect-auto md:min-h-[70vh] lg:min-h-[72vh]"
+          className="project-card-media relative aspect-[4/3] w-full max-w-none overflow-hidden bg-[var(--color-paper)]/5 md:aspect-auto"
         >
           <ProjectImageInteractive
             project={project}
@@ -56,7 +60,7 @@ function FeaturedProject({ project, index }: { project: Project; index: number }
             interaction={project.flagship ? 'hero' : 'strong'}
             className="h-full min-h-[inherit] w-full"
           />
-          <span className="absolute top-4 left-4 z-10 border border-[var(--color-paper)]/30 bg-[var(--color-ink)]/80 px-3 py-1 font-mono text-[11px] tracking-widest text-[var(--color-paper)] uppercase backdrop-blur-sm md:top-6 md:left-6">
+          <span className="pointer-events-none absolute top-4 left-4 z-10 border border-[var(--color-paper)]/30 bg-[var(--color-ink)]/80 px-3 py-1 font-mono text-[11px] tracking-widest text-[var(--color-paper)] uppercase backdrop-blur-sm md:top-6 md:left-6">
             {padIndex(index)}
           </span>
         </div>

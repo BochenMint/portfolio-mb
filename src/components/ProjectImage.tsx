@@ -44,7 +44,7 @@ export function ProjectImage({
         loading={isFlagshipLcp ? 'eager' : 'lazy'}
         decoding="async"
         fetchPriority={isFlagshipLcp ? 'high' : 'auto'}
-        className="h-full w-full object-cover object-top"
+        className="h-full w-full object-cover object-center"
       />
     </picture>
   )
