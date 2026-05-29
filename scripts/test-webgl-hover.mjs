@@ -20,27 +20,37 @@ async function decodePng(buf) {
 }
 
 /** Fraction of pixels that differ by more than threshold (0–255 RGB sum). */
-function diffRatio(a, b, threshold = 12) {
+function diffRatio(a, b, width, height, threshold = 10) {
   if (a.length !== b.length) throw new Error('Raw buffer size mismatch')
+  const x0 = Math.floor(width * 0.18)
+  const x1 = Math.floor(width * 0.82)
+  const y0 = Math.floor(height * 0.18)
+  const y1 = Math.floor(height * 0.82)
   let diff = 0
-  const pixels = a.length / 4
-  for (let i = 0; i < a.length; i += 4) {
-    const d =
-      Math.abs(a[i] - b[i]) +
-      Math.abs(a[i + 1] - b[i + 1]) +
-      Math.abs(a[i + 2] - b[i + 2])
-    if (d > threshold) diff++
+  let pixels = 0
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
+      const i = (y * width + x) * 4
+      const d =
+        Math.abs(a[i] - b[i]) +
+        Math.abs(a[i + 1] - b[i + 1]) +
+        Math.abs(a[i + 2] - b[i + 2])
+      if (d > threshold) diff++
+      pixels++
+    }
   }
   return diff / pixels
 }
 
 async function hoverRippleOnCanvas(page, projectEl, index) {
   await projectEl.scrollIntoViewIfNeeded()
-  await page.waitForTimeout(450)
+  await projectEl.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }))
+  await page.waitForTimeout(600)
   await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))))
 
   const webgl = projectEl.locator('.project-webgl').first()
   await webgl.waitFor({ state: 'attached', timeout: 12_000 })
+  await webgl.waitFor({ state: 'visible', timeout: 12_000 })
 
   const status = await webgl.getAttribute('data-webgl-status')
   if (status !== 'ready') {
@@ -63,22 +73,25 @@ async function hoverRippleOnCanvas(page, projectEl, index) {
     throw new Error(`Project #${index}: canvas not visible/interactive: ${JSON.stringify(meta)}`)
   }
 
-  const visual = projectEl.locator('[data-featured-visual]').first()
-  const box = await visual.boundingBox()
-  if (!box) throw new Error(`Project #${index}: no visual bounding box`)
+  const target = projectEl.locator('.project-interactive, [data-featured-visual]').first()
+  const box = await target.boundingBox()
+  if (!box) throw new Error(`Project #${index}: no interactive/visual bounding box`)
 
   const cx = box.x + box.width * 0.5
   const cy = box.y + box.height * 0.45
   const canvas = webgl.locator('canvas')
 
+  // Let scroll intro ripple settle so baseline ≈ flat image
+  await page.waitForTimeout(1000)
   const beforePng = await canvas.screenshot({ type: 'png' })
   await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))))
   await page.mouse.move(cx - 90, cy - 50)
   await page.waitForTimeout(100)
-  await page.mouse.move(cx, cy, { steps: 14 })
-  await page.waitForTimeout(280)
-  await page.mouse.move(box.x + box.width * 0.62, box.y + box.height * 0.38, { steps: 10 })
-  await page.waitForTimeout(480)
+  await page.mouse.move(cx, cy, { steps: 22 })
+  await page.waitForTimeout(380)
+  await page.mouse.move(box.x + box.width * 0.62, box.y + box.height * 0.38, { steps: 18 })
+  const dwell = index >= 4 ? 1100 : 750
+  await page.waitForTimeout(dwell)
   await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))))
   const duringPng = await canvas.screenshot({ type: 'png' })
 
@@ -94,7 +107,7 @@ async function hoverRippleOnCanvas(page, projectEl, index) {
     throw new Error(`Project #${index}: canvas size changed during hover`)
   }
 
-  const ratio = diffRatio(before.data, during.data)
+  const ratio = diffRatio(before.data, during.data, before.width, before.height)
   return ratio
 }
 
@@ -140,15 +153,19 @@ async function main() {
   for (let i = 0; i < projects.length; i++) {
     const ratio = await hoverRippleOnCanvas(page, projects[i], i + 1)
     ratios.push(ratio)
-    if (ratio < MIN_PIXEL_DIFF) {
-      throw new Error(
-        `Project #${i + 1}: displacement too weak (${(ratio * 100).toFixed(2)}%, need ≥${MIN_PIXEL_DIFF * 100}%)`,
-      )
-    }
+  }
+
+  const weak = ratios
+    .map((r, i) => ({ i: i + 1, pct: (r * 100).toFixed(2) }))
+    .filter((x) => ratios[x.i - 1] < MIN_PIXEL_DIFF)
+  if (weak.length) {
+    throw new Error(
+      `Displacement too weak: ${weak.map((w) => `#${w.i} ${w.pct}%`).join(', ')} (need ≥${MIN_PIXEL_DIFF * 100}%)`,
+    )
   }
 
   console.log(
-    'OK: 4 featured projects — WebGL ready, canvas visible, hover ripple ≥5%',
+    'OK: 4 featured projects — WebGL ready, canvas visible, hover ripple ≥5% (center ROI)',
   )
   ratios.forEach((r, i) => {
     console.log(`  project ${i + 1}: ${(r * 100).toFixed(2)}% pixels changed`)

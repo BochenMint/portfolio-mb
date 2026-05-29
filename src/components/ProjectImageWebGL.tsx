@@ -75,7 +75,7 @@ export function ProjectImageWebGL({
         ro.observe(host)
 
         const introStart = performance.now()
-        const introDuration = 1400
+        const introDuration = 1200
 
         const pointerRect = () => eventRoot.getBoundingClientRect()
 

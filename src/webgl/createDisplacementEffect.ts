@@ -15,6 +15,7 @@ const SIM_FRAGMENT = /* glsl */ `
   uniform sampler2D uTexture;
   uniform vec2 uTexel;
   uniform vec2 uMouse;
+  uniform float uAspect;
   uniform float uDissipation;
   uniform float uBrushRadius;
   uniform float uVelocity;
@@ -29,18 +30,22 @@ const SIM_FRAGMENT = /* glsl */ `
     float height = info.r;
     float vel = info.g;
 
-    float left = texture2D(uTexture, vUv - vec2(uTexel.x, 0.0)).r;
-    float right = texture2D(uTexture, vUv + vec2(uTexel.x, 0.0)).r;
-    float up = texture2D(uTexture, vUv + vec2(0.0, uTexel.y)).r;
-    float down = texture2D(uTexture, vUv - vec2(0.0, uTexel.y)).r;
+    float aspect = max(uAspect, 0.25);
+    vec2 dx = vec2(uTexel.x / aspect, 0.0);
+    vec2 dy = vec2(0.0, uTexel.y);
+
+    float left = texture2D(uTexture, vUv - dx).r;
+    float right = texture2D(uTexture, vUv + dx).r;
+    float up = texture2D(uTexture, vUv + dy).r;
+    float down = texture2D(uTexture, vUv - dy).r;
 
     vel += (left + right + up + down) * uWaveFrequency - height * uWaveFrequency;
     vel *= uDissipation;
     height += vel;
 
-    float dist = distance(vUv, uMouse);
-    float inner = uBrushRadius * 0.28;
-    float brush = pow(smoothstep(uBrushRadius, inner, dist), 1.75);
+    vec2 toMouse = (vUv - uMouse) * vec2(aspect, 1.0);
+    float dist = length(toMouse);
+    float brush = smoothstep(uBrushRadius, uBrushRadius * 0.12, dist);
     vel += brush * uVelocity;
 
     height = clamp(height, -uHeightClamp, uHeightClamp);
@@ -66,8 +71,9 @@ const DISPLAY_VERTEX = /* glsl */ `
     vec3 pos = position;
     float disp = texture2D(uDisplacementMap, uv).r;
     float center = length(uv - 0.5);
-    float intro = (1.0 - smoothstep(0.0, 0.72, center)) * uIntroStrength * (1.0 - uProgress);
-    float z = clamp((disp + intro) * uVertexStrength, -uMaxVertexOffset, uMaxVertexOffset);
+    float intro = (1.0 - smoothstep(0.0, 0.78, center)) * uIntroStrength * (1.0 - uProgress);
+    float z = (disp + intro) * uVertexStrength;
+    z = clamp(z, -uMaxVertexOffset, uMaxVertexOffset);
     pos.z += z;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   }
@@ -77,6 +83,7 @@ const DISPLAY_FRAGMENT = /* glsl */ `
   precision highp float;
   uniform sampler2D uMap;
   uniform sampler2D uDisplacementMap;
+  uniform vec2 uGradTexel;
   uniform float uDistortStrength;
   uniform float uMaxDistort;
   uniform float uChromaticStrength;
@@ -85,28 +92,27 @@ const DISPLAY_FRAGMENT = /* glsl */ `
   varying vec2 vUv;
 
   void main() {
-    vec2 texel = vec2(1.0 / 512.0);
     float h = texture2D(uDisplacementMap, vUv).r;
-    float hL = texture2D(uDisplacementMap, vUv - vec2(texel.x, 0.0)).r;
-    float hR = texture2D(uDisplacementMap, vUv + vec2(texel.x, 0.0)).r;
-    float hD = texture2D(uDisplacementMap, vUv - vec2(0.0, texel.y)).r;
-    float hU = texture2D(uDisplacementMap, vUv + vec2(0.0, texel.y)).r;
+    float hL = texture2D(uDisplacementMap, vUv - vec2(uGradTexel.x, 0.0)).r;
+    float hR = texture2D(uDisplacementMap, vUv + vec2(uGradTexel.x, 0.0)).r;
+    float hD = texture2D(uDisplacementMap, vUv - vec2(0.0, uGradTexel.y)).r;
+    float hU = texture2D(uDisplacementMap, vUv + vec2(0.0, uGradTexel.y)).r;
     vec2 grad = vec2(hR - hL, hU - hD);
 
     float center = length(vUv - 0.5);
-    float intro = (1.0 - smoothstep(0.0, 0.72, center)) * uIntroStrength * (1.0 - uProgress);
-    grad += vec2(intro * 0.07);
+    float intro = (1.0 - smoothstep(0.0, 0.78, center)) * uIntroStrength * (1.0 - uProgress);
+    grad += vec2(intro * 0.04);
 
     vec2 offset = clamp(grad * uDistortStrength, -uMaxDistort, uMaxDistort);
-    vec2 chroma = grad * uChromaticStrength;
-    vec2 uvG = clamp(vUv + offset, 0.001, 0.999);
-    vec2 uvR = clamp(vUv + offset + chroma, 0.001, 0.999);
-    vec2 uvB = clamp(vUv + offset - chroma, 0.001, 0.999);
+    vec2 uv = clamp(vUv + offset, 0.001, 0.999);
+    vec3 col = texture2D(uMap, uv).rgb;
 
-    vec3 col;
-    col.r = texture2D(uMap, uvR).r;
-    col.g = texture2D(uMap, uvG).g;
-    col.b = texture2D(uMap, uvB).b;
+    if (uChromaticStrength > 0.0001) {
+      vec2 chroma = grad * uChromaticStrength;
+      col.r = texture2D(uMap, clamp(vUv + offset + chroma, 0.001, 0.999)).r;
+      col.b = texture2D(uMap, clamp(vUv + offset - chroma, 0.001, 0.999)).b;
+    }
+
     gl_FragColor = vec4(col, 1.0);
   }
 `
@@ -159,6 +165,7 @@ export async function createDisplacementEffect(
       uTexture: { value: null as import('three').Texture | null },
       uTexel: { value: new THREE.Vector2(1 / size, 1 / size) },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+      uAspect: { value: 1 },
       uDissipation: { value: options.dissipation },
       uBrushRadius: { value: options.brushRadius },
       uVelocity: { value: 0 },
@@ -178,7 +185,7 @@ export async function createDisplacementEffect(
   const displayCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
   displayCamera.position.z = 2.2
 
-  const maxVertexOffset = Math.min(options.vertexStrength * options.heightClamp, 0.42)
+  const maxVertexOffset = Math.min(options.vertexStrength * options.heightClamp * 1.15, 0.18)
 
   const texture = await loadTexture(THREE, imageUrl)
   texture.colorSpace = THREE.SRGBColorSpace
@@ -189,10 +196,11 @@ export async function createDisplacementEffect(
     uniforms: {
       uMap: { value: texture },
       uDisplacementMap: { value: readTarget.texture },
+      uGradTexel: { value: new THREE.Vector2(1 / size, 1 / size) },
       uVertexStrength: { value: options.vertexStrength },
       uMaxVertexOffset: { value: maxVertexOffset },
       uDistortStrength: { value: options.distortStrength },
-      uMaxDistort: { value: options.distortStrength * 2.1 },
+      uMaxDistort: { value: options.distortStrength * 1.35 },
       uChromaticStrength: { value: options.chromaticStrength },
       uProgress: { value: 0 },
       uIntroStrength: { value: options.introWaveStrength },
@@ -215,28 +223,36 @@ export async function createDisplacementEffect(
   let running = false
   let ready = false
 
+  const updateAspectUniforms = () => {
+    const viewAspect = width / Math.max(height, 1)
+    simMaterial.uniforms.uAspect.value = viewAspect
+    const gradX = (1 / size) / Math.max(viewAspect, 0.25)
+    displayMaterial.uniforms.uGradTexel.value.set(gradX, 1 / size)
+  }
+
   const fitPlane = () => {
     const imgAspect = texture.image
       ? (texture.image as HTMLImageElement).width / (texture.image as HTMLImageElement).height
       : 16 / 9
-    const viewAspect = width / height
-    if (viewAspect > imgAspect) {
-      displayMesh.scale.set(viewAspect / imgAspect, 1, 1)
+    const containerAspect = width / Math.max(height, 1)
+    if (containerAspect > imgAspect) {
+      displayMesh.scale.set(containerAspect / imgAspect, 1, 1)
     } else {
-      displayMesh.scale.set(1, imgAspect / viewAspect, 1)
+      displayMesh.scale.set(1, imgAspect / containerAspect, 1)
     }
+    updateAspectUniforms()
   }
 
   const stepSimulation = () => {
-    const lerp = targetMouse.active ? 0.16 : 0.09
+    const lerp = targetMouse.active ? 0.11 : 0.055
     smoothMouse.x += (targetMouse.x - smoothMouse.x) * lerp
     smoothMouse.y += (targetMouse.y - smoothMouse.y) * lerp
 
-    const idleDamping = targetMouse.active ? 1 : 0.972
+    const idleDamping = targetMouse.active ? 1 : 0.958
     simMaterial.uniforms.uIdleDamping.value = idleDamping
     simMaterial.uniforms.uDissipation.value = targetMouse.active
       ? options.dissipation
-      : Math.min(options.dissipation + 0.004, 0.985)
+      : Math.min(options.dissipation + 0.006, 0.992)
 
     simMaterial.uniforms.uTexture.value = readTarget.texture
     simMaterial.uniforms.uMouse.value.set(smoothMouse.x, 1 - smoothMouse.y)
