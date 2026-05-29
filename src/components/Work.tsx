@@ -9,21 +9,35 @@ function padIndex(n: number) {
 
 export function Work() {
   return (
-    <section id="work" data-section className="section-pad border-t border-rule">
+    <section id="work" data-section className="section-stage section-pad border-t border-rule">
       <div className="mx-auto max-w-6xl">
         <p data-reveal className="section-label">
           Selected work
         </p>
-        <h2 data-reveal className="font-display mt-3 text-4xl leading-tight md:text-5xl">
+        <h2
+          data-reveal
+          className="font-display mt-3 text-4xl leading-[1.02] tracking-tight md:text-5xl lg:text-6xl"
+        >
           My recent work
         </h2>
 
         <WorkStrip />
 
-        <ul className="mt-12 grid gap-10 md:gap-12">
+        <ul className="mt-12 grid gap-12 md:gap-14">
           {projects.map((project, index) => (
             <li key={project.id}>
               <ProjectCard project={project} index={index + 1} />
+              {index < projects.length - 1 ? (
+                <div className="mt-8 flex justify-end border-t border-rule pt-6">
+                  <a
+                    href={`#project-${projects[index + 1].id}`}
+                    className="link-next"
+                  >
+                    Następny projekt
+                    <span aria-hidden>→</span>
+                  </a>
+                </div>
+              ) : null}
             </li>
           ))}
         </ul>
@@ -40,16 +54,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
     <article
       data-project-card
       data-reveal
-      className="group border-rule overflow-hidden border bg-surface"
+      className="group overflow-hidden border border-rule bg-surface"
     >
       <div className="relative aspect-[16/9] overflow-hidden md:aspect-[2/1]">
         <ProjectImage
           project={project}
           variant="card"
           priority={index === 1}
-          className="rounded-none transition-transform duration-500 group-hover:scale-[1.02]"
+          className="rounded-none transition-transform duration-500 group-hover:scale-[1.03]"
         />
-        <span className="project-index absolute top-4 left-4 bg-paper/90 px-2 py-1 md:top-6 md:left-6">
+        <span className="project-index absolute top-4 left-4 bg-[var(--color-night)] px-2.5 py-1 md:top-6 md:left-6">
           {padIndex(index)}
         </span>
       </div>
@@ -63,7 +77,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="border-rule border px-2.5 py-0.5 text-[11px] text-muted"
+                className="border border-rule px-2.5 py-0.5 text-[11px] text-muted"
               >
                 {tag}
               </span>
