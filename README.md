@@ -6,6 +6,9 @@ Produkty: **Plumm.pl**, **Mintapartments.pl**, **iDrive Cars**, **Agentic OS**.
 
 ## Uruchomienie
 
+
+Portfolio dev: **http://localhost:5190** (dedykowany port Vite, strictPort — nie używa 5173 ani sąsiednich portów).
+
 ```bash
 npm install
 cp .env.example .env
