@@ -1,4 +1,4 @@
-import { services } from '../data/content'
+import { sections, services } from '../data/content'
 import { SectionIntro } from './SectionIntro'
 
 export function Services() {
@@ -6,9 +6,9 @@ export function Services() {
     <section id="services" data-section className="section-pad border-t border-[var(--color-paper)]/15">
       <div className="mx-auto max-w-6xl">
         <SectionIntro
-          num="02"
-          title="Usługi"
-          lead="Trzy filary — od pierwszego wireframe’u po agentów z audytem kroków."
+          num={sections.services.num}
+          title={sections.services.title}
+          lead={sections.services.lead}
         />
 
         <div className="divide-y divide-[var(--color-paper)]/12">

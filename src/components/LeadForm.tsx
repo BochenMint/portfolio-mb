@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { contactFields, site } from '../data/content'
+import { contactFields, leadForm, site } from '../data/content'
 import { MagneticButton } from './MagneticButton'
 
 const formEndpoint =
@@ -58,10 +58,10 @@ export function LeadForm() {
   if (sent) {
     return (
       <div className="border-rule border p-8">
-        <p className="font-display text-xl">Dzięki za wiadomość</p>
+        <p className="font-display text-xl">{leadForm.thanksTitle}</p>
         <p className="text-muted mt-2 text-sm">
           {formAccessKey
-            ? 'Odezwę się w ciągu jednego dnia roboczego.'
+            ? leadForm.thanksBody
             : `Jeśli klient maila się nie otworzył, napisz na ${site.email}`}
         </p>
       </div>
@@ -74,7 +74,7 @@ export function LeadForm() {
       className="space-y-4 border border-[var(--color-paper)]/20 p-6 md:p-8"
     >
       <p data-form-field className="font-display text-lg">
-        Krótki formularz
+        {leadForm.title}
       </p>
 
       {contactFields.map((field) => (
@@ -88,7 +88,7 @@ export function LeadForm() {
               required={field.required}
               rows={4}
               className="w-full resize-none border border-[var(--color-paper)]/20 bg-transparent px-4 py-3 text-sm text-[var(--color-paper)] outline-none focus:border-[var(--color-paper)]"
-              placeholder="Co dziś nie działa?"
+              placeholder={leadForm.placeholder}
             />
           ) : (
             <input
@@ -109,7 +109,7 @@ export function LeadForm() {
         disabled={loading}
         className={`btn-fill w-full md:w-auto ${loading ? 'pointer-events-none opacity-70' : ''}`}
       >
-        {loading ? 'Wysyłam…' : 'Wyślij'}
+        {loading ? leadForm.submitting : leadForm.submit}
       </MagneticButton>
       {!formAccessKey ? (
         <p className="text-muted text-[11px]">

@@ -1,4 +1,4 @@
-import { projects } from '../data/content'
+import { projects, sections } from '../data/content'
 import type { Project } from '../data/content'
 import { ProjectImageInteractive } from './ProjectImageInteractive'
 import { ProjectMarquee } from './ProjectMarquee'
@@ -13,9 +13,9 @@ export function FeaturedWork() {
     <section id="work" data-section className="border-t border-[var(--color-paper)]/15">
       <div className="section-pad mx-auto max-w-6xl">
         <SectionIntro
-          num="03"
-          title="Wybrane realizacje"
-          lead="Cztery produkty w produkcji — hospitality, FinTech, media i automatyzacja agentów."
+          num={sections.work.num}
+          title={sections.work.title}
+          lead={sections.work.lead}
         />
       </div>
 

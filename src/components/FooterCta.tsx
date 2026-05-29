@@ -20,8 +20,11 @@ export function FooterCta() {
         >
           <span className="font-headline block text-[clamp(2.75rem,11vw,9.5rem)] leading-[0.92] tracking-tight">
             <span data-footer-line className="block overflow-hidden">
-              <span data-footer-line-inner className="block transition-transform duration-500 group-hover:translate-x-2">
-                Porozmawiajmy
+              <span
+                data-footer-line-inner
+                className="block transition-transform duration-500 group-hover:translate-x-2"
+              >
+                {site.footerCta.line1}
               </span>
             </span>
             <span data-footer-line className="block overflow-hidden">
@@ -29,7 +32,7 @@ export function FooterCta() {
                 data-footer-line-inner
                 className="block text-[var(--color-paper)]/45 transition-transform duration-500 group-hover:translate-x-4"
               >
-                o Twoim projekcie
+                {site.footerCta.line2}
               </span>
             </span>
           </span>

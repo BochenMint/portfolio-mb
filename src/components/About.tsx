@@ -1,4 +1,4 @@
-﻿import { site } from '../data/content'
+﻿import { sections, site } from '../data/content'
 import { Portrait } from './Portrait'
 import { SectionIntro } from './SectionIntro'
 
@@ -7,9 +7,9 @@ export function About() {
     <section id="about" data-section className="section-pad">
       <div className="mx-auto max-w-6xl">
         <SectionIntro
-          num="01"
-          title="O mnie"
-          lead="Studio produktowe w jednej osobie — proces i liczby przed pikselami."
+          num={sections.about.num}
+          title={sections.about.title}
+          lead={sections.about.lead}
         />
 
         <div className="grid items-start gap-10 md:grid-cols-[minmax(200px,300px)_1fr] md:gap-14 lg:gap-20">
@@ -25,7 +25,7 @@ export function About() {
               data-pull-quote
               className="font-headline border-l border-[var(--color-paper)]/30 pl-6 text-2xl leading-snug md:text-[1.85rem]"
             >
-              Buduję produkty, które działają w niedzielę o 23:00.
+              {site.aboutQuote}
             </blockquote>
             <div className="mt-8 grid gap-6 md:grid-cols-2 md:gap-10">
               <p data-reveal className="text-base leading-relaxed text-[var(--color-paper)]/85 md:text-lg">

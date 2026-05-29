@@ -1,12 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
 import { About } from './components/About'
 import { Contact } from './components/Contact'
+import { FaqSection } from './components/FaqSection'
 import { FeaturedWork } from './components/FeaturedWork'
 import { FooterCta } from './components/FooterCta'
 import { Hero } from './components/Hero'
 import { IntroCurtain } from './components/IntroCurtain'
 import { Nav } from './components/Nav'
+import { ProcessSection } from './components/ProcessSection'
+import { ProofBar } from './components/ProofBar'
+import { ResultsStrip } from './components/ResultsStrip'
 import { Services } from './components/Services'
+import { TestimonialsSection } from './components/TestimonialsSection'
 import { useKeyboardNav } from './hooks/useKeyboardNav'
 import { useLenis } from './hooks/useLenis'
 import { useScrollAnimations } from './hooks/useScrollAnimations'
@@ -71,6 +76,8 @@ function App() {
       <Nav />
       <main id="main" className="bg-[var(--color-ink)] text-[var(--color-paper)]">
         <Hero />
+        <ProofBar />
+        <ResultsStrip />
         <SectionWipe />
         <ChapterBreak label="01" />
         <About />
@@ -80,6 +87,10 @@ function App() {
         <SectionWipe />
         <ChapterBreak label="03" />
         <FeaturedWork />
+        <SectionWipe />
+        <ProcessSection />
+        <TestimonialsSection />
+        <FaqSection />
         <SectionWipe />
         <ChapterBreak label="04" />
         <Contact />

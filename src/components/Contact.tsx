@@ -1,4 +1,4 @@
-import { site } from '../data/content'
+import { sections, site } from '../data/content'
 import { LeadForm } from './LeadForm'
 import { MagneticButton } from './MagneticButton'
 import { SectionIntro } from './SectionIntro'
@@ -11,9 +11,9 @@ export function Contact() {
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
           <SectionIntro
-            num="04"
-            title="Kontakt"
-            lead="Napisz krótko, co nie działa — odpowiem w jeden dzień roboczy."
+            num={sections.contact.num}
+            title={sections.contact.title}
+            lead={sections.contact.lead}
           />
 
           <div data-reveal className="mt-8 flex flex-wrap gap-4">
@@ -25,9 +25,13 @@ export function Contact() {
             </MagneticButton>
             {site.calendly ? (
               <MagneticButton href={ctaHref} className="btn-soft" external>
-                Umów rozmowę
+                {site.ctaCalendly}
               </MagneticButton>
-            ) : null}
+            ) : (
+              <MagneticButton href="#contact" className="btn-soft">
+                {site.ctaPrimary}
+              </MagneticButton>
+            )}
             <a
               href={site.github}
               target="_blank"
