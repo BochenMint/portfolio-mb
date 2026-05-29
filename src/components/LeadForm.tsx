@@ -69,7 +69,10 @@ export function LeadForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="border-rule space-y-4 border p-6 md:p-8">
+    <form
+      onSubmit={onSubmit}
+      className="space-y-4 border border-[var(--color-paper)]/20 p-6 md:p-8"
+    >
       <p data-form-field className="font-display text-lg">
         Krótki formularz
       </p>
@@ -84,7 +87,7 @@ export function LeadForm() {
               name={field.id}
               required={field.required}
               rows={4}
-              className="border-rule w-full resize-none border bg-transparent px-4 py-3 text-sm outline-none focus:border-accent"
+              className="w-full resize-none border border-[var(--color-paper)]/20 bg-transparent px-4 py-3 text-sm text-[var(--color-paper)] outline-none focus:border-[var(--color-paper)]"
               placeholder="Co dziś nie działa?"
             />
           ) : (
@@ -92,7 +95,7 @@ export function LeadForm() {
               type={field.type}
               name={field.id}
               required={field.required}
-              className="border-rule w-full border bg-transparent px-4 py-3 text-sm outline-none focus:border-accent"
+              className="w-full border border-[var(--color-paper)]/20 bg-transparent px-4 py-3 text-sm text-[var(--color-paper)] outline-none focus:border-[var(--color-paper)]"
             />
           )}
         </label>

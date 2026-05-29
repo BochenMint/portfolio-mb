@@ -23,7 +23,7 @@ export function Nav() {
 
           <button
             type="button"
-            className="nav-menu-trigger group flex items-center gap-3 text-[var(--color-paper)] mix-blend-difference"
+            className="nav-menu-trigger group flex items-center gap-3 text-[var(--color-paper)]"
             aria-expanded={menuOpen}
             aria-controls="fullscreen-menu"
             onClick={() => setMenuOpen((v) => !v)}
@@ -49,7 +49,7 @@ export function Nav() {
                 }`}
               />
             </span>
-            <span className="hidden text-[10px] font-semibold tracking-[0.22em] uppercase sm:inline">
+            <span className="text-[10px] font-semibold tracking-[0.22em] uppercase">
               {menuOpen ? 'Zamknij' : 'Menu'}
             </span>
           </button>
