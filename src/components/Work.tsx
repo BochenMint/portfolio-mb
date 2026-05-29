@@ -1,6 +1,7 @@
 import { projects } from '../data/content'
 import type { Project } from '../data/content'
 import { ProjectImage } from './ProjectImage'
+import { WorkStrip } from './WorkStrip'
 
 export function Work() {
   return (
@@ -16,6 +17,8 @@ export function Work() {
           Hospitality, FinTech, media motoryzacyjne i orkiestracja agentów — każdy pod konkretny model
           biznesowy.
         </p>
+
+        <WorkStrip />
 
         <ul className="mt-12 grid gap-8 md:grid-cols-2">
           {projects.map((project, index) => (
@@ -37,17 +40,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
     <article
       id={`work-${project.id}`}
       data-project-card
-      data-reveal
-      className="group scroll-mt-28 overflow-hidden border border-rule bg-surface md:scroll-mt-32"
+      className="project-card group scroll-mt-28 overflow-hidden border border-rule bg-surface md:scroll-mt-32"
     >
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="project-card-media relative aspect-[16/10] overflow-hidden">
         <ProjectImage
           project={project}
           variant="card"
           priority={index === 1}
-          className="rounded-none"
+          className="project-card-img rounded-none"
         />
-        <span className="project-index absolute top-4 left-4 px-2.5 py-1">
+        <span className="project-index absolute top-4 left-4 z-10 px-2.5 py-1">
           {String(index).padStart(2, '0')}
         </span>
       </div>

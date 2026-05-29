@@ -1,5 +1,6 @@
 import { site } from '../data/content'
 import { LeadForm } from './LeadForm'
+import { MagneticButton } from './MagneticButton'
 
 export function Contact() {
   const ctaHref = site.calendly || `mailto:${site.email}`
@@ -22,18 +23,13 @@ export function Contact() {
           </p>
 
           <div data-reveal className="mt-8 flex flex-wrap gap-4">
-            <a href={`mailto:${site.email}`} className="btn-fill">
+            <MagneticButton href={`mailto:${site.email}`} className="btn-fill">
               {site.email}
-            </a>
+            </MagneticButton>
             {site.calendly ? (
-              <a
-                href={ctaHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-soft"
-              >
+              <MagneticButton href={ctaHref} className="btn-soft" external>
                 Umów rozmowę
-              </a>
+              </MagneticButton>
             ) : null}
             <a
               href={site.github}

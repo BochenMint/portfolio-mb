@@ -14,6 +14,7 @@
   --color-rule: color-mix(in srgb, var(--color-ink) 12%, transparent);
   --color-surface: #ffffff;
   --color-on-accent: #faf9f7;
+  --color-glow: #ffe800;
 }
 
 @layer base {
@@ -189,12 +190,68 @@
     background: var(--color-accent-deep);
   }
 
-  [data-project-card] {
-    transition: border-color 0.25s ease;
+  .scroll-progress {
+    transform: scaleX(0);
+    will-change: transform;
   }
 
-  [data-project-card]:hover {
-    border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-rule));
+  .section-wipe {
+    transform-origin: left center;
+    will-change: clip-path, opacity;
+  }
+
+  .film-grain {
+    opacity: 0.035;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+
+  [data-theme='dark'] .film-grain {
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+  }
+
+  .work-strip {
+    will-change: transform;
+  }
+
+  .project-card {
+    transition:
+      border-color 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+
+  .project-card-media {
+    isolation: isolate;
+  }
+
+  .project-card-img {
+    transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .project-card:hover {
+    border-color: color-mix(in srgb, var(--color-glow) 55%, var(--color-rule));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-glow) 35%, transparent),
+      0 12px 40px -12px color-mix(in srgb, var(--color-glow) 22%, transparent);
+  }
+
+  .project-card:hover .project-card-img {
+    transform: scale(1.08);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-progress {
+      transform: scaleX(1);
+    }
+    .project-card-img {
+      transition: none;
+    }
+    .project-card:hover .project-card-img {
+      transform: none;
+    }
   }
 
   .sr-only {

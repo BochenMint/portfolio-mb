@@ -1,22 +1,43 @@
-import type { ReactNode } from 'react'
+import type { ButtonHTMLAttributes, ReactNode, RefObject } from 'react'
 import { useMagnetic } from '../hooks/useMagnetic'
 
-type Props = {
+type LinkProps = {
+  as?: 'a'
   href: string
   children: ReactNode
   className?: string
   external?: boolean
 }
 
-export function MagneticButton({ href, children, className = '', external }: Props) {
-  const ref = useMagnetic<HTMLAnchorElement>(0.25)
+type ButtonProps = {
+  as: 'button'
+  children: ReactNode
+  className?: string
+} & ButtonHTMLAttributes<HTMLButtonElement>
 
+type Props = LinkProps | ButtonProps
+
+export function MagneticButton(props: Props) {
+  const strength = 0.28
+  const ref = useMagnetic<HTMLElement>(strength)
+  const className = `inline-flex will-change-transform ${props.className ?? ''}`
+
+  if (props.as === 'button') {
+    const { as: _a, className: _cn, children, ...rest } = props
+    return (
+      <button ref={ref as RefObject<HTMLButtonElement>} className={className} {...rest}>
+        {children}
+      </button>
+    )
+  }
+
+  const { href, children, external } = props
   return (
     <a
-      ref={ref}
+      ref={ref as RefObject<HTMLAnchorElement>}
       href={href}
       data-magnetic
-      className={`inline-flex will-change-transform ${className}`}
+      className={className}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
       {children}

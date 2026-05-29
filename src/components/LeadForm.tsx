@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { contactFields, site } from '../data/content'
+import { MagneticButton } from './MagneticButton'
 
 const formEndpoint =
   import.meta.env.VITE_FORM_ENDPOINT || 'https://api.web3forms.com/submit'
@@ -69,10 +70,12 @@ export function LeadForm() {
 
   return (
     <form onSubmit={onSubmit} className="border-rule space-y-4 border p-6 md:p-8">
-      <p className="font-display text-lg">Krótki formularz</p>
+      <p data-form-field className="font-display text-lg">
+        Krótki formularz
+      </p>
 
       {contactFields.map((field) => (
-        <label key={field.id} className="block">
+        <label key={field.id} data-form-field className="block">
           <span className="text-muted mb-1.5 block text-[10px] tracking-[0.12em] uppercase">
             {field.label}
           </span>
@@ -97,9 +100,14 @@ export function LeadForm() {
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-      <button type="submit" disabled={loading} className="btn-fill w-full md:w-auto">
+      <MagneticButton
+        as="button"
+        type="submit"
+        disabled={loading}
+        className={`btn-fill w-full md:w-auto ${loading ? 'pointer-events-none opacity-70' : ''}`}
+      >
         {loading ? 'Wysyłam…' : 'Wyślij'}
-      </button>
+      </MagneticButton>
       {!formAccessKey ? (
         <p className="text-muted text-[11px]">
           Ustaw VITE_FORM_ACCESS_KEY w .env, aby wysyłać przez Web3Forms.

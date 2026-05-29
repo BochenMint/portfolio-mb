@@ -1,5 +1,30 @@
 import { site } from '../data/content'
 import { Portrait } from './Portrait'
+import { MagneticButton } from './MagneticButton'
+
+function HeroName({ name }: { name: string }) {
+  const parts = name.split(' ')
+  return (
+    <h1 className="font-headline mt-6 text-[clamp(2.5rem,6vw,4.25rem)] leading-[1.08]">
+      {parts.map((part, i) => (
+        <span key={part} data-hero-line className="block overflow-hidden">
+          <span data-hero-line-inner className="block">
+            {part.split('').map((char, j) => (
+              <span key={`${part}-${j}`} data-hero-word className="inline-block">
+                {char}
+              </span>
+            ))}
+            {i < parts.length - 1 ? (
+              <span data-hero-word className="inline-block">
+                &nbsp;
+              </span>
+            ) : null}
+          </span>
+        </span>
+      ))}
+    </h1>
+  )
+}
 
 export function Hero() {
   const ctaHref = site.calendly || '#contact'
@@ -14,12 +39,7 @@ export function Hero() {
           <p data-hero-fade className="section-label">
             {site.role}
           </p>
-          <h1
-            data-hero-fade
-            className="font-headline mt-6 text-[clamp(2.5rem,6vw,4.25rem)] leading-[1.08]"
-          >
-            {site.name}
-          </h1>
+          <HeroName name={site.name} />
           <p
             data-hero-fade
             className="text-balance mt-8 max-w-2xl text-lg leading-relaxed text-muted md:text-xl"
@@ -30,14 +50,14 @@ export function Hero() {
             {site.responseTime} · {site.location}
           </p>
           <div data-hero-fade className="mt-10 flex flex-wrap items-center gap-4">
-            <a
+            <MagneticButton
               href={ctaHref}
               className="btn-fill"
-              {...(site.calendly ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              external={Boolean(site.calendly)}
             >
               {site.ctaPrimary}
               <span aria-hidden>→</span>
-            </a>
+            </MagneticButton>
             <a href="#work" className="btn-soft">
               {site.ctaSecondary}
             </a>
@@ -45,8 +65,8 @@ export function Hero() {
         </div>
 
         <figure
-          data-hero-fade
-          className="relative mx-auto aspect-square w-full max-w-[min(380px,80vw)] shrink-0 overflow-hidden border border-rule bg-surface lg:mx-0"
+          data-hero-portrait
+          className="relative mx-auto aspect-square w-full max-w-[min(380px,80vw)] shrink-0 overflow-hidden border border-rule bg-surface will-change-transform lg:mx-0"
         >
           <Portrait priority sizes="(min-width: 1024px) 380px, 80vw" className="h-full w-full" />
         </figure>
