@@ -157,6 +157,52 @@
     background-size: 180px 180px;
   }
 
+  .project-card-media {
+    isolation: isolate;
+    perspective: 900px;
+  }
+
+  .project-interactive {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --tilt-scale: 1;
+    --px: 0px;
+    --py: 0px;
+    --shine-x: 0;
+    --shine-y: 0;
+  }
+
+  .project-interactive__tilt {
+    transform-style: preserve-3d;
+    transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y))
+      scale(var(--tilt-scale));
+    will-change: transform;
+  }
+
+  .project-interactive__media {
+    transform: translate3d(var(--px), var(--py), 0) scale(1.06);
+    transform-origin: center center;
+    will-change: transform;
+  }
+
+  .project-interactive--hero .project-interactive__media {
+    transform: translate3d(var(--px), var(--py), 0) scale(1.1);
+  }
+
+  .project-interactive__shine {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+    background: radial-gradient(
+      circle at calc(50% + var(--shine-x) * 22%) calc(42% + var(--shine-y) * 18%),
+      color-mix(in srgb, var(--color-paper) 22%, transparent),
+      transparent 58%
+    );
+    mix-blend-mode: soft-light;
+  }
+
   .marquee-track {
     will-change: transform;
   }
@@ -175,6 +221,13 @@
     }
     .marquee-track {
       transform: none !important;
+    }
+    .project-interactive__tilt,
+    .project-interactive__media {
+      transform: none !important;
+    }
+    .project-interactive__shine {
+      display: none;
     }
   }
 
