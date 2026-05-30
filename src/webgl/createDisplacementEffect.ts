@@ -206,7 +206,7 @@ export async function createDisplacementEffect(
   simScene.add(simQuad)
 
   const coverZoom = Math.max(1, cover.zoom ?? 1)
-  const coverCenterY = cover.centerY ?? 0.28
+  const coverCenterY = cover.centerY ?? 0.5
   const coverCenter = new THREE.Vector2(0.5, coverCenterY)
 
   const displayScene = new THREE.Scene()

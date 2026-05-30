@@ -39,13 +39,12 @@ export function FeaturedWork() {
 function FeaturedProject({ project, index }: { project: Project; index: number }) {
   const hasLiveSite = project.url.startsWith('http')
   const heroFill = textureCoverForProject(project, 'hero')
-  const heroFillStyle =
-    heroFill.zoom > 1
-      ? ({
-          ['--featured-texture-zoom' as string]: heroFill.zoom,
-          ['--featured-texture-center-y' as string]: `${(1 - heroFill.centerY) * 100}%`,
-        } as CSSProperties)
-      : undefined
+  const heroFillStyle = {
+    ['--featured-texture-center-y' as string]: `${(1 - heroFill.centerY) * 100}%`,
+    ...(heroFill.zoom > 1
+      ? { ['--featured-texture-zoom' as string]: heroFill.zoom }
+      : {}),
+  } as CSSProperties
 
   return (
     <article

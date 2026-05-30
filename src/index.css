@@ -142,7 +142,7 @@
   /* Letterboxed full-page hero exports (e.g. Mint) — zoom into hero band; matches WebGL uCoverZoom */
   #work [data-featured-visual][data-hero-media-fill] .project-interactive__still {
     transform: scale(var(--featured-texture-zoom, 1));
-    transform-origin: center var(--featured-texture-center-y, 28%);
+    transform-origin: center var(--featured-texture-center-y, 50%);
     will-change: transform;
   }
 
@@ -152,7 +152,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center var(--featured-texture-center-y, 28%);
+    object-position: center var(--featured-texture-center-y, 50%);
   }
 
   [data-section] {

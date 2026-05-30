@@ -62,9 +62,9 @@ const LIVE_CAPTURES = [
 
     wait: 5000,
 
-    element: 'main > section:first-of-type, body main section:first-of-type',
+    viewport: { width: 1920, height: 1080 },
 
-    crop16x9: 'top',
+    crop16x9: 'center',
 
   },
 
@@ -621,6 +621,14 @@ async function capturePage(context, cap) {
   const page = await context.newPage()
 
   try {
+
+    if (cap.viewport) {
+
+      await page.setViewportSize(cap.viewport)
+
+      console.log(`  ↳ viewport ${cap.viewport.width}×${cap.viewport.height}`)
+
+    }
 
     await page.goto(cap.url, { waitUntil: 'networkidle', timeout: 90000 })
 

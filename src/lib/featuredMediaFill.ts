@@ -1,11 +1,10 @@
 import type { Project } from '../data/content'
 
 /**
- * Hero WebP exports are often full-page screenshots letterboxed inside 16:9.
- * CSS + WebGL UV zoom crops to the hero band so featured bleed looks fullscreen.
+ * Hero WebP exports are 16:9 viewport crops. CSS + WebGL UV center anchors object-fit / cover sampling.
  */
-/** WebGL v=0 is bottom; ~0.88 targets hero at top of letterboxed full-page exports */
-export const DEFAULT_TEXTURE_CENTER_Y = 0.28
+/** WebGL v=0 is bottom; 0.5 = optical center of the frame */
+export const DEFAULT_TEXTURE_CENTER_Y = 0.5
 
 export type TextureCoverFill = {
   zoom: number

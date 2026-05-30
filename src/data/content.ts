@@ -201,6 +201,7 @@ export const projects: Project[] = [
     ],
     tags: ['Hospitality', 'Direct booking', 'AI Concierge'],
     flagship: true,
+    heroMediaFill: { zoom: 1, centerY: 0.5 },
   },
   {
     id: 'plumm',
