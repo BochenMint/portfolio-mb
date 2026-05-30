@@ -62,6 +62,10 @@ const LIVE_CAPTURES = [
 
     wait: 5000,
 
+    element: 'main > section:first-of-type, body main section:first-of-type',
+
+    crop16x9: 'top',
+
   },
 
   {
@@ -326,7 +330,35 @@ const AGENTIC_MOCK_HTML = `<!DOCTYPE html>
 
 
 
-async function optimizePng(pngBuffer, projectId, baseName) {
+/** Crop PNG to 16:9 (top-biased for hero bands). */
+async function fitPngTo16x9(pngBuffer, anchor = 'top') {
+  const meta = await sharp(pngBuffer).metadata()
+  const w = meta.width ?? VIEWPORT_W
+  const h = meta.height ?? VIEWPORT_H
+  const targetRatio = 16 / 9
+  const currentRatio = w / h
+
+  if (Math.abs(currentRatio - targetRatio) < 0.004) {
+    return pngBuffer
+  }
+
+  let extract
+  if (currentRatio > targetRatio) {
+    const cropW = Math.round(h * targetRatio)
+    extract = { left: Math.round((w - cropW) / 2), top: 0, width: cropW, height: h }
+  } else {
+    const cropH = Math.round(w / targetRatio)
+    const top = anchor === 'top' ? 0 : Math.round((h - cropH) / 2)
+    extract = { left: 0, top, width: w, height: cropH }
+  }
+
+  console.log(`  ↳ crop 16:9 (${anchor}): ${w}×${h} → ${extract.width}×${extract.height}`)
+  return sharp(pngBuffer).extract(extract).png().toBuffer()
+}
+
+
+
+async function optimizePng(pngBuffer, projectId, baseName, options = {}) {
 
   const dir = join(OUT, projectId)
 
@@ -334,7 +366,17 @@ async function optimizePng(pngBuffer, projectId, baseName) {
 
 
 
-  const meta = await sharp(pngBuffer).metadata()
+  let processed = pngBuffer
+
+  if (options.crop16x9) {
+
+    processed = await fitPngTo16x9(pngBuffer, options.crop16x9)
+
+  }
+
+
+
+  const meta = await sharp(processed).metadata()
 
   const srcW = meta.width || VIEWPORT_W
 
@@ -344,13 +386,17 @@ async function optimizePng(pngBuffer, projectId, baseName) {
 
   for (const { suffix, width } of WEBP_WIDTHS) {
 
-    const targetW = Math.min(width, srcW)
+    const targetW = suffix === 'full' ? Math.min(width, srcW) : width
 
     const outPath = join(dir, `${baseName}-${suffix}.webp`)
 
-    await sharp(pngBuffer)
+    await sharp(processed)
 
-      .resize(targetW, null, { withoutEnlargement: true })
+      .resize(targetW, null, {
+
+        withoutEnlargement: suffix === 'full',
+
+      })
 
       .webp({ quality: WEBP_QUALITY, effort: WEBP_EFFORT })
 
@@ -590,7 +636,7 @@ async function capturePage(context, cap) {
 
     const png = await screenshotCapture(page, cap)
 
-    await optimizePng(png, cap.id, cap.name)
+    await optimizePng(png, cap.id, cap.name, { crop16x9: cap.crop16x9 })
 
     return true
 

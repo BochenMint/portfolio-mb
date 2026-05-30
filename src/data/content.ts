@@ -185,7 +185,6 @@ export const projects: Project[] = [
     title: 'Mint Apartments',
     domain: 'mintapartments.pl',
     url: 'https://mintapartments.pl',
-    heroMediaFill: { zoom: 4.25, centerY: 0.88 },
     tagline: '36 apartamentów · direct booking · concierge 24/7',
     description:
       'System dla operatora najmu krótkoterminowego: rezerwacja na własnej domenie (10–15% taniej niż OTA), samodzielny check-in Tedee/Nuki, concierge AI w 7 językach. Szacunek: 8–15 h/mies.* mniej na powtarzalnych pytaniach gości.',
