@@ -26,6 +26,15 @@ export function useHeroTypeMotion(active: boolean, ready: boolean) {
         delay: 0.35,
       })
 
+      gsap.to(chars, {
+        y: '+=3',
+        duration: 2.4,
+        stagger: { each: 0.04, from: 'random' },
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+      })
+
       const title = document.querySelector('.hero-type-title')
       if (!title) return
 
@@ -57,7 +66,10 @@ export function useHeroTypeMotion(active: boolean, ready: boolean) {
       }
 
       window.addEventListener('mousemove', onMove, { passive: true })
-      return () => window.removeEventListener('mousemove', onMove)
+      return () => {
+        window.removeEventListener('mousemove', onMove)
+        gsap.killTweensOf(chars)
+      }
     },
     { dependencies: [active, ready, reduced, coarse] },
   )

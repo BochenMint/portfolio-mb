@@ -1,5 +1,16 @@
 /* —— Hero variant backgrounds & TYPE glass —— */
 
+.hero-webgl-host {
+  position: relative;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.hero-webgl-canvas {
+  display: block;
+  touch-action: none;
+}
+
 [data-hero][data-hero-variant='retro'] {
   --hero-content-max: 100%;
 }
@@ -70,6 +81,11 @@
   color: color-mix(in srgb, var(--color-paper) 55%, transparent);
 }
 
+.hero-orbit-layer--webgl .hero-webgl-host {
+  width: 100%;
+  height: 100%;
+}
+
 .hero-orbit-stage {
   width: min(120vmin, 900px);
   height: min(120vmin, 900px);
@@ -120,6 +136,33 @@
 }
 
 /* —— Type (glass typography) —— */
+
+.hero-type-ambient {
+  background:
+    radial-gradient(ellipse 70% 50% at 30% 40%, rgba(80, 200, 255, 0.08), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 75% 60%, rgba(255, 80, 180, 0.06), transparent 50%),
+    linear-gradient(180deg, transparent, color-mix(in srgb, var(--color-ink) 30%, transparent));
+}
+
+.hero-type-webgl {
+  opacity: 1;
+  mix-blend-mode: screen;
+}
+
+.hero-type-layer {
+  z-index: 0;
+}
+
+[data-hero][data-hero-variant='type'] .hero-type-title {
+  font-family: 'Bebas Neue', var(--font-headline), sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+[data-hero][data-hero-variant='type'] .hero-type-char {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
 
 .hero-type-glass {
   background: color-mix(in srgb, var(--color-paper) 4%, transparent);
@@ -185,5 +228,9 @@
 
   .hero-retro-grain-canvas {
     display: none;
+  }
+
+  .hero-webgl-canvas {
+    filter: saturate(0.85) contrast(1.05);
   }
 }

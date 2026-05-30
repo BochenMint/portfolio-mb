@@ -1,54 +1,53 @@
-import { lazy, Suspense, useEffect, useRef } from 'react'
+import { lazy, Suspense, useCallback, useMemo } from 'react'
+import { getSplineSceneUrl } from '../../config/splineScenes'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
+import { SplineEmbed } from '../SplineEmbed'
 
-const RetroGrainCanvas = lazy(() =>
-  import('./RetroGrainCanvas').then((m) => ({ default: m.RetroGrainCanvas })),
+const HeroWebGLCanvas = lazy(() =>
+  import('./HeroWebGLCanvas').then((m) => ({ default: m.HeroWebGLCanvas })),
 )
 
-export function HeroRetroLayer() {
-  const reduced = useReducedMotion()
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video || reduced) return
-    video.play().catch(() => {
-      /* missing file or autoplay policy */
-    })
-  }, [reduced])
-
+function RetroCssFallback() {
   return (
-    <div className="hero-retro-layer pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+    <>
       <div className="hero-retro-gradient absolute inset-0" />
       <div className="hero-retro-vignette absolute inset-0" />
       <div className="hero-retro-chroma hero-retro-chroma--l absolute inset-0" />
       <div className="hero-retro-chroma hero-retro-chroma--r absolute inset-0" />
+      <div className="hero-retro-grain-fallback absolute inset-0" />
+    </>
+  )
+}
 
-      {!reduced ? (
-        <Suspense fallback={<div className="hero-retro-grain-fallback absolute inset-0" />}>
-          <RetroGrainCanvas />
-        </Suspense>
-      ) : (
-        <div className="hero-retro-grain-fallback absolute inset-0" />
-      )}
+export function HeroRetroLayer() {
+  const reduced = useReducedMotion()
+  const sceneUrl = getSplineSceneUrl('retro')
 
-      {/*
-        Drop Spline export: public/video/retro-hero.webm (or .mp4)
-        Spline → Export → Video → loop, muted, playsinline
-      */}
-      <video
-        ref={videoRef}
-        className="hero-retro-video absolute inset-0 h-full w-full object-cover opacity-0"
-        muted
-        loop
-        playsInline
-        preload="none"
-        poster=""
-        aria-hidden
-      >
-        <source src="/video/retro-hero.webm" type="video/webm" />
-        <source src="/video/retro-hero.mp4" type="video/mp4" />
-      </video>
+  const createScene = useCallback(
+    (canvas: HTMLCanvasElement) =>
+      import('../../webgl/hero/createRetroHeroScene').then((m) =>
+        m.createRetroHeroScene(canvas, { reducedMotion: reduced }),
+      ),
+    [reduced],
+  )
+
+  const webglFallback = useMemo(
+    () => (
+      <Suspense fallback={<RetroCssFallback />}>
+        <HeroWebGLCanvas
+          className="absolute inset-0"
+          createScene={createScene}
+          fallback={<RetroCssFallback />}
+        />
+      </Suspense>
+    ),
+    [createScene, reduced],
+  )
+
+  return (
+    <div className="hero-retro-layer pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+      <SplineEmbed sceneUrl={sceneUrl} className="absolute inset-0" fallback={webglFallback} />
+      <div className="hero-retro-vignette pointer-events-none absolute inset-0 z-[2] mix-blend-multiply" />
     </div>
   )
 }

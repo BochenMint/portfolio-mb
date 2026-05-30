@@ -1,34 +1,55 @@
-/**
- * Stub for future @splinetool/react-spline scenes.
- * Pass `sceneUrl` after Export → Code from a .spline file (see docs/SPLINE-INTEGRATION.md).
- */
+import { lazy, Suspense, useCallback, useEffect, useState, type ReactNode } from 'react'
+
+const Spline = lazy(() =>
+  import('@splinetool/react-spline').then((m) => ({ default: m.default })),
+)
+
+const LOAD_TIMEOUT_MS = 18_000
+
 export type SplineEmbedProps = {
   sceneUrl?: string
   className?: string
-  /** When true, reserves layout space even without a URL (dev placeholder). */
-  showPlaceholder?: boolean
+  /** Three.js / CSS fallback when URL missing or Spline fails */
+  fallback: ReactNode
 }
 
-export function SplineEmbed({ sceneUrl, className = '', showPlaceholder = false }: SplineEmbedProps) {
-  if (!sceneUrl && !showPlaceholder) return null
+export function SplineEmbed({ sceneUrl, className = '', fallback }: SplineEmbedProps) {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>(
+    sceneUrl ? 'loading' : 'error',
+  )
+
+  const onLoad = useCallback(() => setStatus('ready'), [])
+
+  useEffect(() => {
+    if (!sceneUrl) {
+      setStatus('error')
+      return
+    }
+    setStatus('loading')
+    const timer = window.setTimeout(() => {
+      setStatus((s) => (s === 'loading' ? 'error' : s))
+    }, LOAD_TIMEOUT_MS)
+    return () => window.clearTimeout(timer)
+  }, [sceneUrl])
+
+  if (!sceneUrl || status === 'error') {
+    return <>{fallback}</>
+  }
 
   return (
-    <div
-      className={className}
-      data-spline-embed={sceneUrl ?? 'pending'}
-      aria-hidden={!sceneUrl}
-    >
-      {sceneUrl ? (
-        <p className="sr-only">Spline scene: {sceneUrl}</p>
-      ) : (
-        <p className="pointer-events-none text-[10px] tracking-widest text-[var(--color-paper)]/30 uppercase">
-          Spline URL pending
-        </p>
-      )}
-      {/*
-        import Spline from '@splinetool/react-spline'
-        return <Spline scene={sceneUrl} />
-      */}
+    <div className={`relative h-full w-full ${className}`} data-spline-embed={sceneUrl}>
+      {status === 'loading' ? (
+        <div className="absolute inset-0 z-[1]" aria-hidden>
+          {fallback}
+        </div>
+      ) : null}
+      <Suspense fallback={fallback}>
+        <Spline
+          scene={sceneUrl}
+          className="absolute inset-0 h-full w-full [&_canvas]:!h-full [&_canvas]:!w-full"
+          onLoad={onLoad}
+        />
+      </Suspense>
     </div>
   )
 }

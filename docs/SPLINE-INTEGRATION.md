@@ -1,43 +1,48 @@
-# Spline → Portfolio (opcjonalna ścieżka)
+# Spline → Portfolio hero
 
-Obecny hero używa **trzech wariantów w czystym kodzie** (CSS + GSAP + lekki canvas), żeby nie ładować runtime Spline (~4 MB) na każdej wizycie. Poniżej: jak podmienić wariant na prawdziwy export, gdy wybierzecie zwycięzcę.
+## Ważne
 
-## Pliki źródłowe (.spline)
+Pliki `.spline` **nie ładują się w przeglądarce**. Trzeba je opublikować w edytorze Spline i wkleić URL do `src/config/splineScenes.ts`.
 
-| Plik | Wariant w UI | Sugerowany export |
-|------|----------------|-------------------|
-| `retrofuturism_bg_animation.spline` | **Retro** | Video loop → `public/video/retro-hero.webm` |
-| `distorting_typography.spline` | **Type** | Code (React) lub video pod warstwą typografii |
-| `rotating_interactive_hero_section.spline` | **Orbit** | Code (React) w tle hero |
+1. Otwórz scenę w [spline.design](https://spline.design/)
+2. **Export → Publish** (lub Code → skopiuj URL produkcyjny `https://prod.spline.design/...`)
+3. Wklej URL w `SPLINE_SCENE_URLS.retro` | `.type` | `.orbit`
+4. `npm run dev` — przy braku URL działa **Three.js fallback** (postprocessing / pierścienie / typografia)
 
-## Export z Spline
+## Pliki źródłowe
 
-1. Otwórz plik w [Spline](https://spline.design/).
-2. **Retro (tło post-FX):** `Export` → `Video` → MP4/WebM, loop, bez dźwięku. Skopiuj do `public/video/retro-hero.webm` (opcjonalnie `.mp4` jako fallback). Warstwa `<video>` w `HeroRetroLayer.tsx` już jest przygotowana.
-3. **Type / Orbit (interaktywność):** `Export` → `Code` → `React`.
-   - Zainstaluj: `npm install @splinetool/react-spline @splinetool/runtime`
-   - Wklej URL sceny do `SplineEmbed` (prop `sceneUrl`).
-4. **Wydajność:** ładuj Spline tylko dla aktywnego wariantu (`React.lazy`), nie na całej stronie.
+| Plik | Wariant | `?hero=` |
+|------|---------|----------|
+| `retrofuturism_bg_animation.spline` | Retro | `retro` |
+| `distorting_typography.spline` | Type | `type` |
+| `rotating_interactive_hero_section.spline` | Orbit | `orbit` |
 
-## Przełącznik wariantów (dev / porównanie)
+## Porównanie wariantów
 
-- UI: pigułki **Retro · Type · Orbit** (lewy dół hero).
-- URL: `?hero=retro` | `?hero=type` | `?hero=orbit`
-- `localStorage`: klucz `portfolio-mb-hero-variant`
+- UI: pigułki **Retro · Type · Orbit** (lewy dół hero)
+- URL: `http://localhost:5190/?hero=retro` | `type` | `orbit`
+- `localStorage`: `portfolio-mb-hero-variant`
 
-Domyślny wariant: **orbit**.
+## Komponenty
 
-## Komponent stub
+| Plik | Rola |
+|------|------|
+| `src/config/splineScenes.ts` | URL po Publish |
+| `src/components/SplineEmbed.tsx` | Runtime Spline + fallback |
+| `src/webgl/hero/createRetroHeroScene.ts` | Gradient shader + bloom/chroma/vignette/grain |
+| `src/webgl/hero/createOrbitHeroScene.ts` | Torusy 3D, radial lines, emissive żółty segment |
+| `src/webgl/hero/createTypeHeroScene.ts` | Ghost typography WebGL + HTML headline |
 
-`src/components/SplineEmbed.tsx` — podłącz `@splinetool/react-spline` gdy macie URL z exportu; build nie wymaga URL.
+## Bundle
 
-## Kompromisy jakości
+`@splinetool/react-spline` ładuje się **lazy** tylko gdy jest `sceneUrl`. Three.js dla hero ładuje się **per wariant** (dynamic import przy przełączeniu).
 
-| Aspekt | Kod (obecnie) | Prawdziwy Spline |
-|--------|----------------|------------------|
-| Rozmiar bundle | ~kilka KB + GSAP | +runtime, sceny MB |
-| Post-FX retro | CSS grain, vignette, chroma | Pełne 3D + bloom |
-| Szkło / typografia | `backdrop-filter`, aberracja CSS | Refrakcja 3D |
-| Orbita | SVG + CSS rotate + parallax | Interaktywne pierścienie 3D |
+## Luka jakości vs prawdziwy Spline
 
-Po wyborze zwycięzcy: usuń nieużywane warianty lub zostaw jeden export Spline + usuń pozostałe warstwy kodowe.
+| Aspekt | Three.js (teraz) | Spline po Publish |
+|--------|------------------|-----------------|
+| Refrakcja szkła / materiały | Przybliżenie shaderami | Fizycznie z edytora |
+| Interakcje sceny | Mysz → obrót / displacement | Events z Spline |
+| Rozmiar | ~chunk three + postprocessing | +runtime ~MB |
+
+Po wyborze zwycięzcy: zostaw jeden URL, usuń nieużywane warianty lub warstwy fallback.
