@@ -66,12 +66,17 @@ export function ProjectImageInteractive({
       className={`project-interactive relative h-full w-full overflow-hidden ${showCssFallback ? 'project-interactive--css-fallback' : ''} ${className}`}
       data-webgl-enabled={enabled ? 'true' : 'false'}
     >
-      <ProjectImage
-        project={project}
-        variant={variant}
-        className="project-interactive__still relative z-0 h-full w-full"
-        priority={priority}
-      />
+      <div
+        data-project-media-reveal
+        className="project-interactive__reveal absolute inset-0 z-0 h-full w-full"
+      >
+        <ProjectImage
+          project={project}
+          variant={variant}
+          className="project-interactive__still relative h-full w-full"
+          priority={priority}
+        />
+      </div>
       {enabled ? (
         <Suspense fallback={null}>
           <WebGLImageErrorBoundary onError={handleWebglFallback}>

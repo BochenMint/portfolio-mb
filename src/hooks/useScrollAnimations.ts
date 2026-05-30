@@ -9,7 +9,7 @@ const FINAL_SELECTORS = [
   '[data-hero-portrait]',
   '[data-reveal]',
   '[data-service-block]',
-  '[data-featured-visual]',
+  '[data-project-media-reveal]',
   '[data-featured-project]',
   '[data-about-portrait]',
   '[data-pull-quote]',
@@ -185,19 +185,20 @@ export function useScrollAnimations(ready = true) {
           })
 
           // —— Featured work visuals ——
-          gsap.utils.toArray<HTMLElement>('[data-featured-visual]').forEach((visual) => {
-            const stillImg = visual.querySelector('.project-interactive__still img')
+          gsap.utils.toArray<HTMLElement>('[data-project-media-reveal]').forEach((reveal) => {
+            const stillImg = reveal.querySelector('img')
             if (!stillImg) return
+            const trigger = reveal.closest('[data-featured-visual]') ?? reveal
             gsap.fromTo(
               stillImg,
-              { scale: 1.12, opacity: 0.5 },
+              { scale: 1.1, opacity: 0.55 },
               {
                 scale: 1,
                 opacity: 1,
-                duration: 1.2,
+                duration: 1.15,
                 ease: 'power3.out',
                 scrollTrigger: {
-                  trigger: visual,
+                  trigger,
                   start: 'top 88%',
                   once: true,
                 },

@@ -19,6 +19,7 @@ const SIM_FRAGMENT = /* glsl */ `
   uniform float uDissipation;
   uniform float uBrushRadius;
   uniform float uVelocity;
+  uniform float uMouseSpeed;
   uniform float uWaveFrequency;
   uniform float uHeightClamp;
   uniform float uVelocityClamp;
@@ -45,8 +46,9 @@ const SIM_FRAGMENT = /* glsl */ `
 
     vec2 toMouse = (vUv - uMouse) * vec2(aspect, 1.0);
     float dist = length(toMouse);
-    float brush = smoothstep(uBrushRadius, uBrushRadius * 0.12, dist);
-    vel += brush * uVelocity;
+    float brush = 1.0 - smoothstep(uBrushRadius * 0.08, uBrushRadius, dist);
+    float speedBoost = 0.4 + min(uMouseSpeed, 2.8) * 0.55;
+    vel += brush * uVelocity * speedBoost;
 
     height = clamp(height, -uHeightClamp, uHeightClamp);
     vel = clamp(vel, -uVelocityClamp, uVelocityClamp);
@@ -119,7 +121,7 @@ const DISPLAY_FRAGMENT = /* glsl */ `
 
 export type DisplacementEffect = {
   setSize: (width: number, height: number) => void
-  setMouse: (x: number, y: number, active: boolean) => void
+  setMouse: (x: number, y: number, active: boolean, speed?: number) => void
   setIntroProgress: (t: number) => void
   start: () => void
   stop: () => void
@@ -169,6 +171,7 @@ export async function createDisplacementEffect(
       uDissipation: { value: options.dissipation },
       uBrushRadius: { value: options.brushRadius },
       uVelocity: { value: 0 },
+      uMouseSpeed: { value: 0 },
       uWaveFrequency: { value: options.waveFrequency },
       uHeightClamp: { value: options.heightClamp },
       uVelocityClamp: { value: options.velocityClamp },
@@ -214,8 +217,8 @@ export async function createDisplacementEffect(
   const displayMesh = new THREE.Mesh(geometry, displayMaterial)
   displayScene.add(displayMesh)
 
-  let targetMouse = { x: 0.5, y: 0.5, active: false }
-  let smoothMouse = { x: 0.5, y: 0.5 }
+  let targetMouse = { x: 0.5, y: 0.5, active: false, speed: 0 }
+  let smoothMouse = { x: 0.5, y: 0.5, speed: 0 }
   let introProgress = 0
   let width = 1
   let height = 1
@@ -244,19 +247,21 @@ export async function createDisplacementEffect(
   }
 
   const stepSimulation = () => {
-    const lerp = targetMouse.active ? 0.11 : 0.055
+    const lerp = targetMouse.active ? 0.14 : 0.06
     smoothMouse.x += (targetMouse.x - smoothMouse.x) * lerp
     smoothMouse.y += (targetMouse.y - smoothMouse.y) * lerp
+    smoothMouse.speed += (targetMouse.speed - smoothMouse.speed) * (targetMouse.active ? 0.22 : 0.08)
 
-    const idleDamping = targetMouse.active ? 1 : 0.958
+    const idleDamping = targetMouse.active ? 1 : 0.952
     simMaterial.uniforms.uIdleDamping.value = idleDamping
     simMaterial.uniforms.uDissipation.value = targetMouse.active
       ? options.dissipation
-      : Math.min(options.dissipation + 0.006, 0.992)
+      : Math.min(options.dissipation + 0.008, 0.99)
 
     simMaterial.uniforms.uTexture.value = readTarget.texture
     simMaterial.uniforms.uMouse.value.set(smoothMouse.x, 1 - smoothMouse.y)
     simMaterial.uniforms.uVelocity.value = targetMouse.active ? options.brushVelocity : 0
+    simMaterial.uniforms.uMouseSpeed.value = targetMouse.active ? smoothMouse.speed : 0
 
     renderer.setRenderTarget(writeTarget)
     renderer.render(simScene, simCamera)
@@ -295,14 +300,11 @@ export async function createDisplacementEffect(
       fitPlane()
     },
 
-    setMouse(x: number, y: number, active: boolean) {
-      const cx = Number.isFinite(x) ? Math.min(1, Math.max(0, x)) : 0.5
-      const cy = Number.isFinite(y) ? Math.min(1, Math.max(0, y)) : 0.5
-      targetMouse = { x: cx, y: cy, active }
-      if (!active) {
-        targetMouse.x = 0.5
-        targetMouse.y = 0.5
-      }
+    setMouse(x: number, y: number, active: boolean, speed = 0) {
+      const cx = Number.isFinite(x) ? Math.min(1, Math.max(0, x)) : smoothMouse.x
+      const cy = Number.isFinite(y) ? Math.min(1, Math.max(0, y)) : smoothMouse.y
+      const sp = active && Number.isFinite(speed) ? Math.min(3.2, Math.max(0, speed)) : 0
+      targetMouse = { x: cx, y: cy, active, speed: sp }
     },
 
     setIntroProgress(t: number) {

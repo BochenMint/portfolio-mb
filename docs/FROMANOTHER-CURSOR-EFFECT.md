@@ -70,7 +70,7 @@ Plane z segmentacją; `pos.z += texture2D(uDisplacementMap, uv).r * uVertexStren
 
 | `src/webgl/displacementConfig.ts` | Presety `hero` / `strong` / `subtle` |
 
-| `src/components/ProjectImageWebGL.tsx` | Canvas, ResizeObserver, IntersectionObserver, RAF loop |
+| `src/components/ProjectImageWebGL.tsx` | Canvas (opacity reveal, not display:none), pointer velocity, ResizeObserver, IntersectionObserver, RAF loop |
 
 | `src/components/ProjectImageInteractive.tsx` | Lazy WebGL + fallback `ProjectImage` |
 
@@ -123,6 +123,8 @@ Plane z segmentacją; `pos.z += texture2D(uDisplacementMap, uv).r * uVertexStren
 - `IntersectionObserver` — pauza symulacji poza viewportem
 
 - `renderer.dispose()` + `WEBGL_lose_context` przy unmount
+- GSAP scroll reveal tylko na `[data-project-media-reveal]` — nigdy opacity na `[data-featured-visual]` (nie gasi canvasu WebGL)
+- Canvas `display:block` + `opacity/visibility` do czasu `ready` (unikanie martwego framebuffera)
 
 - `prefers-reduced-motion` i touch → brak WebGL
 

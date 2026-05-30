@@ -31,10 +31,12 @@ export function ProjectImageWebGL({
   const [status, setStatus] = useState<WebGLStatus>('idle')
   const onFallbackRef = useRef(onFallback)
   const onReadyRef = useRef(onReady)
+  const mountedRef = useRef(true)
   onFallbackRef.current = onFallback
   onReadyRef.current = onReady
 
   useEffect(() => {
+    mountedRef.current = true
     const host = hostRef.current
     const canvas = canvasRef.current
     if (!host || !canvas) return
@@ -75,23 +77,45 @@ export function ProjectImageWebGL({
         ro.observe(host)
 
         const introStart = performance.now()
-        const introDuration = 1200
+        const introDuration = 900
 
         const pointerRect = () => eventRoot.getBoundingClientRect()
 
+        let lastX = 0
+        let lastY = 0
+        let lastT = 0
+
+        const readNormFromClient = (clientX: number, clientY: number) => {
+          const rect = pointerRect()
+          if (rect.width < 1 || rect.height < 1) return { x: 0.5, y: 0.5 }
+          return {
+            x: (clientX - rect.left) / rect.width,
+            y: (clientY - rect.top) / rect.height,
+          }
+        }
+
+        const applyPointer = (clientX: number, clientY: number, active: boolean) => {
+          const { x: nx, y: ny } = readNormFromClient(clientX, clientY)
+          let speed = 0
+          if (active && lastT > 0) {
+            const dt = Math.max(8, performance.now() - lastT)
+            const dist = Math.hypot(clientX - lastX, clientY - lastY)
+            speed = Math.min(3.2, (dist / dt) * 18)
+          }
+          lastX = clientX
+          lastY = clientY
+          lastT = performance.now()
+          effect.setMouse(nx, ny, active, speed)
+        }
+
         const onMove = (e: Event) => {
           if (!(e instanceof PointerEvent)) return
-          const rect = pointerRect()
-          if (rect.width < 1 || rect.height < 1) return
-          effect.setMouse(
-            (e.clientX - rect.left) / rect.width,
-            (e.clientY - rect.top) / rect.height,
-            true,
-          )
+          applyPointer(e.clientX, e.clientY, true)
         }
 
         const onLeave = () => {
-          effect.setMouse(0.5, 0.5, false)
+          const { x, y } = readNormFromClient(lastX, lastY)
+          effect.setMouse(x, y, false, 0)
         }
 
         const io = new IntersectionObserver(
@@ -99,7 +123,7 @@ export function ProjectImageWebGL({
             if (entries[0]?.isIntersecting) effect.start()
             else effect.stop()
           },
-          { threshold: 0.08 },
+          { threshold: 0.05, rootMargin: '80px 0px' },
         )
         io.observe(host)
         effect.start()
@@ -115,7 +139,7 @@ export function ProjectImageWebGL({
         eventRoot.addEventListener('pointermove', onMove)
         eventRoot.addEventListener('pointerleave', onLeave)
 
-        if (!disposed && activeRun === runId) {
+        if (!disposed && activeRun === runId && mountedRef.current) {
           setStatus('ready')
           onReadyRef.current?.()
         }
@@ -131,7 +155,7 @@ export function ProjectImageWebGL({
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err)
         warnWebGL(project.id, `init failed (${imageUrl})`, message)
-        if (!disposed && activeRun === runId) {
+        if (!disposed && activeRun === runId && mountedRef.current) {
           setStatus('failed')
           onFallbackRef.current?.()
         }
@@ -143,7 +167,7 @@ export function ProjectImageWebGL({
       activeRun = null
       removeListeners?.()
       removeListeners = undefined
-      setStatus('idle')
+      if (mountedRef.current) setStatus('idle')
     }
   }, [project, variant, level])
 
@@ -152,15 +176,13 @@ export function ProjectImageWebGL({
   return (
     <div
       ref={hostRef}
-      className={`project-webgl pointer-events-auto absolute inset-0 z-[1] overflow-hidden ${className}`}
+      className={`project-webgl pointer-events-auto absolute inset-0 z-[2] overflow-hidden ${className}`}
       aria-hidden={!isReady}
       data-webgl-status={status}
     >
       <canvas
         ref={canvasRef}
-        className={`project-webgl__canvas absolute inset-0 h-full w-full touch-none ${
-          isReady ? 'block' : 'hidden'
-        }`}
+        className="project-webgl__canvas absolute inset-0 block h-full w-full touch-none"
         data-webgl-canvas-ready={isReady ? 'true' : 'false'}
         aria-hidden={!isReady}
       />

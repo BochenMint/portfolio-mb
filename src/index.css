@@ -234,10 +234,16 @@
     pointer-events: auto;
   }
 
+  .project-webgl {
+    opacity: 1;
+    isolation: isolate;
+  }
+
   .project-webgl__canvas {
     display: block;
     width: 100%;
     height: 100%;
+    pointer-events: auto;
   }
 
   /* Static <img> under WebGL — hide once displacement canvas is live */
@@ -329,10 +335,13 @@
   }
 }
 
-/* WebGL canvas — display toggle avoids opacity conflicts with GSAP / Tailwind layers */
+/* WebGL canvas stays display:block while loading — opacity/visibility only (GPU paints hidden canvases poorly) */
 .project-webgl__canvas[data-webgl-canvas-ready='true'] {
-  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 .project-webgl__canvas[data-webgl-canvas-ready='false'] {
-  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
