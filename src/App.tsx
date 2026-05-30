@@ -75,7 +75,7 @@ function App() {
       </a>
       <Nav />
       <main id="main" className="max-w-none bg-[var(--color-ink)] p-0 text-[var(--color-paper)]">
-        <Hero />
+        <Hero animationsReady={introDone} />
         <ProofBar />
         <ResultsStrip />
         <SectionWipe />

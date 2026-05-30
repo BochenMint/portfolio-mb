@@ -6,6 +6,7 @@ const FINAL_SELECTORS = [
   '[data-hero-line]',
   '[data-hero-line-inner]',
   '[data-hero-word]',
+  '[data-hero-type-char]',
   '[data-hero-portrait]',
   '[data-reveal]',
   '[data-service-block]',
