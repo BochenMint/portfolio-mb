@@ -43,30 +43,28 @@ function FeaturedProject({ project, index }: { project: Project; index: number }
       data-featured-project
       className="scroll-mt-28 border-t border-[var(--color-paper)]/12 md:scroll-mt-32"
     >
-      <div data-featured-bleed className="featured-bleed">
-        <a
-          href={hasLiveSite ? project.url : '#contact'}
-          target={hasLiveSite ? '_blank' : undefined}
-          rel={hasLiveSite ? 'noopener noreferrer' : undefined}
-          className="group block max-w-none"
+      <a
+        href={hasLiveSite ? project.url : '#contact'}
+        target={hasLiveSite ? '_blank' : undefined}
+        rel={hasLiveSite ? 'noopener noreferrer' : undefined}
+        className="group block max-w-none"
+      >
+        <div
+          data-featured-visual
+          className="bleed-full project-card-media relative overflow-hidden bg-[var(--color-paper)]/5"
         >
-          <div
-            data-featured-visual
-            className="project-card-media relative aspect-[4/3] overflow-hidden bg-[var(--color-paper)]/5 md:aspect-auto"
-          >
-            <ProjectImageInteractive
-              project={project}
-              variant="hero"
-              priority={index === 1}
-              interaction={project.flagship ? 'hero' : 'strong'}
-              className="h-full min-h-[inherit]"
-            />
-            <span className="pointer-events-none absolute top-4 left-4 z-10 border border-[var(--color-paper)]/30 bg-[var(--color-ink)]/80 px-3 py-1 font-mono text-[11px] tracking-widest text-[var(--color-paper)] uppercase backdrop-blur-sm md:top-6 md:left-6">
-              {padIndex(index)}
-            </span>
-          </div>
-        </a>
-      </div>
+          <ProjectImageInteractive
+            project={project}
+            variant="hero"
+            priority={index === 1}
+            interaction={project.flagship ? 'hero' : 'strong'}
+            className="absolute inset-0 h-full w-full"
+          />
+          <span className="pointer-events-none absolute top-4 left-4 z-10 border border-[var(--color-paper)]/30 bg-[var(--color-ink)]/80 px-3 py-1 font-mono text-[11px] tracking-widest text-[var(--color-paper)] uppercase backdrop-blur-sm md:top-6 md:left-6">
+            {padIndex(index)}
+          </span>
+        </div>
+      </a>
 
       <div className="section-pad mx-auto grid max-w-6xl gap-6 md:grid-cols-[1fr_auto] md:items-end">
         <div>
