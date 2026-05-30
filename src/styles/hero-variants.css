@@ -1,5 +1,47 @@
 /* —— Hero variant backgrounds & TYPE glass —— */
 
+/* WCAG: scrim + tokeny tekstu nad tłem WebGL */
+.hero-content-scrim {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-ink) 72%, transparent) 0%, transparent 38%),
+    linear-gradient(0deg, color-mix(in srgb, var(--color-ink) 88%, transparent) 0%, transparent 52%),
+    radial-gradient(ellipse 90% 70% at 18% 78%, color-mix(in srgb, var(--color-ink) 55%, transparent), transparent 62%);
+}
+
+.hero-text-kicker {
+  color: color-mix(in srgb, var(--color-paper) 72%, transparent);
+}
+
+.hero-text-muted {
+  color: color-mix(in srgb, var(--color-paper) 68%, transparent);
+}
+
+.hero-text-body {
+  color: color-mix(in srgb, var(--color-paper) 82%, transparent);
+}
+
+.hero-text-faint {
+  color: color-mix(in srgb, var(--color-paper) 58%, transparent);
+}
+
+.hero-text-display {
+  color: var(--color-paper);
+  text-shadow: 0 2px 40px color-mix(in srgb, var(--color-ink) 65%, transparent);
+}
+
+.hero-poster {
+  filter: saturate(0.92) contrast(1.04);
+}
+
+.hero-poster-css-fallback:has(.hero-poster[style*='display: none']) .hero-poster,
+.hero-poster-css-fallback .hero-poster:not([src]) {
+  display: none;
+}
+
+.spline-embed-canvas {
+  pointer-events: none;
+}
+
 .hero-webgl-host {
   position: relative;
   overflow: hidden;

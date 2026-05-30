@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useMemo } from 'react'
-import { getSplineSceneUrl } from '../../config/splineScenes'
+import { useCoarsePointer } from '../../hooks/useCoarsePointer'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
-import { SplineEmbed } from '../SplineEmbed'
+import { HeroBackground } from './HeroBackground'
 
 const HeroWebGLCanvas = lazy(() =>
   import('./HeroWebGLCanvas').then((m) => ({ default: m.HeroWebGLCanvas })),
@@ -52,14 +52,14 @@ function OrbitCssFallback() {
 
 export function HeroOrbitLayer() {
   const reduced = useReducedMotion()
-  const sceneUrl = getSplineSceneUrl('orbit')
+  const coarse = useCoarsePointer()
 
   const createScene = useCallback(
     (canvas: HTMLCanvasElement) =>
       import('../../webgl/hero/createOrbitHeroScene').then((m) =>
-        m.createOrbitHeroScene(canvas, { reducedMotion: reduced }),
+        m.createOrbitHeroScene(canvas, { reducedMotion: reduced, lowPower: coarse }),
       ),
-    [reduced],
+    [reduced, coarse],
   )
 
   const webglFallback = useMemo(
@@ -74,15 +74,15 @@ export function HeroOrbitLayer() {
         </div>
       </Suspense>
     ),
-    [createScene, reduced],
+    [createScene],
   )
 
   return (
-    <div
-      className="hero-orbit-layer pointer-events-none absolute inset-0 z-0 overflow-hidden"
-      aria-hidden
-    >
-      <SplineEmbed sceneUrl={sceneUrl} className="absolute inset-0" fallback={webglFallback} />
-    </div>
+    <HeroBackground
+      variant="orbit"
+      layerClassName="hero-orbit-layer pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden"
+      webglFallback={webglFallback}
+      cssFallback={<OrbitCssFallback />}
+    />
   )
 }

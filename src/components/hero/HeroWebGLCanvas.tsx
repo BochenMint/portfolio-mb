@@ -5,7 +5,6 @@ import { warnWebGL } from '../../webgl/warnWebGL'
 type HeroWebGLCanvasProps = {
   className?: string
   createScene: (canvas: HTMLCanvasElement) => Promise<HeroScene>
-  /** Shown while WebGL initializes */
   fallback?: ReactNode
 }
 
@@ -17,6 +16,7 @@ export function HeroWebGLCanvas({
   const hostRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [failed, setFailed] = useState(false)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const host = hostRef.current
@@ -43,6 +43,7 @@ export function HeroWebGLCanvas({
         ro = new ResizeObserver(resize)
         ro.observe(host)
         scene.start()
+        if (!disposed) setReady(true)
       } catch (err) {
         warnWebGL('hero-webgl', err instanceof Error ? err.message : String(err))
         if (!disposed) setFailed(true)
@@ -51,6 +52,7 @@ export function HeroWebGLCanvas({
 
     return () => {
       disposed = true
+      setReady(false)
       ro?.disconnect()
       scene?.stop()
       scene?.dispose()
@@ -63,8 +65,14 @@ export function HeroWebGLCanvas({
 
   return (
     <div ref={hostRef} className={`hero-webgl-host ${className}`}>
-      <canvas ref={canvasRef} className="hero-webgl-canvas absolute inset-0 h-full w-full" />
-      {fallback}
+      <canvas
+        ref={canvasRef}
+        className="hero-webgl-canvas absolute inset-0 z-[1] h-full w-full"
+        aria-hidden
+      />
+      {!ready && fallback ? (
+        <div className="absolute inset-0 z-0">{fallback}</div>
+      ) : null}
     </div>
   )
 }

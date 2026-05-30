@@ -87,6 +87,11 @@ const RETRO_FRAGMENT = /* glsl */ `
     float scan = sin((refractUv.y + uTime * 0.15) * 280.0) * 0.015;
     col += scan;
 
+    float leakL = smoothstep(0.0, 0.35, 1.0 - uv.x) * smoothstep(0.2, 0.9, uv.y);
+    float leakR = smoothstep(0.0, 0.35, uv.x) * smoothstep(0.15, 0.85, 1.0 - uv.y);
+    col += vec3(1.0, 0.35, 0.15) * leakL * (0.06 + 0.04 * sin(uTime * 0.7));
+    col += vec3(0.2, 0.55, 1.0) * leakR * (0.05 + 0.03 * cos(uTime * 0.55));
+
     float vig = smoothstep(1.1, 0.25, edge);
     col *= mix(0.35, 1.0, vig);
 
@@ -100,13 +105,15 @@ export async function createRetroHeroScene(
 ): Promise<HeroScene> {
   const THREE = await import('three')
 
+  const low = options.lowPower ?? false
+
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: false,
     alpha: false,
-    powerPreference: 'high-performance',
+    powerPreference: low ? 'default' : 'high-performance',
   })
-  renderer.setPixelRatio(getDpr())
+  renderer.setPixelRatio(getDpr(low))
   renderer.setClearColor(0x08060e, 1)
 
   const scene = new THREE.Scene()
@@ -131,8 +138,8 @@ export async function createRetroHeroScene(
   composer.addPass(new RenderPass(scene, camera))
 
   const bloom = new BloomEffect({
-    intensity: 1.35,
-    luminanceThreshold: 0.15,
+    intensity: low ? 1.05 : 1.45,
+    luminanceThreshold: 0.12,
     luminanceSmoothing: 0.45,
     mipmapBlur: true,
   })

@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useMemo } from 'react'
-import { getSplineSceneUrl } from '../../config/splineScenes'
+import { useCoarsePointer } from '../../hooks/useCoarsePointer'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
-import { SplineEmbed } from '../SplineEmbed'
+import { HeroBackground } from './HeroBackground'
 
 const HeroWebGLCanvas = lazy(() =>
   import('./HeroWebGLCanvas').then((m) => ({ default: m.HeroWebGLCanvas })),
@@ -11,7 +11,6 @@ function RetroCssFallback() {
   return (
     <>
       <div className="hero-retro-gradient absolute inset-0" />
-      <div className="hero-retro-vignette absolute inset-0" />
       <div className="hero-retro-chroma hero-retro-chroma--l absolute inset-0" />
       <div className="hero-retro-chroma hero-retro-chroma--r absolute inset-0" />
       <div className="hero-retro-grain-fallback absolute inset-0" />
@@ -21,14 +20,14 @@ function RetroCssFallback() {
 
 export function HeroRetroLayer() {
   const reduced = useReducedMotion()
-  const sceneUrl = getSplineSceneUrl('retro')
+  const coarse = useCoarsePointer()
 
   const createScene = useCallback(
     (canvas: HTMLCanvasElement) =>
       import('../../webgl/hero/createRetroHeroScene').then((m) =>
-        m.createRetroHeroScene(canvas, { reducedMotion: reduced }),
+        m.createRetroHeroScene(canvas, { reducedMotion: reduced, lowPower: coarse }),
       ),
-    [reduced],
+    [reduced, coarse],
   )
 
   const webglFallback = useMemo(
@@ -41,13 +40,21 @@ export function HeroRetroLayer() {
         />
       </Suspense>
     ),
-    [createScene, reduced],
+    [createScene],
   )
 
   return (
-    <div className="hero-retro-layer pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-      <SplineEmbed sceneUrl={sceneUrl} className="absolute inset-0" fallback={webglFallback} />
-      <div className="hero-retro-vignette pointer-events-none absolute inset-0 z-[2] mix-blend-multiply" />
-    </div>
+    <>
+      <HeroBackground
+        variant="retro"
+        layerClassName="hero-retro-layer pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        webglFallback={webglFallback}
+        cssFallback={<RetroCssFallback />}
+      />
+      <div
+        className="hero-retro-vignette pointer-events-none absolute inset-0 z-[1] mix-blend-multiply"
+        aria-hidden
+      />
+    </>
   )
 }

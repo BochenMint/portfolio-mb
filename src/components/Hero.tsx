@@ -6,6 +6,8 @@ import { useHeroVariant } from '../hooks/useHeroVariant'
 
 import { HeroDefaultHeadline } from './hero/HeroDefaultHeadline'
 
+import { HeroLabBanner } from './hero/HeroLabBanner'
+
 import { HeroOrbitLayer } from './hero/HeroOrbitLayer'
 
 import { HeroRetroLayer } from './hero/HeroRetroLayer'
@@ -70,19 +72,25 @@ export function Hero({ animationsReady = true }: HeroProps) {
 
 
 
+      <div className="hero-content-scrim pointer-events-none absolute inset-0 z-[1]" aria-hidden />
+
+
+
+      <HeroLabBanner variant={variant} />
+
       <HeroVariantSwitcher variant={variant} onChange={setVariant} />
 
 
 
       <div className="relative z-10 mx-auto grid w-full max-w-[100vw] items-end gap-10 px-6 md:grid-cols-[1fr_minmax(200px,320px)] md:gap-12 md:px-10 lg:px-16">
 
-        <div className="min-w-0">
+        <div className="hero-content min-w-0">
 
           <p
 
             data-hero-fade
 
-            className={`section-label text-[var(--color-paper)]/55 ${isOrbit ? 'hero-orbit-kicker' : ''}`}
+            className={`section-label hero-text-kicker ${isOrbit ? 'hero-orbit-kicker' : ''}`}
 
           >
 
@@ -94,7 +102,7 @@ export function Hero({ animationsReady = true }: HeroProps) {
 
             data-hero-fade
 
-            className={`mt-3 text-sm text-[var(--color-paper)]/55 ${isOrbit ? 'hero-orbit-role' : ''}`}
+            className={`hero-text-muted mt-3 text-sm ${isOrbit ? 'hero-orbit-role' : ''}`}
 
           >
 
@@ -114,7 +122,7 @@ export function Hero({ animationsReady = true }: HeroProps) {
 
               lines={site.headline}
 
-              className={isOrbit ? 'hero-orbit-display tracking-[0.02em]' : ''}
+              className={`hero-text-display ${isOrbit ? 'hero-orbit-display tracking-[0.02em]' : ''}`}
 
             />
 
@@ -126,7 +134,7 @@ export function Hero({ animationsReady = true }: HeroProps) {
 
             data-hero-fade
 
-            className="text-balance mt-8 max-w-2xl text-lg leading-relaxed text-[var(--color-paper)]/72 md:mt-10 md:text-xl md:leading-relaxed"
+            className="hero-text-body text-balance mt-8 max-w-2xl text-lg leading-relaxed md:mt-10 md:text-xl md:leading-relaxed"
 
           >
 
@@ -140,7 +148,7 @@ export function Hero({ animationsReady = true }: HeroProps) {
 
             data-hero-fade
 
-            className="text-balance mt-4 max-w-2xl text-base leading-relaxed text-[var(--color-paper)]/55"
+            className="hero-text-muted text-balance mt-4 max-w-2xl text-base leading-relaxed"
 
           >
 
@@ -150,7 +158,7 @@ export function Hero({ animationsReady = true }: HeroProps) {
 
 
 
-          <p data-hero-fade className="mt-4 text-sm text-[var(--color-paper)]/45">
+          <p data-hero-fade className="hero-text-faint mt-4 text-sm">
 
             {site.responseTime} · {site.location}
 
@@ -192,7 +200,7 @@ export function Hero({ animationsReady = true }: HeroProps) {
 
           data-hero-portrait
 
-          className="relative z-10 mx-auto aspect-[3/4] w-full max-w-[min(320px,72vw)] shrink-0 overflow-hidden border border-[var(--color-paper)]/20 bg-[var(--color-paper)]/5 will-change-transform md:mx-0"
+          className="relative z-10 mx-auto aspect-[3/4] w-full max-w-[min(320px,72vw)] shrink-0 overflow-hidden border border-[var(--color-paper)]/25 bg-[var(--color-paper)]/8 shadow-[0_24px_80px_rgba(0,0,0,0.45)] will-change-transform md:mx-0"
 
         >
 
@@ -207,5 +215,4 @@ export function Hero({ animationsReady = true }: HeroProps) {
   )
 
 }
-
 

@@ -1,5 +1,7 @@
 export type HeroSceneOptions = {
   reducedMotion: boolean
+  /** Touch / narrow — mniej geometrii, niższy DPR */
+  lowPower?: boolean
 }
 
 export type HeroScene = {
@@ -31,6 +33,11 @@ export function bindHeroPointer(
   }
 }
 
-export function getDpr(): number {
-  return Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 2)
+export function getDpr(lowPower = false): number {
+  const base = typeof window !== 'undefined' ? window.devicePixelRatio : 1
+  if (lowPower) return 1
+  return Math.min(base, 2)
 }
+
+/** Spline hoverRotate — ok. 0.08 damping */
+export const HERO_ROTATION_DAMP = 0.08

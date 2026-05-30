@@ -1,17 +1,21 @@
 import type { HeroVariant } from '../lib/heroVariant'
 
 /**
- * Po Publish w Spline (Export → Publish) wklej publiczny URL sceny.
- * Pliki .spline NIE działają w przeglądarce — tylko opublikowany link.
+ * Publiczne URL po Publish w Spline (Export → Publish).
+ * Wklej w `.env` — bez edycji kodu:
  *
- * 1. Otwórz plik w spline.design
- * 2. Export → Publish → skopiuj URL (prod.spline.design/…)
- * 3. Wklej poniżej dla właściwego wariantu
+ *   VITE_SPLINE_RETRO_URL=https://prod.spline.design/...
+ *   VITE_SPLINE_TYPE_URL=https://prod.spline.design/...
+ *   VITE_SPLINE_ORBIT_URL=https://prod.spline.design/...
+ *
+ * Pliki `.spline` NIE działają w przeglądarce.
  */
+const env = import.meta.env
+
 export const SPLINE_SCENE_URLS: Record<HeroVariant, string | undefined> = {
-  retro: undefined,
-  type: undefined,
-  orbit: undefined,
+  retro: normalizeSplineUrl(env.VITE_SPLINE_RETRO_URL),
+  type: normalizeSplineUrl(env.VITE_SPLINE_TYPE_URL),
+  orbit: normalizeSplineUrl(env.VITE_SPLINE_ORBIT_URL),
 }
 
 export const SPLINE_SOURCE_FILES: Record<HeroVariant, string> = {
@@ -20,7 +24,11 @@ export const SPLINE_SOURCE_FILES: Record<HeroVariant, string> = {
   orbit: 'rotating_interactive_hero_section.spline',
 }
 
-export function getSplineSceneUrl(variant: HeroVariant): string | undefined {
-  const url = SPLINE_SCENE_URLS[variant]?.trim()
+function normalizeSplineUrl(raw: string | undefined): string | undefined {
+  const url = raw?.trim()
   return url && url.startsWith('http') ? url : undefined
+}
+
+export function getSplineSceneUrl(variant: HeroVariant): string | undefined {
+  return SPLINE_SCENE_URLS[variant]
 }

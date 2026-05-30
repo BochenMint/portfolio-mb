@@ -114,13 +114,15 @@ export async function createTypeHeroScene(
 
   await document.fonts.load('700 1em "Bebas Neue"')
 
+  const low = options.lowPower ?? false
+
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    antialias: true,
+    antialias: !low,
     alpha: true,
-    powerPreference: 'high-performance',
+    powerPreference: low ? 'default' : 'high-performance',
   })
-  renderer.setPixelRatio(getDpr())
+  renderer.setPixelRatio(getDpr(low))
   renderer.setClearColor(0x000000, 0)
 
   const scene = new THREE.Scene()
@@ -136,7 +138,9 @@ export async function createTypeHeroScene(
       uNoise: { value: noiseTex },
       uTime: { value: 0 },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-      uDispStrength: { value: options.reducedMotion ? 0.02 : 0.08 },
+      uDispStrength: {
+        value: options.reducedMotion ? 0.02 : low ? 0.045 : 0.09,
+      },
     },
     vertexShader: TYPE_VERTEX,
     fragmentShader: TYPE_FRAGMENT,
@@ -144,7 +148,7 @@ export async function createTypeHeroScene(
     depthWrite: false,
   })
 
-  const segments = options.reducedMotion ? 32 : 64
+  const segments = options.reducedMotion ? 32 : low ? 48 : 72
   const mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(1, 1, segments, segments),
     material,

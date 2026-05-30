@@ -1,8 +1,8 @@
 import { lazy, Suspense, useCallback, useMemo } from 'react'
 import { site } from '../../data/content'
-import { getSplineSceneUrl } from '../../config/splineScenes'
+import { useCoarsePointer } from '../../hooks/useCoarsePointer'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
-import { SplineEmbed } from '../SplineEmbed'
+import { HeroBackground } from './HeroBackground'
 
 const HeroWebGLCanvas = lazy(() =>
   import('./HeroWebGLCanvas').then((m) => ({ default: m.HeroWebGLCanvas })),
@@ -14,33 +14,36 @@ function TypeCssFallback() {
 
 export function HeroTypeLayer() {
   const reduced = useReducedMotion()
-  const sceneUrl = getSplineSceneUrl('type')
+  const coarse = useCoarsePointer()
   const lines = site.headline
 
   const createScene = useCallback(
     (canvas: HTMLCanvasElement) =>
       import('../../webgl/hero/createTypeHeroScene').then((m) =>
-        m.createTypeHeroScene(canvas, lines, { reducedMotion: reduced }),
+        m.createTypeHeroScene(canvas, lines, { reducedMotion: reduced, lowPower: coarse }),
       ),
-    [lines, reduced],
+    [lines, reduced, coarse],
   )
 
   const webglFallback = useMemo(
     () => (
       <Suspense fallback={<TypeCssFallback />}>
         <HeroWebGLCanvas
-          className="hero-type-webgl absolute inset-0"
+          className="hero-type-webgl absolute inset-0 max-md:opacity-40"
           createScene={createScene}
           fallback={<TypeCssFallback />}
         />
       </Suspense>
     ),
-    [createScene, reduced],
+    [createScene],
   )
 
   return (
-    <div className="hero-type-layer pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-      <SplineEmbed sceneUrl={sceneUrl} className="absolute inset-0" fallback={webglFallback} />
-    </div>
+    <HeroBackground
+      variant="type"
+      layerClassName="hero-type-layer pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      webglFallback={webglFallback}
+      cssFallback={<TypeCssFallback />}
+    />
   )
 }
