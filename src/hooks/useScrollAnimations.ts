@@ -186,12 +186,10 @@ export function useScrollAnimations(ready = true) {
 
           // —— Featured work visuals ——
           gsap.utils.toArray<HTMLElement>('[data-project-media-reveal]').forEach((reveal) => {
-            const stillImg = reveal.querySelector('img')
-            if (!stillImg) return
             const trigger = reveal.closest('[data-featured-visual]') ?? reveal
             gsap.fromTo(
-              stillImg,
-              { scale: 1.1, opacity: 0.55 },
+              reveal,
+              { scale: 1.04, opacity: 0.72 },
               {
                 scale: 1,
                 opacity: 1,

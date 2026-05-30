@@ -127,10 +127,22 @@
   }
 
   #work [data-featured-visual] .project-interactive,
+  #work [data-featured-visual] .project-interactive__reveal,
   #work [data-featured-visual] .project-interactive__still,
   #work [data-featured-visual] picture {
     width: 100%;
     height: 100%;
+  }
+
+  #work [data-featured-visual] .project-interactive__reveal {
+    overflow: hidden;
+  }
+
+  /* Letterboxed full-page hero exports (e.g. Mint) — zoom into hero band; matches WebGL uCoverZoom */
+  #work [data-featured-visual][data-hero-media-fill] .project-interactive__still {
+    transform: scale(var(--featured-texture-zoom, 1));
+    transform-origin: center var(--featured-texture-center-y, 28%);
+    will-change: transform;
   }
 
   #work [data-featured-visual] .project-interactive__still img,
@@ -139,7 +151,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 28%;
+    object-position: center var(--featured-texture-center-y, 28%);
   }
 
   [data-section] {

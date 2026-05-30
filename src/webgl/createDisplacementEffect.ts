@@ -66,12 +66,19 @@ const DISPLAY_VERTEX = /* glsl */ `
   uniform float uMaxVertexOffset;
   uniform float uProgress;
   uniform float uIntroStrength;
+  uniform vec2 uCoverCenter;
+  uniform float uCoverZoom;
   varying vec2 vUv;
+
+  vec2 coverMapUv(vec2 uv) {
+    float z = max(uCoverZoom, 1.0);
+    return (uv - uCoverCenter) / z + uCoverCenter;
+  }
 
   void main() {
     vUv = uv;
     vec3 pos = position;
-    float disp = texture2D(uDisplacementMap, uv).r;
+    float disp = texture2D(uDisplacementMap, coverMapUv(uv)).r;
     float center = length(uv - 0.5);
     float intro = (1.0 - smoothstep(0.0, 0.78, center)) * uIntroStrength * (1.0 - uProgress);
     float z = (disp + intro) * uVertexStrength;
@@ -91,14 +98,22 @@ const DISPLAY_FRAGMENT = /* glsl */ `
   uniform float uChromaticStrength;
   uniform float uProgress;
   uniform float uIntroStrength;
+  uniform vec2 uCoverCenter;
+  uniform float uCoverZoom;
   varying vec2 vUv;
 
+  vec2 coverMapUv(vec2 uv) {
+    float z = max(uCoverZoom, 1.0);
+    return (uv - uCoverCenter) / z + uCoverCenter;
+  }
+
   void main() {
-    float h = texture2D(uDisplacementMap, vUv).r;
-    float hL = texture2D(uDisplacementMap, vUv - vec2(uGradTexel.x, 0.0)).r;
-    float hR = texture2D(uDisplacementMap, vUv + vec2(uGradTexel.x, 0.0)).r;
-    float hD = texture2D(uDisplacementMap, vUv - vec2(0.0, uGradTexel.y)).r;
-    float hU = texture2D(uDisplacementMap, vUv + vec2(0.0, uGradTexel.y)).r;
+    vec2 mapUv = coverMapUv(vUv);
+    float h = texture2D(uDisplacementMap, mapUv).r;
+    float hL = texture2D(uDisplacementMap, mapUv - vec2(uGradTexel.x, 0.0)).r;
+    float hR = texture2D(uDisplacementMap, mapUv + vec2(uGradTexel.x, 0.0)).r;
+    float hD = texture2D(uDisplacementMap, mapUv - vec2(0.0, uGradTexel.y)).r;
+    float hU = texture2D(uDisplacementMap, mapUv + vec2(0.0, uGradTexel.y)).r;
     vec2 grad = vec2(hR - hL, hU - hD);
 
     float center = length(vUv - 0.5);
@@ -106,13 +121,13 @@ const DISPLAY_FRAGMENT = /* glsl */ `
     grad += vec2(intro * 0.04);
 
     vec2 offset = clamp(grad * uDistortStrength, -uMaxDistort, uMaxDistort);
-    vec2 uv = clamp(vUv + offset, 0.001, 0.999);
+    vec2 uv = clamp(mapUv + offset, 0.001, 0.999);
     vec3 col = texture2D(uMap, uv).rgb;
 
     if (uChromaticStrength > 0.0001) {
       vec2 chroma = grad * uChromaticStrength;
-      col.r = texture2D(uMap, clamp(vUv + offset + chroma, 0.001, 0.999)).r;
-      col.b = texture2D(uMap, clamp(vUv + offset - chroma, 0.001, 0.999)).b;
+      col.r = texture2D(uMap, clamp(mapUv + offset + chroma, 0.001, 0.999)).r;
+      col.b = texture2D(uMap, clamp(mapUv + offset - chroma, 0.001, 0.999)).b;
     }
 
     gl_FragColor = vec4(col, 1.0);
@@ -129,10 +144,16 @@ export type DisplacementEffect = {
   readonly ready: boolean
 }
 
+export type TextureCoverOptions = {
+  zoom?: number
+  centerY?: number
+}
+
 export async function createDisplacementEffect(
   canvas: HTMLCanvasElement,
   imageUrl: string,
   options: DisplacementOptions,
+  cover: TextureCoverOptions = {},
 ): Promise<DisplacementEffect> {
   const THREE = await import('three')
 
@@ -148,12 +169,12 @@ export async function createDisplacementEffect(
   const simScene = new THREE.Scene()
   const simCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
 
-  const canFloat = renderer.capabilities.isWebGL2
+  const rtType = pickSimulationRenderTargetType(THREE, renderer)
   const rtOpts = {
     minFilter: THREE.LinearFilter,
     magFilter: THREE.LinearFilter,
     format: THREE.RGBAFormat,
-    type: canFloat ? THREE.HalfFloatType : THREE.UnsignedByteType,
+    type: rtType,
   }
 
   const size = options.simResolution
@@ -184,6 +205,10 @@ export async function createDisplacementEffect(
   const simQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), simMaterial)
   simScene.add(simQuad)
 
+  const coverZoom = Math.max(1, cover.zoom ?? 1)
+  const coverCenterY = cover.centerY ?? 0.28
+  const coverCenter = new THREE.Vector2(0.5, coverCenterY)
+
   const displayScene = new THREE.Scene()
   const displayCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
   displayCamera.position.z = 2.2
@@ -207,6 +232,8 @@ export async function createDisplacementEffect(
       uChromaticStrength: { value: options.chromaticStrength },
       uProgress: { value: 0 },
       uIntroStrength: { value: options.introWaveStrength },
+      uCoverCenter: { value: coverCenter.clone() },
+      uCoverZoom: { value: coverZoom },
     },
     vertexShader: DISPLAY_VERTEX,
     fragmentShader: DISPLAY_FRAGMENT,
@@ -237,12 +264,21 @@ export async function createDisplacementEffect(
     const imgAspect = texture.image
       ? (texture.image as HTMLImageElement).width / (texture.image as HTMLImageElement).height
       : 16 / 9
-    const containerAspect = width / Math.max(height, 1)
-    if (containerAspect > imgAspect) {
-      displayMesh.scale.set(containerAspect / imgAspect, 1, 1)
+    const viewAspect = width / Math.max(height, 1)
+    const dist = Math.abs(displayCamera.position.z)
+    const vFov = THREE.MathUtils.degToRad(displayCamera.fov)
+    const visibleHeight = 2 * Math.tan(vFov / 2) * dist
+    const visibleWidth = visibleHeight * viewAspect
+
+    let planeW = visibleWidth
+    let planeH = visibleHeight
+    if (viewAspect > imgAspect) {
+      planeH = visibleWidth / imgAspect
     } else {
-      displayMesh.scale.set(1, imgAspect / containerAspect, 1)
+      planeW = visibleHeight * imgAspect
     }
+
+    displayMesh.scale.set(planeW, planeH, 1)
     updateAspectUniforms()
   }
 
@@ -295,7 +331,7 @@ export async function createDisplacementEffect(
       width = w
       height = h
       renderer.setSize(w, h, false)
-      displayCamera.aspect = w / h
+      displayCamera.aspect = w / Math.max(h, 1)
       displayCamera.updateProjectionMatrix()
       fitPlane()
     },
@@ -349,6 +385,23 @@ function clearRenderTarget(
   renderer.setClearColor(0x000000, 0)
   renderer.clear()
   renderer.setRenderTarget(prev)
+}
+
+function pickSimulationRenderTargetType(
+  THREE: ThreeModule,
+  renderer: import('three').WebGLRenderer,
+): import('three').TextureDataType {
+  if (!renderer.capabilities.isWebGL2) {
+    return THREE.UnsignedByteType
+  }
+  try {
+    const gl = renderer.getContext()
+    const test = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT)
+    if (!test) return THREE.UnsignedByteType
+    return THREE.HalfFloatType
+  } catch {
+    return THREE.UnsignedByteType
+  }
 }
 
 function loadTexture(

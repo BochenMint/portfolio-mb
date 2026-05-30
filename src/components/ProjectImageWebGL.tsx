@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Project } from '../data/content'
+import { textureCoverForProject } from '../lib/featuredMediaFill'
 import { projectImageTextureUrl } from '../lib/projectImageUrl'
 import {
   DISPLACEMENT_LEVEL,
@@ -56,7 +57,12 @@ export function ProjectImageWebGL({
         const { createDisplacementEffect } = await import('../webgl/createDisplacementEffect')
         if (disposed || activeRun !== runId) return
 
-        const effect = await createDisplacementEffect(canvas, imageUrl, DISPLACEMENT_LEVEL[level])
+        const effect = await createDisplacementEffect(
+          canvas,
+          imageUrl,
+          DISPLACEMENT_LEVEL[level],
+          textureCoverForProject(project, variant),
+        )
         if (disposed || activeRun !== runId) {
           effect.dispose()
           return

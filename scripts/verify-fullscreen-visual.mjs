@@ -9,6 +9,8 @@ import { fileURLToPath } from 'node:url'
 
 const BASE = process.env.PREVIEW_URL ?? 'http://localhost:5190'
 const MIN_RATIO = 0.99
+const MIN_CENTER_LUM = 16
+const MIN_FILL_RATIO = 0.92
 const VIEWPORTS = [
   { width: 1440, height: 900, label: '1440' },
   { width: 1920, height: 1080, label: '1920' },
@@ -51,17 +53,40 @@ async function measure(page) {
         })
         parent = parent.parentElement
       }
+      let centerLum = 0
+      let fillRatio = 0
+      if (media && r.width > 0 && r.height > 0) {
+        fillRatio = Math.min(mr.width / r.width, mr.height / r.height)
+        const canvas = el.querySelector('canvas')
+        const gl =
+          canvas?.getContext('webgl2', { preserveDrawingBuffer: true }) ??
+          canvas?.getContext('webgl', { preserveDrawingBuffer: true })
+        if (gl && canvas.width > 0) {
+          const px = new Uint8Array(4)
+          const cx = Math.floor(canvas.width / 2)
+          const cy = Math.floor(canvas.height / 2)
+          gl.readPixels(cx, cy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px)
+          centerLum = (px[0] + px[1] + px[2]) / 3
+        } else if (img) {
+          centerLum = 128
+        }
+      }
+
       return {
         index: i + 1,
         id: el.closest('[id^="project-"]')?.id ?? `visual-${i}`,
         visualW: r.width,
+        visualH: r.height,
         visualLeft: r.left,
         visualRight: r.right,
         vw,
         ratio: r.width / vw,
         mediaW: mr?.width ?? 0,
+        mediaH: mr?.height ?? 0,
         mediaLeft: mr?.left ?? 0,
         mediaRatio: mr ? mr.width / vw : 0,
+        fillRatio,
+        centerLum,
         chain,
       }
     })
@@ -108,12 +133,22 @@ async function main() {
           `${vp.label}px ${row.id}: media ${row.mediaW.toFixed(1)}px (${(row.mediaRatio * 100).toFixed(2)}%)`,
         )
       }
+      if (row.fillRatio > 0 && row.fillRatio < MIN_FILL_RATIO) {
+        failures.push(
+          `${vp.label}px ${row.id}: media fill ${(row.fillRatio * 100).toFixed(1)}% of visual (need ≥${MIN_FILL_RATIO * 100}%)`,
+        )
+      }
+      if (row.centerLum > 0 && row.centerLum < MIN_CENTER_LUM) {
+        failures.push(
+          `${vp.label}px ${row.id}: center luminance ${row.centerLum.toFixed(0)} (letterbox/empty; need ≥${MIN_CENTER_LUM})`,
+        )
+      }
     }
 
     for (let i = 0; i < rows.length; i++) {
       const el = page.locator('#work [data-featured-visual]').nth(i)
       await el.scrollIntoViewIfNeeded()
-      await page.waitForTimeout(200)
+      await page.waitForTimeout(600)
       const shot = path.join(SHOTS_DIR, `work-${rows[i].id}-vp${vp.label}.png`)
       await page.screenshot({ path: shot, fullPage: false })
       console.log(`screenshot: ${shot}`)

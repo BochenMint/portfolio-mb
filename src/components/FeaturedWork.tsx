@@ -1,5 +1,7 @@
+import type { CSSProperties } from 'react'
 import { projects, sections } from '../data/content'
 import type { Project } from '../data/content'
+import { textureCoverForProject } from '../lib/featuredMediaFill'
 import { ProjectImageInteractive } from './ProjectImageInteractive'
 import { ProjectMarquee } from './ProjectMarquee'
 import { SectionIntro } from './SectionIntro'
@@ -36,6 +38,14 @@ export function FeaturedWork() {
 
 function FeaturedProject({ project, index }: { project: Project; index: number }) {
   const hasLiveSite = project.url.startsWith('http')
+  const heroFill = textureCoverForProject(project, 'hero')
+  const heroFillStyle =
+    heroFill.zoom > 1
+      ? ({
+          ['--featured-texture-zoom' as string]: heroFill.zoom,
+          ['--featured-texture-center-y' as string]: `${(1 - heroFill.centerY) * 100}%`,
+        } as CSSProperties)
+      : undefined
 
   return (
     <article
@@ -51,7 +61,9 @@ function FeaturedProject({ project, index }: { project: Project; index: number }
       >
         <div
           data-featured-visual
-          className="bleed-full project-card-media relative overflow-hidden bg-[var(--color-paper)]/5"
+          data-hero-media-fill={heroFill.zoom > 1 ? '' : undefined}
+          style={heroFillStyle}
+          className="bleed-full project-card-media relative aspect-[16/9] overflow-hidden bg-[var(--color-paper)]/5 md:aspect-auto md:min-h-[70vh] lg:min-h-[72vh]"
         >
           <ProjectImageInteractive
             project={project}
