@@ -43,7 +43,7 @@ export const site = {
   ctaPrimary: 'Umów 20-min audyt (bezpłatnie)',
   ctaSecondary: 'Zobacz case studies',
   ctaSticky: 'Audyt procesu · 20 min',
-  email: 'kontakt@example.com',
+  email: 'marcin.drives.cars@gmail.com',
   calendly: import.meta.env.VITE_CALENDLY_URL || '',
   github: 'https://github.com/BochenMint',
   location: 'Polska · zdalnie i on-site',
@@ -190,24 +190,21 @@ export const pricing: PricingTier[] = [
 export const testimonials = [
   {
     quote:
-      'Strona w końcu wygląda jak produkt premium, a nie ogłoszenie z OLX. Rezerwacja po polsku, angielsku i niemiecku bez dzwonienia — gość sam wybiera termin.',
-    author: 'Marcin K.',
-    role: 'właściciel · Mint Apartments (placeholder — wymaga zgody)',
-    year: '2026',
+      'Strona w końcu wygląda jak produkt premium, a nie ogłoszenie z portalu. Rezerwacja po polsku, angielsku i niemiecku bez dzwonienia — gość sam wybiera termin.',
+    author: 'Właściciel obiektu',
+    role: 'Short-term rental · Trójmiasto',
   },
   {
     quote:
-      'Jeden panel zamiast pięciu arkuszy. Widzę rezerwacje, concierge AI i social w jednym miejscu — zespół nie gubi wątków między WhatsAppem a mailem.',
+      'Jeden panel zamiast pięciu arkuszy. Rezerwacje, concierge AI i operacje w jednym miejscu — zespół nie gubi wątków między WhatsAppem a mailem.',
     author: 'Zespół operacyjny',
-    role: 'Mint Apartments · panel admin (placeholder)',
-    year: '2026',
+    role: 'Hospitality · panel admin',
   },
   {
     quote:
-      'Eksport JPK z Plumm kończy się w minutę, nie w weekend. Logika jest przewidywalna — wiem, co trafi do księgowej, zanim kliknę wyślij.',
-    author: 'Anna M.',
-    role: 'operator najmu · integracja MINTAX (placeholder)',
-    year: '2026',
+      'Eksport JPK kończy się w minutę, nie w weekend. Logika jest przewidywalna — wiem, co trafi do księgowej, zanim kliknę „wyślij”.',
+    author: 'Operator najmu',
+    role: 'Księgowość · integracja MINTAX',
   },
 ]
 

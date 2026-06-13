@@ -1,6 +1,6 @@
 import { projects } from '../data/content'
+import { MagneticButton } from './MagneticButton'
 import { ProjectImage } from './ProjectImage'
-import { VisitSiteButton } from './VisitSiteButton'
 
 export function CaseStudies() {
   const flagship = projects.find((p) => p.flagship)!

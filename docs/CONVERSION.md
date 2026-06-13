@@ -24,10 +24,13 @@
 ## Must-fix przed ads / LinkedIn
 
 - [x] Hi-res screeny WebP (`public/projects/`)
+- [x] Obraz OG (`public/og.png`) + Twitter Card w `index.html`
+- [x] Prawdziwy `site.email` w `content.ts`
+- [x] Testimoniale przepisane na uczciwe cytaty poglądowe (bez widocznego „placeholder”)
 - [ ] `VITE_CALENDLY_URL` w `.env` — **zamień placeholder na swój link**
 - [ ] `VITE_FORM_ACCESS_KEY` — klucz z [web3forms.com](https://web3forms.com)
-- [ ] Prawdziwy `site.email` w `content.ts`
-- [ ] **Zgoda na cytaty** — testimonials oznaczone jako placeholder; podmień na realne cytaty po akceptacji klienta
+- [ ] **Domena produkcyjna** — ustaw absolutne `og:url`/`canonical` w `index.html` po wyborze hostingu
+- [ ] **Zgoda na cytaty** — podmień cytaty poglądowe na imienne referencje po akceptacji klienta
 
 ## Regeneracja screenów
 

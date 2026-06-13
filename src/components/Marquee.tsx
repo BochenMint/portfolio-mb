@@ -4,7 +4,11 @@ export function Marquee() {
   const items = [...marqueeItems, ...marqueeItems]
 
   return (
-    <div data-marquee className="border-line border-y bg-surface/50 py-5 overflow-hidden">
+    <div
+      data-marquee
+      aria-hidden
+      className="border-line border-y bg-surface/50 py-5 overflow-hidden"
+    >
       <div className="flex w-max animate-marquee gap-10 whitespace-nowrap">
         {items.map((item, i) => (
           <span
