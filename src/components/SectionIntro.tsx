@@ -6,19 +6,27 @@ type SectionIntroProps = {
 
 export function SectionIntro({ num, title, lead }: SectionIntroProps) {
   return (
-    <header className="mb-12 md:mb-16">
-      <p data-reveal className="section-label flex items-center gap-4">
+    <header className="mb-14 md:mb-18">
+      {/* mono section number */}
+      <p data-reveal className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-accent mb-5">
         <span className="tabular-nums">{num}</span>
-        <span className="h-px w-12 bg-[var(--color-paper)]/25" aria-hidden />
       </p>
+
+      {/* accent hairline above title */}
+      <div className="accent-hairline mb-6 w-14" aria-hidden />
+
       <h2
         data-reveal
-        className="font-headline mt-5 text-[clamp(2.25rem,5.5vw,4.25rem)] leading-[1.02] tracking-tight"
+        className="font-headline text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.0] tracking-tight text-balance"
       >
         {title}
       </h2>
+
       {lead ? (
-        <p data-reveal className="text-muted mt-5 max-w-2xl text-base leading-relaxed md:text-lg">
+        <p
+          data-reveal
+          className="text-muted mt-5 max-w-[58ch] text-base leading-relaxed md:text-lg"
+        >
           {lead}
         </p>
       ) : null}

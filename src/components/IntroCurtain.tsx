@@ -75,6 +75,8 @@ export function IntroCurtain({ onComplete }: IntroCurtainProps) {
 
   if (reduced) return null
 
+  const [firstName, ...rest] = site.name.split(' ')
+
   return (
     <div
       ref={curtainRef}
@@ -86,7 +88,8 @@ export function IntroCurtain({ onComplete }: IntroCurtainProps) {
         ref={lineRef}
         className="font-headline text-[clamp(1.5rem,4vw,2.75rem)] tracking-tight text-[var(--color-paper)]"
       >
-        {site.name}
+        <span className="text-[var(--color-accent)]">{firstName}</span>
+        {rest.length > 0 && <span> {rest.join(' ')}</span>}
       </p>
     </div>
   )

@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "portfolio-mb",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5190
+    },
+    {
+      "name": "portfolio-mb-v4-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--port", "5197", "--strictPort"],
+      "port": 5197
+    }
+  ]
+}

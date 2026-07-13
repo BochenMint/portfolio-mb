@@ -6,12 +6,19 @@ type HeroWebGLCanvasProps = {
   className?: string
   createScene: (canvas: HTMLCanvasElement) => Promise<HeroScene>
   fallback?: ReactNode
+  /**
+   * Pause the scene's render loop (scene.stop()/start()) via IntersectionObserver
+   * when the host scrolls out of view — avoids burning GPU on off-screen canvases
+   * (e.g. deck cards far down the page, or a card behind the case-study overlay).
+   */
+  pauseWhenOffscreen?: boolean
 }
 
 export function HeroWebGLCanvas({
   className = '',
   createScene,
   fallback = null,
+  pauseWhenOffscreen = false,
 }: HeroWebGLCanvasProps) {
   const hostRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -26,6 +33,7 @@ export function HeroWebGLCanvas({
     let disposed = false
     let scene: HeroScene | undefined
     let ro: ResizeObserver | undefined
+    let io: IntersectionObserver | undefined
 
     void (async () => {
       try {
@@ -44,6 +52,18 @@ export function HeroWebGLCanvas({
         ro.observe(host)
         scene.start()
         if (!disposed) setReady(true)
+
+        if (pauseWhenOffscreen) {
+          io = new IntersectionObserver(
+            ([entry]) => {
+              if (!scene) return
+              if (entry.isIntersecting) scene.start()
+              else scene.stop()
+            },
+            { threshold: 0 },
+          )
+          io.observe(host)
+        }
       } catch (err) {
         warnWebGL('hero-webgl', err instanceof Error ? err.message : String(err))
         if (!disposed) setFailed(true)
@@ -54,10 +74,11 @@ export function HeroWebGLCanvas({
       disposed = true
       setReady(false)
       ro?.disconnect()
+      io?.disconnect()
       scene?.stop()
       scene?.dispose()
     }
-  }, [createScene, failed])
+  }, [createScene, failed, pauseWhenOffscreen])
 
   if (failed) {
     return <div className={className}>{fallback}</div>

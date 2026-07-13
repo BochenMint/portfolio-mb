@@ -35,6 +35,9 @@ export function useLenis() {
 
     lenis.on('scroll', ScrollTrigger.update)
 
+    // Overlaye (case study) muszą móc zatrzymać smooth scroll strony pod spodem.
+    ;(window as unknown as { __lenis?: Lenis }).__lenis = lenis
+
     const tick = (time: number) => lenis.raf(time * 1000)
     gsap.ticker.add(tick)
     gsap.ticker.lagSmoothing(0)
@@ -54,6 +57,7 @@ export function useLenis() {
       window.removeEventListener('load', onLoad)
       ScrollTrigger.removeEventListener('refresh', onRefresh)
       gsap.ticker.remove(tick)
+      delete (window as unknown as { __lenis?: Lenis }).__lenis
       lenis.destroy()
       ScrollTrigger.scrollerProxy(document.documentElement, {})
     }

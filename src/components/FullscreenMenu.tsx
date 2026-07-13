@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import { gsap } from '../animation/gsap'
 import { menuLinks, site } from '../data/content'
@@ -14,18 +14,21 @@ function lockBodyScroll(lock: boolean) {
 }
 
 export function FullscreenMenu({ open, onClose }: FullscreenMenuProps) {
-  const panelId = useId()
   const panelRef = useRef<HTMLDivElement>(null)
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const reduced = useReducedMotion()
   const [mounted, setMounted] = useState(open)
+  const ctaHref = site.calendly || '#contact'
+  const isExternal = Boolean(site.calendly)
 
   const handleLinkClick = useCallback(() => {
     onClose()
   }, [onClose])
 
   useEffect(() => {
-    if (open) setMounted(true)
+    if (!open) return
+    const frame = window.requestAnimationFrame(() => setMounted(true))
+    return () => window.cancelAnimationFrame(frame)
   }, [open])
 
   useEffect(() => {
@@ -136,14 +139,24 @@ export function FullscreenMenu({ open, onClose }: FullscreenMenuProps) {
   return (
     <div
       ref={panelRef}
-      id={panelId}
+      id="fullscreen-menu"
       role="dialog"
       aria-modal="true"
       aria-label="Menu nawigacji"
       className="menu-overlay fixed inset-0 z-[90] flex flex-col bg-[var(--color-ink)] text-[var(--color-paper)]"
       style={{ visibility: open ? 'visible' : 'hidden' }}
     >
-      <div className="flex items-center justify-between px-6 py-5 md:px-10 lg:px-16">
+      {/* Dekoracyjny akcent — subtelna linia bursztynowa w tle */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        aria-hidden
+      >
+        <div className="absolute -right-48 -top-48 h-[600px] w-[600px] rounded-full bg-[var(--color-accent)]/[0.03] blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-[var(--color-accent-deep)]/[0.04] blur-3xl" />
+      </div>
+
+      {/* Header row */}
+      <div className="relative z-10 flex items-center justify-between px-6 py-5 md:px-10 lg:px-16">
         <span className="font-headline text-lg tracking-tight">{site.name.split(' ')[0]}</span>
         <button
           type="button"
@@ -154,8 +167,9 @@ export function FullscreenMenu({ open, onClose }: FullscreenMenuProps) {
         </button>
       </div>
 
+      {/* Nav links */}
       <nav
-        className="flex flex-1 flex-col justify-center overflow-y-auto px-6 pb-16 md:px-10 lg:px-16"
+        className="relative z-10 flex flex-1 flex-col justify-center overflow-y-auto px-6 pb-16 md:px-10 lg:px-16"
         aria-label="Sekcje"
       >
         <ul className="space-y-1 md:space-y-2">
@@ -169,26 +183,51 @@ export function FullscreenMenu({ open, onClose }: FullscreenMenuProps) {
                 onClick={handleLinkClick}
                 className="menu-link group flex items-baseline gap-4 py-1 md:gap-6"
               >
-                <span className="menu-link-num text-xs font-medium tracking-[0.2em] text-[var(--color-paper)]/40 tabular-nums">
+                {/* Numer — mono, bursztyn na hover */}
+                <span className="font-mono text-xs tracking-[0.2em] text-[var(--color-paper)]/35 tabular-nums transition-colors duration-200 group-hover:text-[var(--color-accent)]">
                   {link.num}
                 </span>
-                <span className="font-headline text-[clamp(2.5rem,8vw,5.5rem)] leading-[0.95] tracking-tight transition-[letter-spacing] duration-300 group-hover:tracking-wide">
+                {/* Label — headline, rośnie letter-spacing i pojawia się bursztynowy underline na hover */}
+                <span className="relative font-headline text-[clamp(2.5rem,8vw,5.5rem)] leading-[0.95] tracking-tight transition-[letter-spacing] duration-300 group-hover:tracking-wide">
                   {link.label}
+                  <span
+                    className="accent-hairline absolute bottom-0 left-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    aria-hidden
+                  />
                 </span>
               </a>
             </li>
           ))}
         </ul>
 
+        {/* Meta info */}
         <p
           data-menu-meta
           className="mt-16 max-w-md text-sm leading-relaxed text-[var(--color-paper)]/50 md:mt-20"
         >
           {site.valueProp}
         </p>
-        <p data-menu-meta className="mt-4 text-xs tracking-wide text-[var(--color-paper)]/35 uppercase">
+        <p data-menu-meta className="mt-4 font-mono text-xs tracking-[0.14em] text-[var(--color-paper)]/30 uppercase">
           {site.location}
         </p>
+
+        <a
+          data-menu-meta
+          href={ctaHref}
+          onClick={handleLinkClick}
+          className="mt-8 flex w-full max-w-md items-center justify-between border border-accent/40 bg-accent px-5 py-4 text-[var(--color-on-accent)] md:hidden"
+          {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >
+          <span>
+            <span className="block font-mono text-[9px] tracking-[0.14em] uppercase opacity-70">
+              20-min audyt
+            </span>
+            <span className="block text-sm font-semibold">Policzmy zakres i ROI</span>
+          </span>
+          <span aria-hidden className="font-mono text-sm">
+            →
+          </span>
+        </a>
       </nav>
     </div>
   )

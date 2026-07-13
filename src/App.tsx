@@ -6,7 +6,9 @@ import { FeaturedWork } from './components/FeaturedWork'
 import { FooterCta } from './components/FooterCta'
 import { Hero } from './components/Hero'
 import { IntroCurtain } from './components/IntroCurtain'
+import { MobileStickyCta } from './components/MobileStickyCta'
 import { Nav } from './components/Nav'
+import { PricingSection } from './components/PricingSection'
 import { ProcessSection } from './components/ProcessSection'
 import { ProofBar } from './components/ProofBar'
 import { ResultsStrip } from './components/ResultsStrip'
@@ -62,7 +64,7 @@ function App() {
 
       <div
         data-progress-bar
-        className="scroll-progress fixed top-0 left-0 z-[60] h-[2px] w-full origin-left bg-[var(--color-paper)]"
+        className="scroll-progress bg-sunset fixed top-0 left-0 z-[60] h-[2px] w-full origin-left"
         aria-hidden
       />
       <div className="film-grain pointer-events-none fixed inset-0 z-[55]" aria-hidden />
@@ -74,6 +76,7 @@ function App() {
         Przejdź do treści
       </a>
       <Nav />
+      <MobileStickyCta />
       <main id="main" className="max-w-none bg-[var(--color-ink)] p-0 text-[var(--color-paper)]">
         <Hero animationsReady={introDone} />
         <ProofBar />
@@ -88,11 +91,14 @@ function App() {
         <ChapterBreak label="03" />
         <FeaturedWork />
         <SectionWipe />
+        <ChapterBreak label="04" />
+        <PricingSection />
+        <SectionWipe />
         <ProcessSection />
         <TestimonialsSection />
         <FaqSection />
         <SectionWipe />
-        <ChapterBreak label="04" />
+        <ChapterBreak label="05" />
         <Contact />
         <FooterCta />
       </main>

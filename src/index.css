@@ -5,13 +5,19 @@
   --font-headline: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --color-paper: #eceae4;
   --color-paper-bright: #f5f3ee;
   --color-ink: #080807;
   --color-ink-muted: #9a9690;
-  --color-accent: #eceae4;
-  --color-accent-deep: #c8c6c0;
+
+  /* Sygnaturowy akcent — ciepły bursztyn / sunset */
+  --color-accent: #f5a524;
+  --color-accent-bright: #ffc861;
+  --color-accent-deep: #e8761a;
+  --color-coral: #ff5e3a;
+
   --color-rule: color-mix(in srgb, var(--color-paper) 18%, transparent);
   --color-surface: #111110;
   --color-on-accent: #080807;
@@ -34,12 +40,12 @@
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--color-paper) 22%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 30%, transparent);
     color: var(--color-paper);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-paper);
+    outline: 2px solid var(--color-accent);
     outline-offset: 3px;
   }
 
@@ -221,6 +227,61 @@
     box-shadow: inset 0 0 0 1px var(--color-paper);
   }
 
+  /* Sygnaturowe CTA — bursztynowy akcent. Używaj na PRIMARY (umów audyt). */
+  .btn-accent {
+    @apply inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    transition:
+      background-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.2s ease;
+  }
+
+  .btn-accent:hover {
+    background: var(--color-accent-bright);
+    box-shadow: 0 10px 34px -10px color-mix(in srgb, var(--color-accent) 65%, transparent);
+  }
+
+  .btn-accent:active {
+    transform: translateY(1px);
+  }
+
+  /* Sunset gradient — tła akcentowe i duże napisy (background-clip:text). */
+  .bg-sunset {
+    background-image: linear-gradient(
+      115deg,
+      var(--color-accent-bright) 0%,
+      var(--color-accent) 38%,
+      var(--color-coral) 100%
+    );
+  }
+
+  .text-sunset {
+    background-image: linear-gradient(
+      115deg,
+      var(--color-accent-bright),
+      var(--color-accent) 45%,
+      var(--color-coral)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Cienka linia akcentu — separatory / podkreślenia kluczowych liczb. */
+  .accent-hairline {
+    height: 1px;
+    width: 100%;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-accent) 30%,
+      var(--color-coral) 70%,
+      transparent
+    );
+  }
+
   .scroll-progress {
     transform: scaleX(0);
     will-change: transform;
@@ -236,6 +297,86 @@
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 180px 180px;
+  }
+
+  .premium-hero {
+    isolation: isolate;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(245, 165, 36, 0.17), transparent 28rem),
+      radial-gradient(circle at 16% 78%, rgba(255, 94, 58, 0.12), transparent 26rem),
+      linear-gradient(135deg, #080807 0%, #10100e 44%, #070706 100%);
+  }
+
+  .hero-premium-grid {
+    opacity: 0.22;
+    mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--color-paper) 10%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-paper) 10%, transparent) 1px, transparent 1px);
+    background-position: center;
+    background-size: 88px 88px;
+  }
+
+  .hero-premium-spotlight {
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 8%, transparent), transparent 46%, color-mix(in srgb, var(--color-ink) 42%, transparent)),
+      radial-gradient(ellipse 65% 54% at 72% 52%, color-mix(in srgb, var(--color-paper) 10%, transparent), transparent 62%);
+  }
+
+  .hero-system-panel {
+    border-radius: 2rem;
+  }
+
+  .hero-system-panel::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 22% 16%, rgba(245, 165, 36, 0.28), transparent 15rem),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02) 38%, rgba(245, 165, 36, 0.12));
+  }
+
+  .hero-console-card,
+  .hero-metric-card {
+    border: 1px solid color-mix(in srgb, var(--color-paper) 11%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--color-paper) 6%, transparent), color-mix(in srgb, var(--color-paper) 2%, transparent)),
+      color-mix(in srgb, var(--color-ink) 72%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-paper) 8%, transparent);
+  }
+
+  .hero-console-card {
+    border-radius: 1.35rem;
+    padding: 1rem;
+  }
+
+  .hero-console-card--accent {
+    background:
+      radial-gradient(circle at 95% 0%, rgba(245, 165, 36, 0.14), transparent 10rem),
+      linear-gradient(180deg, rgba(245, 165, 36, 0.08), rgba(255, 255, 255, 0.025));
+  }
+
+  .hero-metric-card {
+    border-radius: 1rem;
+    padding: 0.95rem;
+    backdrop-filter: blur(16px);
+  }
+
+  .premium-cta {
+    min-height: 3.1rem;
+    border-radius: 999px;
+    box-shadow:
+      0 18px 60px -20px color-mix(in srgb, var(--color-accent) 80%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  }
+
+  .premium-secondary-cta {
+    min-height: 3.1rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-paper) 5%, transparent);
+    backdrop-filter: blur(14px);
   }
 
   .project-card-media {

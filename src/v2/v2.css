@@ -1,0 +1,256 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   v2 — "CONTROL ROOM" art direction.
+   Portfolio reimagined as a premium operator console / live-systems dashboard.
+   Reuses tokens + .btn-accent/.text-accent/etc. from index.css (imported first).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@theme {
+  --font-grotesk: 'Space Grotesk', 'DM Sans', system-ui, sans-serif;
+}
+
+:root {
+  --v2-line: color-mix(in srgb, var(--color-paper) 11%, transparent);
+  --v2-line-bright: color-mix(in srgb, var(--color-paper) 24%, transparent);
+  --v2-surface: #0e0d0b;
+  --v2-surface-2: #131211;
+  --v2-glow: color-mix(in srgb, var(--color-accent) 60%, transparent);
+}
+
+.v2-root {
+  font-family: var(--font-grotesk);
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Blueprint grid + warm horizon glow — the "instrument" backdrop */
+.v2-grid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--v2-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--v2-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 30%, transparent 78%);
+  mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 30%, transparent 78%);
+  opacity: 0.5;
+}
+
+.v2-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 78% 12%, color-mix(in srgb, var(--color-accent) 16%, transparent), transparent 70%),
+    radial-gradient(50% 40% at 12% 0%, color-mix(in srgb, var(--color-coral) 10%, transparent), transparent 70%);
+}
+
+/* Faint scanlines for CRT/console texture */
+.v2-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 56;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.018) 0px,
+    rgba(255, 255, 255, 0.018) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* ── Panels (HUD cards) ─────────────────────────────────────────────────── */
+.v2-panel {
+  position: relative;
+  background: var(--v2-surface);
+  border: 1px solid var(--v2-line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.v2-panel--2 {
+  background: var(--v2-surface-2);
+}
+
+/* HUD corner ticks */
+.v2-hud::before,
+.v2-hud::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: var(--v2-line-bright);
+  pointer-events: none;
+}
+.v2-hud::before {
+  top: 10px;
+  left: 10px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+.v2-hud::after {
+  bottom: 10px;
+  right: 10px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+.v2-panel-link {
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    background-color 0.25s ease;
+}
+@media (hover: hover) {
+  .v2-panel-link:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 50%, var(--v2-line-bright));
+    transform: translateY(-2px);
+    background: var(--v2-surface-2);
+  }
+}
+
+/* ── Type ──────────────────────────────────────────────────────────────── */
+.v2-display {
+  font-family: var(--font-grotesk);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 0.96;
+}
+.v2-mono {
+  font-family: var(--font-mono);
+}
+.v2-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+.v2-serif {
+  font-family: var(--font-headline);
+}
+
+/* ── Status pills ──────────────────────────────────────────────────────── */
+.v2-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--v2-line-bright);
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-paper) 70%, transparent);
+}
+.v2-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 0 var(--v2-glow);
+  animation: v2-ping 2.4s ease-out infinite;
+}
+@keyframes v2-ping {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 55%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 7px transparent; }
+}
+
+/* ── Keyboard hint ─────────────────────────────────────────────────────── */
+.v2-kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  border: 1px solid var(--v2-line-bright);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 0.1rem 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: color-mix(in srgb, var(--color-paper) 75%, transparent);
+  background: var(--v2-surface-2);
+}
+
+/* ── Accent number / metric ────────────────────────────────────────────── */
+.v2-metric {
+  font-family: var(--font-grotesk);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Terminal ──────────────────────────────────────────────────────────── */
+.v2-terminal {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--color-paper) 82%, transparent);
+}
+.v2-caret::after {
+  content: '▋';
+  margin-left: 1px;
+  color: var(--color-accent);
+  animation: v2-blink 1s steps(2, start) infinite;
+}
+@keyframes v2-blink {
+  50% { opacity: 0; }
+}
+
+/* ── Reveal on scroll ──────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Marquee strip ─────────────────────────────────────────────────────── */
+.v2-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: v2-scroll 38s linear infinite;
+}
+@keyframes v2-scroll {
+  to { transform: translateX(-50%); }
+}
+
+/* ── Command palette ───────────────────────────────────────────────────── */
+.v2-cmdk-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: color-mix(in srgb, var(--color-ink) 70%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.v2-cmdk {
+  width: min(92vw, 560px);
+  background: var(--v2-surface-2);
+  border: 1px solid var(--v2-line-bright);
+  border-radius: 16px;
+  box-shadow: 0 40px 120px -20px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+.v2-cmdk-item[data-active='true'] {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .v2-marquee,
+  .v2-dot,
+  .v2-caret::after { animation: none; }
+}

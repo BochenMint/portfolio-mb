@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { contactFields, leadForm, site } from '../data/content'
 import { MagneticButton } from './MagneticButton'
@@ -6,6 +6,16 @@ import { MagneticButton } from './MagneticButton'
 const formEndpoint =
   import.meta.env.VITE_FORM_ENDPOINT || 'https://api.web3forms.com/submit'
 const formAccessKey = import.meta.env.VITE_FORM_ACCESS_KEY || ''
+
+function getFieldLabel(id: string) {
+  return contactFields.find((field) => field.id === id)?.label ?? id
+}
+
+function formatPayload(payload: Record<string, string>) {
+  return contactFields
+    .map((field) => `${field.label}: ${payload[field.id] || '-'}`)
+    .join('\n')
+}
 
 export function LeadForm() {
   const [sent, setSent] = useState(false)
@@ -17,6 +27,7 @@ export function LeadForm() {
     setError('')
     const data = new FormData(e.currentTarget)
     const payload = Object.fromEntries(data.entries()) as Record<string, string>
+    const formattedMessage = formatPayload(payload)
 
     if (formAccessKey) {
       setLoading(true)
@@ -26,10 +37,14 @@ export function LeadForm() {
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
             access_key: formAccessKey,
-            subject: `Portfolio — ${payload.name ?? 'zapytanie'}`,
+            subject: `Portfolio — ${payload.company || payload.name || 'zapytanie'}`,
             from_name: payload.name,
             email: payload.email,
-            message: payload.message,
+            message: formattedMessage,
+            company: payload.company,
+            project_type: payload.projectType,
+            budget: payload.budget,
+            timeline: payload.timeline,
           }),
         })
         const json = (await res.json()) as { success?: boolean; message?: string }
@@ -45,10 +60,10 @@ export function LeadForm() {
       return
     }
 
-    const subject = encodeURIComponent(`Portfolio — ${payload.name ?? 'zapytanie'}`)
+    const subject = encodeURIComponent(`Portfolio — ${payload.company || payload.name || 'zapytanie'}`)
     const text = encodeURIComponent(
       Object.entries(payload)
-        .map(([k, v]) => `${k}: ${v}`)
+        .map(([key, value]) => `${getFieldLabel(key)}: ${value}`)
         .join('\n'),
     )
     window.location.href = `mailto:${site.email}?subject=${subject}&body=${text}`
@@ -57,12 +72,15 @@ export function LeadForm() {
 
   if (sent) {
     return (
-      <div className="border-rule border p-8">
-        <p className="font-display text-xl">{leadForm.thanksTitle}</p>
-        <p className="text-muted mt-2 text-sm">
+      <div className="rounded-[1.8rem] border border-accent/30 bg-accent/5 p-8">
+        <p className="font-mono text-[10px] tracking-[0.14em] text-accent uppercase">
+          Wysłano
+        </p>
+        <p className="font-headline mt-3 text-xl">{leadForm.thanksTitle}</p>
+        <p className="text-muted mt-2 text-sm leading-relaxed">
           {formAccessKey
             ? leadForm.thanksBody
-            : `Jeśli klient maila się nie otworzył, napisz na ${site.email}`}
+            : `Jeśli klient maila się nie otworzył, napisz bezpośrednio na ${site.email}`}
         </p>
       </div>
     )
@@ -71,49 +89,76 @@ export function LeadForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-4 border border-[var(--color-paper)]/20 p-6 md:p-8"
+      className="space-y-5 rounded-[1.8rem] border border-[var(--color-paper)]/16 bg-[var(--color-surface)]/70 p-5 shadow-[0_30px_110px_rgba(0,0,0,0.28)] md:p-8"
     >
-      <p data-form-field className="font-display text-lg">
-        {leadForm.title}
-      </p>
+      <div>
+        <p className="font-headline text-lg">{leadForm.title}</p>
+        <p className="text-muted mt-2 text-sm leading-relaxed">{leadForm.intro}</p>
+      </div>
 
       {contactFields.map((field) => (
         <label key={field.id} data-form-field className="block">
-          <span className="text-muted mb-1.5 block text-[10px] tracking-[0.12em] uppercase">
+          <span className="font-mono mb-1.5 block text-[10px] tracking-[0.12em] text-[var(--color-paper)]/50 uppercase">
             {field.label}
           </span>
           {field.type === 'textarea' ? (
             <textarea
               name={field.id}
               required={field.required}
-              rows={4}
-              className="w-full resize-none border border-[var(--color-paper)]/20 bg-transparent px-4 py-3 text-sm text-[var(--color-paper)] outline-none focus:border-[var(--color-paper)]"
-              placeholder={leadForm.placeholder}
+              rows={5}
+              className="w-full resize-none rounded-2xl border border-[var(--color-paper)]/18 bg-[var(--color-ink)]/38 px-4 py-3 text-sm text-[var(--color-paper)] outline-none transition-colors placeholder:text-[var(--color-paper)]/25 focus:border-accent"
+              placeholder={field.placeholder}
             />
+          ) : field.type === 'select' ? (
+            <select
+              name={field.id}
+              required={field.required}
+              defaultValue=""
+              className="w-full rounded-2xl border border-[var(--color-paper)]/18 bg-[var(--color-ink)] px-4 py-3 text-sm text-[var(--color-paper)] outline-none transition-colors focus:border-accent"
+            >
+              <option value="" disabled>
+                Wybierz opcję
+              </option>
+              {field.options?.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
           ) : (
             <input
               type={field.type}
               name={field.id}
               required={field.required}
-              className="w-full border border-[var(--color-paper)]/20 bg-transparent px-4 py-3 text-sm text-[var(--color-paper)] outline-none focus:border-[var(--color-paper)]"
+              className="w-full rounded-2xl border border-[var(--color-paper)]/18 bg-[var(--color-ink)]/38 px-4 py-3 text-sm text-[var(--color-paper)] outline-none transition-colors placeholder:text-[var(--color-paper)]/25 focus:border-accent"
+              placeholder={field.placeholder}
             />
           )}
         </label>
       ))}
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? (
+        <p className="font-mono text-[11px] text-[var(--color-coral)]" role="alert">
+          {error}
+        </p>
+      ) : null}
 
       <MagneticButton
         as="button"
         type="submit"
         disabled={loading}
-        className={`btn-fill w-full md:w-auto ${loading ? 'pointer-events-none opacity-70' : ''}`}
+        className={`btn-accent premium-cta w-full justify-center md:w-auto ${loading ? 'pointer-events-none opacity-70' : ''}`}
       >
         {loading ? leadForm.submitting : leadForm.submit}
       </MagneticButton>
-      {!formAccessKey ? (
-        <p className="text-muted text-[11px]">
-          Ustaw VITE_FORM_ACCESS_KEY w .env, aby wysyłać przez Web3Forms.
+
+      <p className="font-mono text-[10px] leading-relaxed text-[var(--color-paper)]/30">
+        Bez spamu. Jeśli Web3Forms nie jest skonfigurowany, formularz otworzy gotowego maila.
+      </p>
+
+      {import.meta.env.DEV && !formAccessKey ? (
+        <p className="font-mono text-[10px] text-[var(--color-paper)]/30">
+          DEV: Ustaw VITE_FORM_ACCESS_KEY w .env, aby wysyłać przez Web3Forms.
         </p>
       ) : null}
     </form>

@@ -1,11 +1,11 @@
-export type HeroVariant = 'retro' | 'type' | 'orbit'
+export type HeroVariant = 'retro' | 'type' | 'orbit' | 'particles' | 'glass'
 
 export const HERO_VARIANT_STORAGE_KEY = 'portfolio-mb-hero-variant'
 
-/** Rotating rings — closest to a classic hero section. */
-export const DEFAULT_HERO_VARIANT: HeroVariant = 'orbit'
+/** CSS-first premium glass — stable default without noisy WebGL driver warnings. */
+export const DEFAULT_HERO_VARIANT: HeroVariant = 'glass'
 
-const VALID: HeroVariant[] = ['retro', 'type', 'orbit']
+const VALID: HeroVariant[] = ['retro', 'type', 'orbit', 'particles', 'glass']
 
 export function isHeroVariant(value: string | null | undefined): value is HeroVariant {
   return VALID.includes(value as HeroVariant)
@@ -46,4 +46,6 @@ export const HERO_VARIANT_LABELS: Record<HeroVariant, string> = {
   retro: 'Retro',
   type: 'Type',
   orbit: 'Orbit',
+  particles: 'Particles',
+  glass: 'Glass',
 }

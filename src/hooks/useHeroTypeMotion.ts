@@ -76,7 +76,10 @@ export function useHeroTypeMotion(active: boolean, ready: boolean) {
 
   useEffect(() => {
     if (!active || reduced || coarse) {
-      gsap.set('.hero-type-line-inner, .hero-type-aberration', { clearProps: 'all' })
+      const typeElements = gsap.utils.toArray<HTMLElement>('.hero-type-line-inner, .hero-type-aberration')
+      if (typeElements.length) {
+        gsap.set(typeElements, { clearProps: 'all' })
+      }
     }
   }, [active, reduced, coarse])
 }

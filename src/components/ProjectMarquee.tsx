@@ -18,8 +18,8 @@ export function ProjectMarquee() {
             className="font-headline shrink-0 px-6 text-[clamp(2.5rem,8vw,6.5rem)] leading-none tracking-tight text-[var(--color-paper)]/90 md:px-10"
           >
             {title}
-            <span className="mx-6 inline-block text-[var(--color-paper)]/25 md:mx-10" aria-hidden>
-              —
+            <span className="mx-6 inline-block text-accent/40 md:mx-10" aria-hidden>
+              ·
             </span>
           </span>
         ))}

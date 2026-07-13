@@ -10,6 +10,13 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      input: {
+        main: 'index.html',
+        v1: 'v1.html',
+        v2: 'v2.html',
+        v3: 'v3.html',
+        v4: 'v4.html',
+      },
       output: {
         manualChunks(id) {
           if (id.includes('node_modules/three')) return 'three'

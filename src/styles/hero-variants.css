@@ -156,7 +156,7 @@
 }
 
 .hero-orbit-glint {
-  filter: drop-shadow(0 0 8px #ffe800);
+  filter: drop-shadow(0 0 8px #f5a524);
 }
 
 [data-hero][data-hero-variant='orbit'] .hero-orbit-kicker {
@@ -253,10 +253,318 @@
   z-index: 2;
 }
 
+/* —— Orbit CSS fallback: warm glass + sun —— */
+
+.hero-orbit-stage--css {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-orbit-sun-glow {
+  position: absolute;
+  top: -10%;
+  right: -10%;
+  width: 65%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, #ffc86180 0%, #f5a52440 40%, transparent 70%);
+  animation: hero-orbit-sun-pulse 4s ease-in-out infinite;
+}
+
+.hero-orbit-shard {
+  position: absolute;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  background: linear-gradient(135deg, rgba(255, 200, 100, 0.18), rgba(255, 255, 255, 0.06));
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 200, 100, 0.2);
+}
+
+.hero-orbit-shard--1 {
+  width: 120px;
+  height: 120px;
+  top: 20%;
+  left: 60%;
+  animation: hero-orbit-shard-float-1 5s ease-in-out infinite;
+}
+.hero-orbit-shard--2 {
+  width: 80px;
+  height: 80px;
+  top: 55%;
+  left: 15%;
+  animation: hero-orbit-shard-float-2 6.5s ease-in-out infinite;
+}
+.hero-orbit-shard--3 {
+  width: 60px;
+  height: 60px;
+  top: 35%;
+  left: 75%;
+  animation: hero-orbit-shard-float-3 4.8s ease-in-out infinite;
+}
+
+@keyframes hero-orbit-sun-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+@keyframes hero-orbit-shard-float-1 {
+  0%, 100% { transform: translateY(0) rotate(15deg); }
+  50% { transform: translateY(-12px) rotate(18deg); }
+}
+@keyframes hero-orbit-shard-float-2 {
+  0%, 100% { transform: translateY(0) rotate(-25deg); }
+  50% { transform: translateY(-8px) rotate(-28deg); }
+}
+@keyframes hero-orbit-shard-float-3 {
+  0%, 100% { transform: translateY(0) rotate(40deg); }
+  50% { transform: translateY(-10px) rotate(37deg); }
+}
+
+/* —— Particles CSS fallback: dark moon + crescent + starfield —— */
+
+.hero-particles-stage--css {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 60%, #1a0f00 0%, #080807 70%);
+}
+
+.hero-particles-moon-glow {
+  position: absolute;
+  top: 10%;
+  right: 5%;
+  width: 55%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, #ffb84d22 0%, transparent 65%);
+}
+
+.hero-particles-moon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #1a1814, #0c0b0a);
+}
+
+.hero-particles-crescent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 8px -8px 0 4px #ffb84d;
+  animation: hero-particles-crescent-pulse 3s ease-in-out infinite;
+}
+
+.hero-particles-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #eceae4;
+}
+.hero-particles-star--1 { top: 15%; left: 20%; animation: hero-particles-star-twinkle 2.1s ease-in-out infinite; }
+.hero-particles-star--2 { top: 25%; left: 75%; animation: hero-particles-star-twinkle 3.4s ease-in-out infinite 0.5s; }
+.hero-particles-star--3 { top: 70%; left: 30%; animation: hero-particles-star-twinkle 2.7s ease-in-out infinite 0.3s; }
+.hero-particles-star--4 { top: 80%; left: 80%; animation: hero-particles-star-twinkle 1.9s ease-in-out infinite 0.8s; background: #f5a524; }
+.hero-particles-star--5 { top: 45%; left: 10%; animation: hero-particles-star-twinkle 4.1s ease-in-out infinite 0.2s; }
+.hero-particles-star--6 { top: 10%; left: 55%; animation: hero-particles-star-twinkle 2.8s ease-in-out infinite 1s; width: 2px; height: 2px; }
+.hero-particles-star--7 { top: 60%; left: 65%; animation: hero-particles-star-twinkle 3.2s ease-in-out infinite 0.7s; background: #ffb84d; }
+.hero-particles-star--8 { top: 35%; left: 90%; animation: hero-particles-star-twinkle 2.4s ease-in-out infinite 1.2s; width: 2px; height: 2px; }
+
+@keyframes hero-particles-crescent-pulse {
+  0%, 100% { opacity: 0.55; box-shadow: 8px -8px 0 4px #ffb84d55; }
+  50% { opacity: 0.8; box-shadow: 10px -10px 0 6px #ffb84d88; }
+}
+@keyframes hero-particles-star-twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.9; }
+}
+
+/* —— Retro CSS fallback: synthwave sun + perspective grid —— */
+
+.hero-retro-sun {
+  left: 50%;
+  top: 30%;
+  width: 44vmin;
+  max-width: 520px;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffe08a 0%, #ff9d4d 48%, #ff3d77 100%);
+  filter: drop-shadow(0 0 48px rgba(255, 90, 80, 0.5));
+}
+.hero-retro-sun::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 9px,
+    rgba(8, 8, 7, 0.92) 9px 14px
+  );
+  -webkit-mask-image: linear-gradient(180deg, transparent 46%, #000 60%);
+  mask-image: linear-gradient(180deg, transparent 46%, #000 60%);
+}
+
+.hero-retro-grid {
+  height: 52%;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255, 61, 187, 0.28) 0 1px, transparent 1px 7%),
+    repeating-linear-gradient(0deg, rgba(255, 157, 77, 0.3) 0 1px, transparent 1px 9%);
+  transform: perspective(420px) rotateX(58deg);
+  transform-origin: bottom center;
+  -webkit-mask-image: linear-gradient(0deg, #000 25%, transparent 92%);
+  mask-image: linear-gradient(0deg, #000 25%, transparent 92%);
+}
+
+/* —— Glass (glassmorphism) — CSS-first scene —— */
+
+.hero-glass-stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* Soft, heavily-blurred colour blobs (the airy backdrop) */
+.hero-glass-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(56px);
+  opacity: 0.85;
+  mix-blend-mode: screen; /* glow on the dark hero instead of being muddied */
+  will-change: transform;
+}
+/* Vivid multi-colour field biased to centre/right (behind portrait + cards);
+   left stays cleaner for the headline. */
+.hero-glass-blob--1 {
+  right: -4%;
+  top: -6%;
+  width: 40vmax;
+  height: 40vmax;
+  background: radial-gradient(circle at 50% 50%, #ffb55c 0%, transparent 64%);
+  animation: hero-glass-drift-1 19s ease-in-out infinite alternate;
+}
+.hero-glass-blob--2 {
+  right: 6%;
+  top: 22%;
+  width: 34vmax;
+  height: 34vmax;
+  background: radial-gradient(circle at 50% 50%, #ff4d8f 0%, transparent 64%);
+  animation: hero-glass-drift-2 23s ease-in-out infinite alternate;
+}
+.hero-glass-blob--3 {
+  right: 12%;
+  bottom: -12%;
+  width: 38vmax;
+  height: 38vmax;
+  background: radial-gradient(circle at 50% 50%, #8a7bff 0%, transparent 64%);
+  animation: hero-glass-drift-3 27s ease-in-out infinite alternate;
+}
+.hero-glass-blob--4 {
+  right: 30%;
+  top: -10%;
+  width: 24vmax;
+  height: 24vmax;
+  opacity: 0.6;
+  background: radial-gradient(circle at 50% 50%, #ffd27a 0%, transparent 66%);
+  animation: hero-glass-drift-1 21s ease-in-out infinite alternate-reverse;
+}
+
+/* Lighten the global hero scrim for glass so the colour shows through */
+[data-hero][data-hero-variant='glass'] .hero-content-scrim {
+  opacity: 0.38;
+}
+
+/* Frosted glass cards — backdrop-blur the blobs behind. Biased centre/right
+   so they don't sit under the headline (text legibility). */
+.hero-glass-card {
+  position: absolute;
+  border-radius: 26px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.035));
+  backdrop-filter: blur(26px) saturate(1.5);
+  -webkit-backdrop-filter: blur(26px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 32px 90px -24px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 0 48px rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  will-change: transform;
+}
+/* diagonal specular sheen */
+.hero-glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(118deg, transparent 42%, rgba(255, 255, 255, 0.16) 50%, transparent 58%);
+}
+.hero-glass-card--1 {
+  right: 6%;
+  top: 13%;
+  width: 27%;
+  height: 60%;
+  transform: rotate(4deg);
+  animation: hero-glass-float-1 8s ease-in-out infinite alternate;
+}
+.hero-glass-card--2 {
+  left: 33%;
+  top: 30%;
+  width: 23%;
+  height: 46%;
+  transform: rotate(-3deg);
+  animation: hero-glass-float-2 9.5s ease-in-out infinite alternate;
+}
+.hero-glass-card--3 {
+  right: 28%;
+  bottom: 8%;
+  width: 19%;
+  height: 30%;
+  transform: rotate(6deg);
+  animation: hero-glass-float-3 7s ease-in-out infinite alternate;
+}
+
+@keyframes hero-glass-drift-1 { to { transform: translate(5%, 4%); } }
+@keyframes hero-glass-drift-2 { to { transform: translate(-4%, 6%); } }
+@keyframes hero-glass-drift-3 { to { transform: translate(4%, -5%); } }
+@keyframes hero-glass-float-1 { to { transform: rotate(4deg) translateY(-18px); } }
+@keyframes hero-glass-float-2 { to { transform: rotate(-3deg) translateY(-14px); } }
+@keyframes hero-glass-float-3 { to { transform: rotate(6deg) translateY(-12px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orbit-sun-glow,
+  .hero-orbit-shard,
+  .hero-particles-crescent,
+  .hero-particles-star,
+  .hero-glass-blob,
+  .hero-glass-card {
+    animation: none !important;
+  }
+}
+
 /* Switcher */
 
 .hero-variant-switcher {
   box-shadow: 0 8px 32px color-mix(in srgb, #000 35%, transparent);
+}
+
+/* Mobile: przyciemnij dekoracyjną orbitę, by tekst hero był czytelny nad tłem */
+@media (max-width: 767px) {
+  .hero-orbit-layer {
+    opacity: 0.55;
+  }
+}
+
+/* Scroll cue */
+
+.hero-scroll-cue {
+  animation: hero-scroll-cue-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes hero-scroll-cue-pulse {
+  0%, 100% { opacity: 0.35; transform: translate(-50%, 0); }
+  50% { opacity: 0.7; transform: translate(-50%, 4px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -274,5 +582,10 @@
 
   .hero-webgl-canvas {
     filter: saturate(0.85) contrast(1.05);
+  }
+
+  .hero-scroll-cue {
+    animation: none;
+    opacity: 0.35;
   }
 }

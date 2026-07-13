@@ -64,14 +64,16 @@ export function CustomCursor() {
         data-cursor-ring
         aria-hidden
         className={`pointer-events-none fixed top-0 left-0 z-[10001] h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border transition-all duration-300 ${
-          hovering ? 'border-mint scale-150 opacity-90' : 'border-cream/30 scale-100 opacity-50'
+          hovering
+            ? 'border-[var(--color-accent)] scale-150 opacity-90'
+            : 'border-[var(--color-paper)]/30 scale-100 opacity-50'
         }`}
       />
       <div
         data-cursor-dot
         aria-hidden
         className={`pointer-events-none fixed top-0 left-0 z-[10002] h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-200 ${
-          hovering ? 'bg-mint scale-[2]' : 'bg-cream'
+          hovering ? 'bg-[var(--color-accent)] scale-[2]' : 'bg-[var(--color-paper)]'
         }`}
       />
     </>

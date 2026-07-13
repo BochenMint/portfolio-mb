@@ -1,0 +1,175 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   v3 — Case study overlay. Full-screen editorial deep-dive per project.
+   Prefixed .v3-cs- to avoid collisions with v3.css (owned by another pass).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.v3-cs-backdrop {
+  position: fixed;
+  inset: 0;
+  /* nad NavV3 (z-[80]) — inaczej nav zasłania przycisk zamknięcia */
+  z-index: 90;
+  background: rgba(8, 8, 7, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.v3-cs-scroll {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vw, 4rem) 1.25rem clamp(4rem, 10vw, 7rem);
+}
+
+.v3-cs-column {
+  width: 100%;
+  max-width: 56rem; /* max-w-4xl */
+}
+
+.v3-cs-close {
+  position: fixed;
+  top: clamp(1rem, 3vw, 2rem);
+  right: clamp(1rem, 3vw, 2rem);
+  z-index: 91;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--v3-line-bright);
+  background: color-mix(in srgb, var(--v3-surface) 80%, transparent);
+  color: var(--color-paper);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.v3-cs-close:hover,
+.v3-cs-close:focus-visible {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: rotate(90deg);
+}
+
+.v3-cs-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  border: 1px solid var(--v3-line-bright);
+  border-radius: 999px;
+  padding: 0.42rem 0.9rem;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+  background: transparent;
+}
+.v3-cs-trigger:hover,
+.v3-cs-trigger:focus-visible {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+}
+
+.v3-cs-hero-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem; /* rounded-2xl */
+  border: 1px solid var(--v3-line-bright);
+}
+.v3-cs-hero-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.v3-cs-section {
+  border-top: 1px solid var(--v3-line);
+  padding-top: 1.75rem;
+  margin-top: 1.75rem;
+}
+
+.v3-cs-decision-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.v3-cs-decision-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-accent);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+  padding-top: 0.15em;
+}
+
+.v3-cs-outcome-panel {
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.v3-cs-nav {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--v3-line-bright);
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+}
+.v3-cs-nav-btn {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 0;
+  color: var(--color-paper);
+  transition: color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.85;
+}
+.v3-cs-nav-btn:hover,
+.v3-cs-nav-btn:focus-visible {
+  opacity: 1;
+  color: var(--color-accent);
+}
+.v3-cs-nav-btn--next {
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* gallery */
+.v3-cs-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.v3-cs-gallery-item {
+  width: 100%;
+}
+.v3-cs-gallery-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem; /* rounded-xl */
+  border: 1px solid var(--v3-line);
+}
+.v3-cs-gallery-caption {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+  margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-cs-close:hover,
+  .v3-cs-close:focus-visible {
+    transform: none;
+  }
+}
