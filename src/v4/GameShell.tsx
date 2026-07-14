@@ -342,7 +342,7 @@ export function GameShell() {
           )
         }
 
-        engineInstance.dust.update(engineInstance.camera.position, controlsInstance.state.speed)
+        engineInstance.dust.update(engineInstance.camera.position, controlsInstance.state.velocity)
         worldInstance.update(dt, elapsed, engineInstance.camera)
         hudInstance.update({
           speed: controlsInstance.state.speed,

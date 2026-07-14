@@ -8,14 +8,10 @@ const POSITION_LERP_RATE = 5.5 // /s — exponential approach, framerate indepen
 const FOV_MIN = 60
 const FOV_MAX = 66
 
-/** Camera inherits only a fraction of the ship's bank — full inherit would
- * feel like the camera is welded to the hull; this keeps the horizon tilt
- * readable as "dynamic" without being disorienting. */
-const BANK_INHERIT = 0.6
-/** Camera's own roll lags slightly behind the ship's (smaller/slower than
- * the ship's own ROLL_RESPONSE in ship/controls.ts) for a touch of extra
- * weight on top of the ship's bank-to-turn response. */
-const BANK_LERP_RATE = 4.5 // /s
+/** Up kamery podąża za PEŁNĄ orientacją statku (z tym lagiem) — bez
+ * osobliwości world-up przy pętlach; lag daje naturalne „dociąganie"
+ * horyzontu przy szybkich manewrach. */
+const UP_LERP_RATE = 4.5 // /s
 
 export type CameraRig = {
   update(
@@ -44,14 +40,14 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
   const upVec = new THREE.Vector3()
   const offsetLocal = new THREE.Vector3()
   const deflect = new THREE.Vector3()
+  const upSmoothed = new THREE.Vector3(0, 1, 0)
   let primed = false
-  let camBank = 0
 
   camera.fov = FOV_MIN
   camera.updateProjectionMatrix()
 
   return {
-    update(dt, shipPos, shipQuat, thrustLevel, shipBankAngle, angularVelocity) {
+    update(dt, shipPos, shipQuat, thrustLevel, _shipBankAngle, angularVelocity) {
       // Cel odchylenia: pitch odchyla kamerę w pionie, skręt — w bok
       // (przeciwnie do ruchu dziobu, jak głowa pilota pod przeciążeniem).
       if (angularVelocity) {
@@ -68,7 +64,7 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
 
       if (!primed) {
         camera.position.copy(desiredPos)
-        camBank = -shipBankAngle * BANK_INHERIT
+        upSmoothed.set(0, 1, 0).applyQuaternion(shipQuat)
         primed = true
       } else {
         const lerpFactor = 1 - Math.exp(-POSITION_LERP_RATE * dt)
@@ -77,16 +73,15 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
 
       forward.set(0, 0, -1).applyQuaternion(shipQuat)
 
-      // Partial, slightly-lagged roll inherit: tilt the camera's up vector
-      // around the shared forward axis rather than snapping to the ship's
-      // full bank — see BANK_INHERIT/BANK_LERP_RATE above. Negated because
-      // applyAxisAngle uses the world-space FORWARD axis (-Z-ish), which is
-      // the opposite sense from the ship's own local +Z bank axis — without
-      // the flip the horizon would tilt away from the hull's lean.
-      const targetCamBank = -shipBankAngle * BANK_INHERIT
-      camBank += (targetCamBank - camBank) * (1 - Math.exp(-BANK_LERP_RATE * dt))
-      upVec.set(0, 1, 0).applyAxisAngle(forward, camBank)
-      camera.up.copy(upVec)
+      // Up kamery = up STATKU (z lekkim lagiem), nie up świata. Poprzednie
+      // world-up + roll-only dawało klasyczny flip lookAt: przy pętli/pitchu
+      // powyżej pionu kamera przeskakiwała o 180° i statek bywał „do góry
+      // nogami względem kamery". Podążanie za pełną orientacją statku nie ma
+      // osobliwości — kamera jest „nieruchoma względem statku", a lag daje
+      // naturalne odchylenie przy manewrach.
+      upVec.set(0, 1, 0).applyQuaternion(shipQuat)
+      upSmoothed.lerp(upVec, 1 - Math.exp(-UP_LERP_RATE * dt)).normalize()
+      camera.up.copy(upSmoothed)
 
       lookTarget.copy(shipPos).addScaledVector(forward, LOOK_AHEAD)
       camera.lookAt(lookTarget)

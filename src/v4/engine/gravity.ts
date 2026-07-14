@@ -14,25 +14,38 @@ import { BLACK_HOLE_POS } from './world-anchors'
  * no residual drift at all. START_POSITION (GameShell.tsx) sits at r≈250, i.e.
  * right at the edge of the danger band, not inside an inescapable well.
  *
- * Numerically verified curve (falloff = 1 for r <= 250):
+ * Numerically verified curve (falloff = 1 for r <= 250; GM and the falloff
+ * band are unchanged by the visual black-hole rescale — only EVENT_HORIZON_R
+ * below moved, from 26 to 44, to stay just outside the new, much bigger
+ * visual horizon (world/blackHole.ts HORIZON_R 36)):
  *  - a(300) ≈ 1.26 u/s^2 — light drift, easy correction, edge of the falloff band.
  *  - a(150) ≈ 5.33 u/s^2 — clearly felt, needs active correction, still flyable.
- *  - a(95)  ≈ 13.3 u/s^2 (0.4x thrust) — HUD fairness-warning threshold
+ *  - a(95)  ≈ 13.3 u/s^2 (0.3x thrust) — HUD fairness-warning threshold
  *    ("UWAGA: STUDNIA GRAWITACYJNA", ui/hud.ts).
  *  - a(52)  ≈ 44 u/s^2 — equal to MAIN_THRUST_ACCEL (44, ship/controls.ts):
- *    the force-balance point of no return sits at r ≈ 52u (≈2x
- *    EVENT_HORIZON_R), where full outward thrust can no longer even hold
- *    position, let alone climb.
- *  - a(40)  = 75 u/s^2 (~1.7x thrust) — doomed without prior outward speed.
+ *    the force-balance point of no return sits at r = sqrt(GM/thrust) =
+ *    sqrt(120000/44) ≈ 52u, where full outward thrust can no longer even
+ *    hold position, let alone climb.
+ *  - a(50)  ≈ 48 u/s^2 (~1.09x thrust) — just inside the force-balance
+ *    radius, already doomed without prior outward speed.
+ *  - a(44)  ≈ 62 u/s^2 (~1.4x thrust) — EVENT_HORIZON_R itself (game over).
+ *    IMPORTANT: the margin between the force-balance point (52u) and the
+ *    death radius (44u) is now only 8 units — thin. Cross under ~52u without
+ *    already carrying real outward speed and there is very little room left
+ *    to react before the horizon ends the run.
  *
  * Energy check (work-energy integral of a(r) from r0 out to 600u, the
- * radius past which gravity is fully spent): climbing out from r0=70u needs
+ * radius past which gravity is fully spent — this integral only depends on
+ * GM and the falloff band, both unchanged, so these two values are
+ * unaffected by the EVENT_HORIZON_R rescale): climbing out from r0=70u needs
  * an initial outward speed v0 ≈ 53.3 u/s, comfortably under the 60 u/s soft
  * speed cap (ship/controls.ts) — dramatic but genuinely flyable. From
  * r0=60u it needs v0 ≈ 58.4 u/s, right at that asymptotic cap (which is
  * only ever approached, never reached, while gravity keeps draining speed
- * during the climb) — not achievable in practice. That's the intended
- * shape: danger hugs the hole, the rest of the map is free.
+ * during the climb) — not achievable in practice, and r0=60u is now just
+ * 16u above the death radius (44u), underlining how thin the safety margin
+ * near the hole has become. That's the intended shape: danger hugs the
+ * hole, the rest of the map is free.
  */
 export const GRAVITY_GM = 120000
 
@@ -41,8 +54,10 @@ const FALLOFF_START = 250
 /** Pull fades to exactly zero by this radius — free flight beyond it. */
 const FALLOFF_END = 600
 
-/** Gameplay game-over trigger — just outside the visual horizon (18u). */
-export const EVENT_HORIZON_R = 26
+/** Gameplay game-over trigger — just outside the visual horizon (36u,
+ * world/blackHole.ts HORIZON_R). Note the force-balance radius (~52u, see
+ * doc-block above) is only 8u further out — a thin margin. */
+export const EVENT_HORIZON_R = 44
 
 /** Floor on r so the accel doesn't spike toward infinity this close to the
  * singularity — irrelevant in practice since EVENT_HORIZON_R (26) always

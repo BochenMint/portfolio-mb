@@ -1,5 +1,16 @@
 import * as THREE from 'three'
-import { BloomEffect, EffectComposer, EffectPass, RenderPass } from 'postprocessing'
+import {
+  BloomEffect,
+  BrightnessContrastEffect,
+  ChromaticAberrationEffect,
+  type Effect,
+  EffectComposer,
+  EffectPass,
+  HueSaturationEffect,
+  NoiseEffect,
+  RenderPass,
+  VignetteEffect,
+} from 'postprocessing'
 import { getDpr } from '../../webgl/hero/heroSceneTypes'
 import { createDustField, type DustField } from './dust'
 import { createStarfield, type Starfield } from './starfield'
@@ -125,6 +136,12 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
     antialias: !lowPower,
     alpha: false,
     powerPreference: lowPower ? 'default' : 'high-performance',
+    // Matches src/webgl/createDisplacementEffect.ts — without this, a WebGL
+    // canvas reads back as blank (readPixels/toDataURL/screenshot tooling)
+    // any time the read happens between frames rather than in the same tick
+    // as the draw call, which software-rendering verification (SwiftShader,
+    // very slow per-frame) hits constantly.
+    preserveDrawingBuffer: true,
   })
   renderer.setPixelRatio(getDpr(lowPower))
   renderer.setClearColor(0x000000, 1)
@@ -199,14 +216,20 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   scene.add(sun)
 
   // ─── Near-camera dust — sells velocity in otherwise-empty space ────────────
-  const dust = createDustField()
+  const dust = createDustField(lowPower)
   scene.add(dust.object)
 
   // ─── Twinkling near-field stars — the flat skybox can't shimmer; this can ──
   const starfield: Starfield = createStarfield(lowPower)
   scene.add(starfield.object)
 
-  // ─── Postprocessing — tasteful bloom (engines/stars glow, hull stays matte) ─
+  // ─── Postprocessing — cinematic grade ──────────────────────────────────────
+  // Bloom (engines/stars glow, hull stays matte) + a tasteful film-grade stack:
+  // grain + vignette + filmic desaturated contrast on every tier, chromatic
+  // aberration added only on desktop (an extra per-fragment sample offset).
+  // All effects are merged into ONE EffectPass — postprocessing.js compiles a
+  // single combined fragment shader for every effect handed to one pass, so
+  // this stays a single extra draw call regardless of how many effects run.
   const composer = new EffectComposer(renderer, { multisampling: lowPower ? 0 : 4 })
   composer.addPass(new RenderPass(scene, camera))
   const bloom = new BloomEffect({
@@ -215,14 +238,65 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
     luminanceSmoothing: 0.3,
     mipmapBlur: true,
   })
-  composer.addPass(new EffectPass(camera, bloom))
+
+  // Film grain — premultiplied so it reads stronger against dark space and
+  // stays subtle over bright disk/bloom highlights. Kept at the low end of
+  // the 0.05–0.08 target range on lowPower (less visible noise to resolve).
+  const grain = new NoiseEffect({ premultiply: true })
+  grain.blendMode.opacity.value = lowPower ? 0.05 : 0.07
+
+  // Subtle framing vignette — offset/darkness kept gentle so it reads as
+  // lens falloff, not a tunnel around the ship.
+  const vignette = new VignetteEffect({ offset: 0.32, darkness: 0.55 })
+
+  // Filmic restraint: a touch of contrast, slightly desaturated highlights —
+  // the "not Instagram" grade the brief for this pass calls for.
+  const contrast = new BrightnessContrastEffect({ contrast: 0.06 })
+  const desaturate = new HueSaturationEffect({ saturation: -0.04 })
+
+  const cinematicEffects: Effect[] = [bloom, contrast, desaturate, grain, vignette]
+  if (!lowPower) {
+    // Chromatic aberration — tiny lens-edge color fringing. radialModulation
+    // concentrates it at the frame edges (clean center, filmic fringe at the
+    // rim) rather than a uniform shift across the whole image.
+    const chromaticAberration = new ChromaticAberrationEffect({
+      offset: new THREE.Vector2(0.0009, 0.0009),
+      radialModulation: true,
+      modulationOffset: 0.15,
+    })
+    cinematicEffects.splice(1, 0, chromaticAberration)
+  }
+  composer.addPass(new EffectPass(camera, ...cinematicEffects))
+
+  // `?debug=1` verification-only fallback: some headless/automation browser
+  // contexts report document.hidden = true for the tab under test forever
+  // (no real window ever gets focus). Two separate things break in that
+  // case, both worked around only in this mode (real visitors always have
+  // document.hidden === false, so production behavior — pausing the sim
+  // while backgrounded — is completely unchanged):
+  //  1. Chrome never invokes requestAnimationFrame callbacks for a hidden
+  //     page, so the render loop would silently freeze forever with no
+  //     error — scheduleTick() below falls back to setTimeout.
+  //  2. THREE.Timer's Page Visibility integration (timer.connect(document))
+  //     hard-zeroes getDelta() for every update() call while document.hidden
+  //     is true, by design (it exists to avoid huge deltas after a real tab
+  //     switch) — which would leave dt permanently 0 even once (1) is
+  //     worked around, freezing all physics/animation while still rendering
+  //     (mostly) static frames. Skipping connect() in verification mode
+  //     avoids that.
+  const verificationMode = new URLSearchParams(location.search).has('debug')
 
   // ─── RAF loop — THREE.Timer (Clock is deprecated as of r180) ────────────────
   const timer = new THREE.Timer()
-  timer.connect(document)
+  if (!verificationMode) timer.connect(document)
   const tickers = new Set<(dt: number, elapsed: number) => void>()
   let raf = 0
   let running = false
+
+  const scheduleTick = (fn: (t: number) => void): number =>
+    verificationMode && document.hidden
+      ? (setTimeout(() => fn(performance.now()), 16) as unknown as number)
+      : requestAnimationFrame(fn)
 
   const tick = (timestamp: number) => {
     if (!running) return
@@ -237,7 +311,7 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
     skyDome.setYaw(skyYaw)
     starfield.update(camera.position, elapsed, skyYaw)
     composer.render(dt)
-    raf = requestAnimationFrame(tick)
+    raf = scheduleTick(tick)
   }
 
   return {
@@ -266,16 +340,18 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
       if (running) return
       running = true
       timer.reset()
-      raf = requestAnimationFrame(tick)
+      raf = scheduleTick(tick)
     },
 
     stop() {
       running = false
+      clearTimeout(raf)
       cancelAnimationFrame(raf)
     },
 
     dispose() {
       running = false
+      clearTimeout(raf)
       cancelAnimationFrame(raf)
       timer.dispose()
       tickers.clear()

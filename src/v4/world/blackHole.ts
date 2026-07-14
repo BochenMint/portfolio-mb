@@ -21,30 +21,35 @@ import { BLACK_HOLE_POS } from '../engine/world-anchors'
  * lensing distorts the actual Milky Way background, not a stand-in.
  */
 
-/** Gargantua-proportion pass: the shadow must DOMINATE the composition —
- * the visible lensing band should be narrow (~0.3×) relative to the shadow
- * diameter, so the horizon is large while the march/impostor extents stay
- * put. Shadow radius ≈ b_crit ≈ 2.6·Rs ≈ 47 here, lensing band ≈ the
- * remaining ~31 units out to the march sphere. */
-const HORIZON_R = 24
+/** Gargantua-proportion pass, take 2 — "cień dominuje": the shadow must
+ * DOMINATE the composition even harder than before, so every extent below
+ * was scaled up together. Shadow radius ≈ b_crit ≈ 2.6·Rs ≈ 94 here (Rs =
+ * HORIZON_R = 36), lensing band ≈ the remaining ~76 units out to the march
+ * sphere (170) — narrower than the shadow diameter (188), same "small crisp
+ * shadow, thin lensed band" silhouette as before, just markedly larger on
+ * screen. */
+const HORIZON_R = 36
 /** Photon sphere sits at 1.5·Rs in Schwarzschild — near-critical escaping
  * rays hug it, so the thin bright ring is centered here. */
-const PHOTON_RING_R = HORIZON_R * 1.5
+const PHOTON_RING_R = HORIZON_R * 1.5 // = 54
 const PHOTON_RING_WIDTH = 1.0
-const DISK_INNER = 38 // just outside the photon sphere (36)
-const DISK_OUTER = 100
+const DISK_INNER = 56 // just outside the photon sphere (54)
+const DISK_OUTER = 150
 const DISK_TILT_DEG = 18
-const IMPOSTOR_HALF_SIZE = 165
+const IMPOSTOR_HALF_SIZE = 240
 /** Radius of the sphere the march actually starts at — the 1/r⁵ geodesic
  * term is negligible outside it, so the far-field approach is skipped
  * analytically (ray-sphere intersection) instead of burning march steps on a
  * straight line where nothing interesting happens. */
-const MARCH_START_R = 115
+const MARCH_START_R = 170
 /** Multiplier on the physical Schwarzschild bending term — 1.0 is the real
  * geodesic strength; kept tunable for art direction. */
 const BEND_K = 1.0
-const STEPS_HIGH = 116
-const STEPS_LOW = 58
+/** HARD CAP: the march loop below is `for (int i = 0; i < 128; i++)` — uSteps
+ * must stay <= 127 or the step-budget early-out (`if (i >= uSteps) break`)
+ * never fires and the loop silently runs one iteration short of intent. */
+const STEPS_HIGH = 126
+const STEPS_LOW = 64
 
 const VERT = /* glsl */ `
   varying vec3 vWorldPos;
@@ -264,10 +269,12 @@ const FRAG = /* glsl */ `
       color += vec3(1.0, 0.969, 0.91) * ring * 1.2;
     }
 
-    // Kołowe wygaszanie alfa przy krawędzi strefy efektu — lensowane niebo
-    // płynnie przechodzi w prawdziwą kopułę (i w planety za impostorem),
-    // zamiast dawnego twardego malowania nieba do rogu quada.
-    float fadeOut = 1.0 - smoothstep(uHalfSize * 0.62, uHalfSize * 0.98, quadR);
+    // WĄSKI pierścień wygaszania przy samej krawędzi quada. Szeroki pas
+    // (0.62→0.98) dawał „przezroczyste planety": planeta ZA quadem prześwitywała
+    // półprzezroczyście przez lensowane niebo na dużej powierzchni. Teraz:
+    // rdzeń w pełni kryjący (planeta za strefą soczewki jest po prostu
+    // zasłonięta — czytelne wizualnie), cienki rym 90–98.5% domyka szew nieba.
+    float fadeOut = 1.0 - smoothstep(uHalfSize * 0.90, uHalfSize * 0.985, quadR);
     float alpha = captured ? 1.0 : fadeOut;
 
     gl_FragColor = vec4(color, alpha);
