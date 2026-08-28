@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import type { Project } from '../data/content'
+import type { Project } from '../i18n/live'
 import { projectImageTextureUrl } from '../lib/projectImageUrl'
 import { galleryForProject } from '../data/gallery'
 import { gsap, useGSAP } from '../animation/gsap'
@@ -159,25 +159,69 @@ export function CaseStudyOverlay({
             )}
           </div>
 
-          {/* Hero image */}
-          <div className="v3-cs-anim v3-cs-hero-media mb-2">
-            {project.id === 'agentic' ? (
-              <AgenticSwarmCanvas
-                className="block w-full aspect-video"
-                imgProps={{
-                  src: projectImageTextureUrl(project, 'hero'),
-                  alt: project.title,
-                  loading: 'lazy',
-                }}
-              />
-            ) : (
-              <img
-                src={projectImageTextureUrl(project, 'hero')}
-                alt={project.title}
-                loading="lazy"
-              />
-            )}
-          </div>
+          {/* Editorial filmstrip — multi-shot story from production */}
+          {gallery.length > 0 ? (
+            <div className="v3-cs-anim v3-cs-filmstrip-wrap mb-2">
+              <p className="v3-label mb-4">Z produkcji</p>
+              <div className="v3-cs-filmstrip" data-lenis-prevent>
+                {gallery.map((shot, i) => (
+                  <figure key={shot.src} className="v3-cs-filmstrip-item">
+                    <div className="v3-cs-filmstrip-frame">
+                      {project.id === 'agentic' && i === 0 ? (
+                        <AgenticSwarmCanvas
+                          className="block w-full h-full"
+                          imgProps={{
+                            src: shot.src,
+                            alt: shot.caption,
+                            loading: i === 0 ? 'eager' : 'lazy',
+                            className: 'v3-cs-filmstrip-img',
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={shot.src}
+                          srcSet={`${shot.srcSmall} 1200w, ${shot.src} 2400w`}
+                          sizes="(min-width: 896px) 72vw, 88vw"
+                          width={shot.width}
+                          height={shot.height}
+                          alt={shot.caption}
+                          loading={i === 0 ? 'eager' : 'lazy'}
+                          decoding="async"
+                          className="v3-cs-filmstrip-img"
+                        />
+                      )}
+                      <span className="v3-cs-filmstrip-index" aria-hidden>
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <figcaption className="v3-cs-filmstrip-caption">{shot.caption}</figcaption>
+                  </figure>
+                ))}
+              </div>
+              <p className="v3-cs-filmstrip-hint v3-mono text-[10px] text-muted mt-3">
+                Przewiń w poziomie →
+              </p>
+            </div>
+          ) : (
+            <div className="v3-cs-anim v3-cs-hero-media mb-2">
+              {project.id === 'agentic' ? (
+                <AgenticSwarmCanvas
+                  className="block w-full aspect-video"
+                  imgProps={{
+                    src: projectImageTextureUrl(project, 'hero'),
+                    alt: project.title,
+                    loading: 'lazy',
+                  }}
+                />
+              ) : (
+                <img
+                  src={projectImageTextureUrl(project, 'hero')}
+                  alt={project.title}
+                  loading="lazy"
+                />
+              )}
+            </div>
+          )}
 
           {/* Problem */}
           <section className="v3-cs-anim v3-cs-section">
@@ -251,30 +295,6 @@ export function CaseStudyOverlay({
               </p>
             </div>
           </section>
-
-          {/* Z produkcji — verified production screenshots, editorial stack */}
-          {gallery.length > 0 && (
-            <section className="v3-cs-anim v3-cs-section">
-              <p className="v3-label mb-4">Z produkcji</p>
-              <div className="v3-cs-gallery">
-                {gallery.map((shot) => (
-                  <figure key={shot.src} className="v3-cs-gallery-item">
-                    <img
-                      src={shot.src}
-                      srcSet={`${shot.srcSmall} 1200w, ${shot.src} 2400w`}
-                      sizes="(min-width: 896px) 896px, 100vw"
-                      width={shot.width}
-                      height={shot.height}
-                      alt={shot.caption}
-                      loading="lazy"
-                      className="v3-cs-gallery-img"
-                    />
-                    <figcaption className="v3-cs-gallery-caption">{shot.caption}</figcaption>
-                  </figure>
-                ))}
-              </div>
-            </section>
-          )}
 
           {/* Tags */}
           <div className="v3-cs-anim flex flex-wrap gap-2 mt-8">

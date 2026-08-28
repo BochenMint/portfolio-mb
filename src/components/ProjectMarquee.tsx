@@ -1,4 +1,4 @@
-import { projects } from '../data/content'
+import { projects } from '../i18n/live'
 
 const labels = projects.map((p) => p.title)
 

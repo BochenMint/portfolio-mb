@@ -1,4 +1,4 @@
-import { site } from '../data/content'
+import { site } from '../i18n/live'
 
 type Props = {
   className?: string

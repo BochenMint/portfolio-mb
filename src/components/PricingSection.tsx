@@ -1,4 +1,4 @@
-﻿import { pricingPackages, sections, site } from '../data/content'
+﻿import { pricingPackages, sections, site } from '../i18n/live'
 import { SectionIntro } from './SectionIntro'
 
 export function PricingSection() {

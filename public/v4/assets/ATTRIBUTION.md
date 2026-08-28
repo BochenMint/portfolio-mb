@@ -68,6 +68,38 @@ V4 page footer. Keep it up to date if assets are swapped later.
   - https://poly.pizza/m/Jqfed124pQ
 - **Attribution line to display (optional, CC0 needs none):**
   "Spaceship models: Quaternius (quaternius.com), CC0 1.0."
+- **V4 active ship (2026-07-16):** `buildShipV2` no longer uses these Quaternius hulls.
+  See **Normandy SR2** section below.
+
+## Normandy SR2 — JoshuaS / BlendSwap (CC0) + procedural fallback
+
+- **Active runtime path:** `src/v4/ship/buildShipV2.ts` → `loadShipNormandy.ts`
+- **Preferred mesh file (manual drop-in):** `ships/normandy-sr2-joshuas-cc0.glb`
+- **Source:** JoshuaS — "Normandy Ship - SR2" on BlendSwap
+  https://blendswap.com/blend/8489
+- **License:** CC0 1.0 — https://creativecommons.org/publicdomain/zero/1.0/
+  (confirmed on the BlendSwap model page; also mirrored on Printables.com as public domain)
+- **Author:** JoshuaS (BlendSwap profile https://blendswap.com/profile/51532)
+- **Download status (2026-08-28):** **GLB not in repo.** Legal fetch without an account is blocked.
+  - BlendSwap `GET https://blendswap.com/blend/8489/download` → `200 text/html` (login wall, not a `.blend`/`.glb` body). Direct URLs 404 without session cookies.
+  - Printables mirror (same CC0 mesh, re-upload by Books): https://www.printables.com/model/410734-normandy-ship-sr2 — `HEAD`/`GET` return 403 without a Printables session. GraphQL `api.printables.com` rejected the anonymous query. No public CDN object (`media.printables.com/media/prints/410734/`) exists.
+  - No GitHub/raw CC0 GLB of this specific JoshuaS mesh was found. Official EA/BioWare assets are not used.
+- **Manual steps to enable the GLB path (user must drop the file):**
+  1. Create a free BlendSwap account and download blend #8489 (or Printables #410734 STL, then convert).
+  2. Open in Blender 3.x → File → Export → glTF 2.0 (`.glb`), Y-up, apply transforms.
+  3. Save as `public/v4/assets/ships/normandy-sr2-joshuas-cc0.glb`.
+  4. Reload `http://localhost:5190/gra.html?debug=1` — `window.__v4.getHullSource()` should return `glb`.
+- **Textures (optional):** original hand-painted textures linked from the BlendSwap
+  description (MediaFire mirrors in the model page text). Not required — runtime
+  reapplies Alliance charcoal/white/blue materials via `loadShipNormandy.ts`.
+- **Procedural fallback:** when the GLB is absent, `src/v4/ship/v2/hull.ts` builds an
+  SR2-class silhouette from scratch (offset port hammerhead, S-curve nacelles, twin
+  engine pods, stern aux nozzles, dorsal fins, ceramic bands). No EA assets copied.
+- **Attribution line to display (optional for CC0, good practice):**
+  "Normandy SR2 fan mesh: JoshuaS, CC0 1.0, via BlendSwap."
+- **IP note:** Mass Effect / Normandy is EA/BioWare trademarked IP. This is a CC0
+  community fan model used for portfolio visual reference; procedural fallback avoids
+  franchise textures/insignia. Evaluate commercial portfolio exposure separately.
 
 ## Black hole shader reference — oseiskar/black-hole
 
@@ -100,6 +132,11 @@ V4 page footer. Keep it up to date if assets are swapped later.
 ## Not used / rejected (see `docs/v4-assets-research.md` for full detail)
 
 - Sketchfab "Normandia SR2" — rejected: unconfirmed license + Mass Effect / EA trademark risk.
+- Sketchfab Normandy listings (C-a-l-a-l-a-m-i-t-y et al.) — not used: download requires
+  Sketchfab login; license not confirmed as CC0; disabled models common.
+- BlendSwap #8489 (JoshuaS, CC0) — **accepted license**, download requires a free account
+  login; runtime supports drop-in GLB at `ships/normandy-sr2-joshuas-cc0.glb`. Printables
+  #410734 is the same CC0 mesh (public-domain re-upload) and is also session-gated (403).
 - Shadertoy black-hole shaders — rejected: default CC BY-NC-SA 3.0 license, incompatible
   with commercial use.
 - `oseiskar/black-hole`'s bundled Milky Way background image — rejected: CC BY-NC 2.0,
@@ -107,4 +144,4 @@ V4 page footer. Keep it up to date if assets are swapped later.
 
 ---
 
-_Generated during asset staging for Portfolio V4. Last updated: 2026-07-12._
+_Generated during asset staging for Portfolio V4. Last updated: 2026-08-28._

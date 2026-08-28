@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { navLinks } from '../data/content'
+import { navLinks } from '../i18n/live'
 
 const SECTION_IDS = navLinks.map((l) => l.href.replace('#', ''))
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { sections, site, contactFields, leadForm } from '../../data/content'
+import { sections, site, contactFields, leadForm } from '../../i18n/live'
 
 type FormState = Record<string, string>
 

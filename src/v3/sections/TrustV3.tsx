@@ -1,5 +1,5 @@
 import type { MouseEvent } from 'react'
-import { site, liveProof, trustPoints } from '../../data/content'
+import { site, liveProof, trustPoints } from '../../i18n/live'
 
 function handleGlow(e: MouseEvent<HTMLElement>) {
   const rect = e.currentTarget.getBoundingClientRect()
@@ -10,14 +10,14 @@ function handleGlow(e: MouseEvent<HTMLElement>) {
 }
 
 const marqueeItems = [
-  'Direct booking',
-  'KSeF',
-  'AI concierge 24/7',
-  'PMS',
-  'Smart-lock',
-  'Next.js',
-  'Astro',
-  'Audyt kroków',
+  'Rezerwacje na własnej stronie',
+  'E-faktury do urzędu',
+  'Asystent dla gości 24/7',
+  'Kalendarz rezerwacji',
+  'Zamki do drzwi',
+  'Szybka strona',
+  'Widoczność w Google',
+  'Audyt każdego kroku',
 ]
 
 export function TrustV3() {
@@ -58,7 +58,7 @@ export function TrustV3() {
         {/* Live proof cards */}
         <div className="mb-6">
           <p className="v3-label mb-8">Żywe wdrożenia — kliknij i sprawdź</p>
-          <div className="grid md:grid-cols-3 gap-5">
+          <div className="grid md:grid-cols-2 gap-5 max-w-4xl">
             {liveProof.map((proof) => (
               <a
                 key={proof.name}
@@ -91,8 +91,8 @@ export function TrustV3() {
         </div>
 
         {/* Trust points */}
-        <div className="grid md:grid-cols-3 gap-5 mt-12">
-          {trustPoints.slice(0, 3).map((tp, i) => (
+        <div className="grid md:grid-cols-2 gap-5 mt-12 max-w-4xl">
+          {trustPoints.map((tp, i) => (
             <div key={tp.title} className="reveal flex flex-col gap-3">
               <span className="v3-metric text-2xl leading-none">0{i + 1}</span>
               <h4 className="font-grotesk font-semibold text-[var(--color-paper)] text-base leading-snug">

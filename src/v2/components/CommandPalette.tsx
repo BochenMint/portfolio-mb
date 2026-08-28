@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { site } from '../../data/content'
+import { homePath, useLocale } from '../../i18n'
+import { getArchiveUi } from '../../i18n/archive-ui'
+import { site } from '../../i18n/live'
 
 type Cmd = { id: string; label: string; hint?: string; run: () => void }
 
 export function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { locale } = useLocale()
+  const ui = getArchiveUi(locale)
   const [q, setQ] = useState('')
   const [active, setActive] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -13,27 +17,36 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       onClose()
       document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' })
     }
-    return [
-      { id: 'cap', label: 'Możliwości', hint: 'co robię', run: jump('#capabilities') },
-      { id: 'dep', label: 'Realizacje', hint: 'case studies', run: jump('#deployments') },
-      { id: 'pipe', label: 'Proces', hint: 'jak pracuję', run: jump('#pipeline') },
-      { id: 'proof', label: 'Dowód', hint: 'na żywo', run: jump('#proof') },
-      { id: 'console', label: 'Kontakt', hint: 'otwórz zgłoszenie', run: jump('#console') },
-      {
-        id: 'audit',
-        label: 'Umów 20-min audyt',
-        hint: site.calendly ? 'calendly' : 'formularz',
-        run: () => {
-          onClose()
-          if (site.calendly) window.open(site.calendly, '_blank')
-          else document.querySelector('#console')?.scrollIntoView({ behavior: 'smooth' })
-        },
-      },
-      { id: 'mail', label: 'Napisz e-mail', hint: site.email, run: () => { window.location.href = `mailto:${site.email}` } },
-      { id: 'gh', label: 'GitHub', hint: 'kod', run: () => window.open(site.github, '_blank') },
-      { id: 'v1', label: 'Zobacz wersję 1 (obecna strona)', hint: '/', run: () => { window.location.href = '/' } },
-    ]
-  }, [onClose])
+    return ui.v2Cmds.map((item) => {
+      if (item.id === 'audit') {
+        return {
+          ...item,
+          hint: site.calendly ? 'calendly' : item.hint,
+          run: () => {
+            onClose()
+            if (site.calendly) window.open(site.calendly, '_blank')
+            else document.querySelector('#console')?.scrollIntoView({ behavior: 'smooth' })
+          },
+        }
+      }
+      if (item.id === 'mail') {
+        return { ...item, hint: site.email, run: () => { window.location.href = `mailto:${site.email}` } }
+      }
+      if (item.id === 'gh') {
+        return { ...item, run: () => window.open(site.github, '_blank') }
+      }
+      if (item.id === 'v1') {
+        return { ...item, run: () => { window.location.href = homePath(locale) } }
+      }
+      const hash =
+        item.id === 'cap' ? '#capabilities' :
+        item.id === 'dep' ? '#deployments' :
+        item.id === 'pipe' ? '#pipeline' :
+        item.id === 'proof' ? '#proof' :
+        '#console'
+      return { ...item, run: jump(hash) }
+    })
+  }, [onClose, ui, locale])
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase()

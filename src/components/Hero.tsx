@@ -1,4 +1,4 @@
-import { proofProducts, results, site } from '../data/content'
+import { proofProducts, results, site } from '../i18n/live'
 
 import { useHeroTypeMotion } from '../hooks/useHeroTypeMotion'
 

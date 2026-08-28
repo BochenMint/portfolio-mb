@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
-import { site } from '../data/content'
+import { site } from '../i18n/live'
 
 export function MobileStickyCta() {
   const [visible, setVisible] = useState(false)

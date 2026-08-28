@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { Project } from '../data/content'
+import type { Project } from '../i18n/live'
 import { textureCoverForProject } from '../lib/featuredMediaFill'
 import { projectImageTextureUrl } from '../lib/projectImageUrl'
 import {

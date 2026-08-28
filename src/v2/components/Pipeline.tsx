@@ -1,4 +1,4 @@
-import { sections, process } from '../../data/content'
+import { sections, process } from '../../i18n/live'
 
 export function Pipeline() {
   return (

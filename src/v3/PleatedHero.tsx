@@ -1,5 +1,7 @@
 import { lazy, Suspense, useCallback } from 'react'
-import { site, proofProducts } from '../data/content'
+import { useLocale } from '../i18n'
+import { getArchiveUi } from '../i18n/archive-ui'
+import { site, proofProducts } from '../i18n/live'
 import { useCoarsePointer } from '../hooks/useCoarsePointer'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 import { useWebGLCapable } from '../hooks/useWebGLCapable'
@@ -14,6 +16,8 @@ function PleatsCss() {
 }
 
 export function PleatedHero() {
+  const { locale } = useLocale()
+  const ui = getArchiveUi(locale)
   const reduced = useReducedMotion()
   const coarse = useCoarsePointer()
   const { capable } = useWebGLCapable()
@@ -45,23 +49,25 @@ export function PleatedHero() {
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-5 pt-28 pb-20 text-center md:px-8">
         <span className="v3-pill v3-fade-up" style={{ animationDelay: '0.05s' }}>
           <span className="v3-pill-dot" aria-hidden />
-          <span className="sm:hidden">Projekty od 25 000 PLN</span>
+          <span className="sm:hidden">{site.icpBadgeShort}</span>
           <span className="hidden sm:inline">{site.icpBadge}</span>
         </span>
 
         <h1 className="v3-display mt-8 text-[clamp(2.7rem,7.6vw,6.2rem)] text-balance">
           <span className="v3-hero-line">
-            <span>Strony, panele i AI,</span>
+            <span>{ui.v3HeroLine1}</span>
           </span>
           <span className="v3-hero-line">
             <span>
-              które oddają Ci <em className="v3-serif-accent">czas</em>.
+              {ui.v3HeroLine2Before}
+              <em className="v3-serif-accent">{ui.v3HeroLine2Em}</em>
+              {ui.v3HeroLine2After}
             </span>
           </span>
         </h1>
 
         <p
-          className="v3-fade-up mx-auto mt-7 max-w-2xl text-base leading-relaxed text-[var(--color-paper)]/72 md:text-lg"
+          className="v3-fade-up mx-auto mt-7 max-w-2xl text-base leading-relaxed text-[var(--color-paper)]/82 md:text-lg"
           style={{ animationDelay: '0.3s' }}
         >
           {site.valueProp}

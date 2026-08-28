@@ -1,4 +1,4 @@
-import { process, sections } from '../../data/content'
+import { process, sections } from '../../i18n/live'
 
 export function ProcessV3() {
   return (

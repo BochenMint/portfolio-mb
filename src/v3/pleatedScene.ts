@@ -3,7 +3,7 @@ import { getDpr } from '../webgl/hero/heroSceneTypes'
 
 /**
  * "Fluted glass" — ryflowane szkło podświetlone od tyłu.
- * Za szybą: animowane pole ciepłego światła (bursztyn/coral + teal).
+ * Za szybą: animowane pole światła (copper / sea-glass + tarragon ink).
  * Każde pionowe żebro działa jak soczewka cylindryczna: ZAŁAMUJE tło
  * (przesunięcie próbkowania w poprzek żebra), rozszczepia kolory na
  * krawędziach (dyspersja RGB), rozmywa w pionie (smuga szkła) i łapie
@@ -28,12 +28,12 @@ const FRAG = /* glsl */ `
   uniform float uScrim;
   uniform float uBeam;
 
-  const vec3 INK    = vec3(0.031, 0.031, 0.027);
-  const vec3 AMBER  = vec3(0.961, 0.647, 0.141);
-  const vec3 BRIGHT = vec3(1.000, 0.800, 0.420);
-  const vec3 CORAL  = vec3(1.000, 0.369, 0.227);
-  const vec3 EMBER  = vec3(0.430, 0.085, 0.060);
-  const vec3 TEAL   = vec3(0.050, 0.190, 0.215);
+  const vec3 INK       = vec3(0.024, 0.042, 0.034);
+  const vec3 COPPER    = vec3(0.780, 0.478, 0.278);
+  const vec3 BRIGHT    = vec3(0.910, 0.698, 0.438);
+  const vec3 SEA_GLASS = vec3(0.208, 0.448, 0.478);
+  const vec3 EMBER     = vec3(0.478, 0.312, 0.188);
+  const vec3 SEA       = vec3(0.188, 0.438, 0.468);
 
   float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -71,13 +71,13 @@ const FRAG = /* glsl */ `
     float darkZone = smoothstep(0.45, 0.95, uv.x) * smoothstep(0.55, 0.02, uv.y);
 
     vec3 col = INK;
-    col = mix(col, TEAL, tealZone * 1.05);
-    col += EMBER * gEmb * 1.0;
-    col = mix(col, CORAL, clamp(gSun * 1.08, 0.0, 1.0));
-    col = mix(col, AMBER, clamp(pow(gSun, 1.8) * 1.18, 0.0, 1.0));
-    col = mix(col, BRIGHT, clamp(pow(gSun, 4.0) * 0.95, 0.0, 1.0));
-    col += CORAL * gSpk * 0.55;
-    col = mix(col, INK, darkZone * 0.70);
+    col = mix(col, SEA, tealZone * 1.22);
+    col += EMBER * gEmb * 1.18;
+    col = mix(col, SEA_GLASS, clamp(gSun * 1.24, 0.0, 1.0));
+    col = mix(col, COPPER, clamp(pow(gSun, 1.55) * 1.38, 0.0, 1.0));
+    col = mix(col, BRIGHT, clamp(pow(gSun, 3.6) * 1.08, 0.0, 1.0));
+    col += SEA_GLASS * gSpk * 0.68;
+    col = mix(col, INK, darkZone * 0.82);
 
     // pionowa linia świetlna ZA szkłem — podświetla ryfle od dołu,
     // pozycja podąża za kursorem (refrakcja żeber łamie ją naturalnie)
@@ -87,7 +87,7 @@ const FRAG = /* glsl */ `
     float beamGlow = exp(-pow(dxB / 0.055, 2.0));
     float lift = smoothstep(1.1, 0.0, uv.y);                 // najjaśniej przy dole
     float beam = (beamCore * 1.5 + beamGlow * 0.5) * (0.30 + 0.85 * lift);
-    col += vec3(1.0, 0.80, 0.44) * beam * uBeam;
+    col += BRIGHT * beam * uBeam;
     // gorący punkt u podstawy linii (źródło światła "od spodu")
     float base = exp(-pow(distance(uv, vec2(beamX, 0.02)) / 0.11, 2.0));
     col += BRIGHT * base * 0.55 * uBeam;
@@ -132,10 +132,10 @@ const FRAG = /* glsl */ `
     float lum = dot(lightField(ruv), vec3(0.299, 0.587, 0.114));
     float spec1 = exp(-pow((fx - 0.18) / 0.045, 2.0));
     float spec2 = exp(-pow((fx - 0.86) / 0.035, 2.0));
-    col += vec3(1.0, 0.92, 0.78) * (spec1 * 0.9 + spec2 * 0.45) * (0.10 + 0.75 * lum);
+    col += vec3(0.94, 0.86, 0.74) * (spec1 * 0.9 + spec2 * 0.45) * (0.10 + 0.75 * lum);
 
-    // mleczność szkła (frost) — lekkie podniesienie czerni
-    col = mix(col, col + vec3(0.035, 0.030, 0.026), 0.8);
+    // mleczność szkła (frost) — subtelna, bez wybielania
+    col = mix(col, col + vec3(0.014, 0.020, 0.018), 0.32);
 
     // ── scrim pod typografię ──
     float scrim = exp(-pow((uv.x - 0.5) / 0.46, 2.0)) * exp(-pow((uv.y - 0.42) / 0.40, 2.0));
@@ -143,7 +143,7 @@ const FRAG = /* glsl */ `
 
     // winieta + ziarno
     float vig = smoothstep(1.35, 0.40, length(uv - 0.5));
-    col *= mix(0.70, 1.0, vig);
+    col *= mix(0.62, 1.0, vig);
     float n = hash(uv * (310.0 + mod(uTime, 7.0)));
     col += (n - 0.5) * 0.028;
 
@@ -178,7 +178,7 @@ export async function createPleatedScene(
       uAspect: { value: 1 },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
       uBars: { value: low ? 26 : 42 },
-      uScrim: { value: low ? 0.84 : 0.65 },
+      uScrim: { value: low ? 0.58 : 0.42 },
       uBeam: { value: low ? 0.7 : 1.0 },
     },
     depthTest: false,

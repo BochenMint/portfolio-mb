@@ -1,4 +1,4 @@
-import { sections, services } from '../data/content'
+import { sections, services } from '../i18n/live'
 import { SectionIntro } from './SectionIntro'
 
 export function Services() {

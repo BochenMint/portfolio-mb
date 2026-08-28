@@ -1,4 +1,4 @@
-import { sections, services, site } from '../../data/content'
+import { sections, services, site } from '../../i18n/live'
 
 export function Capabilities() {
   return (

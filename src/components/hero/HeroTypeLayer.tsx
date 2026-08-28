@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useMemo } from 'react'
-import { site } from '../../data/content'
+import { site } from '../../i18n/live'
 import { useCoarsePointer } from '../../hooks/useCoarsePointer'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { HeroBackground } from './HeroBackground'

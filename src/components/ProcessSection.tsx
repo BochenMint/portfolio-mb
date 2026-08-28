@@ -1,4 +1,4 @@
-import { process, sections } from '../data/content'
+import { process, sections } from '../i18n/live'
 import { SectionIntro } from './SectionIntro'
 
 export function ProcessSection() {

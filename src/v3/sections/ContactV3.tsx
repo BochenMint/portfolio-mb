@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import '../intake.css'
-import { site, sections, intakeSteps, intakeCopy, type IntakeField } from '../../data/content'
+import { site, sections, intakeSteps, intakeCopy, type IntakeField } from '../../i18n/live'
+import { useLocale } from '../../i18n'
+import { getArchiveUi } from '../../i18n/archive-ui'
 
 type IntakeState = Record<string, string>
 type SubmitStatus = 'idle' | 'submitting' | 'error'
@@ -9,6 +11,14 @@ type SubmitStatus = 'idle' | 'submitting' | 'error'
 const TOTAL_STEPS = intakeSteps.length
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const formEndpoint = import.meta.env.VITE_FORM_ENDPOINT || 'https://api.web3forms.com/submit'
+
+function normalizeFormAccessKey(raw: string | undefined): string {
+  const key = (raw || '').trim()
+  if (!key) return ''
+  if (/^your-web3forms-access-key$/i.test(key)) return ''
+  return key
+}
 
 function isFieldEmpty(value: string | undefined) {
   return !value || value.trim().length === 0
@@ -160,6 +170,8 @@ function IntakeFieldControl({
 }
 
 export function ContactV3() {
+  const { locale } = useLocale()
+  const ui = getArchiveUi(locale)
   const [values, setValues] = useState<IntakeState>({})
   const [stepIndex, setStepIndex] = useState(0)
   const [direction, setDirection] = useState<'forward' | 'back'>('forward')
@@ -209,13 +221,13 @@ export function ContactV3() {
   async function submitBrief() {
     setStatus('submitting')
 
-    const accessKey = import.meta.env.VITE_FORM_ACCESS_KEY
+    const accessKey = normalizeFormAccessKey(import.meta.env.VITE_FORM_ACCESS_KEY)
     const subject = `[BRIEF] ${values.companyName ?? 'Brief'} · ${values.projectType ?? ''}`
     const message = buildMessageBody(values)
 
     if (accessKey) {
       try {
-        const res = await fetch('https://api.web3forms.com/submit', {
+        const res = await fetch(formEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
@@ -273,10 +285,12 @@ export function ContactV3() {
     <section id="kontakt" className="mx-auto max-w-6xl px-5 py-24 md:py-32 md:px-8">
       {/* Section header */}
       <div className="mb-16">
-        <p className="v3-label mb-4">04 / Kontakt</p>
+        <p className="v3-label mb-4">
+          {sections.contact.num} / {sections.contact.title}
+        </p>
         <h2 className="v3-display text-[clamp(2rem,5vw,3.5rem)] text-balance mb-5">
-          Zacznijmy od{' '}
-          <em className="v3-serif-accent">audytu</em>
+          {ui.v3ContactTitleBefore}
+          <em className="v3-serif-accent">{ui.v3ContactTitleEm}</em>
         </h2>
         <p className="text-muted max-w-2xl text-base leading-relaxed">
           {sections.contact.lead}
@@ -288,10 +302,7 @@ export function ContactV3() {
         {/* Left: contact info */}
         <div className="flex flex-col gap-8">
           <div>
-            <p className="text-muted text-sm mb-2 leading-relaxed">
-              Napisz, co dziś zjada czas — lub zarezerwuj 20-minutowy audyt. Bez ściemy, bez
-              obietnic z pitch decka.
-            </p>
+            <p className="text-muted text-sm mb-2 leading-relaxed">{ui.v3ContactAside}</p>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -341,21 +352,31 @@ export function ContactV3() {
               <div className="v3-intake-timeline">
                 <div className="v3-intake-timeline-item">
                   <span className="v3-intake-timeline-num">1</span>
-                  <span>Czytam brief</span>
+                  <span>{ui.v3Thanks1}</span>
                 </div>
                 <div className="v3-intake-timeline-item">
                   <span className="v3-intake-timeline-num">2</span>
-                  <span>Odsyłam szkic №1 i widełki</span>
+                  <span>{ui.v3Thanks2}</span>
                 </div>
                 <div className="v3-intake-timeline-item">
                   <span className="v3-intake-timeline-num">3</span>
-                  <span>20-min audyt i decyzja</span>
+                  <span>{ui.v3Thanks3}</span>
                 </div>
               </div>
 
-              <button type="button" onClick={resetWizard} className="btn-soft mt-2 mx-auto">
-                Wyślij kolejny brief
-              </button>
+              <div className="mt-4 flex flex-col items-center gap-3">
+                <a
+                  href={ctaHref}
+                  className="btn-accent justify-center"
+                  {...(site.calendly ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                >
+                  {site.ctaPrimary}
+                  <span aria-hidden>→</span>
+                </a>
+                <button type="button" onClick={resetWizard} className="btn-soft">
+                  Wyślij kolejny brief
+                </button>
+              </div>
             </div>
           ) : (
             <>
@@ -437,6 +458,11 @@ export function ContactV3() {
               </form>
             </>
           )}
+
+          <p className="v3-mono mt-6 text-[10px] leading-relaxed text-muted">
+            Dane z formularza służą wyłącznie do odpowiedzi na Twoje zapytanie — nie sprzedaję list
+            mailingowych ani nie przekazuję danych podmiotom trzecim.
+          </p>
         </div>
       </div>
     </section>

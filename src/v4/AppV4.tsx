@@ -1,12 +1,10 @@
 import { useState } from 'react'
+import { ArchiveLang } from '../i18n'
 import { GameShell } from './GameShell'
 import { FallbackScreen } from './FallbackScreen'
 
 function detectCanRunGame(): boolean {
   if (typeof window === 'undefined') return false
-
-  const hasFinePointer = window.matchMedia('(pointer: fine)').matches
-  if (!hasFinePointer) return false
 
   try {
     const canvas = document.createElement('canvas')
@@ -19,5 +17,12 @@ function detectCanRunGame(): boolean {
 
 export function AppV4() {
   const [canRunGame] = useState(detectCanRunGame)
-  return canRunGame ? <GameShell /> : <FallbackScreen />
+  return (
+    <>
+      <div className="v4-lang-slot">
+        <ArchiveLang />
+      </div>
+      {canRunGame ? <GameShell /> : <FallbackScreen />}
+    </>
+  )
 }

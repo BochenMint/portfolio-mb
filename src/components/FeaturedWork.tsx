@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
-import { projects, sections } from '../data/content'
-import type { Project } from '../data/content'
+import { projects, sections } from '../i18n/live'
+import type { Project } from '../i18n/live'
 import { textureCoverForProject } from '../lib/featuredMediaFill'
 import { ProjectImageInteractive } from './ProjectImageInteractive'
 import { ProjectMarquee } from './ProjectMarquee'

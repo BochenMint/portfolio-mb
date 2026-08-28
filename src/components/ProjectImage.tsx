@@ -1,4 +1,4 @@
-import type { Project } from '../data/content'
+import type { Project } from '../i18n/live'
 import { sceneFor } from '../lib/projectImageUrl'
 
 type Props = {

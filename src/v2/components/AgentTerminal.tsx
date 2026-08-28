@@ -1,19 +1,14 @@
 import { useEffect, useState } from 'react'
-
-const LINES = [
-  '$ init operator.mb',
-  '✓ direct booking — rezerwacje bez prowizji OTA',
-  '✓ panel + integracje — KSeF · PMS · smart-lock',
-  '✓ AI concierge 24/7 — z audytem każdego kroku',
-  '→ szacowany odzysk: 8–15 h / mies.',
-  '_ gotowy na Twój proces.',
-]
+import { useLocale } from '../../i18n'
+import { getArchiveUi } from '../../i18n/archive-ui'
 
 export function AgentTerminal() {
+  const { locale } = useLocale()
+  const lines = getArchiveUi(locale).v2Terminal
   const [text, setText] = useState('')
 
   useEffect(() => {
-    const full = LINES.join('\n')
+    const full = lines.join('\n')
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) {
       setText(full)
@@ -34,7 +29,7 @@ export function AgentTerminal() {
     }
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
-  }, [])
+  }, [lines])
 
   return (
     <pre className="v2-terminal max-h-[180px] overflow-hidden whitespace-pre-wrap">

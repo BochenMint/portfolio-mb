@@ -1,4 +1,4 @@
-import { proofProducts } from '../data/content'
+import { proofProducts } from '../i18n/live'
 
 export function ProofBar() {
   return (

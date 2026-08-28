@@ -1,4 +1,4 @@
-import { site } from '../data/content'
+import { site } from '../i18n/live'
 
 export function FooterCta() {
   // calendly is empty → fallback to #contact (the form)

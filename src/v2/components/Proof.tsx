@@ -1,4 +1,4 @@
-import { sections, site, liveProof, trustPoints } from '../../data/content'
+import { sections, site, liveProof, trustPoints } from '../../i18n/live'
 
 export function Proof() {
   return (

@@ -1,6 +1,13 @@
-import type { Project } from '../../data/content'
+import type { Project } from '../../i18n/live'
 import type { PanelImage } from '../engine/panelImages'
-import { trimToSentences } from '../engine/format'
+import { trimToSentences, isExternalLiveUrl } from '../engine/format'
+
+const PORTFOLIO_URL =
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_PORTFOLIO_URL) ||
+  'https://marcinbochenek.com'
+
+const CASE_STUDIES_URL = `${PORTFOLIO_URL.replace(/\/$/, '')}/#realizacje`
+
 
 export type ProjectPanel = {
   show(project: Project, images: PanelImage[]): void
@@ -26,7 +33,9 @@ export function createProjectPanel(container: HTMLElement): ProjectPanel {
     <div class="v4-project-panel__shots"></div>
     <div class="v4-project-panel__stack"></div>
     <div class="v4-project-panel__links">
-      <a class="v4-project-panel__case" href="/#realizacje" target="_blank" rel="noopener">Case study &rarr;</a>
+      <a class="v4-project-panel__live" href="#" target="_blank" rel="noopener" hidden>Strona na żywo &rarr;</a>
+      <span class="v4-project-panel__status" hidden></span>
+      <a class="v4-project-panel__case" href="${CASE_STUDIES_URL}" target="_blank" rel="noopener">Case study &rarr;</a>
     </div>
   `
   container.appendChild(root)
@@ -37,6 +46,8 @@ export function createProjectPanel(container: HTMLElement): ProjectPanel {
   const descEl = root.querySelector<HTMLElement>('.v4-project-panel__desc')!
   const shotsEl = root.querySelector<HTMLElement>('.v4-project-panel__shots')!
   const stackEl = root.querySelector<HTMLElement>('.v4-project-panel__stack')!
+  const liveEl = root.querySelector<HTMLAnchorElement>('.v4-project-panel__live')!
+  const statusEl = root.querySelector<HTMLElement>('.v4-project-panel__status')!
 
   function hide() {
     root.classList.remove('is-open')
@@ -67,6 +78,16 @@ export function createProjectPanel(container: HTMLElement): ProjectPanel {
         chip.className = 'v4-project-panel__chip'
         chip.textContent = tech
         stackEl.appendChild(chip)
+      }
+
+      if (isExternalLiveUrl(project.url)) {
+        liveEl.href = project.url
+        liveEl.hidden = false
+        statusEl.hidden = true
+      } else {
+        liveEl.hidden = true
+        statusEl.hidden = false
+        statusEl.textContent = project.domain
       }
 
       root.classList.add('is-open')

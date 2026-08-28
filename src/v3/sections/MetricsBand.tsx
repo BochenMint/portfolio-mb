@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { results, resultsDisclaimer } from '../../data/content'
+import { results, resultsDisclaimer } from '../../i18n/live'
 import { useCountUp } from '../useCountUp'
 
 function MetricValue({ value }: { value: string }) {
@@ -37,7 +37,7 @@ export function MetricsBand() {
           ))}
         </div>
         <p className="v3-mono text-[10px] text-muted/60 mt-4 px-4 leading-relaxed">
-          {resultsDisclaimer}
+          {resultsDisclaimer()}
         </p>
       </div>
     </div>

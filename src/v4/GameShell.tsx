@@ -4,6 +4,7 @@ import { createEngine, type Engine } from './engine/core'
 import { type Ship } from './ship/buildShip'
 import { buildShipV2 } from './ship/buildShipV2'
 import { createControls } from './ship/controls'
+import { createTouchControls } from './ship/touchControls'
 import { createCameraRig } from './ship/camera-rig'
 import { createHud } from './ui/hud'
 import { createWorld, type World } from './world'
@@ -16,13 +17,13 @@ import { createProjectPanel } from './ui/projectPanel'
 import { createDiscoveryToast } from './ui/discoveryToast'
 import { createGameOverOverlay } from './ui/gameOverOverlay'
 import { createCompletionOverlay } from './ui/completionOverlay'
-import { projects } from '../data/content'
+import { projects } from '../i18n/live'
 
-// Establishing shot: outside the black hole's disk (outer radius ~58u) and
-// impostor (half-size 130u), offset sideways so the ship doesn't occlude the
+// Establishing shot: outside the black hole's disk (outer radius ~208u) and
+// impostor (half-size 305u), offset sideways so the ship doesn't occlude the
 // hole, and close to the (18°-tilted) disk plane so the accretion disk reads
 // near-edge-on — thin front band + over-pole halo arcs, the Gargantua frame.
-const START_POSITION = new THREE.Vector3(70, -30, 235)
+const START_POSITION = new THREE.Vector3(72, -32, 248)
 
 /** The low-end heuristic used elsewhere in the codebase is "coarse pointer",
  * which doesn't apply here (v4 already requires a fine pointer + WebGL2 to
@@ -46,6 +47,8 @@ type V4Debug = {
    * keyboard input nudged it between steps. */
   getShipPos(): [number, number, number]
   haltShip(): void
+  /** Dev/preview-only — procedural vs CC0 GLB hull source. */
+  getHullSource(): string
 }
 
 declare global {
@@ -68,6 +71,7 @@ export function GameShell() {
     let ship: Ship | null = null
     let world: World | null = null
     let controls: ReturnType<typeof createControls> | null = null
+    let touchControls: ReturnType<typeof createTouchControls> | null = null
     let hud: ReturnType<typeof createHud> | null = null
     let commPanel: ReturnType<typeof createCommPanel> | null = null
     let projectPanel: ReturnType<typeof createProjectPanel> | null = null
@@ -84,6 +88,12 @@ export function GameShell() {
       const hudContainer = hudContainerRef.current
       if (!root || !canvas || !hudContainer) return
 
+      // Keyboard flight controls listen on `window`, but focusing the canvas
+      // helps first-time visitors discover input and keeps Space from scrolling.
+      canvas.tabIndex = 0
+      canvas.setAttribute('aria-label', 'Pole lotu — sterowanie statkiem')
+      canvas.focus({ preventScroll: true })
+
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       const lowPower = detectLowPowerTier()
 
@@ -94,6 +104,9 @@ export function GameShell() {
         if (loadingLabelRef.current) loadingLabelRef.current.textContent = `WCZYTYWANIE MISJI… ${pct}%`
       }
       manager.onError = (url) => {
+        // Optional Normandy GLB is probed via HEAD before load — anything else
+        // that fails here is worth surfacing in devtools.
+        if (url.includes('normandy-sr2-joshuas-cc0.glb')) return
         console.error('[v4] failed to load asset:', url)
       }
 
@@ -128,14 +141,20 @@ export function GameShell() {
       }
       world = worldInstance
 
-      const controlsInstance = createControls(START_POSITION)
+      const touchControlsInstance = createTouchControls(root)
+      touchControls = touchControlsInstance
+
+      const controlsInstance = createControls(START_POSITION, touchControlsInstance.input)
       controls = controlsInstance
 
       const cameraRig = createCameraRig(engineInstance.camera)
-      const hudInstance = createHud(hudContainer)
+      const hudInstance = createHud(hudContainer, { touchActive: touchControlsInstance.active })
       hud = hudInstance
 
-      const commPanelInstance = createCommPanel(hudContainer, { reducedMotion })
+      const commPanelInstance = createCommPanel(hudContainer, {
+        reducedMotion,
+        startCollapsed: touchControlsInstance.active,
+      })
       commPanel = commPanelInstance
       const projectPanelInstance = createProjectPanel(hudContainer)
       projectPanel = projectPanelInstance
@@ -234,6 +253,9 @@ export function GameShell() {
           haltShip() {
             controlsInstance.state.velocity.set(0, 0, 0)
             controlsInstance.state.angularVelocity.set(0, 0, 0)
+          },
+          getHullSource() {
+            return (shipInstance.group.userData.hullSource as string | undefined) ?? 'unknown'
           },
         }
       }
@@ -376,6 +398,7 @@ export function GameShell() {
       commPanel?.dispose()
       hud?.dispose()
       controls?.dispose()
+      touchControls?.dispose()
       world?.dispose()
       ship?.dispose()
       engine?.stop()

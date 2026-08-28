@@ -1,6 +1,6 @@
 ﻿import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { contactFields, leadForm, site } from '../data/content'
+import { contactFields, leadForm, site } from '../i18n/live'
 import { MagneticButton } from './MagneticButton'
 
 const formEndpoint =

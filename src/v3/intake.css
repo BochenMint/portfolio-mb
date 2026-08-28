@@ -127,12 +127,12 @@
 .v3-intake-field-error .v3-intake-input,
 .v3-intake-field-error .v3-intake-textarea,
 .v3-intake-field-error .v3-intake-select {
-  border-color: var(--color-coral);
+  border-color: var(--color-oxblood);
 }
 
 .v3-intake-error-text {
   font-size: 0.75rem;
-  color: var(--color-coral);
+  color: var(--color-oxblood);
 }
 
 /* ── Option-card grid (replaces native <select> for key fields) ─────────── */
@@ -248,7 +248,7 @@
 
 .v3-intake-submit-error {
   font-size: 0.8125rem;
-  color: var(--color-coral);
+  color: var(--color-oxblood);
   line-height: 1.5;
 }
 

@@ -1,5 +1,5 @@
 import type { MouseEvent } from 'react'
-import { services, sections } from '../../data/content'
+import { services, sections, site } from '../../i18n/live'
 
 /** Sztuka kart — wygenerowane „backlit fluted glass" (public/v3/, tiery 1200/2400 z mastera 4K) */
 const SERVICE_ART = ['/v3/art-arch', '/v3/art-blocks', '/v3/art-knot']
@@ -134,6 +134,16 @@ export function ServicesV3() {
                 {service.timeline} ·{' '}
                 <span className="text-accent">{service.from}</span>
               </p>
+              {idx === 2 && (
+                <a
+                  href={site.mbAiUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="v3-mono mt-3 inline-block text-[11px] tracking-widest text-accent uppercase hover:opacity-70 transition-opacity"
+                >
+                  Szczegóły na mb-ai.pl →
+                </a>
+              )}
             </div>
             </div>
           </div>

@@ -1,9 +1,8 @@
 import { useRef, useState } from 'react'
-import { projects, sections } from '../../data/content'
-import { projectImageTextureUrl } from '../../lib/projectImageUrl'
+import { projects, sections } from '../../i18n/live'
 import { gsap, useGSAP } from '../../animation/gsap'
 import { CaseStudyOverlay } from '../CaseStudyOverlay'
-import { AgenticSwarmCanvas } from '../AgenticSwarmCanvas'
+import { ProjectShowcaseMedia } from './ProjectShowcaseMedia'
 
 // ─── Parallax + deal-in hook ───────────────────────────────────────────────
 
@@ -35,15 +34,17 @@ function useShowcaseParallax(containerRef: React.RefObject<HTMLElement | null>) 
           )
         })
 
-        // 2. Image parallax: yPercent -6 → 6 (scrub)
+        // 2. Image parallax — primary vs secondary layers at different depths
         const images = gsap.utils.toArray<HTMLElement>('.v3-parallax-img')
         images.forEach((img) => {
           const card = img.closest('.v3-stack-card-anim')
+          const isSecondary = img.classList.contains('v3-parallax-img--secondary')
+          const range = isSecondary ? 14 : 7
           gsap.fromTo(
             img,
-            { yPercent: -6 },
+            { yPercent: -range },
             {
-              yPercent: 6,
+              yPercent: range,
               ease: 'none',
               scrollTrigger: {
                 trigger: card ?? img,
@@ -99,6 +100,12 @@ export function Showcase() {
       <div className="relative">
         {projects.map((project, i) => {
           const isLive = project.url.startsWith('http')
+          const statusLabel =
+            isLive
+              ? null
+              : project.id === 'idrive'
+                ? 'Przed publicznym startem'
+                : 'System wewnętrzny'
           const isLast = i === projects.length - 1
           const metric = projectMetrics[project.id]
 
@@ -116,28 +123,9 @@ export function Showcase() {
             >
               {/* Card grid: content left, media right */}
               <div className="grid md:grid-cols-[1.05fr_1.3fr] h-full">
-                {/* Mobile: media on top */}
-                <div className="relative block md:hidden overflow-hidden" style={{ minHeight: 240 }}>
-                  {project.id === 'agentic' ? (
-                    <AgenticSwarmCanvas
-                      className="h-full w-full"
-                      imgProps={{
-                        src: projectImageTextureUrl(project, 'hero'),
-                        alt: project.title,
-                        loading: 'lazy',
-                        className: 'h-full w-full object-cover object-top',
-                        style: { minHeight: 240, scale: '1.12' },
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={projectImageTextureUrl(project, 'hero')}
-                      alt={project.title}
-                      loading="lazy"
-                      className="v3-parallax-img h-full w-full object-cover object-top"
-                      style={{ minHeight: 240, scale: '1.12' }}
-                    />
-                  )}
+                {/* Mobile: multi-shot strip */}
+                <div className="relative block md:hidden px-5 pt-5 pb-2">
+                  <ProjectShowcaseMedia project={project} />
                 </div>
 
                 {/* Left: content */}
@@ -163,7 +151,7 @@ export function Showcase() {
                         </a>
                       ) : (
                         <span className="v3-pill text-[10px] py-0.5 px-3 opacity-50">
-                          system wewnętrzny
+                          {statusLabel}
                         </span>
                       )}
                       <button
@@ -230,30 +218,10 @@ export function Showcase() {
                   )}
                 </div>
 
-                {/* Right: media (desktop only) */}
-                <div className="relative hidden md:block overflow-hidden" style={{ minHeight: 280 }}>
-                  {project.id === 'agentic' ? (
-                    <AgenticSwarmCanvas
-                      className="h-full w-full"
-                      imgProps={{
-                        src: projectImageTextureUrl(project, 'hero'),
-                        alt: project.title,
-                        loading: 'lazy',
-                        className: 'h-full w-full object-cover object-top',
-                        style: { scale: '1.12' },
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={projectImageTextureUrl(project, 'hero')}
-                      alt={project.title}
-                      loading="lazy"
-                      className="v3-parallax-img h-full w-full object-cover object-top"
-                      style={{ scale: '1.12' }}
-                    />
-                  )}
-                  {/* Overlay gradient: left fade into card */}
-                  <div className="v3-media-gradient absolute inset-0" aria-hidden />
+                {/* Right: layered multi-shot media (desktop) */}
+                <div className="relative hidden md:block overflow-hidden" style={{ minHeight: 320 }}>
+                  <ProjectShowcaseMedia project={project} className="absolute inset-0" />
+                  <div className="v3-media-gradient absolute inset-0 z-[4] pointer-events-none" aria-hidden />
                 </div>
               </div>
             </div>
@@ -277,7 +245,7 @@ export function Showcase() {
 // ─── Data ──────────────────────────────────────────────────────────────────
 
 const projectMetrics: Record<string, string> = {
-  mint: '10–15% taniej niż OTA',
+  mint: '10–15% taniej niż Booking.com',
   plumm: '12–20 h/mies. mniej',
   idrive: 'Szybsza publikacja + SEO',
   agentic: '5–10 h/tydz. mniej',

@@ -2,6 +2,13 @@
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var p = location.pathname
+        document.documentElement.lang =
+          p.indexOf('/en/') === 0 ? 'en' : p.indexOf('/ua/') === 0 ? 'uk' : 'pl'
+      })()
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
@@ -9,6 +16,13 @@
       content="Marcin Bochenek — buduję produkcyjne systemy dla firm: direct booking, panele, AI. Propozycja kierunku v2."
     />
     <meta name="theme-color" content="#080807" />
+    <meta name="robots" content="noindex, follow" />
+    <!-- Archive visual direction. Locale from /en/ /ua/ prefix. -->
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/v2.html" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/v2.html" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/v2.html" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/v2.html" />
+    <link rel="canonical" href="https://marcinbochenek.com/" />
     <meta property="og:title" content="Marcin Bochenek — systemy dla firm (v2)" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pl_PL" />
@@ -21,6 +35,7 @@
     />
   </head>
   <body>
+    <noscript><p>JavaScript required. <a href="/en/v2.html">EN</a> · <a href="/ua/v2.html">UA</a></p></noscript>
     <div id="root"></div>
     <script type="module" src="/src/v2/main.tsx"></script>
   </body>

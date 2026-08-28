@@ -1,4 +1,4 @@
-import { site } from '../../data/content'
+import { site } from '../../i18n/live'
 
 export function FooterV2({ onOpenCmd }: { onOpenCmd?: () => void }) {
   return (

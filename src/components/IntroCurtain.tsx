@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from '../animation/gsap'
-import { site } from '../data/content'
+import { site } from '../i18n/live'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 
 const MAX_MS = 1500

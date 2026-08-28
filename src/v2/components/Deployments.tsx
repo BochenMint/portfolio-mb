@@ -1,4 +1,4 @@
-import { sections, projects } from '../../data/content'
+import { sections, projects } from '../../i18n/live'
 import { projectImageTextureUrl } from '../../lib/projectImageUrl'
 
 // Concrete metric pulled from each project's copy

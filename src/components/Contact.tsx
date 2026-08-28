@@ -1,4 +1,4 @@
-import { sections, site } from '../data/content'
+import { sections, site } from '../i18n/live'
 import { LeadForm } from './LeadForm'
 import { MagneticButton } from './MagneticButton'
 import { SectionIntro } from './SectionIntro'

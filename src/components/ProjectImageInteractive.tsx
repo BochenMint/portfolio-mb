@@ -1,5 +1,5 @@
 import { Component, lazy, Suspense, useCallback, useState, type ReactNode } from 'react'
-import type { Project } from '../data/content'
+import type { Project } from '../i18n/live'
 import { useWebGLCapable } from '../hooks/useWebGLCapable'
 import type { DisplacementLevel } from '../webgl/displacementConfig'
 import { ProjectImage } from './ProjectImage'

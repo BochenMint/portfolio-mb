@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { site } from '../data/content'
+import { ArchiveLang, useLocale } from '../i18n'
+import { getArchiveUi } from '../i18n/archive-ui'
+import { site } from '../i18n/live'
 import { FullscreenMenu } from './FullscreenMenu'
 
 export function Nav() {
+  const { locale } = useLocale()
+  const ui = getArchiveUi(locale)
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const ticking = useRef(false)
@@ -35,7 +39,7 @@ export function Nav() {
               ? 'mx-4 rounded-full border-[var(--color-paper)]/12 bg-[var(--color-ink)]/78 md:mx-10 lg:mx-16'
               : 'mx-3 rounded-full border-[var(--color-paper)]/8 bg-[var(--color-ink)]/38 md:mx-8 lg:mx-12'
           }`}
-          aria-label="Główna nawigacja"
+          aria-label={ui.navAria}
         >
           {/* Logo */}
           <a
@@ -55,16 +59,17 @@ export function Nav() {
 
           {/* CTA + hamburger */}
           <div className="flex items-center gap-3 md:gap-4">
+            <ArchiveLang />
             <span className="hidden items-center gap-2 rounded-full border border-[var(--color-paper)]/10 bg-[var(--color-paper)]/[0.035] px-3 py-2 font-mono text-[9px] tracking-[0.14em] text-[var(--color-paper)]/50 uppercase lg:inline-flex">
               <span className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_12px_rgba(245,165,36,0.8)]" aria-hidden />
-              1 slot / miesiąc
+              {ui.slotMonth}
             </span>
             <a
               href={ctaHref}
               className="rounded-full border border-accent/35 bg-accent/10 px-3 py-2 font-mono text-[10px] font-semibold tracking-[0.12em] text-accent uppercase shadow-[0_0_24px_rgba(245,165,36,0.12)] md:hidden"
               {...(site.calendly ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
             >
-              Audyt
+              {ui.bookAuditShort}
             </a>
             {/* Primary CTA — tylko desktop. Wrapper kontroluje widoczność,
                 bo .btn-accent wymusza display:inline-flex (hidden by nie zadziałał). */}

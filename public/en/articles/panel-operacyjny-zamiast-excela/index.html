@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>An operations panel instead of Excel: when it pays</title>
+    <meta name="description" content="An operations panel instead of Excel makes sense when several people break one file and the process repeats. Ops range: PLN 60,000–180,000+. I write when to keep the sheet and when to build." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://marcinbochenek.com/en/articles/panel-operacyjny-zamiast-excela/" />
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/artykuly/panel-operacyjny-zamiast-excela/" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/articles/panel-operacyjny-zamiast-excela/" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/statti/panel-operacyjny-zamiast-excela/" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/artykuly/panel-operacyjny-zamiast-excela/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="An operations panel instead of Excel: when it pays" />
+    <meta property="og:description" content="An operations panel instead of Excel makes sense when several people break one file and the process repeats. Ops range: PLN 60,000–180,000+. I write when to keep the sheet and when to build." />
+    <meta property="og:url" content="https://marcinbochenek.com/en/articles/panel-operacyjny-zamiast-excela/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="pl_PL" />
+    <meta property="og:locale:alternate" content="uk_UA" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="An operations panel instead of Excel: when it pays" />
+    <meta name="twitter:description" content="An operations panel instead of Excel makes sense when several people break one file and the process repeats. Ops range: PLN 60,000–180,000+. I write when to keep the sheet and when to build." />
+    <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/journal.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":["Article","BlogPosting"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://marcinbochenek.com/en/articles/panel-operacyjny-zamiast-excela/"},"headline":"An operations panel instead of Excel: when it pays","description":"An operations panel instead of Excel makes sense when several people break one file and the process repeats. Ops range: PLN 60,000–180,000+. I write when to keep the sheet and when to build.","inLanguage":"en","datePublished":"2026-08-24","dateModified":"2026-08-24","wordCount":1702,"image":["https://marcinbochenek.com/brand/og-default.png"],"author":{"@type":"Person","@id":"https://marcinbochenek.com/#person","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","email":"kontakt@marcinbochenek.com","jobTitle":"Software engineer","image":"https://marcinbochenek.com/images/marcin-bochenek.webp","sameAs":["https://github.com/BochenMint"]},"publisher":{"@type":"Organization","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","logo":{"@type":"ImageObject","url":"https://marcinbochenek.com/brand/logo-mb.svg"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://marcinbochenek.com/en/"},{"@type":"ListItem","position":2,"name":"Journal","item":"https://marcinbochenek.com/en/articles/"},{"@type":"ListItem","position":3,"name":"An operations panel instead of Excel: when the sheet lies and a system may cost real money","item":"https://marcinbochenek.com/en/articles/panel-operacyjny-zamiast-excela/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is low-code (Airtable, Appsmith) not enough?","acceptedAnswer":{"@type":"Answer","text":"Sometimes yes — then I do not build custom. When roles, audit, KSeF or locks appear, low-code starts lying with hidden cost."}},{"@type":"Question","name":"How long does this take?","acceptedAnswer":{"@type":"Answer","text":"Usually 6–12 weeks to the first measurable flow, longer with many integrations. I do not promise “the whole ERP in two sprints”."}},{"@type":"Question","name":"Can we start with a slice?","acceptedAnswer":{"@type":"Answer","text":"Yes. One painful flow, measurement, then the rest. A 180k big bang without a slice is a risk I will not take blind."}},{"@type":"Question","name":"What about data in the old Excel?","acceptedAnswer":{"@type":"Answer","text":"We migrate what is the source of truth. The rest is archive. I do not move junk so that “nothing is lost”."}},{"@type":"Question","name":"How do we know Excel is still enough?","acceptedAnswer":{"@type":"Answer","text":"One person, low volume, no parallel edits, no history audit. Then file-name discipline and a deputy on leave are cheaper than Ops at PLN 60–180k. An awkward truth: many firms do not need a panel. They need a sheet owner. A panel makes sense when several roles break one file, the process repeats, and a mistake touches money or occupancy. I do not sell shame for not being “digital” yet."}},{"@type":"Question","name":"Does “Excel plus ChatGPT” replace a panel?","acceptedAnswer":{"@type":"Answer","text":"Not with me. I do not build a model that guesses VAT from a PDF and sends it immediately. I add HITL when a step can be limited to an allow-list. ChatGPT in a sheet with no log is risk, not a system. States, roles, step logs — that is a panel. Magic in cell G17 — that is a Sunday ticket. Plumm as accounting is my own product, not a promise of twenty offices. Mint does not pretend I wrote a PMS from scratch."}},{"@type":"Question","name":"When do you refuse to build a panel?","acceptedAnswer":{"@type":"Answer","text":"No process owner, a budget of “an MVP like a template for a few thousand”, a goal to “replace people with a model and no log”, no metric that should fall. Then Audit Sprint or a stop is more honest. The day Excel dies must be written down. If after launch everyone returns to the sheet “because it is faster”, the panel was theatre. After invoices the code is yours or the product is my SaaS — two contracts. Mixing them comes back as grievance a year later."}}]}</script>
+  </head>
+  <body>
+    <a class="j-skip" href="#content">Skip to content</a>
+    <header class="j-header">
+      <a class="j-mark" href="/en/">MB<span>Marcin Bochenek</span></a>
+      <nav class="j-nav" aria-label="Journal">
+        <a href="/en/articles/">Journal</a>
+        <a href="/en/#cennik">Packages</a>
+        <a href="/en/#kontakt">Contact</a>
+      </nav>
+      <nav class="j-locales" aria-label="Language"><a href="/artykuly/panel-operacyjny-zamiast-excela/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/panel-operacyjny-zamiast-excela/" aria-current="page" lang="en" hreflang="en">EN</a><a href="/ua/statti/panel-operacyjny-zamiast-excela/" lang="uk" hreflang="uk">UA</a></nav>
+    </header>
+    <main class="j-main" id="content">
+      <nav class="j-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/en/">Home</a></li>
+          <li><a href="/en/articles/">Journal</a></li>
+          <li>An operations panel instead of Excel: when the sheet lies and a system may cost real money</li>
+        </ol>
+      </nav>
+      <article class="j-article">
+        <p class="j-kicker">Ops System</p>
+        <h1>An operations panel instead of Excel: when the sheet lies and a system may cost real money</h1>
+        <p class="j-meta">Author: Marcin Bochenek · Updated: <time datetime="2026-08-24">2026-08-24</time></p>
+        <p class="j-lead">Excel is not the enemy. The enemy is Excel pretending to be ERP, CRM, calendar and till at once while five people sit in the file and nobody knows which copy is true. An operations panel I ship costs PLN 60,000–180,000+ because it is not a prettier table in the browser. Below: thresholds where I say keep the sheet — and where the sheet already steals hours.</p>
+        <h2>Signs Excel stopped being a tool</h2>
+<ul><li>Two “final” files, one in mail, one on disk.</li><li>Someone is afraid to filter because formulas will break.</li><li>The same fact typed in three places (calendar, invoice, WhatsApp).</li><li>A new hire learns the process from a person, not from the system.</li><li>Your report is built by hand on Sunday evening.</li></ul>
+<p>If you recognise two points, we talk. If one — often a tidier sheet or an off-the-shelf tool is enough. I do not sell a panel out of habit. <a href="/en/articles/audyt-strony-internetowej/">Audit Sprint</a> (PLN 2,500–6,000) exists so we do not code regret for 80k.</p>
+<h2>What a panel is, and what is just another SaaS with a card</h2>
+<p>An operations panel is an app around your flow: roles, statuses, one event log, integrations you already have (invoices, locks, calendar). Off-the-shelf SaaS is cheaper when your process is a market standard. At Mint I did not write a PMS — I used Previo. Plumm is a product because sole-trader accounting + e-invoices + an assistant is our process, not a marketplace template.</p>
+<div class="j-table-wrap"><table><tr><th>Situation</th><th>Keep Excel / off-the-shelf</th><th>Build a panel (Ops)</th></tr><tr><td>People on the process</td><td>1–2, trust</td><td>3+, shift changes</td></tr><tr><td>Cost of a wrong copy</td><td>Rare, cheap</td><td>Expensive or shame before the tax office / guest</td></tr><tr><td>Integrations</td><td>CSV export is enough</td><td>KSeF, payment, lock, CRM at once</td></tr><tr><td>Budget</td><td>< 25k and calm</td><td>60–180k+ and a measurable before/after</td></tr></table></div>
+<aside class="j-note">I do not have a public “we recovered 400 hours at client X” case. Publicly you click <a href="https://plumm.pl" target="_blank" rel="noopener noreferrer">Plumm</a> and <a href="https://mintapartments.pl" target="_blank" rel="noopener noreferrer">Mint</a>. Agentic OS is internal — I do not sell it as a deployment at your firm.</aside>
+<h2>A price a company website cannot impersonate</h2>
+<p>Ops System: PLN 60,000–180,000+. In that range: a panel or a team app, connections to payments / calendars / e-invoices, automation with limits and a log, staging, training, post-launch measurement. That is not a <a href="/en/articles/ile-kosztuje-strona-firmowa/">company site at 6,500–12,000</a>. Someone who “drops Excel into Airtable over a weekend” ships a different product — often without roles, audit trail or escalation.</p>
+<p>Before code I name before/after metrics: hours on the report, error count, time from event to invoice. If we cannot name them, I do not start. A pretty UI with no result at this budget wastes both sides.</p>
+<h2>People, not “digital transformation”</h2>
+<ol><li>A test version before the team loses the old file.</li><li>1–2 hours of training, not a PDF on “how to click”.</li><li>Code and config after invoices — yours.</li><li>NDA. No theatre of fake testimonials from a panel rollout.</li></ol>
+<p>If the team sabotages the tool, the problem is not React. It is an unwritten process. A panel will not fix that. Map it in the audit first.</p>
+<h2>Neighbouring decisions</h2>
+<p>Off-the-shelf vs custom: a separate article. Accounting instead of Excel: <a href="/en/articles/ksiegowosc-online-zamiast-excela/">Plumm as my own product</a>, not “I rolled it out to twenty offices”. I add HITL when repetitive steps can be limited to an allow-list — not when you want “ChatGPT inside Excel”.</p>
+<h2>Symptoms that the sheet already manages you</h2>
+<p>An operations panel instead of Excel does not start with “we want to look modern”. It starts when two people overwrite the same row, a macro dies on one laptop, and “final_v7_really” lives in email. When a process repeats every week and touches money or occupancy, the cost of a mistake stops being “we will fix it by hand”. Then we talk about a system, not a prettier table.</p>
+<p>I leave Excel when one person handles low volume, there are no parallel edits, and there is no audit trail. An awkward truth: many firms do not need a panel. They need file-name discipline and one person who does not leave without a deputy. Ops at PLN 60,000–180,000+ makes sense when that cost is cheaper than monthly chaos, or when Excel blocks growth you no longer pretend not to have.</p>
+<ul><li>Several roles on one file: front desk, accounting, owner.</li><li>A change history you cannot reconstruct from “someone deleted a row”.</li><li>The same process in three locations or three properties.</li><li>An integration Excel will not hold: KSeF, PMS, payments, a mail queue.</li></ul>
+<h2>What is in scope, and what is “Excel+AI” fantasy</h2>
+<p>I build states, roles, step logs and allow-lists. I do not build “ChatGPT in a sheet that books the accounts by itself”. I add HITL when a repetitive step can be limited to an allow-list. If you want a model to guess VAT from a PDF and send it immediately, that is not a panel — that is risk. <a href="/en/articles/ksiegowosc-online-zamiast-excela/">Online accounting</a> in Plumm is my own product, not a claim that I rolled it out to twenty offices.</p>
+<p>SaaS versus custom is a separate call. If the market has a tool covering 80% of the process, I take it — like Previo for Mint bookings. If the process is your edge, like e-invoices and the assistant in Plumm, I build. <a href="/en/articles/saas-czy-wlasny-panel/">Off-the-shelf vs a panel</a> is not a religious slide. It is lock-in arithmetic and the cost of change in two years.</p>
+<h2>Shipping a panel: data, training, the day Excel dies</h2>
+<p>Migration is not “we will paste CSV on Friday”. It is field mapping, junk in old columns, a decision about history. A 1–2 h training does not replace a process owner. If after launch everyone returns to the sheet “because it is faster”, the panel was theatre. So I write down which day Excel is switched off and who may open an exception.</p>
+<p>I do not guarantee the team will love the UI. I do guarantee I do not leave you with a server password and a PDF. After invoices the code is yours, or the product is my SaaS — two different contracts. Mixing them is the usual source of grievance a year later.</p>
+<aside class="j-note">I do not invent “I shipped panels to 40 hotels”. The public, clickable operational proof I show is what actually runs: Mint and Plumm. The rest of the conversation is your process, not someone else’s gallery.</aside>
+<h2>When I decline a panel project</h2>
+<ol><li>There is no process owner — only “a team that will gather requirements”.</li><li>The budget is “an MVP for a few thousand, like a template app”.</li><li>The goal is to replace people with a language model, no log, no escalation.</li><li>Excel hurts, but nobody can name one metric that should fall.</li></ol>
+<p>Then an <a href="/en/articles/audyt-strony-internetowej/">Audit Sprint</a> or a stop is more honest. An operations panel instead of Excel is expensive because a bad state is expensive. If you do not feel that price, keep the sheet and hire someone to guard it. That is also a decision. I do not sell shame for not being “digital” yet.</p>
+<h2>The day the sheet dies must be in the contract</h2>
+<p>Without a date Excel does not die. The team returns “for a moment”, a macro lives on one laptop, the panel becomes a museum. A 1–2 h training does not replace an owner. A Friday CSV paste does not replace mapping junk in old columns. Ops at PLN 60–180k makes sense when that cost is cheaper than monthly chaos or when the sheet blocks growth. If you cannot name a metric that should fall — we do not start. Audit Sprint or a stop. I do not sell modernity theatre. I sell states, roles and a log, or I tell you to keep the file with a named guardian.</p>
+        <section class="j-faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">Questions</h2>
+          <details><summary>Is low-code (Airtable, Appsmith) not enough?</summary><p>Sometimes yes — then I do not build custom. When roles, audit, KSeF or locks appear, low-code starts lying with hidden cost.</p></details>
+<details><summary>How long does this take?</summary><p>Usually 6–12 weeks to the first measurable flow, longer with many integrations. I do not promise “the whole ERP in two sprints”.</p></details>
+<details><summary>Can we start with a slice?</summary><p>Yes. One painful flow, measurement, then the rest. A 180k big bang without a slice is a risk I will not take blind.</p></details>
+<details><summary>What about data in the old Excel?</summary><p>We migrate what is the source of truth. The rest is archive. I do not move junk so that “nothing is lost”.</p></details>
+<details><summary>How do we know Excel is still enough?</summary><p>One person, low volume, no parallel edits, no history audit. Then file-name discipline and a deputy on leave are cheaper than Ops at PLN 60–180k. An awkward truth: many firms do not need a panel. They need a sheet owner. A panel makes sense when several roles break one file, the process repeats, and a mistake touches money or occupancy. I do not sell shame for not being “digital” yet.</p></details>
+<details><summary>Does “Excel plus ChatGPT” replace a panel?</summary><p>Not with me. I do not build a model that guesses VAT from a PDF and sends it immediately. I add HITL when a step can be limited to an allow-list. ChatGPT in a sheet with no log is risk, not a system. States, roles, step logs — that is a panel. Magic in cell G17 — that is a Sunday ticket. Plumm as accounting is my own product, not a promise of twenty offices. Mint does not pretend I wrote a PMS from scratch.</p></details>
+<details><summary>When do you refuse to build a panel?</summary><p>No process owner, a budget of “an MVP like a template for a few thousand”, a goal to “replace people with a model and no log”, no metric that should fall. Then Audit Sprint or a stop is more honest. The day Excel dies must be written down. If after launch everyone returns to the sheet “because it is faster”, the panel was theatre. After invoices the code is yours or the product is my SaaS — two contracts. Mixing them comes back as grievance a year later.</p></details>
+        </section>
+        <section class="j-cta">
+          <h2>Let us check whether the sheet already steals hours</h2>
+          <p>Twenty minutes or an Audit Sprint. If it does not close — you keep Excel. <a href="/en/#oferta">Scope</a> and <a href="/en/#cennik">pricing</a>.</p>
+          <a href="/en/#kontakt">Book a 20-min audit</a>
+        </section>
+        <section class="j-related">
+          <h2>Related articles</h2>
+          <ul><li><a href="/en/articles/saas-czy-wlasny-panel/">off-the-shelf SaaS or a custom panel — how I decide</a></li><li><a href="/en/articles/ksiegowosc-online-zamiast-excela/">online accounting instead of Excel in Plumm</a></li><li><a href="/en/articles/ile-kosztuje-strona-firmowa/">this is not an PLN 8k website</a></li></ul>
+          <h3>Services</h3>
+          <ul><li><a href="/en/#oferta">scope of work: site, panel, HITL</a></li><li><a href="/en/#cennik">packages and entry threshold</a></li></ul>
+        </section>
+      </article>
+    </main>
+    <div class="j-header" style="border:0;padding-bottom:0">
+      <nav class="j-locales" aria-label="Language"><a href="/artykuly/panel-operacyjny-zamiast-excela/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/panel-operacyjny-zamiast-excela/" aria-current="page" lang="en" hreflang="en">EN</a><a href="/ua/statti/panel-operacyjny-zamiast-excela/" lang="uk" hreflang="uk">UA</a></nav>
+    </div>
+    <footer class="j-footer">
+      <p>Marcin Bochenek</p>
+      <div>
+        <a href="mailto:kontakt@marcinbochenek.com">kontakt@marcinbochenek.com</a>
+        ·
+        <a href="/en/articles/">Journal</a>
+        ·
+        <a href="/en/">Home</a>
+      </div>
+    </footer>
+  </body>
+</html>

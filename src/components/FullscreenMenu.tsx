@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import { gsap } from '../animation/gsap'
-import { menuLinks, site } from '../data/content'
+import { menuLinks, site } from '../i18n/live'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 
 type FullscreenMenuProps = {

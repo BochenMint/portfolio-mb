@@ -6,7 +6,7 @@ import { getDpr, HERO_ROTATION_DAMP } from '../webgl/hero/heroSceneTypes'
  *
  * Reuses the exact look of the offline reference render
  * (scripts/swarm/scene.html): a curl-noise displaced twin-lobe torus-knot
- * spine, amber palette on ink, additive fine points. The static art used
+ * spine, copper palette on tarragon ink, additive fine points. The static art used
  * curlAmp 0.55 / coreBias 1.9 / tubeR 0.85 / exposure 1.35 / haloFrac 0.10 /
  * phase 0.7 at millions of particles rendered offline — this module keeps
  * those same params but drops the particle count to something a real GPU can
@@ -27,11 +27,11 @@ function mulberry32(seed: number) {
   }
 }
 
-// ── Palette (matches the static hero render exactly) ────────────────────────
-const INK_HEX = 0x080807
-const EMBER_HEX = 0xe8761a
-const AMBER_HEX = 0xf5a524
-const HILITE_HEX = 0xffc861
+// ── Palette — Tarragon Sanctum (ink / copper / sea-glass family) ─────────────
+const INK_HEX = 0x0a100d
+const EMBER_HEX = 0x6b4a32
+const AMBER_HEX = 0xb8734a
+const HILITE_HEX = 0xd4a574
 
 // ── Twin-lobe torus-knot spine — same constants as the offline reference ───
 const KP = 2

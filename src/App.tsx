@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useLocale } from './i18n'
+import { getArchiveUi } from './i18n/archive-ui'
 import { About } from './components/About'
 import { Contact } from './components/Contact'
 import { FaqSection } from './components/FaqSection'
@@ -44,6 +46,8 @@ function ChapterBreak({ label }: { label: string }) {
 const INTRO_MAX_MS = 1500
 
 function App() {
+  const { locale } = useLocale()
+  const ui = getArchiveUi(locale)
   const [introDone, setIntroDone] = useState(false)
   const completeIntro = useCallback(() => {
     setIntroDone((done) => (done ? done : true))
@@ -73,7 +77,7 @@ function App() {
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-[var(--color-paper)] focus:px-4 focus:py-2 focus:font-medium focus:text-[var(--color-ink)]"
       >
-        Przejdź do treści
+        {ui.skip}
       </a>
       <Nav />
       <MobileStickyCta />

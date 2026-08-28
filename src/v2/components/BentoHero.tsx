@@ -1,14 +1,18 @@
-import { site, results, proofProducts, liveProof } from '../../data/content'
+import { site, results, proofProducts, liveProof } from '../../i18n/live'
+import { useLocale } from '../../i18n'
+import { getArchiveUi } from '../../i18n/archive-ui'
 import { AgentTerminal } from './AgentTerminal'
 
 export function BentoHero() {
+  const { locale } = useLocale()
+  const ui = getArchiveUi(locale)
   const byName = Object.fromEntries(liveProof.map((p) => [p.name, p]))
   const products = proofProducts.map((p) => ({
     name: p.name,
     url: p.url,
     live: p.live,
     tag: byName[p.name]?.tag ?? 'AI',
-    result: byName[p.name]?.result ?? 'System wewnętrzny — orkiestracja agentów AI z audytem każdego kroku.',
+    result: byName[p.name]?.result ?? ui.v2AgentFallback,
   }))
   const ctaHref = site.calendly || '#console'
 
@@ -34,7 +38,7 @@ export function BentoHero() {
               <span aria-hidden>→</span>
             </a>
             <a href="#deployments" className="btn-soft border-[var(--v2-line-bright)]">
-              Realizacje
+              {ui.work}
             </a>
           </div>
         </div>
@@ -49,7 +53,7 @@ export function BentoHero() {
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-ink)] via-transparent to-transparent" />
           <span className="v2-pill absolute top-4 right-4">
             <span className="v2-dot" />
-            Trójmiasto / zdalnie
+            {ui.triCity}
           </span>
           <div className="absolute right-0 bottom-0 left-0 p-5">
             <p className="v2-label">operator</p>
@@ -71,7 +75,7 @@ export function BentoHero() {
 
         {/* Metrics */}
         <div className="v2-panel reveal p-5 lg:col-span-4">
-          <p className="v2-label">odzysk · szacunki</p>
+          <p className="v2-label">{ui.recovered}</p>
           <ul className="mt-3 space-y-2.5">
             {results.slice(0, 3).map((r) => (
               <li

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { faq, sections } from '../data/content'
+import { faq, sections } from '../i18n/live'
 import { SectionIntro } from './SectionIntro'
 
 export function FaqSection() {

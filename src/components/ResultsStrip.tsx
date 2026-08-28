@@ -1,4 +1,4 @@
-import { results, resultsDisclaimer } from '../data/content'
+import { results, resultsDisclaimer } from '../i18n/live'
 
 export function ResultsStrip() {
   return (
@@ -63,7 +63,7 @@ export function ResultsStrip() {
       </div>
 
       <p className="relative mx-auto mt-8 max-w-6xl px-6 text-[11px] leading-relaxed text-[var(--color-paper)]/42 md:px-10 lg:px-16">
-        {resultsDisclaimer}
+        {resultsDisclaimer()}
       </p>
     </section>
   )

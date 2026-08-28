@@ -1,4 +1,4 @@
-import { liveProof, sections, trustPoints } from '../data/content'
+import { liveProof, sections, trustPoints } from '../i18n/live'
 import { SectionIntro } from './SectionIntro'
 
 export function TestimonialsSection() {

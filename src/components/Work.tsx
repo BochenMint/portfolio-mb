@@ -1,5 +1,5 @@
-import { projects } from '../data/content'
-import type { Project } from '../data/content'
+import { projects } from '../i18n/live'
+import type { Project } from '../i18n/live'
 import { ProjectImageInteractive } from './ProjectImageInteractive'
 import { WorkStrip } from './WorkStrip'
 

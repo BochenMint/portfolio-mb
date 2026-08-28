@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
-import { site } from '../../data/content'
+import { ArchiveLang, useLocale } from '../../i18n'
+import { getArchiveUi } from '../../i18n/archive-ui'
+import { site } from '../../i18n/live'
 
 export function NavV2({ onOpenCmd }: { onOpenCmd: () => void }) {
+  const { locale } = useLocale()
+  const ui = getArchiveUi(locale)
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -28,15 +32,16 @@ export function NavV2({ onOpenCmd }: { onOpenCmd: () => void }) {
           </span>
         </a>
         <div className="flex items-center gap-2 md:gap-3">
+          <ArchiveLang />
           <span className="v2-pill hidden sm:inline-flex">
             <span className="v2-dot" />
-            dostępny
+            {ui.available}
           </span>
           <button
             type="button"
             onClick={onOpenCmd}
             className="v2-kbd hidden cursor-pointer items-center gap-1.5 md:inline-flex"
-            aria-label="Otwórz paletę poleceń (Ctrl/Cmd + K)"
+            aria-label={ui.v2CmdAria}
           >
             <span>⌘</span>
             <span>K</span>
@@ -46,7 +51,7 @@ export function NavV2({ onOpenCmd }: { onOpenCmd: () => void }) {
             className="btn-accent text-sm"
             {...(site.calendly ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
           >
-            Umów audyt
+            {ui.bookAudit}
             <span aria-hidden>→</span>
           </a>
         </div>

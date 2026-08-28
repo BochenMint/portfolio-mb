@@ -2,6 +2,13 @@
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var p = location.pathname
+        document.documentElement.lang =
+          p.indexOf('/en/') === 0 ? 'en' : p.indexOf('/ua/') === 0 ? 'uk' : 'pl'
+      })()
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
@@ -9,24 +16,29 @@
       content="Marcin Bochenek — systemy dla firm: direct booking, księgowość w jednym panelu, AI concierge. Umów 20-min audyt czasu i kosztów."
     />
     <meta name="theme-color" content="#080807" />
-    <link rel="canonical" href="https://bochen.studio/" />
-    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://marcinbochenek.com/" />
+    <meta name="robots" content="noindex, follow" />
+    <!-- Archive visual direction. Locale from /en/ /ua/ prefix. -->
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/v1.html" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/v1.html" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/v1.html" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/v1.html" />
     <meta property="og:title" content="Marcin Bochenek — systemy dla firm" />
     <meta
       property="og:description"
-      content="Wdrożenia, które oddają godziny: Mint Apartments, Plumm, iDrive Cars, Agentic OS. Od 25 000 PLN, gdy ROI ma sens."
+      content="Wdrożenia, które oddają godziny: Mint Apartments, Plumm, iDrive Cars, Agentic OS. Strony firmowe od 6 500 PLN · konwersja od 25 000 PLN."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://bochen.studio/" />
+    <meta property="og:url" content="https://marcinbochenek.com/" />
     <meta property="og:locale" content="pl_PL" />
-    <meta property="og:image" content="https://bochen.studio/projects/mint/hero-card.webp" />
+    <meta property="og:image" content="https://marcinbochenek.com/projects/mint/hero-card.webp" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Marcin Bochenek — premium IT studio" />
     <meta
       name="twitter:description"
       content="Systemy, automatyzacje i strony konwertujące dla właścicieli firm. Audyt, wdrożenie, pomiar przed/po."
     />
-    <meta name="twitter:image" content="https://bochen.studio/projects/mint/hero-card.webp" />
+    <meta name="twitter:image" content="https://marcinbochenek.com/projects/mint/hero-card.webp" />
     <title>Marcin Bochenek — systemy dla firm</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -42,13 +54,14 @@
         "description": "Strony, panele i AI dla właścicieli firm — mniej ręcznej pracy, więcej PLN na koncie.",
         "areaServed": "PL",
         "knowsAbout": ["PropTech", "FinTech", "AI automation", "Astro", "React"],
-        "url": "https://bochen.studio/",
-        "email": "kontakt@bochen.studio",
-        "priceRange": "2500-180000 PLN"
+        "url": "https://marcinbochenek.com/",
+        "email": "kontakt@marcinbochenek.com",
+        "priceRange": "6500+ PLN"
       }
     </script>
   </head>
   <body>
+    <noscript><p>JavaScript required. <a href="/en/v1.html">EN</a> · <a href="/ua/v1.html">UA</a></p></noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

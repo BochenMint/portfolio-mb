@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Off-the-shelf SaaS versus a custom operations panel</title>
+    <meta name="description" content="SaaS vs a custom panel: at Mint I used Previo; Plumm is my own product. Decision criteria, lock-in and a PLN 60–180k budget — no “always custom” slide." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://marcinbochenek.com/en/articles/saas-czy-wlasny-panel/" />
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/artykuly/saas-czy-wlasny-panel/" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/articles/saas-czy-wlasny-panel/" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/statti/saas-czy-wlasny-panel/" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/artykuly/saas-czy-wlasny-panel/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Off-the-shelf SaaS versus a custom operations panel" />
+    <meta property="og:description" content="SaaS vs a custom panel: at Mint I used Previo; Plumm is my own product. Decision criteria, lock-in and a PLN 60–180k budget — no “always custom” slide." />
+    <meta property="og:url" content="https://marcinbochenek.com/en/articles/saas-czy-wlasny-panel/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="pl_PL" />
+    <meta property="og:locale:alternate" content="uk_UA" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Off-the-shelf SaaS versus a custom operations panel" />
+    <meta name="twitter:description" content="SaaS vs a custom panel: at Mint I used Previo; Plumm is my own product. Decision criteria, lock-in and a PLN 60–180k budget — no “always custom” slide." />
+    <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/journal.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":["Article","BlogPosting"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://marcinbochenek.com/en/articles/saas-czy-wlasny-panel/"},"headline":"Off-the-shelf SaaS versus a custom operations panel","description":"SaaS vs a custom panel: at Mint I used Previo; Plumm is my own product. Decision criteria, lock-in and a PLN 60–180k budget — no “always custom” slide.","inLanguage":"en","datePublished":"2026-08-24","dateModified":"2026-08-24","wordCount":1595,"image":["https://marcinbochenek.com/brand/og-default.png"],"author":{"@type":"Person","@id":"https://marcinbochenek.com/#person","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","email":"kontakt@marcinbochenek.com","jobTitle":"Software engineer","image":"https://marcinbochenek.com/images/marcin-bochenek.webp","sameAs":["https://github.com/BochenMint"]},"publisher":{"@type":"Organization","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","logo":{"@type":"ImageObject","url":"https://marcinbochenek.com/brand/logo-mb.svg"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://marcinbochenek.com/en/"},{"@type":"ListItem","position":2,"name":"Journal","item":"https://marcinbochenek.com/en/articles/"},{"@type":"ListItem","position":3,"name":"Off-the-shelf SaaS or a custom panel: I do not start from ego in the editor","item":"https://marcinbochenek.com/en/articles/saas-czy-wlasny-panel/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do you always advise against custom?","acceptedAnswer":{"@type":"Answer","text":"No. I advise against custom where an inventory error is costlier than pride. I advise custom where SaaS forces you to lie in the process."}},{"@type":"Question","name":"Is low-code a third way?","acceptedAnswer":{"@type":"Answer","text":"Yes, as a prototype or a thin panel on an API. When roles, audit and the tax office enter — low-code often costs more than admitted custom."}},{"@type":"Question","name":"Who runs the SaaS after launch?","acceptedAnswer":{"@type":"Answer","text":"You, after I hand over. I do not stay the eternal admin of someone else’s subscription without a contract."}},{"@type":"Question","name":"Do you sell Agentic OS as SaaS?","acceptedAnswer":{"@type":"Answer","text":"No. It is an internal tool. Externally I implement HITL under your allowed actions, not an “Agentic package” on a price list."}},{"@type":"Question","name":"Do you always push custom because you invoice more?","acceptedAnswer":{"@type":"Answer","text":"No. At Mint I used Previo because bookings are not my product — they are property operations. Building a PMS from scratch inside a website budget would be vanity. In Plumm custom makes sense because e-invoices and an assistant with escalation are the product, and I carry the lock-in. First question: is the process an edge or a cost to contain. Second: who holds the data in two years. Third: whether PLN 60–180k for Ops even matches several roles and integrations, or it is an “always custom” slide."}},{"@type":"Question","name":"What do we write down so we do not reopen the decision in six months?","acceptedAnswer":{"@type":"Answer","text":"What is SaaS and off the table for 18 months. What we build and who maintains it. An exit plan: export, documentation, escalation. A metric so we do not judge UI by the CEO’s taste. If you cannot sign that, I do not start a build. We return to an audit or to Excel with an owner. It is a contract about who pays when something dies on a Sunday — not a personality test on LinkedIn."}}]}</script>
+  </head>
+  <body>
+    <a class="j-skip" href="#content">Skip to content</a>
+    <header class="j-header">
+      <a class="j-mark" href="/en/">MB<span>Marcin Bochenek</span></a>
+      <nav class="j-nav" aria-label="Journal">
+        <a href="/en/articles/">Journal</a>
+        <a href="/en/#cennik">Packages</a>
+        <a href="/en/#kontakt">Contact</a>
+      </nav>
+      <nav class="j-locales" aria-label="Language"><a href="/artykuly/saas-czy-wlasny-panel/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/saas-czy-wlasny-panel/" aria-current="page" lang="en" hreflang="en">EN</a><a href="/ua/statti/saas-czy-wlasny-panel/" lang="uk" hreflang="uk">UA</a></nav>
+    </header>
+    <main class="j-main" id="content">
+      <nav class="j-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/en/">Home</a></li>
+          <li><a href="/en/articles/">Journal</a></li>
+          <li>Off-the-shelf SaaS or a custom panel: I do not start from ego in the editor</li>
+        </ol>
+      </nav>
+      <article class="j-article">
+        <p class="j-kicker">Decision architecture</p>
+        <h1>Off-the-shelf SaaS or a custom panel: I do not start from ego in the editor</h1>
+        <p class="j-meta">Author: Marcin Bochenek · Updated: <time datetime="2026-08-24">2026-08-24</time></p>
+        <p class="j-lead">The most expensive panel mistake is writing what the market already sells as a subscription. The second is forcing a firm into SaaS that lies about your process. At Mint I did not build a channel manager: Previo holds stock and bookings. Plumm is a custom panel because Polish sole-trader accounting, KSeF and an assistant with escalation to a bookkeeper is not “another Notion”. A rule below, not a custom religion.</p>
+        <h2>The question I ask before I open the editor</h2>
+<p>Is your flow an industry standard, or the exception that makes your margin? Standard (OTA channels, a normal lodging calendar, mail) — I look for an off-the-shelf tool with an API. Exception (your statuses, your roles, a combination no vendor assembled) — we talk about an <a href="/en/articles/panel-operacyjny-zamiast-excela/">operations panel</a> in the Ops range.</p>
+<ul><li>Does the vendor have webhooks and export, or only a Friday CSV?</li><li>Does lock-in kill you if the seat price jumps 40%?</li><li>Can the process be described in five statuses the SaaS already has?</li><li>Will someone on the team administer the tool, or will “the rollout” die with one login?</li></ul>
+<h2>Mint: off-the-shelf where a double booking is costlier than engineering pride</h2>
+<p>Channel managers and PMS are a mature market. A stock error is an overbooking. So <a href="/en/articles/rezerwacje-na-wlasnej-stronie/">direct booking</a> sits on Previo, and I build the guest layer: site, on-domain payment, locks, assistant. Custom on the experience edge, not on inventory core.</p>
+<aside class="j-note">This is not a Previo review for your property. It is a decision example. Another property may use another PMS. I do not invent “I rolled Previo out to 50 operators”.</aside>
+<h2>Plumm: custom because the product is the process</h2>
+<p><a href="/en/articles/ksiegowosc-online-zamiast-excela/">Online accounting</a> in Plumm is not a skin on Excel. E-invoices to the authority, PIT/VAT/ZUS, an assistant with escalation — a product I maintain. If it were an accountant’s brochure site, I would have taken a CMS. I did not.</p>
+<h2>The table I use in the audit</h2>
+<div class="j-table-wrap"><table><tr><th>Criterion</th><th>SaaS</th><th>Custom panel</th></tr><tr><td>Time to first use</td><td>Days / weeks of config</td><td>Weeks / months of build</td></tr><tr><td>3-year cost</td><td>Seats × price-hike seasons</td><td>Ops build + upkeep</td></tr><tr><td>Process fit</td><td>You cope, or drown in workarounds</td><td>The process is the domain model</td></tr><tr><td>Ownership</td><td>Data sometimes, logic rarely</td><td>Code after invoices is yours</td></tr><tr><td>AI / HITL</td><td>Vendor black box</td><td>Allowed actions and a log I design</td></tr></table></div>
+<p>A hybrid is the usual case: SaaS in the core, custom on the edge. Pure custom “because it is more modern” at company-website budget is fantasy. Pure SaaS when the vendor does not know the process is five logins and Excel on the side — where you came from.</p>
+<h2>Lock-in SaaS salespeople mention politely</h2>
+<ol><li>A full export, not a PDF report.</li><li>An API that survives a price-list change.</li><li>Who is the admin after the founder’s holiday.</li><li>What happens to history when you terminate.</li></ol>
+<p>With custom, lock-in is me if I do not hand over the code. So I hand it over. With SaaS, lock-in is the price list and the data format. Both are survivable if you name them before the invoice, not after.</p>
+<h2>Budget: do not mix packages</h2>
+<p>Configuring off-the-shelf plus a site can fit Conversion Build. A custom panel is Ops PLN 60–180k+. <a href="/en/articles/ile-kosztuje-strona-firmowa/">Website pricing</a> will not cover a status engine. If the brief mixes “site + ERP + ChatGPT for 15k”, we cut or I refuse.</p>
+<h2>Questions I ask before anyone says “always custom”</h2>
+<p>Off-the-shelf versus a dedicated panel: the first question is not the stack. Is the process your edge, or a cost you must contain? At Mint, bookings are not my product — they are property operations. Previo covers the calendar, channels, guest settlement. Building a PMS from scratch inside a website budget would be vanity. In Plumm, e-invoices, PIT/VAT/ZUS and an assistant with escalation are the product. There custom makes sense, because I carry the lock-in, not a hotel client.</p>
+<p>Second: who holds the data in two years. SaaS means turning the account off hurts. Custom means you need someone who will keep the code — me or another team, under contract. I do not sell “freedom from vendor lock-in” and then leave you a repo with no docs. Third: PLN 60–180k for Ops is not an “industry average”. It is an order of magnitude when several roles, states and integrations are real.</p>
+<ul><li>Whether 80% of the process already exists in a tool you can buy.</li><li>Whether the exceptions “our Excel must have” are an edge or nostalgia.</li><li>Whether you can name the cost of changing vendor in 24 months.</li><li>Whether you need a step audit (HITL) the SaaS will not log your way.</li></ul>
+<h2>Lock-in you cannot click away in a pricing table</h2>
+<p>Previo, KSeF, a gateway, a mailbox — every contract has an exit that hurts differently. I count that out loud. I do not promise “you can always export”. I promise that before we wire it, we write down what is yours: guest data, invoices, states. The vendor UI is not your asset. Your asset is the process and the history you do not want to lose in a divorce.</p>
+<p>Custom lock-in is with me or the next developer. Hence code after invoices, NDA, training. If you want me to be the only human on earth who understands the panel — that is a bad deal for you. I build simplicity, not magic. Magic is unmaintainable when I am on leave.</p>
+<h2>When SaaS wins even though it is “not tailored”</h2>
+<p>When calendars, OTA channels and guest payment are industry standard, tailoring is usually a more expensive way to rediscover the same edge cases. Mint does not pretend I invented hospitality. The site captures demand and closes booking on your domain; the PMS does PMS. <a href="/en/articles/rezerwacje-na-wlasnej-stronie/">Direct bookings</a> describe that boundary without a theatre of “I wrote Booking.com”.</p>
+<p>SaaS loses when your process is regulated or so unusual that configuring the ready-made tool becomes a second job. Or when the vendor will not give you a decision log and you must show who clicked “issue”. Then a panel with HITL. Not because custom sounds more expensive on an invoice — because accountability does not fit in someone else’s checkbox.</p>
+<aside class="j-note">This is not a Previo review for your property. Another property, another PMS. I do not invent a rollout to fifty operators.</aside>
+<h2>A decision we write down so we do not reopen it in six months</h2>
+<ol><li>What we buy as SaaS and what is off the table for 18 months.</li><li>What we build and who maintains it after launch.</li><li>The exit plan: export, documentation, escalation.</li><li>Which metric we will use so we do not judge UI by the CEO’s taste.</li></ol>
+<p>If you cannot sign that, we do not start a build. We return to an <a href="/en/articles/audyt-strony-internetowej/">audit</a> or to Excel with an owner. SaaS or a custom operations panel is not a personality test. It is a contract about who pays when something breaks on a Sunday.</p>
+<h2>A signature under the decision that a stack workshop will not replace</h2>
+<p>SaaS for 18 months, custom with a named maintainer, an export plan, a metric instead of the CEO’s taste. If you cannot sign that, I do not open a repo. At Mint Previo won because hospitality is not my product. At Plumm custom won because the product is mine. That is not personality. That is who pays on Sunday when an integration dies. PLN 60–180k without that card is a slide. With the card it is a contract. We return to Excel or an audit when there is no card. Better boredom on paper than lock-in you cannot name.</p>
+        <section class="j-faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">Questions</h2>
+          <details><summary>Do you always advise against custom?</summary><p>No. I advise against custom where an inventory error is costlier than pride. I advise custom where SaaS forces you to lie in the process.</p></details>
+<details><summary>Is low-code a third way?</summary><p>Yes, as a prototype or a thin panel on an API. When roles, audit and the tax office enter — low-code often costs more than admitted custom.</p></details>
+<details><summary>Who runs the SaaS after launch?</summary><p>You, after I hand over. I do not stay the eternal admin of someone else’s subscription without a contract.</p></details>
+<details><summary>Do you sell Agentic OS as SaaS?</summary><p>No. It is an internal tool. Externally I implement HITL under your allowed actions, not an “Agentic package” on a price list.</p></details>
+<details><summary>Do you always push custom because you invoice more?</summary><p>No. At Mint I used Previo because bookings are not my product — they are property operations. Building a PMS from scratch inside a website budget would be vanity. In Plumm custom makes sense because e-invoices and an assistant with escalation are the product, and I carry the lock-in. First question: is the process an edge or a cost to contain. Second: who holds the data in two years. Third: whether PLN 60–180k for Ops even matches several roles and integrations, or it is an “always custom” slide.</p></details>
+<details><summary>What do we write down so we do not reopen the decision in six months?</summary><p>What is SaaS and off the table for 18 months. What we build and who maintains it. An exit plan: export, documentation, escalation. A metric so we do not judge UI by the CEO’s taste. If you cannot sign that, I do not start a build. We return to an audit or to Excel with an owner. It is a contract about who pays when something dies on a Sunday — not a personality test on LinkedIn.</p></details>
+        </section>
+        <section class="j-cta">
+          <h2>Settle SaaS versus custom before the budget dies</h2>
+          <p>Twenty minutes: off-the-shelf, hybrid or Ops. No stack ego. <a href="/en/#cennik">Pricing</a>.</p>
+          <a href="/en/#kontakt">Book a 20-min audit</a>
+        </section>
+        <section class="j-related">
+          <h2>Related articles</h2>
+          <ul><li><a href="/en/articles/panel-operacyjny-zamiast-excela/">when a panel instead of Excel makes sense at all</a></li><li><a href="/en/articles/rezerwacje-na-wlasnej-stronie/">Previo at Mint instead of a custom PMS</a></li><li><a href="/en/articles/wdrozyc-chatgpt-w-firmie/">ChatGPT at work is not an off-the-shelf process</a></li></ul>
+          <h3>Services</h3>
+          <ul><li><a href="/en/#cennik">packages and entry threshold</a></li></ul>
+        </section>
+      </article>
+    </main>
+    <div class="j-header" style="border:0;padding-bottom:0">
+      <nav class="j-locales" aria-label="Language"><a href="/artykuly/saas-czy-wlasny-panel/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/saas-czy-wlasny-panel/" aria-current="page" lang="en" hreflang="en">EN</a><a href="/ua/statti/saas-czy-wlasny-panel/" lang="uk" hreflang="uk">UA</a></nav>
+    </div>
+    <footer class="j-footer">
+      <p>Marcin Bochenek</p>
+      <div>
+        <a href="mailto:kontakt@marcinbochenek.com">kontakt@marcinbochenek.com</a>
+        ·
+        <a href="/en/articles/">Journal</a>
+        ·
+        <a href="/en/">Home</a>
+      </div>
+    </footer>
+  </body>
+</html>
