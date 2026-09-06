@@ -4,14 +4,14 @@ import { useReducedMotion } from '../../hooks/useReducedMotion'
 /** Chrome bead cursor: a tiny mirrored sphere + hairline ring on desktop. */
 export function Cursor() {
   const reduced = useReducedMotion()
-  const [active, setActive] = useState(false)
+  const [active] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches,
+  )
   const [hovering, setHovering] = useState(false)
 
   useEffect(() => {
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-    if (!fine || reduced) return
+    if (!active || reduced) return
 
-    setActive(true)
     document.body.classList.add('cursor-custom')
 
     const bead = document.querySelector('[data-cursor-bead]') as HTMLElement | null
@@ -51,7 +51,7 @@ export function Cursor() {
       document.removeEventListener('mouseover', onOver)
       document.body.classList.remove('cursor-custom')
     }
-  }, [reduced])
+  }, [active, reduced])
 
   if (!active || reduced) return null
 

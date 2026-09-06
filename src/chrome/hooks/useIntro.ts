@@ -26,9 +26,10 @@ export function useIntro(ready: boolean) {
           }
 
           gsap.from('[data-hero-line]', {
-            yPercent: 110,
+            y: 36,
+            opacity: 0,
             duration: 1.1,
-            stagger: 0.09,
+            stagger: 0.14,
             ease: 'power4.out',
             delay: 0.05,
           })

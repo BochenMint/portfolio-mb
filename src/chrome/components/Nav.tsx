@@ -62,8 +62,9 @@ export function Nav() {
             aria-label={open ? 'Zamknij menu' : 'Otwórz menu'}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="ghost-btn h-9 w-9 !p-0 lg:hidden"
+            className="lg:hidden"
           >
+            <span className="ghost-btn flex h-9 w-9 items-center justify-center">
             <span className="relative block h-3 w-4">
               <span
                 className={`absolute left-0 h-px w-4 bg-white transition-transform ${open ? 'top-1.5 rotate-45' : 'top-0'}`}
@@ -71,6 +72,7 @@ export function Nav() {
               <span
                 className={`absolute left-0 h-px w-4 bg-white transition-transform ${open ? 'top-1.5 -rotate-45' : 'top-3'}`}
               />
+            </span>
             </span>
           </button>
         </div>

@@ -51,21 +51,12 @@ export function Hero() {
             {c.hero.eyebrow}
           </p>
 
-          <h1 className="mt-6 text-[clamp(2.6rem,7.2vw,6.4rem)] leading-[0.98] font-semibold">
-            <span className="block overflow-hidden">
-              <span data-hero-line className="chrome-text block pb-[0.08em]">
-                {c.hero.h1a}
-              </span>
-            </span>
-            <span className="block overflow-hidden">
-              <span data-hero-line className="chrome-text block pb-[0.08em]">
-                {c.hero.h1b}
-              </span>
-            </span>
-            <span className="block overflow-hidden">
-              <span data-hero-line className="block pb-[0.08em] text-silver-2">
-                Działają jak <Em>inżynieria.</Em>
-              </span>
+          <h1 className="mt-6 max-w-[14ch] text-[clamp(2.5rem,5.2vw,4.75rem)] leading-[1.02] font-semibold">
+            <span data-hero-line className="chrome-text inline-block">
+              {c.hero.h1a} {c.hero.h1b}
+            </span>{' '}
+            <span data-hero-line className="inline-block text-silver-2">
+              Działają jak <Em>inżynieria.</Em>
             </span>
           </h1>
 

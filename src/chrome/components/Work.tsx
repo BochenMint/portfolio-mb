@@ -29,49 +29,53 @@ export function Work() {
       <div className="mx-auto max-w-7xl">
         <SectionHeader eyebrow={c.work.eyebrow} title={c.work.title} lead={c.work.lead} />
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
-          <ChromeCard
-            as="article"
-            data-card
-            tone="light"
-            className="flex flex-col gap-6 p-6 md:p-8 lg:col-span-2"
-          >
-            <div className="bezel">
-              <ProjectImage project={flagship} variant="hero" priority className="aspect-[16/10]" />
+        {/* Flagship: full-width horizontal mirror card */}
+        <ChromeCard
+          as="article"
+          data-card
+          tone="light"
+          className="mt-14 grid gap-6 p-4 md:p-6 lg:grid-cols-[1.35fr_1fr] lg:items-center lg:gap-10"
+        >
+          <div className="bezel">
+            <ProjectImage project={flagship} variant="hero" priority className="aspect-[16/10]" />
+          </div>
+          <div className="flex flex-col gap-6 p-2 md:p-4 lg:pr-6">
+            <div>
+              <p className="font-mono text-[11px] tracking-[0.18em] text-ink/50 uppercase">
+                {flagship.domain} · flagship
+              </p>
+              <h3 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-ink md:text-4xl">
+                {flagship.title}
+              </h3>
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/70 md:text-base">
+                {flagship.description}
+              </p>
             </div>
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <Tags tags={flagship.tags} light />
+            <div className="border-t border-ink/15" />
+            <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="font-mono text-[11px] tracking-[0.18em] text-ink/50 uppercase">
-                  {flagship.domain}
-                </p>
-                <h3 className="mt-2 text-2xl font-semibold tracking-[-0.02em] text-ink md:text-3xl">
-                  {flagship.title}
-                </h3>
-                <p className="mt-2 max-w-md text-sm leading-relaxed text-ink/70 md:text-base">
-                  {flagship.tagline}
-                </p>
-              </div>
-              <div className="shrink-0 text-left md:text-right">
-                <p className="font-display text-3xl font-semibold tracking-[-0.03em] text-ink">
+                <p className="font-display text-4xl font-semibold tracking-[-0.04em] text-ink">
                   {flagship.stat.value}
                 </p>
                 <p className="mt-1 text-[13px] text-ink/60">{flagship.stat.label}</p>
               </div>
+              {flagship.url !== '#' && (
+                <a
+                  href={flagship.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ghost-btn border-ink/20 px-5 py-2.5 text-[13px] text-ink hover:border-ink/50 hover:bg-ink/5"
+                >
+                  Otwórz {flagship.domain}
+                  <Arrow />
+                </a>
+              )}
             </div>
-            <Tags tags={flagship.tags} light />
-            {flagship.url !== '#' && (
-              <a
-                href={flagship.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ghost-btn w-fit border-ink/15 px-5 py-2.5 text-[13px] text-ink"
-              >
-                Otwórz
-                <Arrow />
-              </a>
-            )}
-          </ChromeCard>
+          </div>
+        </ChromeCard>
 
+        <div className="mt-6 grid gap-6 md:grid-cols-3">
           {rest.map((project) => (
             <ChromeCard
               key={project.id}
