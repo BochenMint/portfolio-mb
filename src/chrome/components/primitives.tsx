@@ -6,7 +6,7 @@ import { useMagnetic } from '../../hooks/useMagnetic'
    `tone="light"` = mirror-bright surface with dark text (use sparingly:
    one per viewport for hierarchy). `tone="brushed"` = brushed steel.
 ---------------------------------------------------------------------- */
-type CardProps = HTMLAttributes<HTMLDivElement> & {
+type CardProps = HTMLAttributes<HTMLElement> & {
   tone?: 'dark' | 'light' | 'brushed'
   as?: 'div' | 'article' | 'section' | 'li'
   children: ReactNode
