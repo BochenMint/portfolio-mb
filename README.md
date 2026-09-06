@@ -1,6 +1,21 @@
 # Portfolio MB — Bochen Studio
 
-Portfolio **nastawione na konwersję** (React + Vite + GSAP + Lenis): case studies PSR, cennik, brief kwalifikacyjny, sticky CTA, custom cursor (desktop).
+Dwie edycje w jednym repo (Vite multi-page):
+
+| Ścieżka | Edycja | Kod |
+|---------|--------|-----|
+| `/` | **Chrome** — dojrzała marka IT: polerowany chrom, szczotkowana stal, geometria Apple, odbicie kursora w kartach | `src/chrome/` |
+| `/classic/` | Poprzednia edycja (mint/gold, glass, horizontal scroll) | `src/components/`, `src/App.tsx` |
+
+Obie edycje dzielą dane (`src/data/content.ts`), hooki Lenis/magnetic oraz screeny w `public/projects/`.
+
+## Edycja Chrome — system designu
+
+- **Fonty:** Geist (display + body), Geist Mono (etykiety), Instrument Serif italic (akcent jednego słowa)
+- **Powierzchnie:** `.chrome-card` (polerowany chrom, odbicie kursora sterowane przez `useChromeReflection`), `.chrome-card-light` (lustrzany, jasny — 1 na ekran), `.brushed` (szczotkowana stal z tekstury `public/chrome/brushed.webp`)
+- **Geometria:** `corner-shape: superellipse(1.7)` z fallbackiem na `border-radius` (Apple continuous corners)
+- **Obrazy:** `public/chrome/` — torus chromowy w hero, tekstura szczotkowana (wygenerowane w Higgsfield, zoptymalizowane do WebP)
+- **Copy:** `src/chrome/copy.ts` (ton „international IT brand"), dane wspólne w `src/data/content.ts`
 
 Produkty: **Plumm.pl**, **Mintapartments.pl**, **iDrive Cars**, **Agentic OS**.
 
