@@ -37,6 +37,27 @@ export function Contact() {
               </div>
             ))}
           </div>
+
+          {/* Studio object — chrome sphere on black, blends into the ink background */}
+          <div aria-hidden className="r-card relative mt-12 hidden h-[260px] overflow-hidden lg:block">
+            <img
+              src="/chrome/sphere.webp"
+              width={1000}
+              height={558}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+              style={{ objectPosition: '72% 40%', mixBlendMode: 'screen' }}
+            />
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(90deg, rgba(5,5,6,0.85) 0%, transparent 30%, transparent 85%, rgba(5,5,6,0.6) 100%), linear-gradient(180deg, transparent 60%, rgba(5,5,6,0.9) 100%)',
+              }}
+            />
+          </div>
         </div>
 
         <LeadForm />

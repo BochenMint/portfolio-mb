@@ -104,13 +104,12 @@ export function Hero() {
           >
             <img
               src="/chrome/hero-torus.webp"
-              width={1400}
-              height={1400}
+              width={900}
+              height={873}
               alt=""
               fetchPriority="high"
               decoding="async"
-              className="h-full w-full object-contain"
-              style={{ mixBlendMode: 'screen' }}
+              className="h-full w-full object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,0.7)]"
             />
             {/* Hard light hotspot that travels with the cursor across the object */}
             <div

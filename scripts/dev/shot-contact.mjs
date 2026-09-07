@@ -1,0 +1,16 @@
+import { chromium } from 'playwright'
+const out = '/tmp/claude-0/-home-user-portfolio-mb/e3d83c34-f085-54b4-a023-243f9df0228b/scratchpad'
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' }).catch(() => chromium.launch())
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+await page.goto('http://localhost:4173/#kontakt', { waitUntil: 'networkidle' })
+await page.waitForTimeout(2500)
+await page.evaluate(() => document.getElementById('kontakt').scrollIntoView())
+await page.waitForTimeout(1200)
+await page.mouse.move(900, 500); await page.waitForTimeout(300)
+await page.screenshot({ path: `${out}/contact.png` })
+const classic = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+classic.on('pageerror', (e) => console.log('CLASSIC PAGEERROR', e.message))
+await classic.goto('http://localhost:4173/classic/', { waitUntil: 'networkidle' })
+await classic.waitForTimeout(3000)
+await classic.screenshot({ path: `${out}/classic.png` })
+await browser.close()
