@@ -14,12 +14,15 @@
 .cube-stage {
   --size: clamp(280px, 78vw, 420px);
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: var(--size);
-  height: calc(var(--size) * 1.16);
+  height: var(--size);
   margin-inline: auto;
+  /* The canvas is intentionally larger than this box (see .cube-canvas)
+     so a rotated cube's wider silhouette never clips against the render
+     target. Letting it overflow here is safe: the canvas itself has
+     pointer-events:none and no ancestor in Work.tsx clips overflow, so
+     the oversized transparent margin never blocks neighbouring content. */
+  overflow: visible;
 }
 @media (min-width: 768px) {
   .cube-stage {
@@ -37,18 +40,37 @@
   }
 }
 
+/* Oversized and centered on the (square) stage so the rotated cube's
+   projected width — up to ~1.4x the front-on face width at 45deg — has
+   room to render without being clipped by the canvas bounds. The camera
+   is tuned in JS to compensate, so the front-on cube still reads at the
+   same on-screen size as a canvas sized 1:1 with the stage would give.
+   Purely visual: never receives pointer input. */
 .cube-canvas {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 125%;
+  transform: translate(-50%, -50%);
   display: block;
+  pointer-events: none;
+}
+
+/* Stage-sized transparent hit target carrying all pointer/keyboard
+   interaction, so the oversized canvas never intercepts clicks meant for
+   neighbouring text/links. */
+.cube-overlay {
+  position: absolute;
+  inset: 0;
   outline: none;
   touch-action: pan-y;
   cursor: grab;
 }
-.cube-canvas:active {
+.cube-overlay:active {
   cursor: grabbing;
 }
-.cube-canvas:focus-visible {
+.cube-overlay:focus-visible {
   outline: 2px solid rgba(247, 248, 250, 0.6);
   outline-offset: 10px;
   border-radius: calc(var(--size) * 0.17);
@@ -56,7 +78,9 @@
 
 /* --- Static fallback: front face inside a chrome-bezelled squircle --- */
 .cube-fallback {
-  position: relative;
+  position: absolute;
+  inset: 0;
+  margin: auto;
   width: 78%;
   height: 78%;
   border-radius: calc(var(--size) * 0.17);

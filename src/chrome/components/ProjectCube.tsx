@@ -22,6 +22,14 @@ const TWEEN_MS = 600
 const TILT_MS = 320
 const BASE_TILT_DEG = 0
 const HOVER_TILT_RANGE = 6
+// The canvas is rendered larger than the (square) stage box — see
+// cube.css — so a rotated cube's wider silhouette (up to ~1.4x the
+// front-on face width at 45deg) never clips against the render target.
+// The camera distance below is tuned against this exact ratio so the
+// front-on cube still reads at the same on-screen size the old 1:1
+// canvas gave.
+const CANVAS_W_RATIO = 1.5
+const CANVAS_H_RATIO = 1.25
 
 function indexFromRot(rot: number) {
   const i = Math.round(-rot / 90) % 4
@@ -170,11 +178,14 @@ async function buildScene(
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(28, Math.max(opts.width, 1) / Math.max(opts.height, 1), 0.1, 20)
   const camTiltRad = THREE.MathUtils.degToRad(12)
-  // Tuned so the cube (unit-size, bounding box unaffected by the tilt
-  // rotation which is about X) fills ~92% of the canvas width at the
-  // stage's fixed aspect ratio (--size : --size * 1.16), leaving enough
-  // vertical headroom for the tilted top and the contact shadow.
-  const camDist = 2.55
+  // The canvas is CANVAS_W_RATIO x CANVAS_H_RATIO larger than the square
+  // stage box (see cube.css), so the front-on cube must fill a smaller
+  // *fraction* of the canvas than before to keep its on-screen size (as
+  // a fraction of the stage, ~92%) unchanged while leaving room for the
+  // rotated silhouette to not clip. Distance solved from the pinhole
+  // relation `fillFraction = cubeSize / (2*d*aspect*tan(vFov/2))` for
+  // fillFraction = 0.92 / CANVAS_W_RATIO at the canvas's fixed aspect.
+  const camDist = 2.72
   camera.position.set(0, Math.sin(camTiltRad) * camDist, Math.cos(camTiltRad) * camDist)
   camera.lookAt(0, 0.02, 0)
 
@@ -397,6 +408,7 @@ async function buildScene(
 export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Props) {
   const stageRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
 
   const rotRef = useRef(0)
   const tiltRef = useRef(BASE_TILT_DEG)
@@ -517,23 +529,23 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
   }, [setRot, snapTo])
 
   const onPointerDown = useCallback(
-    (e: React.PointerEvent<HTMLCanvasElement>) => {
+    (e: React.PointerEvent<HTMLDivElement>) => {
       if (!sceneRef.current) return
-      const canvas = canvasRef.current
-      if (!canvas) return
+      const overlay = overlayRef.current
+      if (!overlay) return
       stopMomentum()
       stopTween()
       draggingRef.current = true
       pointerLastXRef.current = e.clientX
       pointerLastTRef.current = performance.now()
       velocityRef.current = 0
-      canvas.setPointerCapture(e.pointerId)
+      overlay.setPointerCapture(e.pointerId)
     },
     [stopMomentum, stopTween],
   )
 
   const onPointerMove = useCallback(
-    (e: React.PointerEvent<HTMLCanvasElement>) => {
+    (e: React.PointerEvent<HTMLDivElement>) => {
       if (!draggingRef.current) return
       const now = performance.now()
       const dx = e.clientX - pointerLastXRef.current
@@ -548,13 +560,13 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
   )
 
   const endDrag = useCallback(
-    (e: React.PointerEvent<HTMLCanvasElement>) => {
+    (e: React.PointerEvent<HTMLDivElement>) => {
       if (!draggingRef.current) return
       draggingRef.current = false
-      const canvas = canvasRef.current
-      if (canvas) {
+      const overlay = overlayRef.current
+      if (overlay) {
         try {
-          canvas.releasePointerCapture(e.pointerId)
+          overlay.releasePointerCapture(e.pointerId)
         } catch {
           // capture may already be released
         }
@@ -621,7 +633,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
 
   // --- Keyboard ------------------------------------------------------
   const onKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLCanvasElement>) => {
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'ArrowRight') {
         e.preventDefault()
         step(1)
@@ -717,8 +729,8 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
           faces,
           projectId,
           theme: themeRef.current,
-          width: rect.width,
-          height: rect.height,
+          width: rect.width * CANVAS_W_RATIO,
+          height: rect.height * CANVAS_H_RATIO,
         })
           .then((handle) => {
             sceneRef.current = handle
@@ -746,7 +758,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
       const entry = entries[0]
       if (!entry) return
       const { width, height } = entry.contentRect
-      sceneRef.current?.setSize(width, height)
+      sceneRef.current?.setSize(width * CANVAS_W_RATIO, height * CANVAS_H_RATIO)
       requestRender()
     })
     ro.observe(stage)
@@ -827,21 +839,23 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <canvas
-          ref={canvasRef}
-          className="cube-canvas"
-          hidden={showFallback}
-          role="img"
-          aria-label={`${title} — ${activeFace.label[locale]}`}
-          tabIndex={showFallback ? -1 : 0}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          onKeyDown={onKeyDown}
-          onFocus={onFocus}
-          onBlur={onBlur}
-        />
+        <canvas ref={canvasRef} className="cube-canvas" hidden={showFallback} aria-hidden="true" />
+        {!showFallback && (
+          <div
+            ref={overlayRef}
+            className="cube-overlay"
+            role="img"
+            aria-label={`${title} — ${activeFace.label[locale]}`}
+            tabIndex={0}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onKeyDown={onKeyDown}
+            onFocus={onFocus}
+            onBlur={onBlur}
+          />
+        )}
         {showFallback && (
           <div
             className="cube-fallback"
