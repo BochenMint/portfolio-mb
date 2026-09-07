@@ -75,7 +75,7 @@ function supportsWebGL(): boolean {
 // component only ever calls the handle's imperative methods.
 // ---------------------------------------------------------------------
 
-type ScreenSlot = {
+type FaceSlot = {
   material: import('three').MeshPhysicalMaterial
   texture: import('three').Texture | null
   face: Face
@@ -90,41 +90,108 @@ type SceneHandle = {
   dispose: () => void
 }
 
-function roundedRectShape(THREE: typeof import('three'), w: number, h: number, r: number) {
-  const shape = new THREE.Shape()
-  const x = -w / 2
-  const y = -h / 2
-  shape.moveTo(x, y + r)
-  shape.lineTo(x, y + h - r)
-  shape.quadraticCurveTo(x, y + h, x + r, y + h)
-  shape.lineTo(x + w - r, y + h)
-  shape.quadraticCurveTo(x + w, y + h, x + w, y + h - r)
-  shape.lineTo(x + w, y + r)
-  shape.quadraticCurveTo(x + w, y, x + w - r, y)
-  shape.lineTo(x + r, y)
-  shape.quadraticCurveTo(x, y, x, y + r)
-  return shape
+// The screen is baked directly into each side face's texture set (rather
+// than a separate plane) so it sits flush with — and bends along — the
+// RoundedBoxGeometry's own curved edge band instead of floating in front
+// of it. All four side faces share the same UV layout, so the screen
+// rect geometry below is computed once in normalized (canvas-pixel)
+// texture space and reused for every face; only the emissive screenshot
+// layer differs per face/theme.
+const FACE_TEX_SIZE = 2048
+const SCREEN_MARGIN_FRAC = 0.1 // -> 80% of the face width/height
+const SCREEN_CORNER_FRAC = 0.06
+const SCREEN_RECT = {
+  x: FACE_TEX_SIZE * SCREEN_MARGIN_FRAC,
+  y: FACE_TEX_SIZE * SCREEN_MARGIN_FRAC,
+  size: FACE_TEX_SIZE * (1 - 2 * SCREEN_MARGIN_FRAC),
+  r: FACE_TEX_SIZE * SCREEN_CORNER_FRAC,
+}
+const SEAM_WIDTH = FACE_TEX_SIZE * 0.003
+
+function traceRoundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.lineTo(x + w - r, y)
+  ctx.arcTo(x + w, y, x + w, y + r, r)
+  ctx.lineTo(x + w, y + h - r)
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r)
+  ctx.lineTo(x + r, y + h)
+  ctx.arcTo(x, y + h, x, y + h - r, r)
+  ctx.lineTo(x, y + r)
+  ctx.arcTo(x, y, x + r, y, r)
+  ctx.closePath()
 }
 
-function fitTextureCover(texture: import('three').Texture, imgW: number, imgH: number) {
-  if (!imgW || !imgH) return
-  const ar = imgW / imgH
-  if (Math.abs(ar - 1) < 0.01) {
-    texture.repeat.set(1, 1)
-    texture.offset.set(0, 0)
-    return
+/** object-fit: cover, top-aligned, clipped to the screen rect. */
+function drawCoverImage(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
+  const iw = img.naturalWidth || img.width
+  const ih = img.naturalHeight || img.height
+  if (!iw || !ih) return
+  const { x, y, size } = SCREEN_RECT
+  const scale = Math.max(size / iw, size / ih)
+  const dw = iw * scale
+  const dh = ih * scale
+  const dx = x + (size - dw) / 2
+  const dy = y
+  ctx.drawImage(img, dx, dy, dw, dh)
+}
+
+/** Base-color map: white outside the screen (tinted by material.color to
+ * the theme's chrome hue), black inside, with a thin dark seam ring
+ * right at the screen's edge so it reads as an inset bezel. */
+function buildFaceColorMap(THREE: typeof import('three')) {
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = FACE_TEX_SIZE
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, FACE_TEX_SIZE, FACE_TEX_SIZE)
+    const { x, y, size, r } = SCREEN_RECT
+    traceRoundedRect(ctx, x, y, size, size, r)
+    ctx.lineWidth = SEAM_WIDTH
+    ctx.strokeStyle = '#15161a'
+    ctx.stroke()
+    ctx.fillStyle = '#000000'
+    ctx.fill()
   }
-  if (ar > 1) {
-    // wider than tall: crop the sides, keep full height
-    const repeatX = 1 / ar
-    texture.repeat.set(repeatX, 1)
-    texture.offset.set((1 - repeatX) / 2, 0)
-  } else {
-    // taller than wide: crop the bottom, keep full width, top-aligned
-    const repeatY = ar
-    texture.repeat.set(1, repeatY)
-    texture.offset.set(0, 1 - repeatY)
+  return new THREE.CanvasTexture(canvas)
+}
+
+/** Packs metalnessMap (blue) + roughnessMap (green): fully metallic,
+ * tight chrome roughness outside the screen; non-metal, softer glass
+ * roughness inside it. Three.js reads metalness from B and roughness
+ * from G, so material.metalness/roughness stay at 1 as pure multipliers. */
+function buildFaceMaskMap(THREE: typeof import('three')) {
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = FACE_TEX_SIZE
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    ctx.fillStyle = `rgb(0, ${Math.round(0.12 * 255)}, 255)`
+    ctx.fillRect(0, 0, FACE_TEX_SIZE, FACE_TEX_SIZE)
+    const { x, y, size, r } = SCREEN_RECT
+    traceRoundedRect(ctx, x, y, size, size, r)
+    ctx.fillStyle = `rgb(0, ${Math.round(0.22 * 255)}, 0)`
+    ctx.fill()
   }
+  const tex = new THREE.CanvasTexture(canvas)
+  return tex
+}
+
+function loadImageElement(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.decoding = 'async'
+    img.onload = () => resolve(img)
+    img.onerror = () => reject(new Error(`image load failed: ${url}`))
+    img.src = url
+  })
 }
 
 function makeContactShadowTexture(THREE: typeof import('three')) {
@@ -201,15 +268,7 @@ async function buildScene(
   tiltGroup.add(spinGroup)
 
   const bodyGeo = new RoundedBoxGeometry(1, 1, 1, 7, 0.17)
-  const bodyMat = new THREE.MeshPhysicalMaterial({
-    color: 0xe8eaee,
-    metalness: 1,
-    roughness: 0.12,
-    clearcoat: 0.6,
-    clearcoatRoughness: 0.12,
-    envMapIntensity: 1,
-  })
-  const body = new THREE.Mesh(bodyGeo, bodyMat)
+  const body = new THREE.Mesh(bodyGeo)
   spinGroup.add(body)
 
   // Studio lighting: two crisp key/fill bands plus a soft rim, fixed in
@@ -254,75 +313,80 @@ async function buildScene(
   haloPlane.position.z = -0.85
   tiltGroup.add(haloPlane)
 
-  // Embedded screens on the four side faces.
-  const sideDefs = [
-    { pos: [0, 0, 0.504] as const, rot: [0, 0, 0] as const },
-    { pos: [0.504, 0, 0] as const, rot: [0, Math.PI / 2, 0] as const },
-    { pos: [0, 0, -0.504] as const, rot: [0, Math.PI, 0] as const },
-    { pos: [-0.504, 0, 0] as const, rot: [0, -Math.PI / 2, 0] as const },
-  ]
-  const screenSize = 0.88
-  const screenGeo = new THREE.ShapeGeometry(roundedRectShape(THREE, screenSize, screenSize, 0.1), 16)
-  // ShapeGeometry writes raw shape-space coordinates into the uv attribute
-  // (not normalized to the shape's bounding box) — remap into [0,1] so the
-  // face texture's repeat/offset cover-crop lines up correctly.
-  {
-    const uv = screenGeo.getAttribute('uv')
-    for (let i = 0; i < uv.count; i++) {
-      uv.setXY(i, uv.getX(i) / screenSize + 0.5, uv.getY(i) / screenSize + 0.5)
-    }
-    uv.needsUpdate = true
+  // Screens are baked into the RoundedBoxGeometry's own per-face material
+  // slots (BoxGeometry — which this extends — always keeps 6 groups, in
+  // [+X right, -X left, +Y top, -Y bottom, +Z front, -Z back] order, each
+  // spanning the *entire* rounded face, curved edge bands included, in
+  // [0,1] UV) rather than a separate plane sitting in front of the face.
+  // That's what makes the screen bend into the curved edge band exactly
+  // like the chrome around it, with no floating edges or corner gaps.
+  const maxAniso = renderer.capabilities.getMaxAnisotropy()
+  const sharedColorMap = buildFaceColorMap(THREE)
+  sharedColorMap.colorSpace = THREE.SRGBColorSpace
+  sharedColorMap.anisotropy = maxAniso
+  const sharedMaskMap = buildFaceMaskMap(THREE)
+  sharedMaskMap.anisotropy = maxAniso
+
+  function makeSideMaterial() {
+    return new THREE.MeshPhysicalMaterial({
+      map: sharedColorMap,
+      metalnessMap: sharedMaskMap,
+      roughnessMap: sharedMaskMap,
+      metalness: 1,
+      roughness: 1,
+      emissive: 0xffffff,
+      emissiveIntensity: 1,
+      // Kept modest (rather than the 1.0 a pure chrome face would want)
+      // so the clearcoat/env reflection stays a subtle glass sheen and
+      // never washes out the emissive screenshot underneath it.
+      clearcoat: 0.5,
+      clearcoatRoughness: 0.06,
+      envMapIntensity: 0.9,
+    })
   }
+
+  const capMat = new THREE.MeshPhysicalMaterial({
+    metalness: 1,
+    roughness: 0.12,
+    clearcoat: 0.6,
+    clearcoatRoughness: 0.12,
+    envMapIntensity: 1,
+  })
 
   const four: Face[] = opts.faces.length >= 4 ? opts.faces.slice(0, 4) : []
   while (four.length < 4 && opts.faces.length > 0) four.push(opts.faces[four.length % opts.faces.length])
 
-  const maxAniso = renderer.capabilities.getMaxAnisotropy()
-  const textureLoader = new THREE.TextureLoader()
-  const screens: ScreenSlot[] = []
+  // Index order matches `FACE_ORDER`/`four` in the component: 0 front, 1
+  // right, 2 back, 3 left.
+  const faceSlots: FaceSlot[] = four.map((face) => ({ material: makeSideMaterial(), texture: null, face }))
+  const [frontSlot, rightSlot, backSlot, leftSlot] = faceSlots
 
-  for (let i = 0; i < 4; i++) {
-    const def = sideDefs[i]
-    // Screens are rendered unlit: the source texture is fed through
-    // `emissiveMap` (which scene lights/RectAreaLights never touch) so its
-    // colors and contrast reach the canvas untouched, while a thin
-    // clearcoat layer on top of a black base still picks up a subtle glass
-    // highlight without washing the image out.
-    const mat = new THREE.MeshPhysicalMaterial({
-      color: 0x0b0c0e,
-      emissive: 0xffffff,
-      emissiveIntensity: 0,
-      roughness: 0.2,
-      clearcoat: 1,
-      clearcoatRoughness: 0.06,
-      envMapIntensity: 0.35,
-    })
-    const mesh = new THREE.Mesh(screenGeo, mat)
-    mesh.position.set(def.pos[0], def.pos[1], def.pos[2])
-    mesh.rotation.set(def.rot[0], def.rot[1], def.rot[2])
-    spinGroup.add(mesh)
-    screens.push({ material: mat, texture: null, face: four[i] })
-  }
-
-  function loadTexture(url: string) {
-    return new Promise<import('three').Texture>((resolve, reject) => {
-      textureLoader.load(
-        url,
-        (tex) => resolve(tex),
-        undefined,
-        (err) => reject(err instanceof Error ? err : new Error('texture load failed')),
-      )
-    })
-  }
+  // BoxGeometry group order: 0 +X(right), 1 -X(left), 2 +Y(top),
+  // 3 -Y(bottom), 4 +Z(front), 5 -Z(back).
+  body.material = [rightSlot.material, leftSlot.material, capMat, capMat, frontSlot.material, backSlot.material]
 
   async function applyFaceTextures(theme: ThemeName) {
     await Promise.all(
-      screens.map(async (slot) => {
+      faceSlots.map(async (slot) => {
         if (!slot.face) return
         const src = theme === 'light' && slot.face.light ? slot.face.light : slot.face.file
         const url = `/projects/${opts.projectId}/${src}`
         try {
-          const tex = await loadTexture(url)
+          const img = await loadImageElement(url)
+          const canvas = document.createElement('canvas')
+          canvas.width = FACE_TEX_SIZE
+          canvas.height = FACE_TEX_SIZE
+          const ctx = canvas.getContext('2d')
+          if (ctx) {
+            ctx.fillStyle = '#000000'
+            ctx.fillRect(0, 0, FACE_TEX_SIZE, FACE_TEX_SIZE)
+            ctx.save()
+            traceRoundedRect(ctx, SCREEN_RECT.x, SCREEN_RECT.y, SCREEN_RECT.size, SCREEN_RECT.size, SCREEN_RECT.r)
+            ctx.clip()
+            drawCoverImage(ctx, img)
+            ctx.restore()
+          }
+          const tex = new THREE.CanvasTexture(canvas)
           tex.colorSpace = THREE.SRGBColorSpace
           tex.anisotropy = maxAniso
           tex.minFilter = THREE.LinearMipmapLinearFilter
@@ -330,17 +394,15 @@ async function buildScene(
           tex.generateMipmaps = true
           tex.wrapS = THREE.ClampToEdgeWrapping
           tex.wrapT = THREE.ClampToEdgeWrapping
-          const img = tex.image as { width?: number; height?: number } | undefined
-          fitTextureCover(tex, img?.width ?? 1, img?.height ?? 1)
+          tex.needsUpdate = true
           if (slot.texture) slot.texture.dispose()
           slot.texture = tex
           slot.material.emissiveMap = tex
-          slot.material.emissiveIntensity = 1
-          slot.material.color.set(0x000000)
           slot.material.needsUpdate = true
           renderer.render(scene, camera)
         } catch {
-          // Keep the dark placeholder material if a texture fails to load.
+          // Keep the black placeholder emissive (no screen content yet)
+          // if a texture fails to load.
         }
       }),
     )
@@ -350,10 +412,12 @@ async function buildScene(
     const isLight = theme === 'light'
     // Slightly darker reflections in light theme (rather than brighter)
     // keep the chrome from washing into a pale page background.
-    bodyMat.envMapIntensity = isLight ? 0.95 : 1.0
-    bodyMat.color.set(isLight ? 0xe6e8ec : 0xe3e5ea)
-    screens.forEach((slot) => {
-      slot.material.envMapIntensity = 0.35
+    const chromeColor = isLight ? 0xe6e8ec : 0xe3e5ea
+    const envIntensity = isLight ? 0.95 : 1.0
+    capMat.color.set(chromeColor)
+    capMat.envMapIntensity = envIntensity
+    faceSlots.forEach((slot) => {
+      slot.material.color.set(chromeColor)
     })
     keyLight.intensity = isLight ? 11 : 9
     fillLight.intensity = isLight ? 5 : 4
@@ -388,9 +452,10 @@ async function buildScene(
 
   function dispose() {
     bodyGeo.dispose()
-    bodyMat.dispose()
-    screenGeo.dispose()
-    screens.forEach((slot) => {
+    sharedColorMap.dispose()
+    sharedMaskMap.dispose()
+    capMat.dispose()
+    faceSlots.forEach((slot) => {
       slot.material.dispose()
       slot.texture?.dispose()
     })
