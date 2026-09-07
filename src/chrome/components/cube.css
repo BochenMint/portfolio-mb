@@ -21,8 +21,14 @@
   --cube-rot: 0deg;
   --cube-tilt: -10deg;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: var(--size);
-  height: var(--size);
+  /* The rotateX tilt makes the rendered cube taller than --size — reserve
+     extra vertical room (and centre the cube inside it) so the tilted top
+     and bottom edges never overlap the dots/caption below. */
+  height: calc(var(--size) * 1.16);
   margin-inline: auto;
   perspective: 1800px;
   perspective-origin: 50% 50%;
@@ -30,8 +36,9 @@
 
 .cube {
   position: relative;
-  width: 100%;
-  height: 100%;
+  flex: 0 0 auto;
+  width: var(--size);
+  height: var(--size);
   transform-style: preserve-3d;
   transform: rotateX(var(--cube-tilt)) rotateY(var(--cube-rot));
   outline: none;
@@ -236,7 +243,7 @@
 .cube-caption {
   margin-top: 0.9rem;
   text-align: center;
-  min-height: 2.6em;
+  min-height: 60px;
 }
 .cube-caption__label {
   font-family: var(--font-display);
@@ -244,6 +251,11 @@
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--color-white, #f7f8fa);
+  max-width: 36ch;
+  margin-inline: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   animation: cube-caption-in 0.4s ease both;
 }
 .cube-caption__text {
@@ -251,8 +263,12 @@
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--color-silver-2, #9a9ea6);
-  max-width: 46ch;
+  max-width: 36ch;
   margin-inline: auto;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   animation: cube-caption-in 0.4s ease both;
 }
 
