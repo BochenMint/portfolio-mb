@@ -1,212 +1,77 @@
 /* ------------------------------------------------------------------
-   ProjectCube — a physical, chrome-edged 3D object for the Work section.
-   Built on the chrome edition's bezel/brushed language (chrome.css) but
-   scoped to its own class names so it can ship independently.
+   ProjectCube — a real 3D rounded-chrome cube (WebGL/three.js) for the
+   Work section. The stage hosts either the live <canvas> or a static
+   squircle-framed fallback image while three.js loads (or when WebGL /
+   reduced-motion rules it out).
 ------------------------------------------------------------------- */
-
-@property --cube-rot {
-  syntax: '<angle>';
-  inherits: true;
-  initial-value: 0deg;
-}
-
-@property --cube-tilt {
-  syntax: '<angle>';
-  inherits: true;
-  initial-value: -10deg;
-}
 
 .cube-stage {
   --size: clamp(260px, min(42vw, 520px), 520px);
-  --cube-rot: 0deg;
-  --cube-tilt: -10deg;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: var(--size);
-  /* The rotateX tilt makes the rendered cube taller than --size — reserve
-     extra vertical room (and centre the cube inside it) so the tilted top
-     and bottom edges never overlap the dots/caption below. */
   height: calc(var(--size) * 1.16);
   margin-inline: auto;
-  perspective: 1800px;
-  perspective-origin: 50% 50%;
 }
 
-.cube {
-  position: relative;
-  flex: 0 0 auto;
-  width: var(--size);
-  height: var(--size);
-  transform-style: preserve-3d;
-  transform: rotateX(var(--cube-tilt)) rotateY(var(--cube-rot));
+.cube-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
   outline: none;
   touch-action: pan-y;
   cursor: grab;
-  transition: transform 0.05s linear;
 }
-.cube:active {
+.cube-canvas:active {
   cursor: grabbing;
 }
-.cube.is-animating {
-  will-change: transform;
-}
-.cube.is-tweening {
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.cube:focus-visible {
+.cube-canvas:focus-visible {
   outline: 2px solid rgba(247, 248, 250, 0.6);
   outline-offset: 10px;
-  border-radius: calc(var(--size) * 0.11);
+  border-radius: calc(var(--size) * 0.17);
 }
 
-/* --- Solid graphite core (prevents see-through gaps at rounded edges) */
-.cube-core {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-.cube-core__face {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(155deg, #2a2c31 0%, #17181c 45%, #0a0a0c 60%, #1c1d22 100%);
-  backface-visibility: hidden;
-}
-.cube-core__face--front {
-  transform: translateZ(calc(var(--size) / 2 - 3px));
-}
-.cube-core__face--right {
-  transform: rotateY(90deg) translateZ(calc(var(--size) / 2 - 3px));
-}
-.cube-core__face--back {
-  transform: rotateY(180deg) translateZ(calc(var(--size) / 2 - 3px));
-}
-.cube-core__face--left {
-  transform: rotateY(-90deg) translateZ(calc(var(--size) / 2 - 3px));
-}
-.cube-core__face--top {
-  transform: rotateX(90deg) translateZ(calc(var(--size) / 2 - 3px));
-}
-.cube-core__face--bottom {
-  transform: rotateX(-90deg) translateZ(calc(var(--size) / 2 - 3px));
-}
-
-/* --- Chrome-bezelled screenshot faces (front/right/back/left) -------- */
-.cube-face {
-  position: absolute;
-  inset: 0;
-  border-radius: calc(var(--size) * 0.11);
+/* --- Static fallback: front face inside a chrome-bezelled squircle --- */
+.cube-fallback {
+  position: relative;
+  width: 78%;
+  height: 78%;
+  border-radius: calc(var(--size) * 0.17);
   corner-shape: var(--corner, superellipse(1.7));
   overflow: hidden;
-  backface-visibility: hidden;
-  padding: calc(var(--size) * 0.018);
+  outline: none;
   background: linear-gradient(160deg, #ffffff, #5a5d64 35%, #e5e7eb 55%, #3b3e44 80%, #f2f3f5);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.35) inset,
     0 -1px 0 rgba(0, 0, 0, 0.6) inset,
     0 30px 60px -20px rgba(0, 0, 0, 0.9);
+  padding: calc(var(--size) * 0.018);
 }
-.cube-face--front {
-  transform: translateZ(calc(var(--size) / 2));
+.cube-fallback:focus-visible {
+  outline: 2px solid rgba(247, 248, 250, 0.6);
+  outline-offset: 6px;
 }
-.cube-face--right {
-  transform: rotateY(90deg) translateZ(calc(var(--size) / 2));
-}
-.cube-face--back {
-  transform: rotateY(180deg) translateZ(calc(var(--size) / 2));
-}
-.cube-face--left {
-  transform: rotateY(-90deg) translateZ(calc(var(--size) / 2));
-}
-
-.cube-face__inner {
+.cube-fallback img {
   position: relative;
   height: 100%;
   width: 100%;
-  border-radius: calc(var(--size) * 0.11 - 3px);
+  border-radius: calc(var(--size) * 0.15);
   corner-shape: var(--corner, superellipse(1.7));
-  overflow: hidden;
-  background: #0a0a0c;
-}
-.cube-face__inner img {
-  height: 100%;
-  width: 100%;
   object-fit: cover;
   object-position: top;
   display: block;
 }
-
-/* Per-face dynamic shading (angle-to-viewer darkening), set via inline
-   --face-shade in [0..1] on each face element. */
-.cube-face__inner::after {
+.cube-fallback::after {
   content: '';
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
-  opacity: var(--face-shade, 0.2);
-  transition: opacity 0.1s linear;
-}
-
-/* Sharp specular streak on the front bezel, driven by the shared cursor
-   reflection vars (--mx/--my/--angle/--near) set by useChromeReflection. */
-.cube-face--front::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 3;
+  z-index: 2;
   border-radius: inherit;
   corner-shape: inherit;
   pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: calc(0.3 + var(--near, 0) * 0.6);
-  background: linear-gradient(
-    var(--angle, 135deg),
-    transparent calc(var(--mx, 50%) - 14%),
-    rgba(255, 255, 255, 0.25) calc(var(--mx, 50%) - 2%),
-    rgba(255, 255, 255, 0.9) var(--mx, 50%),
-    rgba(255, 255, 255, 0.25) calc(var(--mx, 50%) + 2%),
-    transparent calc(var(--mx, 50%) + 14%)
-  );
-}
-
-/* --- Brushed steel top/bottom ----------------------------------------- */
-.cube-face--brushed {
-  position: absolute;
-  inset: 0;
-  border-radius: calc(var(--size) * 0.11);
-  corner-shape: var(--corner, superellipse(1.7));
-  overflow: hidden;
-  backface-visibility: hidden;
-  background-color: #17181c;
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.12) 0%,
-      rgba(255, 255, 255, 0) 30%,
-      rgba(0, 0, 0, 0.3) 60%,
-      rgba(255, 255, 255, 0.07) 100%
-    ),
-    url('/chrome/brushed.webp');
-  background-size: auto, 1400px auto;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18) inset,
-    0 -1px 0 rgba(0, 0, 0, 0.7) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.06);
-}
-.cube-face--top {
-  transform: rotateX(90deg) translateZ(calc(var(--size) / 2));
-}
-.cube-face--bottom {
-  transform: rotateX(-90deg) translateZ(calc(var(--size) / 2));
-}
-
-/* --- Hover tilt (fine pointer only), independent of drag rotation ---- */
-@media (hover: hover) and (pointer: fine) {
-  .cube-stage[data-hover-tilt='1'] .cube {
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0.25) 100%);
 }
 
 /* --- Dots / segmented control ----------------------------------------- */
@@ -284,10 +149,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cube,
-  .cube.is-tweening {
-    transition: none;
-  }
   .cube-caption__label,
   .cube-caption__text {
     animation: none;
