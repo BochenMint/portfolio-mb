@@ -200,7 +200,9 @@
     font-family: var(--font-body);
     font-feature-settings: 'ss01', 'cv11', 'liga';
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
+    /* No native smooth scrolling: Lenis owns the scroll position, and two
+       engines fighting over the same anchor jump land the page in a random
+       spot. Smooth anchors come from Lenis (`anchors: true` in useLenis). */
   }
 
   body {

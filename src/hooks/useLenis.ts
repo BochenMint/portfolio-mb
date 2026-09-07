@@ -13,6 +13,10 @@ export function useLenis() {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: !mobile,
       lerp: mobile ? 1 : undefined,
+      // Anchor clicks go through Lenis instead of the browser's own smooth
+      // scroll, so the two never fight over the target. Lenis honours the
+      // section's `scroll-margin-top`, which keeps the fixed nav off headings.
+      anchors: true,
     })
 
     lenis.on('scroll', ScrollTrigger.update)

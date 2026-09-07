@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 
+/** How close the trailing ring gets to the pointer per frame. */
+const RING_EASE = 0.32
+/** Past this gap the ring teleports instead of gliding: a dropped frame
+ *  (WebGL init, GC, tab switch, pointer re-entering the window) otherwise
+ *  sends it flying across the screen, which reads as the cursor running off. */
+const RING_SNAP_PX = 140
+
 /** Chrome bead cursor: a tiny mirrored sphere + hairline ring on desktop. */
 export function Cursor() {
   const reduced = useReducedMotion()
@@ -12,34 +19,46 @@ export function Cursor() {
   useEffect(() => {
     if (!active || reduced) return
 
-    document.body.classList.add('cursor-custom')
-
     const bead = document.querySelector('[data-cursor-bead]') as HTMLElement | null
     const ring = document.querySelector('[data-cursor-ring]') as HTMLElement | null
+    // Only hide the native cursor once there is something to replace it
+    // with — otherwise a missing bead leaves the page with no pointer at all.
     if (!bead || !ring) return
+
+    document.body.classList.add('cursor-custom')
 
     let mx = -100
     let my = -100
     let rx = -100
     let ry = -100
     let raf = 0
+    // While the pointer is over something clickable the ring is the shape the
+    // eye aims with, so it has to sit exactly on the pointer — a trailing ring
+    // makes small targets (the 36px theme toggle) miss.
+    let onTarget = false
+
+    const place = (el: HTMLElement, x: number, y: number) => {
+      el.style.transform = `translate3d(${x}px, ${y}px, 0)`
+    }
 
     const onMove = (e: MouseEvent) => {
       mx = e.clientX
       my = e.clientY
-      bead.style.transform = `translate3d(${mx}px, ${my}px, 0)`
+      place(bead, mx, my)
     }
     const loop = () => {
-      rx += (mx - rx) * 0.18
-      ry += (my - ry) * 0.18
-      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`
+      const ease = onTarget || Math.hypot(mx - rx, my - ry) > RING_SNAP_PX ? 1 : RING_EASE
+      rx += (mx - rx) * ease
+      ry += (my - ry) * ease
+      place(ring, rx, ry)
       raf = requestAnimationFrame(loop)
     }
     raf = requestAnimationFrame(loop)
 
     const onOver = (e: Event) => {
       const t = e.target as HTMLElement
-      setHovering(!!t.closest('a, button, [data-magnetic], summary, label'))
+      onTarget = !!t.closest('a, button, [data-magnetic], summary, label')
+      setHovering(onTarget)
     }
 
     document.addEventListener('mousemove', onMove, { passive: true })
@@ -68,9 +87,10 @@ export function Cursor() {
       <div
         data-cursor-bead
         aria-hidden
-        className={`pointer-events-none fixed top-0 left-0 z-[10002] -ml-[5px] -mt-[5px] h-[10px] w-[10px] rounded-full transition-[scale] duration-200 ${
-          hovering ? 'scale-[0.6]' : 'scale-100'
-        }`}
+        /* The bead marks the exact click point, so it keeps its size on hover:
+           shrinking it to 6px used to leave the trailing ring as the only
+           thing to aim with. */
+        className="pointer-events-none fixed top-0 left-0 z-[10002] -ml-[5px] -mt-[5px] h-[10px] w-[10px] rounded-full"
         style={{
           background:
             'radial-gradient(circle at 35% 30%, #ffffff 0%, #d8dbe0 25%, #6b6f76 60%, #1a1b1f 100%)',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocale } from '../i18n/context'
 import type { Locale } from '../i18n/types'
 import { useTheme } from '../theme/context'
@@ -75,11 +75,50 @@ export function Nav() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
+  // The scrolled bar is 256px narrower, which slides every control on its
+  // right edge ~128px sideways — more than three times the width of the
+  // theme toggle. With Lenis the scroll (and the slide) keeps running for
+  // about a second after the wheel stops, so a control could move out from
+  // under the pointer mid-click. Hold the resize back while the pointer is
+  // on the bar and apply it once the pointer leaves.
+  const scrolledRef = useRef(false)
+  const holdRef = useRef(false)
+  const pendingRef = useRef<boolean | null>(null)
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const apply = (next: boolean) => {
+      if (scrolledRef.current === next) {
+        pendingRef.current = null
+        return
+      }
+      if (holdRef.current) {
+        pendingRef.current = next
+        return
+      }
+      pendingRef.current = null
+      scrolledRef.current = next
+      setScrolled(next)
+    }
+    const onScroll = () => apply(window.scrollY > 24)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Touch has no meaningful hover, and a pointerleave is not guaranteed
+  // there — holding on touch could freeze the bar at the wrong width.
+  const holdResize = useCallback((e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') holdRef.current = true
+  }, [])
+
+  const releaseResize = useCallback((e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse') return
+    holdRef.current = false
+    const pending = pendingRef.current
+    if (pending === null) return
+    pendingRef.current = null
+    scrolledRef.current = pending
+    setScrolled(pending)
   }, [])
 
   useEffect(() => {
@@ -90,7 +129,11 @@ export function Nav() {
   }, [open])
 
   return (
-    <header className="fixed top-0 right-0 left-0 z-50 px-4 pt-4 md:px-8 md:pt-5">
+    <header
+      className="fixed top-0 right-0 left-0 z-50 px-4 pt-4 md:px-8 md:pt-5"
+      onPointerEnter={holdResize}
+      onPointerLeave={releaseResize}
+    >
       <nav
         aria-label={c.navAria.main}
         className={`glass-nav r-card-sm mx-auto flex max-w-6xl items-center justify-between px-3 py-2 transition-[max-width] duration-500 md:px-4 ${
