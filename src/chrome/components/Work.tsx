@@ -1,6 +1,8 @@
 import type { Project } from '../../data/content'
 import { facesFor } from '../../data/faces'
+import { headlineFactsFor } from '../../data/facts'
 import { useLocale } from '../i18n/context'
+import { FactsStrip } from './FactsStrip'
 import { ProjectCube } from './ProjectCube'
 import { Arrow, LinkButton, SectionHeader } from './primitives'
 
@@ -19,6 +21,7 @@ function Tags({ tags }: { tags: string[] }) {
 function ProjectRow({ project, reverse }: { project: Project; reverse: boolean }) {
   const { locale, t: c } = useLocale()
   const faces = facesFor(project.id)
+  const hasFacts = headlineFactsFor(project.id).length > 0
   if (faces.length === 0) return null
 
   return (
@@ -59,14 +62,18 @@ function ProjectRow({ project, reverse }: { project: Project; reverse: boolean }
 
         <div data-reveal className="hairline" />
 
-        <div data-reveal className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="chrome-text font-display text-3xl font-semibold tracking-[-0.03em]">
-              {project.stat.value}
-            </p>
-            <p className="mt-1 text-[13px] text-muted">{project.stat.label}</p>
-          </div>
-          <ul className="flex flex-wrap gap-x-5 gap-y-1 text-[12px] text-silver-2">
+        <div data-reveal>
+          {hasFacts ? (
+            <FactsStrip projectId={project.id} />
+          ) : (
+            <div>
+              <p className="chrome-text font-display text-3xl font-semibold tracking-[-0.03em]">
+                {project.stat.value}
+              </p>
+              <p className="mt-1 text-[13px] text-muted">{project.stat.label}</p>
+            </div>
+          )}
+          <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-[12px] text-silver-2">
             {project.metrics.map((metric) => (
               <li key={metric}>{metric}</li>
             ))}

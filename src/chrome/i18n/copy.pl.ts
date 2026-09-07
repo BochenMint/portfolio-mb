@@ -59,6 +59,7 @@ export const copyPl = {
     flagshipBadge: 'flagship',
     openLabel: 'Otwórz',
     openDomainLabel: 'Otwórz',
+    factEvidenceLabel: 'Źródło',
   },
   cases: {
     eyebrow: 'Case studies',

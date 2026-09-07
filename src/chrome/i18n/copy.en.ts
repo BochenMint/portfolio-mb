@@ -58,6 +58,7 @@ export const copyEn = {
     flagshipBadge: 'flagship',
     openLabel: 'Open',
     openDomainLabel: 'Open',
+    factEvidenceLabel: 'Source',
   },
   cases: {
     eyebrow: 'Case studies',

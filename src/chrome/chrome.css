@@ -809,3 +809,29 @@
   inherits: false;
   initial-value: 0%;
 }
+
+/* --- Anchor-nav offset: keep the fixed header off section headings --- */
+section[id] {
+  scroll-margin-top: 80px;
+}
+@media (min-width: 768px) {
+  section[id] {
+    scroll-margin-top: 96px;
+  }
+}
+
+/* --- Facts strip stat tiles ------------------------------------------ */
+.fact-tile {
+  min-width: 0;
+}
+.fact-tile__value {
+  font-family: var(--font-mono, inherit);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.fact-tile__label {
+  margin-top: 0.3rem;
+  cursor: help;
+}

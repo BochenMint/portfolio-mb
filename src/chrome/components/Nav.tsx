@@ -121,8 +121,12 @@ export function Nav() {
         </ul>
 
         <div className="flex items-center gap-2">
-          <ThemeToggle className="hidden sm:flex" />
-          <LangSwitch className="hidden sm:flex" />
+          <div className="max-sm:hidden">
+            <ThemeToggle />
+          </div>
+          <div className="max-sm:hidden">
+            <LangSwitch />
+          </div>
           <LinkButton href={ctaHref} external={!!site.calendly} size="sm" magnetic={false}>
             {c.navCta}
           </LinkButton>

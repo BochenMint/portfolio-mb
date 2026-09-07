@@ -42,6 +42,7 @@ export type ChromeCopy = {
     flagshipBadge: string
     openLabel: string
     openDomainLabel: string
+    factEvidenceLabel: string
   }
   cases: {
     eyebrow: string
