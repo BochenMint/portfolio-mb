@@ -5,8 +5,8 @@
     "id": "home",
     "label": { "pl": "Strona główna", "en": "Homepage" },
     "caption": {
-      "pl": "Hero strony głównej iDrive Cars — pełnoekranowa klatka wideo z testu Mercedes-AMG GT S, licznik „Wszystkie (136)” pod sekcją wybranych testów liczony na żywo z treści MDX.",
-      "en": "iDrive Cars homepage hero — full-bleed video frame from the Mercedes-AMG GT S test, with a live \"All (136)\" article counter pulled from the MDX content below the fold."
+      "pl": "Hero strony głównej iDrive Cars — pełnoekranowa klatka wideo z testu Mercedes-AMG GT S, licznik „Wszystkie (136)” pod sekcją wybranych testów liczony na żywo z treści MDX. Zrzut kwadratowy 1600×1600.",
+      "en": "iDrive Cars homepage hero — full-bleed video frame from the Mercedes-AMG GT S test, with a live \"All (136)\" article counter pulled from the MDX content below the fold. Square 1600×1600 capture."
     }
   },
   {
@@ -15,8 +15,8 @@
     "id": "article",
     "label": { "pl": "Artykuł ze zdjęciem hero", "en": "Article page with hero photo" },
     "caption": {
-      "pl": "Strona artykułu (sekcja News, ponieważ galerie zdjęć do testów aut są przechowywane lokalnie i nie wchodzą w skład tego repo/checkoutu) — pokazuje realny render treści MDX z prawdziwym zdjęciem hero, okruszkami i metadanymi daty/kategorii.",
-      "en": "Article detail page (News section — used because the car-test photo galleries live on the author's local disk and are not part of this repo checkout) showing real MDX rendering with a genuine hero photo, breadcrumbs and date/category metadata."
+      "pl": "Strona artykułu (sekcja News, ponieważ galerie zdjęć do testów aut są przechowywane lokalnie i nie wchodzą w skład tego repo/checkoutu) — realny render treści MDX z prawdziwym zdjęciem hero, okruszkami i metadanymi daty/kategorii. Zrzut kwadratowy 1600×1600.",
+      "en": "Article detail page (News section — used because the car-test photo galleries live on the author's local disk and are not part of this repo checkout) showing real MDX rendering with a genuine hero photo, breadcrumbs and date/category metadata. Square 1600×1600 capture."
     }
   },
   {
@@ -25,18 +25,18 @@
     "id": "gallery",
     "label": { "pl": "Siatka zdjęć redakcyjnych", "en": "Editorial photo grid" },
     "caption": {
-      "pl": "Listing News z realnymi miniaturami WebP (6 prawdziwych zdjęć w public/news) — najbliższy odpowiednik zdjęciocentrycznej galerii dostępny w tym checkoucie, bo binaria galerii testów (public/galleries) są w .gitignore i nie zostały sklonowane.",
-      "en": "News listing with real WebP thumbnails (6 genuine photos under public/news) — the closest photo-driven grid available in this checkout, since the test-article gallery binaries (public/galleries) are gitignored and were not cloned."
+      "pl": "Listing News z realnymi miniaturami WebP (6 prawdziwych zdjęć w public/news) — najbliższy odpowiednik zdjęciocentrycznej galerii dostępny w tym checkoucie, bo binaria galerii testów (public/galleries) są w .gitignore i nie zostały sklonowane. Zrzut kwadratowy 1600×1600.",
+      "en": "News listing with real WebP thumbnails (6 genuine photos under public/news) — the closest photo-driven grid available in this checkout, since the test-article gallery binaries (public/galleries) are gitignored and were not cloned. Square 1600×1600 capture."
     }
   },
   {
     "file": "face-4.webp",
     "light": null,
-    "id": "index",
-    "label": { "pl": "Indeks testów", "en": "Tests index" },
+    "id": "article-2",
+    "label": { "pl": "Drugi artykuł redakcyjny", "en": "Second editorial article" },
     "caption": {
-      "pl": "Listing „Testy” — 100 opublikowanych artykułów liczonych dynamicznie z MDX, numerowane wiersze z marką/modelem. Małe ikony miniatur w prawym rogu są rozbite, bo pliki galerii nie są częścią tego checkoutu (zdjęcia przechowywane lokalnie/poza repo) — reszta strony (tekst, liczby, layout) jest w pełni realna.",
-      "en": "\"Tests\" listing — 100 published articles counted live from MDX, numbered rows with brand/model. The small thumbnail icons in the corner are broken because gallery files are not part of this checkout (photos are stored locally, outside the repo) — everything else on the page (copy, counts, layout) is fully real."
+      "pl": "Artykuł News o uruchomieniu produkcji Škody Peaq — wybrany zamiast indeksu „Testy”, którego miniatury są rozbite w tym checkoucie (brak plików galerii). Strona renderuje się w pełni przy szerokości 1000px, z realnym zdjęciem z linii produkcyjnej. Zrzut kwadratowy 1600×1600.",
+      "en": "News article on the Škoda Peaq production launch — chosen instead of the \"Tests\" index, whose thumbnails are broken in this checkout (gallery files are missing). The page renders fully at 1000px width with a genuine factory-floor photo. Square 1600×1600 capture."
     }
   }
 ]
