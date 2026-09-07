@@ -12,12 +12,16 @@ import './liquid.css'
  * mixed fonts (Geist regular + italic Instrument Serif `<em>`) draw exactly
  * like the DOM does — including wrapping, since we never guess line breaks.
  *
- * That word mask (alpha) is blurred + Sobel-differentiated once on the CPU
- * into a static "bevel" normal map. Per frame, the fragment shader adds a
- * slow flowing noise perturbation on top (stronger away from glyph edges,
- * so the bevel stays crisp) and reflects the surface into a procedural
- * chrome environment (bright sky / dark horizon / graphite ground + a
- * couple of soft highlight streaks), inverted in light theme.
+ * The mask is drawn at a high, fixed resolution (>=2x CSS px) so glyph edges
+ * stay crisp no matter the render target size. Alongside the crisp alpha we
+ * bake a *soft* bevel normal (large blur radius, ~cap-height scale) and a
+ * "local line Y" channel — each word's own top-to-bottom 0..1 position —
+ * which is what actually drives the Y2K chrome look: a smooth vertical
+ * sky -> horizon -> ground gradient per line of text, not a per-pixel
+ * reflection off a noisy normal. A slow, very-low-frequency 2-octave noise
+ * field only *wobbles* that gradient (mercury flow) and never touches
+ * per-pixel color directly, so the interior stays glassy and continuous —
+ * never speckled.
  *
  * Falls back to the static `.chrome-text` gradient (already applied by the
  * caller as the base className) when WebGL2 is unavailable or the user
@@ -73,13 +77,15 @@ precision highp float;
 in vec2 vUv;
 out vec4 outColor;
 
-uniform sampler2D uMask; // R,G = base normal (xy, -1..1 packed 0..1), B = edge factor, A = crisp glyph alpha
+// R,G = bevel normal (xy, packed 0..1), B = local line-Y (0 top of glyph's
+// own line box -> 1 bottom), A = crisp glyph alpha.
+uniform sampler2D uMask;
 uniform float uTime;
-uniform vec2 uMouse; // -1..1
-uniform float uLight; // 0 = dark theme, 1 = light theme
-uniform vec2 uAspect; // width/height correction for noise sampling
+uniform vec2 uMouseUv;   // cursor position in the same 0..1 space as vUv
+uniform float uLight;    // 0 = dark theme, 1 = light theme
+uniform vec2 uNoiseScale; // low spatial frequency, in cycles across the headline
 
-// cheap hash-based value noise, 2 octaves
+// cheap hash-based value noise
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
   p += dot(p, p + 45.32);
@@ -95,95 +101,94 @@ float vnoise(vec2 p) {
   vec2 u = f * f * (3.0 - 2.0 * f);
   return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
 }
-float flow(vec2 p, float t) {
-  float n = 0.0;
-  n += vnoise(p * 2.2 + vec2(t * 0.15, -t * 0.10)) * 0.55;
-  n += vnoise(p * 4.7 + vec2(-t * 0.22, t * 0.18)) * 0.30;
-  n += vnoise(p * 9.3 + vec2(t * 0.31, t * 0.05)) * 0.15;
-  return n;
+// At most 2 octaves, very low frequency (set via uNoiseScale, ~1.5-2.5
+// cycles across the whole headline) and slow (~0.05-0.1 cycles/s) — this is
+// the *only* per-pixel variance in the whole shader, so it stays a smooth,
+// continuous wobble rather than speckle.
+float flow(vec2 uv, float t) {
+  vec2 p = uv * uNoiseScale;
+  float n = vnoise(p + vec2(t * 0.07, -t * 0.05)) * 0.7;
+  n += vnoise(p * 1.6 + vec2(-t * 0.05, t * 0.08) + 11.0) * 0.3;
+  return n - 0.5; // -0.5..0.5
 }
 
-vec3 chromeEnv(vec3 r, float lightMode, float t, vec2 mouse) {
-  // A tight "zoom" on the environment turns even the small normal wobble of
-  // a mostly-flat glyph surface into multiple sky/horizon/ground crossings
-  // sweeping across the letterforms — the classic melted-metal look, rather
-  // than a single flat mid-tone.
-  float y = (r.y + mouse.y * 0.15) * 3.4;
-  float horizonY = 0.02 + mouse.y * 0.05;
+// Smooth Y2K chrome environment: broad sky / soft grey / a sharp dark
+// horizon seam sitting in the lower-middle third of each glyph's own line,
+// then a bright(ish) ground below. y is 0 at the top of the line box and
+// 1 at the bottom (already includes the slow liquid wobble).
+vec3 chromeBands(float y, float lightMode) {
+  float horizon = 0.64;
 
-  // Dark theme: bright sky band up top, dark horizon seam, graphite ground.
-  // Light theme: the emphasis inverts so the metal still reads on a pale
-  // page — graphite sky, the same dark horizon seam, bright/white ground.
-  float sky = smoothstep(-0.1, 0.65, y - horizonY);
-  vec3 skyDark = mix(vec3(0.06, 0.065, 0.075), vec3(1.0), sky);
-  vec3 skyLight = mix(vec3(0.88, 0.885, 0.90), vec3(0.14, 0.15, 0.17), sky);
-  vec3 skyCol = mix(skyDark, skyLight, lightMode);
+  vec3 sky = mix(vec3(0.99), vec3(0.20, 0.21, 0.23), lightMode);
+  vec3 ground = mix(vec3(0.74, 0.76, 0.79), vec3(0.95), lightMode);
+  vec3 horizonCol = vec3(0.035);
 
-  float horizon = 1.0 - smoothstep(0.0, 0.035, abs(y - horizonY));
-  vec3 horizonCol = mix(vec3(0.015), vec3(0.05), lightMode);
-  vec3 col = mix(skyCol, horizonCol, horizon * 0.92);
+  // subtle internal gradient so sky/ground read as glossy rounded bands
+  // rather than flat fills (soft grey transition toward the horizon).
+  float skyFall = smoothstep(0.0, horizon, y);
+  vec3 skyShaded = mix(sky * 1.03, mix(sky, horizonCol, 0.35), skyFall);
 
-  float bandPhase = r.x * 6.0 + t * 0.12;
-  float band = sin((y - horizonY) * 55.0 + bandPhase) * 0.5 + 0.5;
-  vec3 groundDark = mix(vec3(0.10, 0.105, 0.115), vec3(0.30, 0.31, 0.33), band);
-  vec3 groundLight = mix(vec3(0.80, 0.82, 0.85), vec3(0.97), band);
-  vec3 groundCol = mix(groundDark, groundLight, lightMode);
-  col = mix(col, groundCol, smoothstep(horizonY + 0.01, horizonY - 0.5, y));
+  float groundRise = smoothstep(horizon, 1.0, y);
+  vec3 groundShaded = mix(mix(ground, horizonCol, 0.30), ground * 1.02, groundRise);
 
-  // Soft highlight streaks (softbox reflections), slowly drifting with time
-  // + mouse. In dark mode they're bright glints; in light mode they read as
-  // the "darker reflections" that keep the metal legible on a pale ground.
-  for (int i = 0; i < 3; i++) {
-    float fi = float(i);
-    float speed = 0.045 + fi * 0.02;
-    float width = 0.05 + fi * 0.015;
-    float offset = fract(0.2 + fi * 0.37 + t * speed + mouse.x * 0.08);
-    float d = abs(fract(r.x * 0.9 + 0.5) - offset);
-    d = min(d, 1.0 - d);
-    float streak = smoothstep(width, 0.0, d) * smoothstep(-0.9, 0.1, y - horizonY) * (0.6 - fi * 0.12);
-    col += streak * mix(1.0, -0.85, lightMode);
-  }
+  float toHorizon = smoothstep(horizon - 0.07, horizon, y);
+  float fromHorizon = smoothstep(horizon, horizon + 0.045, y);
 
-  return clamp(col, 0.0, 1.0);
+  vec3 col = mix(skyShaded, horizonCol, toHorizon);
+  col = mix(col, groundShaded, fromHorizon);
+  return col;
 }
 
 void main() {
   vec4 mask = texture(uMask, vUv);
   float alpha = mask.a;
-  if (alpha < 0.02) discard;
+  // fwidth-based antialiasing on top of the already-AA'd source alpha —
+  // guards against shimmer if the mask is ever sampled at an angle/scale.
+  float aaw = max(fwidth(alpha), 0.0001);
+  float coverage = smoothstep(0.5 - aaw, 0.5 + aaw, alpha);
+  if (coverage < 0.01) discard;
 
-  vec2 baseN = mask.rg * 2.0 - 1.0;
-  float edge = mask.b;
+  vec2 baseN = mask.rg * 2.0 - 1.0; // smooth bevel normal (large blur radius, no noise)
+  float lineY = mask.b;
+  float edgeMag = clamp(length(baseN), 0.0, 1.0);
 
-  vec2 flowUv = vUv * uAspect;
-  float fx = flow(flowUv + vec2(1.7, 0.3), uTime) - 0.5;
-  float fy = flow(flowUv + vec2(-2.1, 4.4), uTime) - 0.5;
-  vec2 liquidN = vec2(fx, fy) * 1.1;
+  // Slow low-frequency wobble of the band boundary itself — this is what
+  // makes the reflection "flow like mercury" without ever perturbing
+  // per-pixel color/normal at high frequency.
+  float wobble = flow(vUv, uTime);
+  float mouseTilt = (uMouseUv.y - 0.5) * 0.05;
+  float y = clamp(lineY + wobble * 0.10 + mouseTilt, 0.0, 1.0);
 
-  // mouse gently pushes the flow field, like a light dragging across mercury
-  liquidN += uMouse * 0.16;
+  vec3 col = chromeBands(y, uLight);
 
-  float interior = 1.0 - edge; // flat glyph interior flows more; edges keep their bevel
-  vec2 n2 = baseN + liquidN * (0.3 + interior * 0.9);
-  n2 = clamp(n2, -1.3, 1.3);
-  float nz = sqrt(max(0.05, 1.0 - dot(n2, n2) * 0.45));
-  vec3 normal = normalize(vec3(n2, nz));
+  // Broad, soft-edged softbox streaks drifting slowly across the headline.
+  for (int i = 0; i < 2; i++) {
+    float fi = float(i);
+    float speed = 0.02 + fi * 0.015;
+    float width = 0.16 + fi * 0.06;
+    float center = fract(0.28 + fi * 0.42 + uTime * speed);
+    float d = abs(fract(vUv.x - center + 0.5) - 0.5);
+    float streak = smoothstep(width, 0.0, d);
+    col += streak * mix(0.16, -0.12, uLight);
+  }
 
-  vec3 viewDir = vec3(0.0, 0.0, 1.0);
-  vec3 reflected = reflect(-viewDir, normal);
+  // Mild specular that follows the cursor, like a light dragging over mercury.
+  float distToMouse = distance(vUv, uMouseUv);
+  float specular = smoothstep(0.4, 0.0, distToMouse) * 0.18;
+  col += specular * mix(1.0, -0.6, uLight);
 
-  vec3 env = chromeEnv(reflected, uLight, uTime, uMouse);
+  // Crisp embossed rim from the *smooth* bevel normal (no noise inside it):
+  // brightens the top edge of strokes, darkens the bottom, like polished
+  // metal catching an overhead light.
+  col += (-baseN.y) * edgeMag * mix(0.22, 0.14, uLight);
+  col += (-baseN.x) * edgeMag * mix(0.10, 0.06, uLight);
 
-  float fresnel = pow(1.0 - clamp(dot(normal, viewDir), 0.0, 1.0), 2.2);
-  vec3 rimCol = uLight > 0.5 ? vec3(0.05) : vec3(1.0);
-  vec3 color = env + rimCol * fresnel * 0.35;
+  // Final tone map: clamp hard so highlights read as pure white and the
+  // horizon reads as deep graphite — high contrast but smooth (no per-pixel
+  // banding artifacts since every input above is a smooth function).
+  col = clamp(col, 0.0, 1.0);
 
-  // punch contrast so it reads as bright, high-contrast liquid metal
-  float contrastAmt = mix(1.35, 1.2, uLight);
-  color = (color - 0.5) * contrastAmt + 0.5;
-  color = clamp(color, 0.0, 1.0);
-
-  outColor = vec4(color * alpha, alpha);
+  outColor = vec4(col * coverage, coverage);
 }`
 
 function compile(gl: WebGL2RenderingContext, type: number, src: string): WebGLShader {
@@ -227,9 +232,9 @@ class LiquidChromeEngine {
   private prog: WebGLProgram
   private tex: WebGLTexture
   private uTime: WebGLUniformLocation | null
-  private uMouse: WebGLUniformLocation | null
+  private uMouseUv: WebGLUniformLocation | null
   private uLight: WebGLUniformLocation | null
-  private uAspect: WebGLUniformLocation | null
+  private uNoiseScale: WebGLUniformLocation | null
 
   private ro: ResizeObserver
   private mo: MutationObserver
@@ -243,20 +248,21 @@ class LiquidChromeEngine {
   private maskDirty = true
   private theme: 'light' | 'dark' = 'dark'
 
-  private mouseX = 0
-  private mouseY = 0
-  private mouseTX = 0
-  private mouseTY = 0
+  // Cursor position, smoothed, expressed in the wrapper's own 0..1 UV space.
+  private mouseU = 0.5
+  private mouseV = 0.3
+  private mouseTU = 0.5
+  private mouseTV = 0.3
   private onMouseMove = (e: MouseEvent) => {
     const r = this.wrap.getBoundingClientRect()
-    const cx = r.left + r.width / 2
-    const cy = r.top + r.height / 2
-    const span = Math.max(window.innerWidth, window.innerHeight)
-    this.mouseTX = Math.max(-1, Math.min(1, ((e.clientX - cx) / span) * 3))
-    this.mouseTY = Math.max(-1, Math.min(1, ((e.clientY - cy) / span) * 3))
+    if (r.width === 0 || r.height === 0) return
+    this.mouseTU = (e.clientX - r.left) / r.width
+    this.mouseTV = (e.clientY - r.top) / r.height
   }
 
-  private maskDpr = Math.min(window.devicePixelRatio || 1, 3)
+  // Mask is always built at a high, fixed resolution (>=2x CSS px) so glyph
+  // edges stay crisp regardless of the (possibly lower-res) render target.
+  private maskDpr = Math.max(2, Math.min(window.devicePixelRatio || 1, 3))
   private renderDpr = 1
 
   constructor(gl: WebGL2RenderingContext, wrap: HTMLDivElement, canvas: HTMLCanvasElement) {
@@ -265,7 +271,7 @@ class LiquidChromeEngine {
     this.canvas = canvas
 
     const dpr = window.devicePixelRatio || 1
-    this.renderDpr = Math.min(dpr >= 2 ? dpr * 0.5 : dpr, 2)
+    this.renderDpr = Math.min(dpr >= 2 ? Math.max(1.5, dpr * 0.5) : dpr, 2)
 
     this.prog = link(gl, VERT, FRAG)
     const vbo = gl.createBuffer()
@@ -287,9 +293,9 @@ class LiquidChromeEngine {
 
     gl.useProgram(this.prog)
     this.uTime = gl.getUniformLocation(this.prog, 'uTime')
-    this.uMouse = gl.getUniformLocation(this.prog, 'uMouse')
+    this.uMouseUv = gl.getUniformLocation(this.prog, 'uMouseUv')
     this.uLight = gl.getUniformLocation(this.prog, 'uLight')
-    this.uAspect = gl.getUniformLocation(this.prog, 'uAspect')
+    this.uNoiseScale = gl.getUniformLocation(this.prog, 'uNoiseScale')
     gl.uniform1i(gl.getUniformLocation(this.prog, 'uMask'), 0)
 
     gl.enable(gl.BLEND)
@@ -363,14 +369,24 @@ class LiquidChromeEngine {
     crisp.width = w
     crisp.height = h
     const ctx = crisp.getContext('2d')
-    if (!ctx) return
+    // Second canvas: for every word, paint its own top->bottom position
+    // (0..1, black->white) into its bounding box. This is what lets the
+    // shader draw a coherent sky/horizon/ground gradient per *line* of
+    // text instead of one continuous gradient across the whole block.
+    const lineYCanvas = document.createElement('canvas')
+    lineYCanvas.width = w
+    lineYCanvas.height = h
+    const lctx = lineYCanvas.getContext('2d')
+    if (!ctx || !lctx) return
     ctx.scale(dpr, dpr)
+    lctx.scale(dpr, dpr)
     ctx.textAlign = 'left'
     ctx.fillStyle = '#fff'
 
     const domRoot = this.wrap.querySelector<HTMLElement>('.liquid-chrome__dom')
     if (!domRoot) return
 
+    let maxFontPx = 16
     const walker = document.createTreeWalker(domRoot, NodeFilter.SHOW_TEXT)
     let node: Node | null
     while ((node = walker.nextNode())) {
@@ -380,6 +396,8 @@ class LiquidChromeEngine {
       const cs = window.getComputedStyle(parent)
       const font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`
       ctx.font = font
+      const fontPx = parseFloat(cs.fontSize)
+      if (Number.isFinite(fontPx)) maxFontPx = Math.max(maxFontPx, fontPx)
       const letterSpacing = cs.letterSpacing
       if (letterSpacing && letterSpacing !== 'normal' && 'letterSpacing' in ctx) {
         ;(ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = letterSpacing
@@ -398,20 +416,38 @@ class LiquidChromeEngine {
         const x = box.left - rect.left
         const y = box.top - rect.top + ascent
         ctx.fillText(m[0], x, y)
+
+        const y0 = box.top - rect.top
+        const y1 = box.bottom - rect.top
+        if (y1 > y0) {
+          const grad = lctx.createLinearGradient(0, y0, 0, y1)
+          grad.addColorStop(0, '#000')
+          grad.addColorStop(1, '#fff')
+          lctx.fillStyle = grad
+          lctx.fillRect(x - 2, y0, box.width + 4, y1 - y0)
+        }
       }
     }
 
     const src = ctx.getImageData(0, 0, w, h)
+    const lineYSrc = lctx.getImageData(0, 0, w, h)
     const n = w * h
     const alpha = new Float32Array(n)
     for (let i = 0; i < n; i++) alpha[i] = src.data[i * 4 + 3] / 255
 
-    // separable box blur (2 passes, small radius) for the normal-map source
-    const radius = Math.max(1, Math.round(2 * dpr))
+    // Bevel blur radius scales with cap-height (~70% of font size), not a
+    // fixed pixel count — ~8% of cap height gives a soft rounded edge
+    // rather than a thin halo, and stays proportional at any font size.
+    const capHeightPx = maxFontPx * dpr * 0.7
+    const radius = Math.max(3, Math.min(40, Math.round(capHeightPx * 0.08)))
     const blurred = boxBlur2D(alpha, w, h, radius)
 
+    // Gradient magnitude for a full 0->1 transition over a blur of this
+    // radius is ~1/(2*radius) per pixel; scale back up so the bevel normal
+    // reaches a sensible peak tilt right at the edge, then clamp gently.
+    const gradGain = radius * 1.6
+
     const out = new Uint8Array(n * 4)
-    const strength = 2.2
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         const xm1 = Math.max(0, x - 1)
@@ -420,14 +456,13 @@ class LiquidChromeEngine {
         const yp1 = Math.min(h - 1, y + 1)
         const gx = (blurred[y * w + xp1] - blurred[y * w + xm1]) * 0.5
         const gy = (blurred[yp1 * w + x] - blurred[ym1 * w + x]) * 0.5
-        const nx = Math.max(-1, Math.min(1, -gx * strength * dpr))
-        const ny = Math.max(-1, Math.min(1, -gy * strength * dpr))
-        const edge = Math.max(0, Math.min(1, Math.hypot(gx, gy) * strength * dpr))
+        const nx = Math.max(-0.6, Math.min(0.6, -gx * gradGain))
+        const ny = Math.max(-0.6, Math.min(0.6, -gy * gradGain))
         const i = (y * w + x) * 4
         out[i] = ((nx * 0.5 + 0.5) * 255) | 0
         out[i + 1] = ((ny * 0.5 + 0.5) * 255) | 0
-        out[i + 2] = (edge * 255) | 0
-        out[i + 3] = src.data[i + 3]
+        out[i + 2] = lineYSrc.data[i] // local line-Y, 0..255
+        out[i + 3] = src.data[i + 3] // crisp (unblurred) alpha
       }
     }
 
@@ -450,8 +485,8 @@ class LiquidChromeEngine {
 
       if (this.maskDirty) this.rebuildMask()
 
-      this.mouseX += (this.mouseTX - this.mouseX) * 0.05
-      this.mouseY += (this.mouseTY - this.mouseY) * 0.05
+      this.mouseU += (this.mouseTU - this.mouseU) * 0.05
+      this.mouseV += (this.mouseTV - this.mouseV) * 0.05
 
       this.render((ts - this.startTime) / 1000)
     }
@@ -467,10 +502,13 @@ class LiquidChromeEngine {
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_2D, this.tex)
     gl.uniform1f(this.uTime, t)
-    gl.uniform2f(this.uMouse, this.mouseX, this.mouseY)
+    gl.uniform2f(this.uMouseUv, this.mouseU, this.mouseV)
     gl.uniform1f(this.uLight, this.theme === 'light' ? 1 : 0)
+    // ~2 cycles of noise across the full headline width, matched in Y so
+    // noise cells stay roughly square regardless of the box's aspect ratio.
     const rect = this.wrap.getBoundingClientRect()
-    gl.uniform2f(this.uAspect, Math.max(1, rect.width) / 200, Math.max(1, rect.height) / 200)
+    const aspect = rect.width > 0 ? rect.height / rect.width : 0.3
+    gl.uniform2f(this.uNoiseScale, 2.0, Math.max(0.6, 2.0 * aspect))
     gl.drawArrays(gl.TRIANGLES, 0, 6)
   }
 
