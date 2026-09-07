@@ -152,7 +152,7 @@ export function Nav() {
       </nav>
 
       {open && (
-        <div className="glass-nav r-card-sm mx-auto mt-2 max-w-6xl p-2 lg:hidden">
+        <div className="glass-nav glass-nav--solid r-card-sm mx-auto mt-2 max-w-6xl p-2 lg:hidden">
           <ul className="flex flex-col">
             {c.nav.map((l) => (
               <li key={l.href}>

@@ -687,6 +687,23 @@
       0 20px 50px -20px rgba(20, 24, 30, 0.25);
   }
 
+  /* Near-opaque variant for panels that must not let underlying content
+     (e.g. hero text) show through — used by the open mobile menu. */
+  .glass-nav--solid {
+    backdrop-filter: blur(32px) saturate(140%);
+    -webkit-backdrop-filter: blur(32px) saturate(140%);
+    background:
+      linear-gradient(rgba(10, 10, 12, 0.94), rgba(10, 10, 12, 0.94)) padding-box,
+      linear-gradient(90deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.06) 40%, rgba(255, 255, 255, 0.06) 60%, rgba(255, 255, 255, 0.35))
+        border-box;
+  }
+  :root[data-theme='light'] .glass-nav--solid {
+    background:
+      linear-gradient(rgba(244, 245, 247, 0.96), rgba(244, 245, 247, 0.96)) padding-box,
+      linear-gradient(90deg, rgba(20, 24, 30, 0.18), rgba(20, 24, 30, 0.04) 40%, rgba(20, 24, 30, 0.04) 60%, rgba(20, 24, 30, 0.18))
+        border-box;
+  }
+
   /* --- Chrome bezel around screenshots ------------------------- */
   .bezel {
     position: relative;
