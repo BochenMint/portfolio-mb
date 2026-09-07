@@ -45,6 +45,22 @@ carries short marketing copy. Nothing here is shown to visitors.
   in this checkout (gallery files are missing). The page renders fully at
   1000px width with a genuine factory-floor photo. Square 1600×1600 capture.
 
+## plumm (`public/projects/plumm/faces.json`)
+
+- **face-1 (`dashboard`)** — Post-login dashboard — a real render from a
+  local run (Next.js 15 + PostgreSQL, "Jan Kowalski IT" demo data): revenue,
+  VAT due and the running PIT advance computed live from 5 issued invoices.
+  Captured at a 1000×1000 viewport.
+- **face-2 (`invoices`)** — The sales invoices list with net/VAT/gross
+  computed per line and KSeF integration ("Fetch from KSeF") — the same 5
+  demo invoices also feed the dashboard and settlements views.
+- **face-3 (`ksef-wizard`)** — The onboarding wizard for Poland's national
+  e-invoicing system (KSeF) — a 4-step flow (company & method, token, test,
+  auto-sync) for e-invoicing that became mandatory in 2026.
+- **face-4 (`settlements`)** — Accounts receivable/payable — outstanding
+  balances and net position computed automatically from open items, with
+  tabs for payment matching and aging analysis.
+
 ## agentic (`public/projects/agentic/faces.json`)
 
 - **face-1 (`jarvis-home`)** — Real screenshot (React 19 + Vite; API

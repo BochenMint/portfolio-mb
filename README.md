@@ -4,7 +4,7 @@ Dwie edycje w jednym repo (Vite multi-page):
 
 | Ścieżka | Edycja | Kod |
 |---------|--------|-----|
-| `/` | **Chrome** — dojrzała marka IT: polerowany chrom, szczotkowana stal, geometria Apple, odbicie kursora w kartach | `src/chrome/` |
+| `/` | **Chrome** — dojrzała marka IT: polerowany chrom, szczotkowana stal, geometria Apple, odbicie kursora w kartach, liquid-chrome headline | `src/chrome/` |
 | `/classic/` | Poprzednia edycja (mint/gold, glass, horizontal scroll) | `src/components/`, `src/App.tsx` |
 
 Obie edycje dzielą dane (`src/data/content.ts`), hooki Lenis/magnetic oraz screeny w `public/projects/`.
@@ -15,6 +15,10 @@ Obie edycje dzielą dane (`src/data/content.ts`), hooki Lenis/magnetic oraz scre
 - **Powierzchnie:** `.chrome-card` (polerowany chrom, odbicie kursora sterowane przez `useChromeReflection`), `.chrome-card-light` (lustrzany, jasny — 1 na ekran), `.brushed` (szczotkowana stal z tekstury `public/chrome/brushed.webp`)
 - **Geometria:** `corner-shape: superellipse(1.7)` z fallbackiem na `border-radius` (Apple continuous corners)
 - **Obrazy:** `public/chrome/` — torus chromowy w hero, tekstura szczotkowana (wygenerowane w Higgsfield, zoptymalizowane do WebP)
+- **Nagłówek:** `LiquidChrome` (`src/chrome/components/LiquidChrome.tsx`) — headline hero z żywym, płynnym overlayem WebGL2 chromu nałożonym dokładnie na litery
+- **Języki:** przełącznik PL/EN (`src/chrome/i18n/`) — cały content, w tym `src/data/content.ts` / `content.en.ts`, jest tłumaczony niezależnie dla obu wariantów językowych
+- **Motyw:** przełącznik jasny/ciemny (`src/chrome/theme/ThemeProvider.tsx`, `localStorage` klucz `mb-theme`) — respektuje `prefers-color-scheme` i pozwala nadpisać wybór ręcznie
+- **Kostki 3D projektów:** `ProjectCube` (`src/chrome/components/ProjectCube.tsx`) — obracana kostka 3D z realnymi zrzutami ekranu produktu na ściankach (osobne warianty jasne/ciemne, patrz `public/projects/<id>/faces.json`), zamiast statycznych miniaturek
 - **Copy:** `src/chrome/copy.ts` (ton „international IT brand"), dane wspólne w `src/data/content.ts`
 
 Produkty: **Plumm.pl**, **Mintapartments.pl**, **iDrive Cars**, **Agentic OS**.
@@ -31,6 +35,8 @@ npm run dev
 Build: `npm run build` → `dist/`
 
 Regeneracja screenów produktów: `npm run capture:screens`
+
+Optymalizacja zrzutów kostek 3D (`public/projects/<id>/faces.json` + `.webp`): `npm run faces:optimize`
 
 ## Konfiguracja sprzedaży
 

@@ -5,8 +5,8 @@
     "id": "dashboard",
     "label": { "pl": "Pulpit", "en": "Dashboard" },
     "caption": {
-      "pl": "Pulpit po zalogowaniu — realny render lokalnego uruchomienia (Next.js 15 + PostgreSQL, dane demo \"Jan Kowalski IT\"): przychód, VAT do zapłaty i narastająca zaliczka PIT liczone na żywo z 5 wystawionych faktur. Zrzut z viewportu 1000×1000.",
-      "en": "The post-login dashboard — a real render from a local run (Next.js 15 + PostgreSQL, \"Jan Kowalski IT\" demo data): revenue, VAT due and the running PIT advance computed live from 5 issued invoices. Captured at a 1000×1000 viewport."
+      "pl": "Przychód, VAT do zapłaty i zaliczka PIT liczone na żywo z każdej wystawionej faktury.",
+      "en": "Revenue, VAT due and the PIT advance computed live from every invoice you issue."
     }
   },
   {
@@ -15,8 +15,8 @@
     "id": "invoices",
     "label": { "pl": "Faktury sprzedażowe", "en": "Sales invoices" },
     "caption": {
-      "pl": "Lista faktur sprzedażowych z netto/VAT/brutto wyliczonymi per pozycja i integracją KSeF (\"Pobierz z KSeF\") — te same 5 faktur demo widoczne też w rozrachunkach i na pulpicie.",
-      "en": "The sales invoices list with net/VAT/gross computed per line and KSeF integration (\"Fetch from KSeF\") — the same 5 demo invoices also feeding the dashboard and settlements views."
+      "pl": "Faktury z netto/VAT/brutto per pozycja i jednym kliknięciem do KSeF.",
+      "en": "Invoices with net/VAT/gross per line and one click to KSeF."
     }
   },
   {
@@ -25,18 +25,18 @@
     "id": "ksef-wizard",
     "label": { "pl": "Kreator KSeF", "en": "KSeF setup wizard" },
     "caption": {
-      "pl": "Kreator podłączenia do Krajowego Systemu e-Faktur (KSeF) — 4-krokowy przepływ (firma i metoda, token, test, auto-sync) dla obowiązkowego od 2026 e-fakturowania w Polsce.",
-      "en": "The onboarding wizard for Poland's national e-invoicing system (KSeF) — a 4-step flow (company & method, token, test, auto-sync) for e-invoicing that became mandatory in 2026."
+      "pl": "Podłączenie do Krajowego Systemu e-Faktur w 4 krokach — gotowe na obowiązkowe KSeF.",
+      "en": "Connect to Poland's national e-invoicing system in 4 steps — ready for mandatory KSeF."
     }
   },
   {
     "file": "face-4.webp",
     "light": "face-4-light.webp",
     "id": "settlements",
-    "label": { "pl": "Rozrachunki", "en": "Settlements (AR/AP)" },
+    "label": { "pl": "Rozrachunki", "en": "Settlements" },
     "caption": {
-      "pl": "Rozrachunki z kontrahentami — należności, zobowiązania i saldo netto wyliczone automatycznie z otwartych pozycji, z zakładkami dopasowania płatności i wiekowania należności.",
-      "en": "Accounts receivable/payable — outstanding balances and net position computed automatically from open items, with tabs for payment matching and aging analysis."
+      "pl": "Należności, zobowiązania i saldo netto liczone automatycznie z otwartych pozycji.",
+      "en": "Receivables, payables and net balance calculated automatically from open items."
     }
   }
 ]

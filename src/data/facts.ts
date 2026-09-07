@@ -56,7 +56,7 @@ export const headlineFactIds: Record<string, string[]> = {
   mint: ['locales', 'blog-posts', 'tests'],
   idrive: ['mdx-articles', 'brands', 'published-tests'],
   agentic: ['agents', 'agent-tools', 'api-endpoints'],
-  plumm: [],
+  plumm: ['xsd-validated-formats', 'test-cases', 'api-routes'],
 }
 
 /**
@@ -74,6 +74,9 @@ const shortLabelsById: Record<string, { pl: string; en: string }> = {
   agents: { pl: 'agentów', en: 'agents' },
   'agent-tools': { pl: 'narzędzi', en: 'tools' },
   'api-endpoints': { pl: 'endpointów API', en: 'API endpoints' },
+  'xsd-validated-formats': { pl: 'silników XSD', en: 'XSD engines' },
+  'test-cases': { pl: 'scenariuszy testowych', en: 'test scenarios' },
+  'api-routes': { pl: 'endpointów API', en: 'API endpoints' },
 }
 
 /** The curated headline facts for a project, in `headlineFactIds` order. */
