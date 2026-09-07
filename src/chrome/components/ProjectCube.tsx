@@ -164,12 +164,17 @@ async function buildScene(
   })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.5))
   renderer.outputColorSpace = THREE.SRGBColorSpace
+  renderer.toneMapping = THREE.NoToneMapping
   renderer.setSize(Math.max(1, opts.width), Math.max(1, opts.height), false)
 
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(28, Math.max(opts.width, 1) / Math.max(opts.height, 1), 0.1, 20)
   const camTiltRad = THREE.MathUtils.degToRad(12)
-  const camDist = 3.65
+  // Tuned so the cube (unit-size, bounding box unaffected by the tilt
+  // rotation which is about X) fills ~92% of the canvas width at the
+  // stage's fixed aspect ratio (--size : --size * 1.16), leaving enough
+  // vertical headroom for the tilted top and the contact shadow.
+  const camDist = 2.55
   camera.position.set(0, Math.sin(camTiltRad) * camDist, Math.cos(camTiltRad) * camDist)
   camera.lookAt(0, 0.02, 0)
 
@@ -223,6 +228,21 @@ async function buildScene(
   shadowPlane.position.y = -0.56
   tiltGroup.add(shadowPlane)
 
+  // Backdrop halo: a soft dark radial fade behind the cube. On a light
+  // page a uniformly bright environment leaves the chrome silhouette
+  // blending into the background — this darkens the horizon right behind
+  // the object so its edges read clearly. Invisible in dark theme.
+  const haloTex = makeContactShadowTexture(THREE)
+  const haloMat = new THREE.MeshBasicMaterial({
+    map: haloTex,
+    transparent: true,
+    depthWrite: false,
+    opacity: 0,
+  })
+  const haloPlane = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.6), haloMat)
+  haloPlane.position.z = -0.85
+  tiltGroup.add(haloPlane)
+
   // Embedded screens on the four side faces.
   const sideDefs = [
     { pos: [0, 0, 0.504] as const, rot: [0, 0, 0] as const },
@@ -230,8 +250,8 @@ async function buildScene(
     { pos: [0, 0, -0.504] as const, rot: [0, Math.PI, 0] as const },
     { pos: [-0.504, 0, 0] as const, rot: [0, -Math.PI / 2, 0] as const },
   ]
-  const screenSize = 0.8
-  const screenGeo = new THREE.ShapeGeometry(roundedRectShape(THREE, screenSize, screenSize, 0.09), 16)
+  const screenSize = 0.88
+  const screenGeo = new THREE.ShapeGeometry(roundedRectShape(THREE, screenSize, screenSize, 0.1), 16)
   // ShapeGeometry writes raw shape-space coordinates into the uv attribute
   // (not normalized to the shape's bounding box) — remap into [0,1] so the
   // face texture's repeat/offset cover-crop lines up correctly.
@@ -252,12 +272,19 @@ async function buildScene(
 
   for (let i = 0; i < 4; i++) {
     const def = sideDefs[i]
+    // Screens are rendered unlit: the source texture is fed through
+    // `emissiveMap` (which scene lights/RectAreaLights never touch) so its
+    // colors and contrast reach the canvas untouched, while a thin
+    // clearcoat layer on top of a black base still picks up a subtle glass
+    // highlight without washing the image out.
     const mat = new THREE.MeshPhysicalMaterial({
       color: 0x0b0c0e,
-      roughness: 0.25,
+      emissive: 0xffffff,
+      emissiveIntensity: 0,
+      roughness: 0.2,
       clearcoat: 1,
-      clearcoatRoughness: 0.08,
-      envMapIntensity: 1,
+      clearcoatRoughness: 0.06,
+      envMapIntensity: 0.35,
     })
     const mesh = new THREE.Mesh(screenGeo, mat)
     mesh.position.set(def.pos[0], def.pos[1], def.pos[2])
@@ -296,8 +323,9 @@ async function buildScene(
           fitTextureCover(tex, img?.width ?? 1, img?.height ?? 1)
           if (slot.texture) slot.texture.dispose()
           slot.texture = tex
-          slot.material.map = tex
-          slot.material.color.set(0xffffff)
+          slot.material.emissiveMap = tex
+          slot.material.emissiveIntensity = 1
+          slot.material.color.set(0x000000)
           slot.material.needsUpdate = true
           renderer.render(scene, camera)
         } catch {
@@ -309,16 +337,20 @@ async function buildScene(
 
   function applyTheme(theme: ThemeName) {
     const isLight = theme === 'light'
-    bodyMat.envMapIntensity = isLight ? 1.35 : 1.0
-    bodyMat.color.set(isLight ? 0xeef0f3 : 0xe3e5ea)
+    // Slightly darker reflections in light theme (rather than brighter)
+    // keep the chrome from washing into a pale page background.
+    bodyMat.envMapIntensity = isLight ? 0.95 : 1.0
+    bodyMat.color.set(isLight ? 0xe6e8ec : 0xe3e5ea)
     screens.forEach((slot) => {
-      slot.material.envMapIntensity = isLight ? 1.1 : 0.9
+      slot.material.envMapIntensity = 0.35
     })
     keyLight.intensity = isLight ? 11 : 9
     fillLight.intensity = isLight ? 5 : 4
     rimLight.intensity = isLight ? 3.4 : 3
-    ambient.intensity = isLight ? 0.28 : 0.16
-    shadowMat.opacity = isLight ? 0.32 : 0.6
+    ambient.intensity = isLight ? 0.22 : 0.16
+    shadowMat.opacity = isLight ? 0.7 : 0.55
+    shadowPlane.scale.setScalar(isLight ? 1.2 : 1)
+    haloMat.opacity = isLight ? 0.4 : 0
     void applyFaceTextures(theme)
   }
 
@@ -353,6 +385,8 @@ async function buildScene(
     })
     shadowMat.dispose()
     shadowTex.dispose()
+    haloMat.dispose()
+    haloTex.dispose()
     envRT.texture.dispose()
     renderer.dispose()
   }

@@ -5,8 +5,14 @@
    reduced-motion rules it out).
 ------------------------------------------------------------------- */
 
+/* Sized against the Work section's actual two-column grid (max-w-6xl,
+   lg:gap-16) rather than raw viewport width, so the cube can be enlarged
+   without overflowing its column once the grid switches to two columns
+   at the lg breakpoint (and the container caps out at 1152px). Below lg
+   the cube's column is the full (single) content column, so a viewport
+   fraction is safe there. */
 .cube-stage {
-  --size: clamp(260px, min(42vw, 520px), 520px);
+  --size: clamp(280px, 78vw, 420px);
   position: relative;
   display: flex;
   align-items: center;
@@ -14,6 +20,21 @@
   width: var(--size);
   height: calc(var(--size) * 1.16);
   margin-inline: auto;
+}
+@media (min-width: 768px) {
+  .cube-stage {
+    --size: clamp(320px, 44vw, 480px);
+  }
+}
+@media (min-width: 1024px) {
+  .cube-stage {
+    --size: clamp(320px, 38vw, 520px);
+  }
+}
+@media (min-width: 1232px) {
+  .cube-stage {
+    --size: 520px;
+  }
 }
 
 .cube-canvas {
