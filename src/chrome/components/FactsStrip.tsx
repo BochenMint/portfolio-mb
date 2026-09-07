@@ -13,10 +13,16 @@ export function FactsStrip({ projectId }: { projectId: string }) {
         <li
           key={fact.id}
           className="fact-tile"
-          title={fact.evidence ? `${c.work.factEvidenceLabel}: ${fact.evidence}` : undefined}
+          title={
+            fact.evidence
+              ? `${fact.label[locale]} — ${c.work.factEvidenceLabel}: ${fact.evidence}`
+              : fact.label[locale]
+          }
         >
-          <p className="chrome-text fact-tile__value">{fact.value}</p>
-          <p className="eyebrow fact-tile__label">{fact.label[locale]}</p>
+          <p className="chrome-text fact-tile__value" style={{ fontSize: '1.05rem' }}>
+            {fact.value}
+          </p>
+          <p className="eyebrow fact-tile__label">{fact.short?.[locale] ?? fact.label[locale]}</p>
         </li>
       ))}
     </ul>

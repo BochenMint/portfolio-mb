@@ -2,6 +2,8 @@ export type Fact = {
   id: string
   value: string
   label: { pl: string; en: string }
+  /** Curated ≤2-word label for tight stat-tile layouts; falls back to `label`. */
+  short?: { pl: string; en: string }
   evidence: string
 }
 
@@ -57,6 +59,23 @@ export const headlineFactIds: Record<string, string[]> = {
   plumm: [],
 }
 
+/**
+ * ≤2-word short labels for every headline fact, keyed by fact id — keeps
+ * stat tiles from wrapping to 3 lines of uppercase mono text. Falls back to
+ * the full `label` when a fact id has no entry here.
+ */
+const shortLabelsById: Record<string, { pl: string; en: string }> = {
+  locales: { pl: 'języków', en: 'locales' },
+  'blog-posts': { pl: 'wpisów bloga', en: 'blog posts' },
+  tests: { pl: 'plików testów', en: 'test files' },
+  'mdx-articles': { pl: 'artykułów MDX', en: 'MDX articles' },
+  brands: { pl: 'marek aut', en: 'car brands' },
+  'published-tests': { pl: 'testów aut', en: 'car tests' },
+  agents: { pl: 'agentów', en: 'agents' },
+  'agent-tools': { pl: 'narzędzi', en: 'tools' },
+  'api-endpoints': { pl: 'endpointów API', en: 'API endpoints' },
+}
+
 /** The curated headline facts for a project, in `headlineFactIds` order. */
 export function headlineFactsFor(projectId: string): Fact[] {
   const ids = headlineFactIds[projectId] ?? []
@@ -64,4 +83,5 @@ export function headlineFactsFor(projectId: string): Fact[] {
   return ids
     .map((id) => all.find((f) => f.id === id))
     .filter((f): f is Fact => Boolean(f))
+    .map((f) => (shortLabelsById[f.id] ? { ...f, short: shortLabelsById[f.id] } : f))
 }
