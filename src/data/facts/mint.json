@@ -1,0 +1,44 @@
+{
+  "facts": [
+    {
+      "id": "network-access",
+      "value": "blocked",
+      "label": { "pl": "Dostęp sieciowy do mintapartments.pl w tej sesji", "en": "Network access to mintapartments.pl in this session" },
+      "evidence": "curl -v https://mintapartments.pl/ through the session's mandatory egress proxy returned 'CONNECT tunnel failed, response 403' (curl error 56) on repeated attempts — the proxy denies this host by policy. No live HTML, hreflang tags, schema.org markup or apartment count could be fetched or verified in this session; all facts below are carried over from prior portfolio content, not freshly verified."
+    },
+    {
+      "id": "locales",
+      "value": "7",
+      "label": { "pl": "języków / wariantów lokalizacyjnych", "en": "locales / language variants" },
+      "evidence": "from portfolio content, unverified — could not confirm via hreflang tags because mintapartments.pl was unreachable from this session (proxy CONNECT 403)"
+    },
+    {
+      "id": "booking-engine",
+      "value": "Previo",
+      "label": { "pl": "silnik rezerwacji", "en": "booking engine" },
+      "evidence": "from portfolio content, unverified — live booking widget could not be inspected because the site was unreachable from this session"
+    },
+    {
+      "id": "smart-locks",
+      "value": "Tedee / Nuki",
+      "label": { "pl": "zamki inteligentne / kontrola dostępu", "en": "smart locks / access control" },
+      "evidence": "from portfolio content, unverified — no live confirmation possible in this session"
+    },
+    {
+      "id": "ai-concierge",
+      "value": "yes",
+      "label": { "pl": "concierge AI dla gości", "en": "AI concierge for guests" },
+      "evidence": "from portfolio content, unverified — no live confirmation possible in this session"
+    },
+    {
+      "id": "screenshots-reused",
+      "value": "2 of 4",
+      "label": { "pl": "zrzutów ekranu ponownie wykorzystanych z wcześniejszej sesji", "en": "screenshots reused from an earlier session" },
+      "evidence": "face-3 and face-4 in faces.json reuse hero-card.webp and apartment-card.webp because two fresh live-site captures (apartments listing, booking step, or EN/DE locale) could not be taken — mintapartments.pl was unreachable through the session proxy (403 on CONNECT)"
+    }
+  ],
+  "summary": {
+    "pl": "Mint Apartments to produkcyjna strona apartamentów na wynajem krótkoterminowy w Trójmieście (Astro + React) z wielojęzycznym bezpośrednim bookingiem. W tej sesji nie udało się połączyć z witryną na żywo (polityka proxy środowiska blokuje mintapartments.pl), więc poniższe liczby dotyczące lokalizacji językowych, silnika rezerwacji i integracji smart-lock pochodzą z wcześniejszych materiałów portfolio i są oznaczone jako niezweryfikowane w tej sesji; zrzuty ekranu to częściowo istniejące pliki z poprzedniej sesji.",
+    "en": "Mint Apartments is a production short-term rental site for the Tri-City area (Astro + React) with multilingual direct booking. This session could not reach the live site (the environment's proxy policy blocks mintapartments.pl), so the figures below on locale count, booking engine, and smart-lock integration come from earlier portfolio material and are flagged as unverified in this session; the screenshots are partly existing files carried over from a prior session."
+  }
+}

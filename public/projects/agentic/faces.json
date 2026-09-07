@@ -1,0 +1,42 @@
+[
+  {
+    "file": "face-1.webp",
+    "light": null,
+    "id": "jarvis-home",
+    "label": { "pl": "Jarvis — ekran główny", "en": "Jarvis home" },
+    "caption": {
+      "pl": "Prawdziwy zrzut ekranu (React 19 + Vite, dane API zamockowane w Playwright na podstawie realnych schematów backendu). Głosowy/tekstowy command center z porannym briefingiem generowanym lokalnie (qwen3.6:27b).",
+      "en": "Real screenshot (React 19 + Vite; API responses mocked in Playwright against the actual backend schemas). Voice/text command center with a morning briefing synthesized locally (qwen3.6:27b)."
+    }
+  },
+  {
+    "file": "face-2.webp",
+    "light": null,
+    "id": "operations-deck",
+    "label": { "pl": "Pulpit na żywo — orkiestracja agentów", "en": "Live operations deck" },
+    "caption": {
+      "pl": "Podgląd 10 agentów w 3 scope'ach (Personal/Plumm/Mint) w czasie rzeczywistym, z historią runów, modelem/tierem i licznikiem eskalacji/pending changes.",
+      "en": "Real-time view of 10 agents across 3 scopes (Personal/Plumm/Mint), with run history, model/tier badges, and escalation/pending-change counters."
+    }
+  },
+  {
+    "file": "face-3.webp",
+    "light": null,
+    "id": "capture-inbox",
+    "label": { "pl": "Capture inbox", "en": "Capture inbox" },
+    "caption": {
+      "pl": "Kolejka przechwyceń z iOS Shortcuts / Telegrama / clipboardu — głos, tekst, screeny i linki czekające na wzbogacenie przez pipeline pamięci.",
+      "en": "Capture queue from iOS Shortcuts / Telegram / clipboard — voice, text, screenshots and links waiting to be enriched by the memory pipeline."
+    }
+  },
+  {
+    "file": "face-4.webp",
+    "light": null,
+    "id": "memory-explorer",
+    "label": { "pl": "Pamięć — eksplorator shardów", "en": "Memory explorer" },
+    "caption": {
+      "pl": "Warstwa pamięci L3 (Cognee + pgvector + Apache AGE): rozkład pewności, liczba shardów per scope, wpisy przestarzałe/zastąpione.",
+      "en": "The L3 memory layer (Cognee + pgvector + Apache AGE): confidence distribution, shard counts per scope, and stale/superseded entries."
+    }
+  }
+]
