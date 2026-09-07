@@ -1,7 +1,46 @@
 import { useEffect, useState } from 'react'
 import { useLocale } from '../i18n/context'
 import type { Locale } from '../i18n/types'
+import { useTheme } from '../theme/context'
 import { LinkButton } from './primitives'
+
+function SunIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </svg>
+  )
+}
+
+function MoonIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+    </svg>
+  )
+}
+
+function ThemeToggle({ className = '' }: { className?: string }) {
+  const { theme, toggle } = useTheme()
+  const { t } = useLocale()
+  const isLight = theme === 'light'
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={t.themeToggle}
+      aria-pressed={isLight}
+      title={isLight ? t.themeDark : t.themeLight}
+      className={`chrome-btn flex h-9 w-9 shrink-0 !p-0 ${className}`}
+    >
+      <span className="relative z-10 inline-flex items-center justify-center">
+        {isLight ? <SunIcon /> : <MoonIcon />}
+      </span>
+    </button>
+  )
+}
 
 function LangSwitch({ className = '' }: { className?: string }) {
   const { locale, setLocale, t } = useLocale()
@@ -82,6 +121,7 @@ export function Nav() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle className="hidden sm:flex" />
           <LangSwitch className="hidden sm:flex" />
           <LinkButton href={ctaHref} external={!!site.calendly} size="sm" magnetic={false}>
             {c.navCta}
@@ -122,7 +162,8 @@ export function Nav() {
               </li>
             ))}
           </ul>
-          <div className="mt-1 flex justify-center border-t border-white/[0.06] pt-3 sm:hidden">
+          <div className="mt-1 flex items-center justify-center gap-2 border-t border-white/[0.06] pt-3 sm:hidden">
+            <ThemeToggle />
             <LangSwitch />
           </div>
         </div>

@@ -61,8 +61,9 @@ export function Cursor() {
         data-cursor-ring
         aria-hidden
         className={`pointer-events-none fixed top-0 left-0 z-[10001] -ml-5 -mt-5 h-10 w-10 rounded-full border transition-[scale,opacity,border-color] duration-300 ${
-          hovering ? 'scale-[1.6] border-white/70 opacity-90' : 'scale-100 border-white/25 opacity-60'
+          hovering ? 'scale-[1.6] opacity-90' : 'scale-100 opacity-60'
         }`}
+        style={{ borderColor: hovering ? 'var(--cursor-ring-strong)' : 'var(--cursor-ring-soft)' }}
       />
       <div
         data-cursor-bead

@@ -28,6 +28,9 @@ export const copyEn = {
     pl: 'PL',
     en: 'EN',
   },
+  themeLight: 'Light mode',
+  themeDark: 'Dark mode',
+  themeToggle: 'Light/dark mode',
   hero: {
     eyebrow: 'Digital products · PropTech · FinTech · AI ops',
     // Rendered as: line 1 + line 2, the serif word is emphasised.

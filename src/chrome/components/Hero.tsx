@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useLocale } from '../i18n/context'
+import { LiquidChrome } from './LiquidChrome'
 import { Arrow, Em, LinkButton } from './primitives'
 
 export function Hero() {
@@ -54,12 +55,14 @@ export function Hero() {
           </p>
 
           <h1 className="mt-6 max-w-[14ch] text-[clamp(2.5rem,5.2vw,4.75rem)] leading-[1.02] font-semibold">
-            <span data-hero-line className="chrome-text inline-block">
-              {c.hero.h1a} {c.hero.h1b}
-            </span>{' '}
-            <span data-hero-line className="inline-block text-silver-2">
-              {c.hero.h1cPrefix} <Em>{c.hero.h1cEm}</Em>
-            </span>
+            <LiquidChrome>
+              <span data-hero-line className="chrome-text inline-block">
+                {c.hero.h1a} {c.hero.h1b}
+              </span>{' '}
+              <span data-hero-line className="inline-block text-silver-2">
+                {c.hero.h1cPrefix} <Em>{c.hero.h1cEm}</Em>
+              </span>
+            </LiquidChrome>
           </h1>
 
           <p

@@ -48,16 +48,10 @@ export function Contact() {
               alt=""
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover"
-              style={{ objectPosition: '72% 40%', mixBlendMode: 'screen' }}
+              className="studio-object-img h-full w-full object-cover"
+              style={{ objectPosition: '72% 40%' }}
             />
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  'linear-gradient(90deg, rgba(5,5,6,0.85) 0%, transparent 30%, transparent 85%, rgba(5,5,6,0.6) 100%), linear-gradient(180deg, transparent 60%, rgba(5,5,6,0.9) 100%)',
-              }}
-            />
+            <div className="studio-object-fade pointer-events-none absolute inset-0" />
           </div>
         </div>
 

@@ -18,6 +18,7 @@ import { useChromeReflection } from './hooks/useChromeReflection'
 import { useIntro } from './hooks/useIntro'
 import { useLocale } from './i18n/context'
 import { LocaleProvider } from './i18n/LocaleProvider'
+import { ThemeProvider } from './theme/ThemeProvider'
 
 const metaDescription = {
   pl: 'Bochen Studio — inżynieria produktów cyfrowych klasy premium. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Booking, FinTech, AI ops. Projekty od 25 000 PLN.',
@@ -83,8 +84,10 @@ function AppShell() {
 
 export default function App() {
   return (
-    <LocaleProvider>
-      <AppShell />
-    </LocaleProvider>
+    <ThemeProvider>
+      <LocaleProvider>
+        <AppShell />
+      </LocaleProvider>
+    </ThemeProvider>
   )
 }

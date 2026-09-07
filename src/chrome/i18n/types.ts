@@ -19,6 +19,9 @@ export type ChromeCopy = {
     pl: string
     en: string
   }
+  themeLight: string
+  themeDark: string
+  themeToggle: string
   hero: {
     eyebrow: string
     h1a: string

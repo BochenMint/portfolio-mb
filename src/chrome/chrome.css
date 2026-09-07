@@ -58,16 +58,19 @@
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
   --font-serif: 'Instrument Serif', 'Times New Roman', serif;
 
-  --color-ink: #050506;
-  --color-graphite: #0c0c0f;
-  --color-graphite-2: #141418;
-  --color-steel: #1c1d22;
-  --color-silver: #c9ccd1;
-  --color-silver-2: #9a9ea6;
-  --color-muted: #75797f;
-  --color-white: #f7f8fa;
-  --color-line: rgba(247, 248, 250, 0.08);
-  --color-line-2: rgba(247, 248, 250, 0.16);
+  /* Theme-aware Tailwind color tokens. These read the CSS custom
+     properties below so utilities like bg-ink / text-white / text-silver-2
+     / border-line automatically follow data-theme. */
+  --color-ink: var(--bg);
+  --color-graphite: var(--bg-2);
+  --color-graphite-2: var(--bg-2);
+  --color-steel: var(--bg-2);
+  --color-silver: var(--fg-2);
+  --color-silver-2: var(--muted);
+  --color-muted: var(--muted);
+  --color-white: var(--fg);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
 
   --radius-card: 28px;
   --radius-card-sm: 20px;
@@ -86,9 +89,109 @@
   --angle: 135deg;
   --near: 0; /* 0..1 proximity of cursor */
 
+  color-scheme: dark;
+
+  /* ---- Theme tokens (dark defaults) -------------------------------- */
+  --bg: #050506;
+  --bg-2: #0c0c0f;
+  --fg: #f7f8fa;
+  --fg-2: #c9ccd1;
+  --muted: #75797f;
+  --line: rgba(247, 248, 250, 0.08);
+  --line-2: rgba(247, 248, 250, 0.16);
+  --hairline: rgba(255, 255, 255, 0.35);
+
   --chrome-hi: #ffffff;
   --chrome-lo: #55585e;
   --chrome-mid: #d7dae0;
+  --specular-blend: screen;
+  --shadow-card: 0 30px 60px -30px rgba(0, 0, 0, 0.9);
+
+  --card-surface:
+    linear-gradient(168deg, #232529 0%, #0e0f12 32%, #16171b 49%, #08080a 51%, #131417 78%, #1b1c20 100%) padding-box,
+    conic-gradient(
+        from var(--angle),
+        #ffffff 0deg,
+        #8a8e95 40deg,
+        #3c3f45 90deg,
+        #d9dce1 150deg,
+        #4a4d53 200deg,
+        #f5f6f8 250deg,
+        #5c5f66 300deg,
+        #ffffff 360deg
+      )
+      border-box;
+  --card-inset: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 -1px 0 rgba(0, 0, 0, 0.6) inset;
+
+  --flagship-surface:
+    linear-gradient(168deg, #ffffff 0%, #dfe2e7 30%, #f6f7f9 46%, #a9adb4 52%, #e9ebee 70%, #ffffff 100%) padding-box,
+    conic-gradient(from var(--angle), #ffffff, #6b6f76, #ffffff, #40434a, #eef0f3, #7d8188, #ffffff) border-box;
+  --flagship-inset: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 -1px 0 rgba(0, 0, 0, 0.25) inset;
+  --flagship-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.9);
+
+  --field-bg: rgba(5, 5, 6, 0.7);
+  --focus-ring: rgba(247, 248, 250, 0.06);
+  --focus-border: rgba(247, 248, 250, 0.6);
+
+  --cursor-ring-strong: rgba(247, 248, 250, 0.7);
+  --cursor-ring-soft: rgba(247, 248, 250, 0.25);
+
+  --selection-bg: rgba(247, 248, 250, 0.85);
+  --selection-fg: #050506;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #eef0f3;
+  --bg-2: #f7f8fa;
+  --fg: #0b0b0d;
+  --fg-2: #4a4e55;
+  --muted: #7a7f87;
+  --line: rgba(0, 0, 0, 0.12);
+  --line-2: rgba(0, 0, 0, 0.18);
+  --hairline: rgba(0, 0, 0, 0.16);
+
+  --chrome-hi: #ffffff;
+  --chrome-lo: #6d727a;
+  --chrome-mid: #cdd1d8;
+  --specular-blend: overlay;
+  --shadow-card: 0 30px 60px -30px rgba(20, 24, 30, 0.35);
+
+  /* Chrome cards flip to bright mirror-on-white in light mode. */
+  --card-surface:
+    linear-gradient(168deg, #ffffff 0%, #d4d8de 24%, #f9fafb 44%, #6d727a 50%, #6d727a 52%, #e6e8ec 62%, #ffffff 100%)
+      padding-box,
+    conic-gradient(
+        from var(--angle),
+        #ffffff 0deg,
+        #b9bdc4 40deg,
+        #6e727a 90deg,
+        #ffffff 150deg,
+        #7c8088 200deg,
+        #ffffff 250deg,
+        #9a9ea6 300deg,
+        #ffffff 360deg
+      )
+      border-box;
+  --card-inset: 0 1px 0 rgba(255, 255, 255, 0.95) inset, 0 -1px 0 rgba(20, 24, 30, 0.3) inset;
+
+  /* Flagship inverts to a dark graphite mirror for hierarchy. */
+  --flagship-surface:
+    linear-gradient(168deg, #2b2d31 0%, #101114 30%, #1a1c20 46%, #050506 52%, #17181c 70%, #26282c 100%) padding-box,
+    conic-gradient(from var(--angle), #f2f3f5, #3c3f45, #eef0f3, #16171a, #d9dce1, #2c2e33, #f2f3f5) border-box;
+  --flagship-inset: 0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 -1px 0 rgba(0, 0, 0, 0.7) inset;
+  --flagship-shadow: 0 40px 80px -30px rgba(20, 24, 30, 0.55);
+
+  --field-bg: rgba(255, 255, 255, 0.75);
+  --focus-ring: rgba(11, 11, 13, 0.07);
+  --focus-border: rgba(11, 11, 13, 0.45);
+
+  --cursor-ring-strong: rgba(11, 11, 13, 0.55);
+  --cursor-ring-soft: rgba(11, 11, 13, 0.28);
+
+  --selection-bg: rgba(11, 11, 13, 0.85);
+  --selection-fg: #eef0f3;
 }
 
 @layer base {
@@ -102,7 +205,8 @@
 
   body {
     @apply overflow-x-hidden;
-    background: var(--color-ink);
+    background: var(--bg);
+    transition: background-color 0.4s ease;
   }
 
   body.cursor-custom,
@@ -114,8 +218,8 @@
   }
 
   ::selection {
-    background: rgba(247, 248, 250, 0.85);
-    color: #050506;
+    background: var(--selection-bg);
+    color: var(--selection-fg);
   }
 
   summary::-webkit-details-marker {
@@ -209,6 +313,24 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+  :root[data-theme='light'] .chrome-text {
+    /* Dark polished-chrome letters with a bright reflective band — legible
+       and premium on the bright studio background. */
+    background-image: linear-gradient(
+      178deg,
+      #16171a 0%,
+      #2c2e33 22%,
+      #565962 40%,
+      #f7f8fa 49.5%,
+      #101114 51%,
+      #4a4d54 66%,
+      #7c8088 84%,
+      #16171a 100%
+    );
+  }
+  :root[data-theme='light'] .chrome-text-soft {
+    background-image: linear-gradient(180deg, #1c1d20 0%, #43464c 45%, #6d727a 60%, #17181b 100%);
+  }
 
   /* --- Polished chrome card ------------------------------------ */
   .chrome-card {
@@ -217,27 +339,12 @@
     border-radius: var(--r-card);
     corner-shape: var(--corner);
     border: 1px solid transparent;
-    background:
-      linear-gradient(168deg, #232529 0%, #0e0f12 32%, #16171b 49%, #08080a 51%, #131417 78%, #1b1c20 100%)
-        padding-box,
-      conic-gradient(
-          from var(--angle),
-          #ffffff 0deg,
-          #8a8e95 40deg,
-          #3c3f45 90deg,
-          #d9dce1 150deg,
-          #4a4d53 200deg,
-          #f5f6f8 250deg,
-          #5c5f66 300deg,
-          #ffffff 360deg
-        )
-        border-box;
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.35) inset,
-      0 -1px 0 rgba(0, 0, 0, 0.6) inset,
-      0 30px 60px -30px rgba(0, 0, 0, 0.9),
-      0 0 0 1px rgba(0, 0, 0, 0.6);
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    background: var(--card-surface);
+    box-shadow: var(--card-inset), var(--shadow-card), 0 0 0 1px rgba(0, 0, 0, 0.06);
+    transition:
+      transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+      background 0.4s ease,
+      box-shadow 0.4s ease;
     will-change: transform;
   }
 
@@ -250,7 +357,7 @@
     border-radius: inherit;
     corner-shape: inherit;
     pointer-events: none;
-    mix-blend-mode: screen;
+    mix-blend-mode: var(--specular-blend);
     opacity: calc(0.35 + var(--near) * 0.65);
     background:
       /* hard-edged main streak */
@@ -299,23 +406,41 @@
       linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0%, transparent 12%);
   }
 
+  /* Light theme: bright mirror cards need a dark companion streak (multiply)
+     tracking the cursor, so the highlight reads with definition against the
+     bright surface — a strong dark "environment reflection". */
+  :root[data-theme='light'] .chrome-card:not(.chrome-card-light)::after {
+    mix-blend-mode: multiply;
+    opacity: calc(0.55 + var(--near) * 0.3);
+    background:
+      linear-gradient(
+        var(--angle),
+        transparent calc(var(--mx) - 11%),
+        rgba(20, 22, 26, 0.05) calc(var(--mx) - 6%),
+        rgba(20, 22, 26, 0.32) calc(var(--mx) - 1%),
+        rgba(20, 22, 26, 0.32) calc(var(--mx) + 1%),
+        rgba(20, 22, 26, 0.05) calc(var(--mx) + 6%),
+        transparent calc(var(--mx) + 11%)
+      ),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, transparent 20%),
+      linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, transparent 16%);
+  }
+
   .chrome-card > * {
     position: relative;
     z-index: 2;
   }
 
-  /* Light chrome surface (for the flagship / highlighted card). */
+  /* Light chrome surface (for the flagship / highlighted card). Inverts to a
+     dark graphite mirror in light theme so hierarchy stays intact. */
   .chrome-card-light {
-    background:
-      linear-gradient(168deg, #ffffff 0%, #dfe2e7 30%, #f6f7f9 46%, #a9adb4 52%, #e9ebee 70%, #ffffff 100%)
-        padding-box,
-      conic-gradient(from var(--angle), #ffffff, #6b6f76, #ffffff, #40434a, #eef0f3, #7d8188, #ffffff)
-        border-box;
-    color: #0b0b0d;
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.9) inset,
-      0 -1px 0 rgba(0, 0, 0, 0.25) inset,
-      0 40px 80px -30px rgba(0, 0, 0, 0.9);
+    background: var(--flagship-surface);
+    color: var(--bg);
+    box-shadow: var(--flagship-inset), var(--flagship-shadow);
+    transition:
+      background 0.4s ease,
+      box-shadow 0.4s ease,
+      color 0.4s ease;
   }
   .chrome-card-light::before {
     mix-blend-mode: overlay;
@@ -329,6 +454,29 @@
     border-radius: var(--r-card);
     corner-shape: var(--corner);
     background-color: #17181c;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.18) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.7) inset,
+      0 0 0 1px rgba(255, 255, 255, 0.06);
+    transition: box-shadow 0.4s ease;
+  }
+  :root[data-theme='light'] .brushed {
+    background-color: #d9dce1;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.8) inset,
+      0 -1px 0 rgba(20, 24, 30, 0.28) inset,
+      0 0 0 1px rgba(20, 24, 30, 0.08);
+  }
+  /* Texture layer, isolated behind the sheen so the light-theme filter only
+     affects the metal scratches, never the engraved text content. */
+  .brushed::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    corner-shape: inherit;
+    pointer-events: none;
     background-image:
       linear-gradient(
         180deg,
@@ -339,11 +487,20 @@
       ),
       url('/chrome/brushed.webp');
     background-size: auto, 1400px auto;
-    background-blend-mode: normal, normal;
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.18) inset,
-      0 -1px 0 rgba(0, 0, 0, 0.7) inset,
-      0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  /* Light brushed aluminium: invert the (dark) texture asset so scratches
+     read dark-on-light metal instead of light-on-dark. */
+  :root[data-theme='light'] .brushed::after {
+    filter: invert(0.92) contrast(1.05);
+    background-image:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(20, 24, 30, 0.1) 60%,
+        rgba(255, 255, 255, 0.35) 100%
+      ),
+      url('/chrome/brushed.webp');
   }
   /* Irregular anisotropic sheen — soft, no hard cursor reflection (brushed diffuses). */
   .brushed::before {
@@ -365,6 +522,17 @@
     opacity: calc(0.6 + var(--near) * 0.4);
     mix-blend-mode: screen;
   }
+  :root[data-theme='light'] .brushed::before {
+    background: linear-gradient(
+      100deg,
+      transparent calc(var(--mx) - 40%),
+      rgba(255, 255, 255, 0.5) calc(var(--mx) - 6%),
+      rgba(255, 255, 255, 0.75) var(--mx),
+      rgba(255, 255, 255, 0.5) calc(var(--mx) + 6%),
+      transparent calc(var(--mx) + 40%)
+    );
+    mix-blend-mode: overlay;
+  }
   .brushed > * {
     position: relative;
     z-index: 1;
@@ -372,6 +540,8 @@
   .brushed-band {
     border-radius: 0;
     corner-shape: initial;
+  }
+  .brushed-band::after {
     background-size: auto, 1800px auto;
   }
 
@@ -381,6 +551,12 @@
     text-shadow:
       0 -1px 0 rgba(0, 0, 0, 0.85),
       0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+  :root[data-theme='light'] .engraved {
+    color: #24262a;
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.75),
+      0 -1px 0 rgba(20, 24, 30, 0.2);
   }
 
   /* --- Chrome button ------------------------------------------- */
@@ -453,26 +629,42 @@
     backdrop-filter: blur(12px);
     transition:
       border-color 0.3s ease,
-      background-color 0.3s ease;
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
   .ghost-btn:hover {
-    border-color: rgba(247, 248, 250, 0.45);
+    border-color: var(--focus-border);
     background: rgba(255, 255, 255, 0.05);
+  }
+  :root[data-theme='light'] .ghost-btn {
+    background: rgba(11, 11, 13, 0.03);
+  }
+  :root[data-theme='light'] .ghost-btn:hover {
+    background: rgba(11, 11, 13, 0.06);
+  }
+  /* Inside the flagship (dark-mirror-in-light-theme) card, the ghost button
+     should match the card's own inverted text colour rather than the page's. */
+  .chrome-card-light .ghost-btn {
+    color: inherit;
+    border-color: color-mix(in srgb, currentColor 30%, transparent);
+  }
+  .chrome-card-light .ghost-btn:hover {
+    border-color: color-mix(in srgb, currentColor 55%, transparent);
+    background: color-mix(in srgb, currentColor 6%, transparent);
   }
 
   /* --- Hairlines ------------------------------------------------ */
   .hairline {
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35) 30%, rgba(255, 255, 255, 0.35) 70%, transparent);
+    background: linear-gradient(90deg, transparent, var(--hairline) 30%, var(--hairline) 70%, transparent);
   }
   .hairline-v {
     width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+    background: linear-gradient(180deg, transparent, var(--hairline), transparent);
   }
 
   /* --- Glass nav ------------------------------------------------ */
   .glass-nav {
-    background: rgba(8, 8, 10, 0.55);
     backdrop-filter: blur(24px) saturate(140%);
     -webkit-backdrop-filter: blur(24px) saturate(140%);
     border: 1px solid transparent;
@@ -483,6 +675,16 @@
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.12) inset,
       0 20px 50px -20px rgba(0, 0, 0, 0.8);
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+  }
+  :root[data-theme='light'] .glass-nav {
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.62)) padding-box,
+      linear-gradient(90deg, rgba(20, 24, 30, 0.18), rgba(20, 24, 30, 0.04) 40%, rgba(20, 24, 30, 0.04) 60%, rgba(20, 24, 30, 0.18))
+        border-box;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 20px 50px -20px rgba(20, 24, 30, 0.25);
   }
 
   /* --- Chrome bezel around screenshots ------------------------- */
@@ -508,6 +710,16 @@
       radial-gradient(ellipse 70% 45% at 50% -10%, rgba(255, 255, 255, 0.09), transparent 60%),
       radial-gradient(ellipse 40% 30% at 85% 20%, rgba(255, 255, 255, 0.04), transparent 60%),
       linear-gradient(180deg, #08080a 0%, #050506 100%);
+    transition: background 0.4s ease;
+  }
+  :root[data-theme='light'] .studio-bg {
+    background:
+      radial-gradient(ellipse 75% 50% at 50% -8%, rgba(255, 255, 255, 0.95), transparent 62%),
+      radial-gradient(ellipse 45% 32% at 85% 18%, rgba(180, 190, 205, 0.3), transparent 60%),
+      linear-gradient(180deg, #f3f4f6 0%, #e6e8ec 100%);
+  }
+  :root[data-theme='light'] img[src='/chrome/hero-torus.webp'] {
+    filter: drop-shadow(0 40px 80px rgba(20, 24, 30, 0.35));
   }
 
   .grain::after {
@@ -518,6 +730,25 @@
     z-index: 9990;
     opacity: 0.035;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* --- Studio object (Contact sphere) --------------------------- */
+  .studio-object-img {
+    mix-blend-mode: screen;
+  }
+  :root[data-theme='light'] .studio-object-img {
+    mix-blend-mode: multiply;
+    filter: contrast(1.08) brightness(0.98);
+  }
+  .studio-object-fade {
+    background:
+      linear-gradient(90deg, rgba(5, 5, 6, 0.85) 0%, transparent 30%, transparent 85%, rgba(5, 5, 6, 0.6) 100%),
+      linear-gradient(180deg, transparent 60%, rgba(5, 5, 6, 0.9) 100%);
+  }
+  :root[data-theme='light'] .studio-object-fade {
+    background:
+      linear-gradient(90deg, rgba(238, 240, 243, 0.92) 0%, transparent 30%, transparent 85%, rgba(238, 240, 243, 0.7) 100%),
+      linear-gradient(180deg, transparent 60%, rgba(238, 240, 243, 0.95) 100%);
   }
 
   /* --- Misc ---------------------------------------------------- */
@@ -554,19 +785,19 @@
     border-radius: 14px;
     corner-shape: var(--corner);
     border: 1px solid var(--color-line-2);
-    background: rgba(5, 5, 6, 0.7);
+    background: var(--field-bg);
     padding: 0.8rem 1rem;
     font-size: 0.9rem;
     color: var(--color-white);
     outline: none;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.4s ease;
   }
   .field:focus {
-    border-color: rgba(247, 248, 250, 0.6);
+    border-color: var(--focus-border);
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.05) inset,
-      0 0 0 4px rgba(247, 248, 250, 0.06);
+      0 0 0 4px var(--focus-ring);
   }
   .field:disabled {
     opacity: 0.6;

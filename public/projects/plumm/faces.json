@@ -1,0 +1,46 @@
+[
+  {
+    "file": "hero-hero.webp",
+    "light": null,
+    "id": "overview-1",
+    "label": { "pl": "Panel Plumm", "en": "Plumm dashboard" },
+    "caption": {
+      "pl": "Widok główny panelu Plumm — istniejący zrzut ekranu; tymczasowo powielony na kilku ściankach kostki do czasu dostarczenia dodatkowych zrzutów.",
+      "en": "Plumm dashboard overview — existing screenshot; temporarily reused across several cube faces until additional captures are provided."
+    },
+    "provisional": true
+  },
+  {
+    "file": "hero-card.webp",
+    "light": null,
+    "id": "overview-2",
+    "label": { "pl": "Faktury i eksport", "en": "Invoices & export" },
+    "caption": {
+      "pl": "Karta produktu Plumm — placeholder do czasu dostarczenia zrzutu ekranu modułu faktur/eksportu JPK.",
+      "en": "Plumm product card — placeholder until a screenshot of the invoices/JPK export flow is available."
+    },
+    "provisional": true
+  },
+  {
+    "file": "hero-hero.webp",
+    "light": null,
+    "id": "overview-3",
+    "label": { "pl": "Integracja MINTAX", "en": "MINTAX integration" },
+    "caption": {
+      "pl": "Placeholder — ekran integracji MINTAX zostanie podmieniony po dostarczeniu zrzutu.",
+      "en": "Placeholder — the MINTAX integration screen will be swapped in once a screenshot is provided."
+    },
+    "provisional": true
+  },
+  {
+    "file": "hero-card.webp",
+    "light": null,
+    "id": "overview-4",
+    "label": { "pl": "Raporty", "en": "Reports" },
+    "caption": {
+      "pl": "Placeholder — widok raportów zostanie podmieniony po dostarczeniu zrzutu.",
+      "en": "Placeholder — the reports view will be swapped in once a screenshot is provided."
+    },
+    "provisional": true
+  }
+]

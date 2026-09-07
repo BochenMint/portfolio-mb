@@ -29,6 +29,9 @@ export const copyPl = {
     pl: 'PL',
     en: 'EN',
   },
+  themeLight: 'Tryb jasny',
+  themeDark: 'Tryb ciemny',
+  themeToggle: 'Tryb jasny/ciemny',
   hero: {
     eyebrow: 'Produkty cyfrowe · PropTech · FinTech · AI ops',
     // Rendered as: line 1 + line 2, the serif word is emphasised.
