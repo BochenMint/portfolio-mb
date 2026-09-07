@@ -1,0 +1,42 @@
+[
+  {
+    "file": "face-1.webp",
+    "light": null,
+    "id": "home",
+    "label": { "pl": "Strona główna", "en": "Homepage" },
+    "caption": {
+      "pl": "Strona główna (PL) uruchomiona lokalnie z klonu repozytorium przez `pnpm dev:web` (Astro 5, localhost:4321) — real render, prawdziwe zdjęcia z repo, bez mockowania treści.",
+      "en": "Homepage (PL) rendered locally from a clone of the repo via `pnpm dev:web` (Astro 5, localhost:4321) — a real render using the repo's actual photos, no content mocked."
+    }
+  },
+  {
+    "file": "face-2.webp",
+    "light": null,
+    "id": "apartment",
+    "label": { "pl": "Strona apartamentu + widget rezerwacji", "en": "Apartment page + booking widget" },
+    "caption": {
+      "pl": "Podstrona \"Mint Apartments Seaside\" z galerią i sidebarem rezerwacyjnym (daty, liczba gości, CTA) — lokalny render z realnych danych content collection (`apps/web/src/content/apartments/mint-seaside.mdx`).",
+      "en": "The \"Mint Apartments Seaside\" detail page with its photo gallery and booking sidebar (dates, guest count, CTA) — local render from the real content-collection entry (`apps/web/src/content/apartments/mint-seaside.mdx`)."
+    }
+  },
+  {
+    "file": "face-3.webp",
+    "light": null,
+    "id": "listing-en",
+    "label": { "pl": "Lista apartamentów (EN)", "en": "Apartments listing (EN)" },
+    "caption": {
+      "pl": "Angielska wersja katalogu apartamentów (`/en/apartamenty`) — potwierdza działające i18n (8 lokalizacji skonfigurowanych w astro.config), realne \"16 matches\" odpowiada 16 plikom w content/apartments.",
+      "en": "English-locale apartments catalogue (`/en/apartamenty`) — confirms working i18n (8 locales configured in astro.config); the real \"16 matches\" count matches the 16 files in content/apartments."
+    }
+  },
+  {
+    "file": "face-4.webp",
+    "light": null,
+    "id": "admin-dashboard",
+    "label": { "pl": "Panel admina — dashboard", "en": "Admin panel dashboard" },
+    "caption": {
+      "pl": "Panel administracyjny (Vue 3, localhost:5173/admin/) po zalogowaniu — sesja i trzy endpointy PHP (bookings.php, owners.php) przechwycone przez Playwright i podstawione realistycznymi danymi (bez działającego backendu PHP/MySQL w tej sesji); liczby apartamentów (16) i właścicieli dobrane zgodnie z danymi z repo, kwoty rezerwacji są fikcyjne demo-danymi.",
+      "en": "The admin panel (Vue 3, localhost:5173/admin/) once logged in — the session and three PHP endpoints (bookings.php, owners.php) were intercepted with Playwright and served realistic fixture data, since no PHP/MySQL backend was running in this sandbox; the apartments count (16) matches the repo's real data, booking amounts are synthetic demo figures."
+    }
+  }
+]
