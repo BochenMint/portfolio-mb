@@ -109,9 +109,13 @@ export function SectionHeader({ eyebrow, title, lead, align = 'left', className 
   )
 }
 
-/* ---------- Serif accent (italic, for one word of emphasis) --------- */
+/* ---------- Accent for one word of emphasis --------------------------
+ * Weight contrast inside the display face rather than a second typeface:
+ * the liquid-chrome overlay repaints the whole headline, so an accent can
+ * only read through glyph shape — colour and style differences vanish
+ * underneath it. Light against the headline's semibold does read. */
 export function Em({ children }: { children: ReactNode }) {
-  return <em className="font-serif font-normal italic tracking-[-0.01em]">{children}</em>
+  return <em className="font-light tracking-[-0.02em] not-italic">{children}</em>
 }
 
 /* ---------- Arrow icon ------------------------------------------------ */

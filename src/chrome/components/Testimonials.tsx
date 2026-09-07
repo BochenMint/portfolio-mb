@@ -19,10 +19,10 @@ export function Testimonials() {
               tone="brushed"
               className="flex flex-col p-8 md:p-10"
             >
-              <span aria-hidden className="chrome-text-soft font-serif text-5xl leading-none">
+              <span aria-hidden className="chrome-text-soft text-5xl leading-none font-semibold">
                 &ldquo;
               </span>
-              <p className="mt-4 flex-1 font-serif text-lg leading-relaxed text-white italic">
+              <p className="mt-4 flex-1 text-lg leading-relaxed font-light text-white">
                 {t.quote}
               </p>
               <div className="hairline mt-8" />

@@ -24,7 +24,7 @@ export function Services() {
               </p>
               <div>
                 <h3 className="text-2xl font-semibold tracking-[-0.02em] text-white">{service.title}</h3>
-                <p className="font-serif mt-2 text-lg text-silver-2 italic">{service.subtitle}</p>
+                <p className="mt-2 text-lg font-light text-silver-2">{service.subtitle}</p>
               </div>
               <div className="hairline" />
               <ul className="flex flex-col gap-4">

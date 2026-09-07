@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Face } from '../../data/faces'
 import type { Locale } from '../i18n/types'
+import { supportsWebGL } from '../webgl'
 import './cube.css'
 
 type Props = {
@@ -58,27 +59,6 @@ function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3)
 }
 
-let webglSupported: boolean | null = null
-
-/**
- * A browser page may only hold ~16 live WebGL contexts, and creating one past
- * that limit makes it drop the OLDEST — which is the hero's liquid-chrome
- * headline, created before any cube. The probe below used to leak a context
- * per call (four cubes, twice each under StrictMode), so the headline lost its
- * context on nearly every load. Answer once and hand the probe back.
- */
-function supportsWebGL(): boolean {
-  if (webglSupported !== null) return webglSupported
-  try {
-    const canvas = document.createElement('canvas')
-    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl')
-    gl?.getExtension('WEBGL_lose_context')?.loseContext()
-    webglSupported = Boolean(window.WebGLRenderingContext && gl)
-  } catch {
-    webglSupported = false
-  }
-  return webglSupported
-}
 
 // ---------------------------------------------------------------------
 // Three.js scene: built lazily, entirely isolated from React state. The
@@ -140,17 +120,37 @@ function traceRoundedRect(
 }
 
 /** object-fit: cover, top-aligned, clipped to the screen rect. */
-function drawCoverImage(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
+/** The page's own background, read from the capture's top-left corner, so
+ *  the letterbox around a non-square screenshot reads as part of the page
+ *  rather than as black bars. */
+function samplePageBackground(img: HTMLImageElement): string {
+  const probe = document.createElement('canvas')
+  probe.width = probe.height = 1
+  const pctx = probe.getContext('2d', { willReadFrequently: true })
+  if (!pctx) return '#ffffff'
+  try {
+    pctx.drawImage(img, 2, 2, 8, 8, 0, 0, 1, 1)
+    const [r, g, b] = pctx.getImageData(0, 0, 1, 1).data
+    return `rgb(${r}, ${g}, ${b})`
+  } catch {
+    return '#ffffff'
+  }
+}
+
+/** Fits the whole capture inside the square screen. Cover used to be the
+ *  fit here, which sliced ~9% off each side of any screenshot that was not
+ *  exactly square — the page's own navigation was the first thing to go. */
+function drawContainImage(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
   const iw = img.naturalWidth || img.width
   const ih = img.naturalHeight || img.height
   if (!iw || !ih) return
   const { x, y, size } = SCREEN_RECT
-  const scale = Math.max(size / iw, size / ih)
+  ctx.fillStyle = samplePageBackground(img)
+  ctx.fillRect(x, y, size, size)
+  const scale = Math.min(size / iw, size / ih)
   const dw = iw * scale
   const dh = ih * scale
-  const dx = x + (size - dw) / 2
-  const dy = y
-  ctx.drawImage(img, dx, dy, dw, dh)
+  ctx.drawImage(img, x + (size - dw) / 2, y + (size - dh) / 2, dw, dh)
 }
 
 /** Base-color map: white outside the screen (tinted by material.color to
@@ -319,9 +319,25 @@ async function buildScene(
     depthWrite: false,
     opacity: 0,
   })
-  const haloPlane = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.6), haloMat)
+  const HALO_GEO_SIZE = 2.6
+  const haloPlane = new THREE.Mesh(new THREE.PlaneGeometry(HALO_GEO_SIZE, HALO_GEO_SIZE), haloMat)
   haloPlane.position.z = -0.85
   tiltGroup.add(haloPlane)
+
+  /**
+   * A fixed 2.6-unit halo was wider than the camera frustum at its depth, so
+   * only the dense middle of the radial gradient was ever on screen and it
+   * read as a hard-edged grey rectangle the size of the canvas instead of a
+   * soft glow. Size it against the actual frustum so the fade always
+   * finishes inside the frame.
+   */
+  function fitHalo() {
+    const dist = camDist + Math.abs(haloPlane.position.z)
+    const visibleH = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * dist
+    const visibleW = visibleH * camera.aspect
+    const target = Math.min(visibleW, visibleH) * 0.9
+    haloPlane.scale.setScalar(target / HALO_GEO_SIZE)
+  }
 
   // Screens are baked into the RoundedBoxGeometry's own per-face material
   // slots (BoxGeometry — which this extends — always keeps 6 groups, in
@@ -393,7 +409,7 @@ async function buildScene(
             ctx.save()
             traceRoundedRect(ctx, SCREEN_RECT.x, SCREEN_RECT.y, SCREEN_RECT.size, SCREEN_RECT.size, SCREEN_RECT.r)
             ctx.clip()
-            drawCoverImage(ctx, img)
+            drawContainImage(ctx, img)
             ctx.restore()
           }
           const tex = new THREE.CanvasTexture(canvas)
@@ -440,12 +456,14 @@ async function buildScene(
   }
 
   applyTheme(opts.theme)
+  fitHalo()
 
   function setSize(w: number, h: number) {
     if (w <= 0 || h <= 0) return
     renderer.setSize(w, h, false)
     camera.aspect = w / h
     camera.updateProjectionMatrix()
+    fitHalo()
   }
 
   function setRotationDeg(rot: number) {

@@ -15,36 +15,7 @@
   font-style: normal;
   font-display: swap;
 }
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/fonts/instrument-serif-latin-ext-400-italic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/fonts/instrument-serif-latin-400-italic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/fonts/instrument-serif-latin-ext-400-normal.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/fonts/instrument-serif-latin-400-normal.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+
 
 /* ------------------------------------------------------------------
    Bochen Studio — Chrome edition design system
@@ -56,7 +27,6 @@
   --font-display: 'Geist', 'Inter', system-ui, sans-serif;
   --font-body: 'Geist', 'Inter', system-ui, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
-  --font-serif: 'Instrument Serif', 'Times New Roman', serif;
 
   /* Theme-aware Tailwind color tokens. These read the CSS custom
      properties below so utilities like bg-ink / text-white / text-silver-2
@@ -256,9 +226,6 @@
   }
   .font-mono {
     font-family: var(--font-mono);
-  }
-  .font-serif {
-    font-family: var(--font-serif);
   }
   .text-balance {
     text-wrap: balance;
