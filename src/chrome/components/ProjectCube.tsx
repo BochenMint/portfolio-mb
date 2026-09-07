@@ -58,16 +58,26 @@ function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3)
 }
 
+let webglSupported: boolean | null = null
+
+/**
+ * A browser page may only hold ~16 live WebGL contexts, and creating one past
+ * that limit makes it drop the OLDEST — which is the hero's liquid-chrome
+ * headline, created before any cube. The probe below used to leak a context
+ * per call (four cubes, twice each under StrictMode), so the headline lost its
+ * context on nearly every load. Answer once and hand the probe back.
+ */
 function supportsWebGL(): boolean {
+  if (webglSupported !== null) return webglSupported
   try {
     const canvas = document.createElement('canvas')
-    return Boolean(
-      window.WebGLRenderingContext &&
-        (canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl')),
-    )
+    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl')
+    gl?.getExtension('WEBGL_lose_context')?.loseContext()
+    webglSupported = Boolean(window.WebGLRenderingContext && gl)
   } catch {
-    return false
+    webglSupported = false
   }
+  return webglSupported
 }
 
 // ---------------------------------------------------------------------

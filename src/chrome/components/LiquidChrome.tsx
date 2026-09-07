@@ -43,13 +43,49 @@ export function LiquidChrome({ children }: { children: ReactNode }) {
       alpha: true,
       antialias: false,
       premultipliedAlpha: true,
-      powerPreference: 'low-power',
+      // Matches the project cubes. Contexts asking for different GPUs on the
+      // same page make the browser migrate the page between them, and the
+      // contexts created before the switch are lost.
+      powerPreference: 'high-performance',
     })
     if (!gl) return // fallback: no WebGL2, keep static gradient text
 
-    const engine = new LiquidChromeEngine(gl, wrap, canvas)
-    engine.start()
-    return () => engine.destroy()
+    let engine: LiquidChromeEngine | null = null
+
+    const build = () => {
+      if (engine || gl.isContextLost()) return
+      try {
+        engine = new LiquidChromeEngine(gl, wrap, canvas)
+        engine.start()
+      } catch {
+        // Shader compile/link can fail on a context that is on its way out.
+        engine = null
+        showDomText()
+      }
+    }
+
+    /** Give the glyphs back to the DOM: `.chrome-text` underneath is a
+     *  complete static fallback, and leaving the canvas marked visible would
+     *  cover the headline with a dead, empty rectangle. */
+    const showDomText = () => canvas.classList.remove('liquid-chrome__canvas--visible')
+
+    const onLost = (e: Event) => {
+      e.preventDefault() // without this the browser will never restore it
+      engine?.destroy()
+      engine = null
+      showDomText()
+    }
+    const onRestored = () => build()
+
+    canvas.addEventListener('webglcontextlost', onLost)
+    canvas.addEventListener('webglcontextrestored', onRestored)
+    build()
+
+    return () => {
+      canvas.removeEventListener('webglcontextlost', onLost)
+      canvas.removeEventListener('webglcontextrestored', onRestored)
+      engine?.destroy()
+    }
   }, [])
 
   return (
@@ -63,6 +99,10 @@ export function LiquidChrome({ children }: { children: ReactNode }) {
 /* ------------------------------------------------------------------ *
  * Engine
  * ------------------------------------------------------------------ */
+
+/** CSS px the canvas extends past the text box on every side, so descenders
+ *  and italic overhang are not clipped. Keep in sync with --liquid-pad. */
+const LIQUID_PAD = 16
 
 const VERT = `#version 300 es
 layout(location=0) in vec2 aPos;
@@ -246,6 +286,8 @@ class LiquidChromeEngine {
   private lastRenderTs = 0
   private destroyed = false
   private maskDirty = true
+  private maskSig = ''
+  private sigRange = document.createRange()
   private theme: 'light' | 'dark' = 'dark'
 
   // Cursor position, smoothed, expressed in the wrapper's own 0..1 UV space.
@@ -348,19 +390,42 @@ class LiquidChromeEngine {
 
   private resize() {
     const rect = this.wrap.getBoundingClientRect()
-    const w = Math.max(1, Math.round(rect.width * this.renderDpr))
-    const h = Math.max(1, Math.round(rect.height * this.renderDpr))
+    const w = Math.max(1, Math.round((rect.width + LIQUID_PAD * 2) * this.renderDpr))
+    const h = Math.max(1, Math.round((rect.height + LIQUID_PAD * 2) * this.renderDpr))
     if (this.canvas.width !== w || this.canvas.height !== h) {
       this.canvas.width = w
       this.canvas.height = h
     }
   }
 
+  /**
+   * Where the glyphs currently are. The mask bakes glyph positions, so it has
+   * to be rebuilt whenever they move — and the intro tween slides the lines in
+   * by 36px through inline transforms, which changes no layout box and fires
+   * neither the ResizeObserver nor the childList/characterData observer. A
+   * mask baked mid-tween would stay offset from the real text for good.
+   */
+  private textSignature(): string {
+    const domRoot = this.wrap.querySelector<HTMLElement>('.liquid-chrome__dom')
+    if (!domRoot) return ''
+    const r = this.wrap.getBoundingClientRect()
+    let sig = `${Math.round(r.width)}x${Math.round(r.height)}`
+    const walker = document.createTreeWalker(domRoot, NodeFilter.SHOW_TEXT)
+    let node: Node | null
+    while ((node = walker.nextNode())) {
+      this.sigRange.selectNodeContents(node)
+      const b = this.sigRange.getBoundingClientRect()
+      sig += `|${Math.round(b.top - r.top)},${Math.round(b.left - r.left)},${Math.round(b.width)}`
+    }
+    return sig
+  }
+
   /** Walk real text nodes under `wrap`, draw each word where the browser put it. */
   private rebuildMask() {
+    const sig = this.textSignature()
     const rect = this.wrap.getBoundingClientRect()
-    const cssW = Math.max(1, rect.width)
-    const cssH = Math.max(1, rect.height)
+    const cssW = Math.max(1, rect.width + LIQUID_PAD * 2)
+    const cssH = Math.max(1, rect.height + LIQUID_PAD * 2)
     const dpr = this.maskDpr
     const w = Math.max(1, Math.round(cssW * dpr))
     const h = Math.max(1, Math.round(cssH * dpr))
@@ -413,12 +478,12 @@ class LiquidChromeEngine {
         if (!box || box.width === 0) continue
         const metrics = ctx.measureText(m[0]) as unknown as Metrics
         const ascent = metrics.fontBoundingBoxAscent ?? metrics.actualBoundingBoxAscent
-        const x = box.left - rect.left
-        const y = box.top - rect.top + ascent
+        const x = box.left - rect.left + LIQUID_PAD
+        const y = box.top - rect.top + LIQUID_PAD + ascent
         ctx.fillText(m[0], x, y)
 
-        const y0 = box.top - rect.top
-        const y1 = box.bottom - rect.top
+        const y0 = box.top - rect.top + LIQUID_PAD
+        const y1 = box.bottom - rect.top + LIQUID_PAD
         if (y1 > y0) {
           const grad = lctx.createLinearGradient(0, y0, 0, y1)
           grad.addColorStop(0, '#000')
@@ -472,6 +537,7 @@ class LiquidChromeEngine {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, out)
 
     this.maskDirty = false
+    this.maskSig = sig
     this.canvas.classList.add('liquid-chrome__canvas--visible')
   }
 
@@ -483,6 +549,8 @@ class LiquidChromeEngine {
       if (ts - this.lastRenderTs < 15.5) return // cap ~60fps
       this.lastRenderTs = ts
 
+      const sig = this.textSignature()
+      if (sig !== this.maskSig) this.maskDirty = true
       if (this.maskDirty) this.rebuildMask()
 
       this.mouseU += (this.mouseTU - this.mouseU) * 0.05

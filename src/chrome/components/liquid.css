@@ -10,12 +10,15 @@
   display: block;
 }
 
+/* Bleeds past the text's layout box by --liquid-pad: descenders and italic
+   overhang of a 66px display face reach outside it, and the canvas is the
+   only thing painting the glyphs once it is visible. Keep in sync with
+   LIQUID_PAD in LiquidChrome.tsx. */
 .liquid-chrome__canvas {
+  --liquid-pad: 16px;
   position: absolute;
-  inset: 0;
+  inset: calc(-1 * var(--liquid-pad));
   z-index: 1;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.7s ease;
