@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import gsap from 'gsap'
-import { chromeCopy as c } from '../copy'
+import { useLocale } from '../i18n/context'
 
 type Props = { onComplete: () => void }
 
 /** Minimal chrome preloader: monogram + hairline that fills like a light sweep. */
 export function Preloader({ onComplete }: Props) {
+  const { t: c } = useLocale()
   const [done, setDone] = useState(false)
 
   useEffect(() => {

@@ -1,8 +1,10 @@
-import { faq } from '../../data/content'
-import { chromeCopy as c } from '../copy'
+import { useLocale } from '../i18n/context'
 import { ChromeCard, SectionHeader } from './primitives'
 
 export function FAQ() {
+  const { t: c, content } = useLocale()
+  const faq = content.faq
+
   return (
     <section id="faq" className="px-5 py-24 md:px-10 md:py-32">
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">

@@ -1,8 +1,10 @@
-import { testimonials } from '../../data/content'
-import { chromeCopy as c } from '../copy'
+import { useLocale } from '../i18n/context'
 import { ChromeCard, SectionHeader } from './primitives'
 
 export function Testimonials() {
+  const { t: c, content } = useLocale()
+  const testimonials = content.testimonials
+
   return (
     <section id="opinie" className="px-5 py-24 md:px-10 md:py-32">
       <div className="mx-auto max-w-7xl">

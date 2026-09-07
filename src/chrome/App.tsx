@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useLenis } from '../hooks/useLenis'
 import { Band } from './components/Band'
 import { CaseStudies } from './components/CaseStudies'
@@ -16,10 +16,30 @@ import { Testimonials } from './components/Testimonials'
 import { Work } from './components/Work'
 import { useChromeReflection } from './hooks/useChromeReflection'
 import { useIntro } from './hooks/useIntro'
+import { useLocale } from './i18n/context'
+import { LocaleProvider } from './i18n/LocaleProvider'
 
-export default function App() {
+const metaDescription = {
+  pl: 'Bochen Studio — inżynieria produktów cyfrowych klasy premium. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Booking, FinTech, AI ops. Projekty od 25 000 PLN.',
+  en: 'Bochen Studio — premium digital product engineering. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Booking, FinTech, AI ops. Projects from PLN 25,000.',
+}
+
+function DocumentMeta() {
+  const { locale, t } = useLocale()
+
+  useEffect(() => {
+    document.title = `${t.brand} — ${t.tagline}`
+    const meta = document.querySelector('meta[name="description"]')
+    if (meta) meta.setAttribute('content', metaDescription[locale])
+  }, [locale, t])
+
+  return null
+}
+
+function AppShell() {
   const [ready, setReady] = useState(false)
   const onLoaded = useCallback(() => setReady(true), [])
+  const { t } = useLocale()
 
   useLenis()
   useChromeReflection()
@@ -27,13 +47,14 @@ export default function App() {
 
   return (
     <>
+      <DocumentMeta />
       {!ready && <Preloader onComplete={onLoaded} />}
       <div className={`grain transition-opacity duration-700 ${ready ? 'opacity-100' : 'opacity-0'}`}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10003] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-ink"
         >
-          Przejdź do treści
+          {t.skipLink}
         </a>
         <div
           data-progress-bar
@@ -57,5 +78,13 @@ export default function App() {
         <Footer />
       </div>
     </>
+  )
+}
+
+export default function App() {
+  return (
+    <LocaleProvider>
+      <AppShell />
+    </LocaleProvider>
   )
 }

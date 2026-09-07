@@ -1,7 +1,9 @@
-import { site } from '../../data/content'
-import { chromeCopy as c } from '../copy'
+import { useLocale } from '../i18n/context'
 
 export function Footer() {
+  const { t: c, content } = useLocale()
+  const site = content.site
+
   return (
     <footer className="px-5 py-12 md:px-10">
       <div className="mx-auto max-w-7xl">
@@ -31,7 +33,7 @@ export function Footer() {
         <div className="hairline" />
 
         <div className="flex flex-col gap-3 py-6 text-xs text-muted md:flex-row md:items-center md:justify-between">
-          <p>{c.footer.rights}</p>
+          <p>{c.footer.rights(site.brand, new Date().getFullYear())}</p>
           <a href={c.footer.classicHref} className="text-muted transition-colors hover:text-white">
             {c.footer.classic}
           </a>

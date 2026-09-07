@@ -1,13 +1,14 @@
-import { site } from '../../data/content'
-import { chromeCopy as c } from '../copy'
+import { useLocale } from '../i18n/context'
 import { LeadForm } from './LeadForm'
 import { Arrow, SectionHeader } from './primitives'
 
 export function Contact() {
+  const { t: c, content } = useLocale()
+  const site = content.site
   const rows = [
     { label: c.contact.emailLabel, value: site.email, href: `mailto:${site.email}` },
     ...(site.calendly
-      ? [{ label: c.contact.calendarLabel, value: 'Zarezerwuj termin', href: site.calendly, external: true }]
+      ? [{ label: c.contact.calendarLabel, value: c.contact.calendarValue, href: site.calendly, external: true }]
       : []),
     { label: c.contact.githubLabel, value: site.github.replace('https://', ''), href: site.github, external: true },
   ]

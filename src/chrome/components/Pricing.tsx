@@ -1,8 +1,9 @@
-import { pricing, site } from '../../data/content'
-import { chromeCopy as c } from '../copy'
+import { useLocale } from '../i18n/context'
 import { ChromeCard, LinkButton, SectionHeader } from './primitives'
 
 export function Pricing() {
+  const { t: c, content } = useLocale()
+  const { pricing, site } = content
   const ctaHref = site.calendly || '#kontakt'
 
   return (

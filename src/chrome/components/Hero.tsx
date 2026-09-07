@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react'
-import { site } from '../../data/content'
-import { chromeCopy as c } from '../copy'
+import { useLocale } from '../i18n/context'
 import { Arrow, Em, LinkButton } from './primitives'
 
 export function Hero() {
+  const { t: c, content } = useLocale()
+  const site = content.site
   const ctaHref = site.calendly || '#kontakt'
+  const meta = [site.responseTime, site.location, c.hero.projectsFromLabel(site.minBudget)]
   const objRef = useRef<HTMLDivElement>(null)
 
   // Subtle parallax + rotating light for the chrome object (desktop only).
@@ -56,7 +58,7 @@ export function Hero() {
               {c.hero.h1a} {c.hero.h1b}
             </span>{' '}
             <span data-hero-line className="inline-block text-silver-2">
-              Działają jak <Em>inżynieria.</Em>
+              {c.hero.h1cPrefix} <Em>{c.hero.h1cEm}</Em>
             </span>
           </h1>
 
@@ -78,7 +80,7 @@ export function Hero() {
           </div>
 
           <ul data-hero-fade className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
-            {c.hero.meta.map((m) => (
+            {meta.map((m) => (
               <li key={m} className="font-mono text-[11px] tracking-[0.12em] text-muted uppercase">
                 {m}
               </li>

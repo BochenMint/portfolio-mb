@@ -1,6 +1,5 @@
 import { ProjectImage } from '../../components/ProjectImage'
-import { projects } from '../../data/content'
-import { chromeCopy as c } from '../copy'
+import { useLocale } from '../i18n/context'
 import { Arrow, ChromeCard, SectionHeader } from './primitives'
 
 function Tags({ tags, light }: { tags: string[]; light?: boolean }) {
@@ -21,6 +20,8 @@ function Tags({ tags, light }: { tags: string[]; light?: boolean }) {
 }
 
 export function Work() {
+  const { t: c, content } = useLocale()
+  const projects = content.projects
   const flagship = projects.find((p) => p.flagship) ?? projects[0]
   const rest = projects.filter((p) => p !== flagship)
 
@@ -42,7 +43,7 @@ export function Work() {
           <div className="flex flex-col gap-6 p-2 md:p-4 lg:pr-6">
             <div>
               <p className="font-mono text-[11px] tracking-[0.18em] text-ink/50 uppercase">
-                {flagship.domain} · flagship
+                {flagship.domain} · {c.work.flagshipBadge}
               </p>
               <h3 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-ink md:text-4xl">
                 {flagship.title}
@@ -67,7 +68,7 @@ export function Work() {
                   rel="noopener noreferrer"
                   className="ghost-btn border-ink/20 px-5 py-2.5 text-[13px] text-ink hover:border-ink/50 hover:bg-ink/5"
                 >
-                  Otwórz {flagship.domain}
+                  {c.work.openDomainLabel} {flagship.domain}
                   <Arrow />
                 </a>
               )}
@@ -112,7 +113,7 @@ export function Work() {
                     rel="noopener noreferrer"
                     className="ghost-btn px-4 py-2 text-[13px]"
                   >
-                    Otwórz
+                    {c.work.openLabel}
                     <Arrow />
                   </a>
                 )}

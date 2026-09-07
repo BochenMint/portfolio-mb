@@ -1,6 +1,7 @@
-import { chromeCopy as c } from '../copy'
+import { useLocale } from '../i18n/context'
 
 export function Band() {
+  const { t: c } = useLocale()
   const items = c.band
 
   return (
