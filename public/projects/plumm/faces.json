@@ -1,46 +1,42 @@
 [
   {
-    "file": "hero-hero.webp",
-    "light": null,
-    "id": "overview-1",
-    "label": { "pl": "Panel Plumm", "en": "Plumm dashboard" },
+    "file": "face-1.webp",
+    "light": "face-1-light.webp",
+    "id": "dashboard",
+    "label": { "pl": "Pulpit", "en": "Dashboard" },
     "caption": {
-      "pl": "Widok główny panelu Plumm — istniejący zrzut ekranu; tymczasowo powielony na kilku ściankach kostki do czasu dostarczenia dodatkowych zrzutów.",
-      "en": "Plumm dashboard overview — existing screenshot; temporarily reused across several cube faces until additional captures are provided."
-    },
-    "provisional": true
+      "pl": "Pulpit po zalogowaniu — realny render lokalnego uruchomienia (Next.js 15 + PostgreSQL, dane demo \"Jan Kowalski IT\"): przychód, VAT do zapłaty i narastająca zaliczka PIT liczone na żywo z 5 wystawionych faktur. Zrzut z viewportu 1000×1000.",
+      "en": "The post-login dashboard — a real render from a local run (Next.js 15 + PostgreSQL, \"Jan Kowalski IT\" demo data): revenue, VAT due and the running PIT advance computed live from 5 issued invoices. Captured at a 1000×1000 viewport."
+    }
   },
   {
-    "file": "hero-card.webp",
-    "light": null,
-    "id": "overview-2",
-    "label": { "pl": "Faktury i eksport", "en": "Invoices & export" },
+    "file": "face-2.webp",
+    "light": "face-2-light.webp",
+    "id": "invoices",
+    "label": { "pl": "Faktury sprzedażowe", "en": "Sales invoices" },
     "caption": {
-      "pl": "Karta produktu Plumm — placeholder do czasu dostarczenia zrzutu ekranu modułu faktur/eksportu JPK.",
-      "en": "Plumm product card — placeholder until a screenshot of the invoices/JPK export flow is available."
-    },
-    "provisional": true
+      "pl": "Lista faktur sprzedażowych z netto/VAT/brutto wyliczonymi per pozycja i integracją KSeF (\"Pobierz z KSeF\") — te same 5 faktur demo widoczne też w rozrachunkach i na pulpicie.",
+      "en": "The sales invoices list with net/VAT/gross computed per line and KSeF integration (\"Fetch from KSeF\") — the same 5 demo invoices also feeding the dashboard and settlements views."
+    }
   },
   {
-    "file": "hero-hero.webp",
-    "light": null,
-    "id": "overview-3",
-    "label": { "pl": "Integracja MINTAX", "en": "MINTAX integration" },
+    "file": "face-3.webp",
+    "light": "face-3-light.webp",
+    "id": "ksef-wizard",
+    "label": { "pl": "Kreator KSeF", "en": "KSeF setup wizard" },
     "caption": {
-      "pl": "Placeholder — ekran integracji MINTAX zostanie podmieniony po dostarczeniu zrzutu.",
-      "en": "Placeholder — the MINTAX integration screen will be swapped in once a screenshot is provided."
-    },
-    "provisional": true
+      "pl": "Kreator podłączenia do Krajowego Systemu e-Faktur (KSeF) — 4-krokowy przepływ (firma i metoda, token, test, auto-sync) dla obowiązkowego od 2026 e-fakturowania w Polsce.",
+      "en": "The onboarding wizard for Poland's national e-invoicing system (KSeF) — a 4-step flow (company & method, token, test, auto-sync) for e-invoicing that became mandatory in 2026."
+    }
   },
   {
-    "file": "hero-card.webp",
-    "light": null,
-    "id": "overview-4",
-    "label": { "pl": "Raporty", "en": "Reports" },
+    "file": "face-4.webp",
+    "light": "face-4-light.webp",
+    "id": "settlements",
+    "label": { "pl": "Rozrachunki", "en": "Settlements (AR/AP)" },
     "caption": {
-      "pl": "Placeholder — widok raportów zostanie podmieniony po dostarczeniu zrzutu.",
-      "en": "Placeholder — the reports view will be swapped in once a screenshot is provided."
-    },
-    "provisional": true
+      "pl": "Rozrachunki z kontrahentami — należności, zobowiązania i saldo netto wyliczone automatycznie z otwartych pozycji, z zakładkami dopasowania płatności i wiekowania należności.",
+      "en": "Accounts receivable/payable — outstanding balances and net position computed automatically from open items, with tabs for payment matching and aging analysis."
+    }
   }
 ]
