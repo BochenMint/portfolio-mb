@@ -5,8 +5,8 @@
     "id": "home",
     "label": { "pl": "Strona główna", "en": "Homepage" },
     "caption": {
-      "pl": "Strona główna (PL) uruchomiona lokalnie z klonu repozytorium przez `pnpm dev:web` (Astro 5, localhost:4321) — real render, prawdziwe zdjęcia z repo, bez mockowania treści.",
-      "en": "Homepage (PL) rendered locally from a clone of the repo via `pnpm dev:web` (Astro 5, localhost:4321) — a real render using the repo's actual photos, no content mocked."
+      "pl": "Strona główna (PL) uruchomiona lokalnie z klonu repozytorium przez `pnpm dev:web` (Astro 5, localhost:4321) — real render, prawdziwe zdjęcia z repo, bez mockowania treści. Zrzut z viewportu 1100×1000 (nie 1000×1000): przy 1000px szerokości nawigacja zwija się do hamburgera.",
+      "en": "Homepage (PL) rendered locally from a clone of the repo via `pnpm dev:web` (Astro 5, localhost:4321) — a real render using the repo's actual photos, no content mocked. Captured at a 1100×1000 viewport (not 1000×1000): at 1000px wide the nav collapses into a hamburger menu."
     }
   },
   {
@@ -35,8 +35,8 @@
     "id": "admin-dashboard",
     "label": { "pl": "Panel admina — dashboard", "en": "Admin panel dashboard" },
     "caption": {
-      "pl": "Panel administracyjny (Vue 3, localhost:5173/admin/) po zalogowaniu — sesja i trzy endpointy PHP (bookings.php, owners.php) przechwycone przez Playwright i podstawione realistycznymi danymi (bez działającego backendu PHP/MySQL w tej sesji); liczby apartamentów (16) i właścicieli dobrane zgodnie z danymi z repo, kwoty rezerwacji są fikcyjne demo-danymi.",
-      "en": "The admin panel (Vue 3, localhost:5173/admin/) once logged in — the session and three PHP endpoints (bookings.php, owners.php) were intercepted with Playwright and served realistic fixture data, since no PHP/MySQL backend was running in this sandbox; the apartments count (16) matches the repo's real data, booking amounts are synthetic demo figures."
+      "pl": "Panel administracyjny (Vue 3, localhost:5173/admin/) po zalogowaniu — sesja i trzy endpointy PHP (bookings.php, owners.php) przechwycone przez Playwright i podstawione realistycznymi danymi (bez działającego backendu PHP/MySQL w tej sesji); liczby apartamentów (16) i właścicieli dobrane zgodnie z danymi z repo, kwoty rezerwacji są fikcyjne demo-danymi. Zrzut z viewportu 1100×1000: przy 1000px szerokości sidebar zwija się do hamburgera.",
+      "en": "The admin panel (Vue 3, localhost:5173/admin/) once logged in — the session and three PHP endpoints (bookings.php, owners.php) were intercepted with Playwright and served realistic fixture data, since no PHP/MySQL backend was running in this sandbox; the apartments count (16) matches the repo's real data, booking amounts are synthetic demo figures. Captured at a 1100×1000 viewport: at 1000px wide the sidebar collapses into a hamburger menu."
     }
   }
 ]
