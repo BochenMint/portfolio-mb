@@ -9,7 +9,7 @@ import type { ChromeCopy } from './types'
 export const copyPl = {
   brand: 'Marcin Bochenek',
   mark: 'MB',
-  tagline: 'Inżynieria produktów cyfrowych · Gdańsk',
+  tagline: 'Strony, aplikacje i systemy · Gdańsk',
   skipLink: 'Przejdź do treści',
   nav: [
     { href: '#realizacje', label: 'Realizacje' },
@@ -34,14 +34,14 @@ export const copyPl = {
   themeDark: 'Tryb ciemny',
   themeToggle: 'Tryb jasny/ciemny',
   hero: {
-    eyebrow: 'Produkty cyfrowe · PropTech · FinTech · AI ops',
+    eyebrow: 'Strony · Aplikacje · Systemy · Automatyzacje',
     // Rendered as: line 1 + line 2, the serif word is emphasised.
-    h1a: 'Systemy, które',
-    h1b: 'wyglądają jak marka.',
-    h1cPrefix: 'Działają jak',
-    h1cEm: 'inżynieria.',
+    h1a: 'Tworzę strony, aplikacje',
+    h1b: 'i systemy,',
+    h1cPrefix: 'które wspierają',
+    h1cEm: 'rozwój Twojego biznesu.',
     lead:
-      'Buduję platformy rezerwacji, automatyzacje finansów i audytowalne agenty AI dla firm, które chcą mniej ręcznej pracy i więcej marży. Jeden standard jakości — od pierwszego piksela po produkcję.',
+      'Rezerwacje online, panel zamiast arkuszy, automatyzacja powtarzalnej roboty. Pracuję z firmami, które chcą obsłużyć więcej klientów bez zatrudniania kolejnej osoby do klikania.',
     ctaPrimary: 'Umów 20-min audyt',
     ctaSecondary: 'Zobacz realizacje',
     projectsFromLabel: (minBudget: string) => `Projekty ${minBudget}+`,
@@ -55,8 +55,8 @@ export const copyPl = {
   band: ['Mint Apartments', 'Plumm', 'iDrive Cars', 'Agentic OS', 'Astro', 'React', 'Previo', 'KSeF', 'RODO', 'EU hosting'],
   work: {
     eyebrow: 'Realizacje',
-    title: 'Cztery ekosystemy. Jeden standard.',
-    lead: 'Od direct bookingu po eksport JPK i orkiestrację agentów — każdy produkt zaprojektowany pod konkretny model biznesowy, nie pod szablon.',
+    title: 'Cztery systemy, które działają na produkcji.',
+    lead: 'Każdy powstał pod konkretny sposób zarabiania, nie pod szablon. Wszystkie możesz otworzyć i sprawdzić sam.',
     flagshipBadge: 'flagship',
     openLabel: 'Otwórz',
     openDomainLabel: 'Otwórz',
@@ -64,23 +64,23 @@ export const copyPl = {
   },
   cases: {
     eyebrow: 'Case studies',
-    title: 'Problem. Rozwiązanie. Rezultat.',
-    lead: 'Bez pitch decka. Konkret, który możesz zweryfikować w produkcji.',
+    title: 'Problem, rozwiązanie, efekt.',
+    lead: 'Bez prezentacji sprzedażowej. Konkret, który da się sprawdzić na żywo.',
     labels: { pain: 'Problem', approach: 'Podejście', result: 'Rezultat' },
   },
   services: {
     eyebrow: 'Usługi',
-    title: 'Trzy obszary. Jedna odpowiedzialność.',
-    lead: 'Nie sprzedaję „strony”. Dostarczam system, który ma właściciela, metryki i plan rozwoju.',
+    title: 'Trzy rzeczy, które dla Ciebie zrobię.',
+    lead: 'Nie sprzedaję samej strony. Zostawiam system, który ma właściciela, mierzalny efekt i plan na dalszy rozwój.',
   },
   process: {
     eyebrow: 'Proces',
-    title: 'Przewidywalnie, od audytu do wzrostu.',
-    lead: 'Cztery etapy, każdy z jasnym artefaktem. Wiesz, co dostajesz, zanim zapłacisz.',
+    title: 'Od pierwszej rozmowy do wdrożenia.',
+    lead: 'Cztery etapy, każdy kończy się czymś konkretnym. Wiesz, co dostajesz, zanim zapłacisz.',
   },
   pricing: {
     eyebrow: 'Inwestycja',
-    title: 'Przejrzyste progi. Zero niespodzianek.',
+    title: 'Jasne widełki. Bez niespodzianek.',
     lead: 'Widełki „od” — zakres precyzujemy po audycie. Minimalny próg chroni obie strony.',
     cta: 'Porozmawiajmy o zakresie',
     note: 'Ceny netto. Retainer AI Ops rozliczany miesięcznie, bez okresu minimalnego po pierwszym kwartale.',
@@ -98,7 +98,7 @@ export const copyPl = {
   contact: {
     eyebrow: 'Kontakt',
     title: 'Zacznijmy od 20 minut.',
-    lead: 'Audyt procesu jest bezpłatny i bez zobowiązań. Jeśli Twój case nie ma sensu ROI — powiem to wprost.',
+    lead: 'Rozmowa jest bezpłatna i bez zobowiązań. Jeśli Twój pomysł się nie spina finansowo, powiem to wprost.',
     emailLabel: 'E-mail',
     calendarLabel: 'Kalendarz',
     calendarValue: 'Zarezerwuj termin',
@@ -109,20 +109,20 @@ export const copyPl = {
     subtitle: (responseTime: string) => `Wypełnij pola — dostanę wiadomość na skrzynkę. ${responseTime}. Bez spamu.`,
     selectPlaceholder: 'Wybierz…',
     messagePlaceholder: 'Np. faktury w Excelu, rezerwacje z Booking…',
-    submitIdle: 'Wyślij brief →',
+    submitIdle: 'Wyślij brief',
     submitLoading: 'Wysyłanie…',
     errorDefault: 'Błąd wysyłki. Spróbuj ponownie lub napisz bezpośrednio.',
     consent:
       'Wysyłając, zgadzasz się na kontakt w sprawie projektu. Dane trafiają wyłącznie do skonfigurowanego endpointu formularza (Web3Forms / Formspree).',
     successTitle: 'Dzięki — brief wysłany',
     successBody: (responseTime: string) => `${responseTime}. Sprawdź skrzynkę (także spam).`,
-    successCalendarCta: 'Albo od razu wybierz termin w kalendarzu →',
+    successCalendarCta: 'Albo od razu wybierz termin w kalendarzu',
     unconfiguredTitle: 'Brief kwalifikacyjny',
     unconfiguredBody: (needsAccessKey: boolean) =>
       `Formularz wymaga konfiguracji: skopiuj .env.example do .env i uzupełnij VITE_FORM_ENDPOINT${
         needsAccessKey ? ' oraz VITE_FORM_ACCESS_KEY' : ''
       }.`,
-    unconfiguredCalendarCta: 'Umów audyt w kalendarzu →',
+    unconfiguredCalendarCta: 'Umów audyt w kalendarzu',
     unconfiguredCalendarHint: 'Ustaw też VITE_CALENDLY_URL dla CTA kalendarza.',
     accessKeyError: 'Brak VITE_FORM_ACCESS_KEY w .env (wymagane dla Web3Forms).',
   },

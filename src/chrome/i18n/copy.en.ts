@@ -8,7 +8,7 @@ import type { ChromeCopy } from './types'
 export const copyEn = {
   brand: 'Marcin Bochenek',
   mark: 'MB',
-  tagline: 'Digital product engineering · Gdańsk',
+  tagline: 'Websites, apps and systems · Gdańsk',
   skipLink: 'Skip to content',
   nav: [
     { href: '#realizacje', label: 'Work' },
@@ -33,14 +33,14 @@ export const copyEn = {
   themeDark: 'Dark mode',
   themeToggle: 'Light/dark mode',
   hero: {
-    eyebrow: 'Digital products · PropTech · FinTech · AI ops',
+    eyebrow: 'Websites · Apps · Systems · Automation',
     // Rendered as: line 1 + line 2, the serif word is emphasised.
-    h1a: 'Systems that',
-    h1b: 'look like a brand.',
-    h1cPrefix: 'Run like',
-    h1cEm: 'engineering.',
+    h1a: 'I build websites, apps',
+    h1b: 'and systems',
+    h1cPrefix: 'that support the growth of',
+    h1cEm: 'your business.',
     lead:
-      "I build booking platforms, financial automation and auditable AI agents for companies that want less manual work and more margin. One standard of quality — from the first pixel to production.",
+      'Online booking, a dashboard instead of spreadsheets, automation for the repetitive work. I work with companies that want to serve more customers without hiring another person to do the clicking.',
     ctaPrimary: 'Book a 20-min audit',
     ctaSecondary: 'See the work',
     projectsFromLabel: (minBudget: string) => `Projects from ${minBudget}`,
@@ -54,8 +54,8 @@ export const copyEn = {
   band: ['Mint Apartments', 'Plumm', 'iDrive Cars', 'Agentic OS', 'Astro', 'React', 'Previo', 'KSeF', 'GDPR', 'EU hosting'],
   work: {
     eyebrow: 'Work',
-    title: 'Four ecosystems. One standard.',
-    lead: 'From direct booking to JPK export and agent orchestration — every product is built around a specific business model, not a template.',
+    title: 'Four systems running in production.',
+    lead: 'Each one was built around a specific way of making money, not around a template. You can open all of them and check.',
     flagshipBadge: 'flagship',
     openLabel: 'Open',
     openDomainLabel: 'Open',
@@ -63,23 +63,23 @@ export const copyEn = {
   },
   cases: {
     eyebrow: 'Case studies',
-    title: 'Problem. Approach. Result.',
-    lead: 'No pitch deck. Specifics you can verify in production.',
+    title: 'Problem, approach, result.',
+    lead: 'No sales deck. Specifics you can check live.',
     labels: { pain: 'Problem', approach: 'Approach', result: 'Result' },
   },
   services: {
     eyebrow: 'Services',
-    title: 'Three areas. One accountable owner.',
-    lead: "I don't sell a \"website\". I deliver a system with an owner, metrics and a growth plan.",
+    title: 'Three things I will build for you.',
+    lead: 'I do not sell a website on its own. I leave behind a system with an owner, a measurable effect and a plan for what comes next.',
   },
   process: {
     eyebrow: 'Process',
-    title: 'Predictable, from audit to growth.',
-    lead: 'Four stages, each with a clear artefact. You know what you get before you pay.',
+    title: 'From the first call to launch.',
+    lead: 'Four stages, each ending in something concrete. You know what you get before you pay.',
   },
   pricing: {
     eyebrow: 'Pricing',
-    title: 'Clear thresholds. No surprises.',
+    title: 'Clear ranges. No surprises.',
     lead: 'Prices are "from" — scope is set after the audit. The minimum protects both sides.',
     cta: "Let's talk scope",
     note: 'Prices are net. The AI Ops retainer is billed monthly, with no minimum term after the first quarter.',

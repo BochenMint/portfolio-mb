@@ -23,7 +23,7 @@ export const siteUa = {
 export const servicesUa: Service[] = [
   {
     title: 'Платформа та бронювання',
-    subtitle: 'Прямий дохід, а не просто візитка',
+    subtitle: 'Клієнти бронюють у вас, а не в посередника',
     points: [
       'Багатомовне SEO, Core Web Vitals, schema.org',
       'Віджет бронювання, Previo/PMS, платежі',
@@ -32,7 +32,7 @@ export const servicesUa: Service[] = [
   },
   {
     title: 'Автоматизація та FinTech',
-    subtitle: 'Excel опівночі → pipeline',
+    subtitle: 'Кінець таблицям після роботи',
     points: [
       'Експорти Plumm, JPK_FA, потік, готовий до KSeF',
       'Синхронізація календарів, замків, CRM',
@@ -41,7 +41,7 @@ export const servicesUa: Service[] = [
   },
   {
     title: 'AI під контролем',
-    subtitle: 'Агент, якого ви знаєте і можете аудитувати',
+    subtitle: 'AI, який робить лише те, на що ви погодились',
     points: [
       'Консьєрж, що знає вашу пропозицію (без галюцинацій)',
       'Agentic OS — workflow, пам’ять, логи',
