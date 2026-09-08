@@ -23,7 +23,7 @@ export const siteEn = {
 export const servicesEn: Service[] = [
   {
     title: 'Platform & booking',
-    subtitle: 'Direct revenue, not just a brochure site',
+    subtitle: 'Customers book with you, not with a middleman',
     points: [
       'Multilingual SEO, Core Web Vitals, schema.org',
       'Booking widget, Previo/PMS, payments',
@@ -32,7 +32,7 @@ export const servicesEn: Service[] = [
   },
   {
     title: 'Automation & FinTech',
-    subtitle: 'Midnight spreadsheets → pipeline',
+    subtitle: 'No more spreadsheets after hours',
     points: [
       'Plumm exports, JPK_FA, KSeF-ready flow',
       'Calendar, lock and CRM sync',
@@ -41,7 +41,7 @@ export const servicesEn: Service[] = [
   },
   {
     title: 'AI with oversight',
-    subtitle: 'An agent you understand and can audit',
+    subtitle: 'AI that only does what you agreed to',
     points: [
       "Concierge grounded in your actual offer (no hallucinations)",
       'Agentic OS — workflow, memory, logs',

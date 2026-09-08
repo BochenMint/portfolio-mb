@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 
-/** How close the trailing ring gets to the pointer per frame. */
-const RING_EASE = 0.32
-/** Past this gap the ring teleports instead of gliding: a dropped frame
- *  (WebGL init, GC, tab switch, pointer re-entering the window) otherwise
- *  sends it flying across the screen, which reads as the cursor running off. */
-const RING_SNAP_PX = 140
 
 /** Chrome bead cursor: a tiny mirrored sphere + hairline ring on desktop. */
 export function Cursor() {
@@ -27,45 +21,31 @@ export function Cursor() {
 
     document.body.classList.add('cursor-custom')
 
-    let mx = -100
-    let my = -100
-    let rx = -100
-    let ry = -100
-    let raf = 0
-    // While the pointer is over something clickable the ring is the shape the
-    // eye aims with, so it has to sit exactly on the pointer — a trailing ring
-    // makes small targets (the 36px theme toggle) miss.
-    let onTarget = false
-
     const place = (el: HTMLElement, x: number, y: number) => {
       el.style.transform = `translate3d(${x}px, ${y}px, 0)`
     }
 
+    // Both marks are written straight from the pointer event. The ring used to
+    // be eased toward the pointer inside a requestAnimationFrame loop, which is
+    // only as fast as the frame rate — and this page runs a headline shader,
+    // four cube renderers and the hero torus, so frames get scarce exactly
+    // when the pointer is moving over the hero. The result was a ring sitting
+    // hundreds of pixels away from the cursor it was supposed to be. With the
+    // native cursor hidden, that is not a flourish, it is a broken pointer.
     const onMove = (e: MouseEvent) => {
-      mx = e.clientX
-      my = e.clientY
-      place(bead, mx, my)
+      place(bead, e.clientX, e.clientY)
+      place(ring, e.clientX, e.clientY)
     }
-    const loop = () => {
-      const ease = onTarget || Math.hypot(mx - rx, my - ry) > RING_SNAP_PX ? 1 : RING_EASE
-      rx += (mx - rx) * ease
-      ry += (my - ry) * ease
-      place(ring, rx, ry)
-      raf = requestAnimationFrame(loop)
-    }
-    raf = requestAnimationFrame(loop)
 
     const onOver = (e: Event) => {
       const t = e.target as HTMLElement
-      onTarget = !!t.closest('a, button, [data-magnetic], summary, label')
-      setHovering(onTarget)
+      setHovering(!!t.closest('a, button, [data-magnetic], summary, label'))
     }
 
     document.addEventListener('mousemove', onMove, { passive: true })
     document.addEventListener('mouseover', onOver)
 
     return () => {
-      cancelAnimationFrame(raf)
       document.removeEventListener('mousemove', onMove)
       document.removeEventListener('mouseover', onOver)
       document.body.classList.remove('cursor-custom')

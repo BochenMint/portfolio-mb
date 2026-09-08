@@ -9,7 +9,7 @@ import './liquid.css'
  * the actual text nodes rendered inside the wrapper and ask the browser
  * where each word landed (`Range.getClientRects`). That gives pixel-perfect
  * positions + we read the *computed* font/letter-spacing per text node, so
- * mixed fonts (Geist regular + italic Instrument Serif `<em>`) draw exactly
+ * mixed weights (the semibold line and the Light accent `<em>`) draw exactly
  * like the DOM does — including wrapping, since we never guess line breaks.
  *
  * The mask is drawn at a high, fixed resolution (>=2x CSS px) so glyph edges
@@ -147,8 +147,8 @@ float vnoise(vec2 p) {
 // continuous wobble rather than speckle.
 float flow(vec2 uv, float t) {
   vec2 p = uv * uNoiseScale;
-  float n = vnoise(p + vec2(t * 0.07, -t * 0.05)) * 0.7;
-  n += vnoise(p * 1.6 + vec2(-t * 0.05, t * 0.08) + 11.0) * 0.3;
+  float n = vnoise(p + vec2(t * 0.11, -t * 0.08)) * 0.7;
+  n += vnoise(p * 1.6 + vec2(-t * 0.08, t * 0.12) + 11.0) * 0.3;
   return n - 0.5; // -0.5..0.5
 }
 
@@ -159,9 +159,15 @@ float flow(vec2 uv, float t) {
 vec3 chromeBands(float y, float lightMode) {
   float horizon = 0.64;
 
-  vec3 sky = mix(vec3(0.99), vec3(0.20, 0.21, 0.23), lightMode);
-  vec3 ground = mix(vec3(0.74, 0.76, 0.79), vec3(0.95), lightMode);
-  vec3 horizonCol = vec3(0.035);
+  // Light mode is not the dark palette nudged, it is inverted. Dark theme puts
+  // a near-white body against near-black paper; carrying that ground (0.95)
+  // onto a #eef0f3 page left everything below the horizon — the bottom third
+  // of every glyph — invisible. Here the metal is dark and the horizon is the
+  // one bright reflected band, which is also how the static .chrome-text
+  // gradient renders the same headline when WebGL is unavailable.
+  vec3 sky = mix(vec3(0.99), vec3(0.13, 0.14, 0.16), lightMode);
+  vec3 ground = mix(vec3(0.74, 0.76, 0.79), vec3(0.27, 0.28, 0.31), lightMode);
+  vec3 horizonCol = mix(vec3(0.035), vec3(0.97), lightMode);
 
   // subtle internal gradient so sky/ground read as glossy rounded bands
   // rather than flat fills (soft grey transition toward the horizon).
@@ -192,12 +198,16 @@ void main() {
   float lineY = mask.b;
   float edgeMag = clamp(length(baseN), 0.0, 1.0);
 
-  // Slow low-frequency wobble of the band boundary itself — this is what
-  // makes the reflection "flow like mercury" without ever perturbing
-  // per-pixel color/normal at high frequency.
+  // The horizon is the surface of the liquid, so it must not sit flat. Two
+  // smooth, very low frequency terms move it: an organic swell from the noise
+  // field, and a long roll travelling along the headline. Both are sampled in
+  // the headline's own uv rather than per glyph, so the surface reads as one
+  // pour running across every letter instead of a separate effect stamped
+  // into each. Amplitude is what sells it as liquid — 0.10 was a ripple.
   float wobble = flow(vUv, uTime);
-  float mouseTilt = (uMouseUv.y - 0.5) * 0.05;
-  float y = clamp(lineY + wobble * 0.10 + mouseTilt, 0.0, 1.0);
+  float roll = sin(vUv.x * 2.1 - uTime * 0.33) * 0.055;
+  float mouseTilt = (uMouseUv.y - 0.5) * 0.06;
+  float y = clamp(lineY + wobble * 0.26 + roll + mouseTilt, 0.0, 1.0);
 
   vec3 col = chromeBands(y, uLight);
 
@@ -209,19 +219,25 @@ void main() {
     float center = fract(0.28 + fi * 0.42 + uTime * speed);
     float d = abs(fract(vUv.x - center + 0.5) - 0.5);
     float streak = smoothstep(width, 0.0, d);
-    col += streak * mix(0.16, -0.12, uLight);
+    col += streak * mix(0.16, 0.13, uLight);
   }
 
   // Mild specular that follows the cursor, like a light dragging over mercury.
   float distToMouse = distance(vUv, uMouseUv);
   float specular = smoothstep(0.4, 0.0, distToMouse) * 0.18;
-  col += specular * mix(1.0, -0.6, uLight);
+  col += specular * mix(1.0, 0.85, uLight);
 
   // Crisp embossed rim from the *smooth* bevel normal (no noise inside it):
   // brightens the top edge of strokes, darkens the bottom, like polished
   // metal catching an overhead light.
   col += (-baseN.y) * edgeMag * mix(0.22, 0.14, uLight);
   col += (-baseN.x) * edgeMag * mix(0.10, 0.06, uLight);
+
+  // Surface tension. Poured metal beads up where it meets an edge, catching a
+  // bright hairline all the way around the stroke rather than only along the
+  // lit side. Cubed so it stays inside the last pixels of the outline and
+  // never washes into the body of the glyph.
+  col += pow(edgeMag, 3.0) * mix(0.26, 0.34, uLight);
 
   // Final tone map: clamp hard so highlights read as pure white and the
   // horizon reads as deep graphite — high contrast but smooth (no per-pixel
@@ -576,7 +592,7 @@ class LiquidChromeEngine {
     // noise cells stay roughly square regardless of the box's aspect ratio.
     const rect = this.wrap.getBoundingClientRect()
     const aspect = rect.width > 0 ? rect.height / rect.width : 0.3
-    gl.uniform2f(this.uNoiseScale, 2.0, Math.max(0.6, 2.0 * aspect))
+    gl.uniform2f(this.uNoiseScale, 1.3, Math.max(0.45, 1.3 * aspect))
     gl.drawArrays(gl.TRIANGLES, 0, 6)
   }
 

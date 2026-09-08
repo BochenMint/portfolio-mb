@@ -1,29 +1,16 @@
 @import 'tailwindcss';
 
 /* Self-hosted fonts (no third-party requests, GDPR-clean, no FOUT on repeat visits). */
+/* One family for display and body. Hanken Grotesk is a clean, neutral
+   grotesque with a full 100-900 weight axis (needed for the headline's Light
+   accent) and verified Latin-Extended coverage for Polish diacritics. Split by
+   unicode-range as Fontsource ships it, so the Latin-Extended cut carrying
+   ą ć ę ł ń ó ś ź ż is a second small request rather than weight in the
+   first. Weight axis only: the headline is the LCP element on every page. */
 @font-face {
-  font-family: 'Geist';
-  src: url('/fonts/Geist-Variable.woff2') format('woff2');
+  font-family: 'Hanken Grotesk';
+  src: url('/fonts/HankenGrotesk-latin-ext-wght.woff2') format('woff2');
   font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist Mono';
-  src: url('/fonts/GeistMono-Variable.woff2') format('woff2');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-/* Display face. Split by unicode-range exactly as Fontsource ships it, so the
-   Latin-Extended file (which carries ą ć ę ł ń ó ś ź ż) is a second, small
-   request rather than weight in the first one. Weight axis only — the optical
-   size axis would nearly triple the download, and the headline is the LCP
-   element on every page, so it is the last place to spend bytes. */
-@font-face {
-  font-family: 'Bricolage Grotesque';
-  src: url('/fonts/BricolageGrotesque-latin-ext-wght.woff2') format('woff2');
-  font-weight: 200 800;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
@@ -31,13 +18,20 @@
     U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
-  font-family: 'Bricolage Grotesque';
-  src: url('/fonts/BricolageGrotesque-latin-wght.woff2') format('woff2');
-  font-weight: 200 800;
+  font-family: 'Hanken Grotesk';
+  src: url('/fonts/HankenGrotesk-latin-wght.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
     U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/GeistMono-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }
 
 
@@ -48,11 +42,8 @@
 ------------------------------------------------------------------- */
 
 @theme {
-  /* Display and body are deliberately different families: Geist is excellent
-     at 16px but it now sets half the developer-tool web, and a studio selling
-     engineering should not wear the same headline as its own toolchain. */
-  --font-display: 'Bricolage Grotesque', 'Geist', 'Inter', system-ui, sans-serif;
-  --font-body: 'Geist', 'Inter', system-ui, sans-serif;
+  --font-display: 'Hanken Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Hanken Grotesk', 'Inter', system-ui, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
 
   /* Theme-aware Tailwind color tokens. These read the CSS custom
