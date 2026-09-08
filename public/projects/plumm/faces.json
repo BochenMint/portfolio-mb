@@ -1,0 +1,42 @@
+[
+  {
+    "file": "face-1.webp",
+    "light": "face-1-light.webp",
+    "id": "dashboard",
+    "label": { "pl": "Pulpit", "en": "Dashboard" },
+    "caption": {
+      "pl": "Przychód, VAT do zapłaty i zaliczka PIT liczone na żywo z każdej wystawionej faktury.",
+      "en": "Revenue, VAT due and the PIT advance computed live from every invoice you issue."
+    }
+  },
+  {
+    "file": "face-2.webp",
+    "light": "face-2-light.webp",
+    "id": "invoices",
+    "label": { "pl": "Faktury sprzedażowe", "en": "Sales invoices" },
+    "caption": {
+      "pl": "Faktury z netto/VAT/brutto per pozycja i jednym kliknięciem do KSeF.",
+      "en": "Invoices with net/VAT/gross per line and one click to KSeF."
+    }
+  },
+  {
+    "file": "face-3.webp",
+    "light": "face-3-light.webp",
+    "id": "ksef-wizard",
+    "label": { "pl": "Kreator KSeF", "en": "KSeF setup wizard" },
+    "caption": {
+      "pl": "Podłączenie do Krajowego Systemu e-Faktur w 4 krokach — gotowe na obowiązkowe KSeF.",
+      "en": "Connect to Poland's national e-invoicing system in 4 steps — ready for mandatory KSeF."
+    }
+  },
+  {
+    "file": "face-4.webp",
+    "light": "face-4-light.webp",
+    "id": "settlements",
+    "label": { "pl": "Rozrachunki", "en": "Settlements" },
+    "caption": {
+      "pl": "Należności, zobowiązania i saldo netto liczone automatycznie z otwartych pozycji.",
+      "en": "Receivables, payables and net balance calculated automatically from open items."
+    }
+  }
+]

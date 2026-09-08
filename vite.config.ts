@@ -73,6 +73,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html',
+        studio: 'studio.html',
+        studioEn: 'studio-en.html',
+        studioUa: 'studio-ua.html',
+        lab: 'lab.html',
         en: 'en/index.html',
         ua: 'ua/index.html',
         v1: 'v1.html',

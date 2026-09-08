@@ -1,0 +1,38 @@
+/* Liquid chrome headline — canvas overlay + real DOM text underneath.
+   Scoped classes only; does not touch chrome.css. */
+
+.liquid-chrome {
+  position: relative;
+  display: block;
+}
+
+.liquid-chrome__dom {
+  display: block;
+}
+
+/* Bleeds past the text's layout box by --liquid-pad: descenders and italic
+   overhang of a 66px display face reach outside it, and the canvas is the
+   only thing painting the glyphs once it is visible. Keep in sync with
+   LIQUID_PAD in LiquidChrome.tsx. */
+.liquid-chrome__canvas {
+  --liquid-pad: 16px;
+  position: absolute;
+  inset: calc(-1 * var(--liquid-pad));
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+/* Once the canvas has a first frame ready it fades in and hides the DOM
+   glyph color underneath it (kept transparent so layout/selection/SEO
+   stay native, but the flat gradient doesn't show through/behind it). */
+.liquid-chrome:has(.liquid-chrome__canvas--visible) .liquid-chrome__dom :is(span, em) {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background: none;
+}
+
+.liquid-chrome__canvas--visible {
+  opacity: 1;
+}

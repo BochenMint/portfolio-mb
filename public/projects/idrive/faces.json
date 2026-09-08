@@ -1,0 +1,42 @@
+[
+  {
+    "file": "face-1.webp",
+    "light": null,
+    "id": "home",
+    "label": { "pl": "Strona główna", "en": "Homepage" },
+    "caption": {
+      "pl": "Pełnoekranowe wideo z testu Mercedesa-AMG GT S otwiera stronę główną redakcji.",
+      "en": "Full-bleed video from the Mercedes-AMG GT S test drive opens the homepage."
+    }
+  },
+  {
+    "file": "face-2.webp",
+    "light": null,
+    "id": "article",
+    "label": { "pl": "Artykuł redakcyjny", "en": "News article" },
+    "caption": {
+      "pl": "Artykuł o rekordzie BMW w produkcji aut elektrycznych, z okruszkami i metadanymi.",
+      "en": "News article on BMW's two-million-EV milestone, with breadcrumbs and publish metadata."
+    }
+  },
+  {
+    "file": "face-3.webp",
+    "light": null,
+    "id": "gallery",
+    "label": { "pl": "Lista newsów", "en": "News listing" },
+    "caption": {
+      "pl": "Siatka najnowszych wiadomości motoryzacyjnych z miniaturami i datami publikacji.",
+      "en": "Grid of the latest automotive news with thumbnail photos and publish dates."
+    }
+  },
+  {
+    "file": "face-4.webp",
+    "light": null,
+    "id": "article-2",
+    "label": { "pl": "Relacja z produkcji", "en": "Production story" },
+    "caption": {
+      "pl": "Relacja z uruchomienia produkcji Škody Peaq na linii obok Octavii i Enyaqa.",
+      "en": "Coverage of the Škoda Peaq entering production alongside the Octavia and Enyaq."
+    }
+  }
+]

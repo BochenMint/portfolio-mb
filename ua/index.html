@@ -1,112 +1,107 @@
 <!doctype html>
-<html lang="uk" data-theme="swiss">
+<html lang="uk" data-locale="uk">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Marcin Bochenek — інженерія цифрових продуктів</title>
     <meta
       name="description"
-      content="Марцін Бохенек — сайти, що збирають запити, операційні панелі та автоматизації. Бронювання на власному домені, менше ручної роботи, вимір до і після. Аудит 20 хв."
+      content="Створюю платформи бронювання, автоматизацію фінансів та аудитовані AI-агенти. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Проєкти від 25 000 PLN."
     />
-    <meta name="theme-color" content="#f3efe6" />
     <link rel="canonical" href="https://marcinbochenek.com/ua/" />
     <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/" />
     <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/" />
     <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/" />
     <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/" />
-    <meta name="robots" content="index, follow" />
-    <meta property="og:title" content="Марцін Бохенек — системи та сайти для бізнесу" />
+
+    <meta name="theme-color" content="#050506" />
+    <script>
+      // Runs before first paint so the page never flashes the wrong theme.
+      (function () {
+        try {
+          var stored = localStorage.getItem('mb-theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'light' ? '#eef0f3' : '#050506');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta property="og:title" content="Marcin Bochenek — інженерія цифрових продуктів" />
     <meta
       property="og:description"
-      content="Будую корпоративні сайти і воронки конверсії — і інструменти, що стоять за ними. Від 6 500 PLN (візитка) · від 25 000 PLN (конверсія)."
+      content="Платформи бронювання, автоматизація фінансів та аудитований AI для компаній, які хочуть менше ручної роботи та більшу маржу."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://marcinbochenek.com/ua/" />
     <meta property="og:locale" content="uk_UA" />
+    <meta property="og:locale:alternate" content="en_GB" />
     <meta property="og:locale:alternate" content="pl_PL" />
-    <meta property="og:locale:alternate" content="en_US" />
-    <meta property="og:site_name" content="Marcin Bochenek" />
     <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Марцін Бохенек — сайти та системи для бізнесу" />
+    <meta property="og:image:alt" content="Marcin Bochenek — інженерія цифрових продуктів" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Марцін Бохенек — premium IT" />
+    <meta name="twitter:title" content="Marcin Bochenek — інженерія цифрових продуктів" />
     <meta
       name="twitter:description"
-      content="Сайти, системи та автоматизації для власників компаній. Аудит, впровадження, вимір до/після."
+      content="Платформи бронювання, автоматизація фінансів та аудитований AI."
     />
     <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
-    <meta name="twitter:image:alt" content="Марцін Бохенек — сайти та системи для бізнесу" />
-    <link rel="preload" as="image" href="/projects/mint/hero-card.webp" type="image/webp" fetchpriority="high" />
-    <title>Марцін Бохенек — сайти та системи для бізнесу</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!--
+      Only the display face is preloaded. A <canvas> is not an eligible LCP
+      element, so the hero's WebGL torus never is the measured paint — the
+      headline text is, and this is the file that paints it. The Latin-Extended
+      cut carries the Polish diacritics, so Polish copy needs both.
+    -->
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/fonts/BricolageGrotesque-latin-wght.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
+    <link
+      rel="preload"
+      href="/fonts/BricolageGrotesque-latin-ext-wght.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Person",
-            "@id": "https://marcinbochenek.com/#person",
-            "name": "Marcin Bochenek",
-            "url": "https://marcinbochenek.com/ua/",
-            "image": "https://marcinbochenek.com/images/marcin-bochenek.webp",
-            "jobTitle": "Software engineer",
-            "email": "kontakt@marcinbochenek.com",
-            "sameAs": [
-              "https://github.com/BochenMint",
-              "https://mb-ai.pl",
-              "https://gra.marcinbochenek.com"
-            ]
-          },
-          {
-            "@type": "ProfessionalService",
-            "@id": "https://marcinbochenek.com/#service",
-            "name": "Marcin Bochenek",
-            "url": "https://marcinbochenek.com/ua/",
-            "inLanguage": "uk",
-            "email": "kontakt@marcinbochenek.com",
-            "description": "Марцін Бохенек — freelance software engineer у Польщі: корпоративні сайти, воронки конверсії, операційні панелі та автоматизація HITL. Live proof: Mint Apartments (mintapartments.pl) і Plumm (plumm.pl).",
-            "image": "https://marcinbochenek.com/brand/og-default.png",
-            "logo": "https://marcinbochenek.com/brand/logo-mb.svg",
-            "priceRange": "6500+ PLN",
-            "areaServed": { "@type": "Country", "name": "Poland" },
-            "address": { "@type": "PostalAddress", "addressCountry": "PL" },
-            "founder": { "@id": "https://marcinbochenek.com/#person" },
-            "employee": { "@id": "https://marcinbochenek.com/#person" },
-            "knowsAbout": [
-              "Корпоративні сайти",
-              "Воронки конверсії",
-              "Операційні панелі",
-              "Автоматизація HITL",
-              "PropTech"
-            ],
-            "sameAs": [
-              "https://github.com/BochenMint",
-              "https://mb-ai.pl",
-              "https://gra.marcinbochenek.com"
-            ]
-          },
-          {
-            "@type": "WebSite",
-            "@id": "https://marcinbochenek.com/#website",
-            "url": "https://marcinbochenek.com/",
-            "name": "Marcin Bochenek",
-            "inLanguage": ["pl", "en", "uk"],
-            "publisher": { "@id": "https://marcinbochenek.com/#person" }
-          }
-        ]
+        "@type": "ProfessionalService",
+        "name": "Marcin Bochenek",
+        "url": "https://marcinbochenek.com/",
+        "image": "https://marcinbochenek.com/brand/og-default.png",
+        "description": "Inżynieria produktów cyfrowych: platformy rezerwacji, automatyzacja finansów i audytowalne agenty AI dla firm w Polsce i Europie.",
+        "areaServed": ["PL", "EU"],
+        "knowsAbout": ["PropTech", "FinTech", "AI automation", "React", "TypeScript"],
+        "founder": {
+          "@type": "Person",
+          "name": "Marcin Bochenek",
+          "url": "https://marcinbochenek.com/"
+        }
       }
     </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/studio/main.tsx"></script>
+    <script type="module" src="/src/chrome/main.tsx"></script>
   </body>
 </html>

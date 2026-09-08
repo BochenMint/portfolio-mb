@@ -1,0 +1,74 @@
+{
+  "facts": [
+    {
+      "id": "agents",
+      "value": "22",
+      "label": { "pl": "wyspecjalizowanych agentów w 7 scope'ach", "en": "specialized agents across 7 scopes" },
+      "evidence": "python3 -c \"import re; t=open('backend/packages/api/src/agentic_os_api/services/agent_router.py',encoding='utf-8').read(); s=t.index('AGENT_ROUTING: dict[str, AgentConfig] = {'); i=t.index('{',s); d=0;\\nexec('for j in range(i,len(t)):\\\\n global d,e\\\\n if t[j]==\\\"{\\\": d+=1\\\\n elif t[j]==\\\"}\\\":\\\\n  d-=1\\\\n  if d==0:\\\\n   e=j\\\\n   break')\\nprint(len(re.findall(r'^\\\\s{4}\\\"([a-z0-9_-]+)\\\":', t[i:e+1], re.M)))\" — counts keys of the AGENT_ROUTING dict, the canonical seed used by Alembic migration 006 and every later per-agent migration (captain, notekeeper, wellbeing, copywriter, brand-marketing, marketing, support, compliance-guard, concierge, mint-ops, channel-manager, invoice-pipeline, mint-marketing, idrivecars-marketing, studio-marketing, dev, code-reviewer, marketing-critic, mb-prospector, mb-account, mb-dev, mb-estimator)."
+    },
+    {
+      "id": "scopes",
+      "value": "7",
+      "label": { "pl": "scope'y (tenants) w jednej instancji", "en": "scopes (tenants) in one instance" },
+      "evidence": "grep -rl \"INSERT INTO scopes\" backend/packages/memory/alembic/versions — 5 migrations, one scope slug each on top of the 3 seeded in 001_create_scopes.py: personal, plumm, mint (001), dev (025), idrivecars (065), studio (080), mb-ai (082)."
+    },
+    {
+      "id": "api-endpoints",
+      "value": "115",
+      "label": { "pl": "endpointów REST/SSE w FastAPI", "en": "REST/SSE endpoints in FastAPI" },
+      "evidence": "grep -rhoE '@router\\.(get|post|patch|put|delete)\\(' backend/packages/api/src/agentic_os_api/routers/ | wc -l   (35 router files under backend/packages/api/src/agentic_os_api/routers/)"
+    },
+    {
+      "id": "agent-tools",
+      "value": "62",
+      "label": { "pl": "narzędzi (tools) dostępnych agentom", "en": "tools available to agents" },
+      "evidence": "python3 -c \"import re; t=open('backend/packages/api/src/agentic_os_api/services/tools.py',encoding='utf-8').read(); s=t.index('TOOL_REGISTRY: dict[str, Tool] = {'); i=t.index('{',s); ...\" counting entries of TOOL_REGISTRY in services/tools.py (9,322-line file) — includes dispatch_to, escalate_to_human, ask_owner, propose_code_change, generate_video, recall, web_search, etc."
+    },
+    {
+      "id": "capture-channels",
+      "value": "6",
+      "label": { "pl": "typów przechwyceń (capture kinds)", "en": "capture kinds ingested" },
+      "evidence": "grep -A8 'export type CaptureKind' frontend/src/api/captures.ts — voice | text | image | link | screenshot | file, fed from 3 iOS Shortcuts + Telegram + clipboard per README.md."
+    },
+    {
+      "id": "db-migrations",
+      "value": "82",
+      "label": { "pl": "migracji Alembic (historia schematu)", "en": "Alembic migrations (schema history)" },
+      "evidence": "ls backend/packages/memory/alembic/versions | wc -l"
+    },
+    {
+      "id": "backend-loc",
+      "value": "70712 / 109858",
+      "label": { "pl": "linii Python: kod / kod+testy", "en": "Python lines: source / source+tests" },
+      "evidence": "find backend -name '*.py' -not -path '*/tests/*' | xargs wc -l | tail -1   →  70712;  find backend -name '*.py' | xargs wc -l | tail -1  →  109858 (413 .py files total)."
+    },
+    {
+      "id": "frontend-loc",
+      "value": "47026",
+      "label": { "pl": "linii TypeScript/TSX we frontendzie", "en": "TypeScript/TSX lines in the frontend" },
+      "evidence": "find frontend/src -name '*.ts' -o -name '*.tsx' | xargs wc -l | tail -1   (119 files)"
+    },
+    {
+      "id": "backend-tests",
+      "value": "766 / 162",
+      "label": { "pl": "funkcji testowych / plików testowych (backend)", "en": "test functions / test files (backend)" },
+      "evidence": "grep -rhoE '^def test_' backend/tests | wc -l  →  766;  find backend/tests -name 'test_*.py' | wc -l  →  162"
+    },
+    {
+      "id": "monorepo-packages",
+      "value": "5 (uv) + 2 (pnpm)",
+      "label": { "pl": "pakietów w monorepo (uv workspace + pnpm workspace)", "en": "packages in the monorepo (uv workspace + pnpm workspace)" },
+      "evidence": "ls backend/packages → api, capture, core, memory, telegram (5, matches [tool.uv.workspace] members=[\"backend/packages/*\"] in pyproject.toml); cat pnpm-workspace.yaml → frontend, shared (2)."
+    },
+    {
+      "id": "adrs",
+      "value": "11",
+      "label": { "pl": "udokumentowanych decyzji architektonicznych (ADR)", "en": "documented architecture decision records (ADRs)" },
+      "evidence": "ls docs/adrs | wc -l"
+    }
+  ],
+  "summary": {
+    "pl": "Agentic OS to jednoosobowy, samohostowany \"drugi mózg + runtime agentowy\" o realnej skali produkcyjnej: 22 wyspecjalizowane agenty w 7 scope'ach (Personal/Plumm/Mint/DEV/iDriveCars/Studio/MB-AI), 62 narzędzia, 115 endpointów FastAPI i 82 migracje schematu, wspierane przez ~71 tys. linii Python (bez testów) i ~47 tys. linii TypeScript we frontendzie React. System jest auditowalny z założenia: każdy agent ma jawną listę \"forbidden_claims\" (czego nie wolno mu twierdzić), krytyczne akcje przechodzą przez narzędzia escalate_to_human / ask_owner i kolejkę pending_changes z ręczną akceptacją Marcina, a każdy przebieg agenta jest trwale logowany (agent_runs) z modelem, tierem i czasem trwania widocznym w konsoli operatora.",
+    "en": "Agentic OS is a solo-built, self-hosted \"second brain + agent runtime\" at genuine production scale: 22 specialized agents across 7 scopes (Personal/Plumm/Mint/DEV/iDriveCars/Studio/MB-AI), 62 tools, 115 FastAPI endpoints and 82 schema migrations, backed by roughly 71k lines of Python (excluding tests) and 47k lines of TypeScript in the React frontend. The system is auditable by design: every agent carries an explicit 'forbidden_claims' list (things it must never assert), consequential actions route through escalate_to_human / ask_owner tools and a pending_changes queue with manual approval by the owner, and every agent run is durably logged (agent_runs) with model, tier and duration visible in the operator console."
+  }
+}
