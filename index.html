@@ -1,42 +1,107 @@
 <!doctype html>
-<html lang="pl">
+<html lang="pl" data-locale="pl">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Marcin Bochenek — inżynieria produktów cyfrowych</title>
     <meta
       name="description"
-      content="Marcin B. — PropTech, FinTech, AI ops. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Projekty od 25 000 PLN. Audyt procesu bezpłatnie."
+      content="Buduję platformy rezerwacji, automatyzacje finansów i audytowalne agenty AI. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Projekty od 25 000 PLN."
     />
-    <meta name="theme-color" content="#050508" />
-    <meta property="og:title" content="Bochen Studio — produkty cyfrowe premium" />
+    <link rel="canonical" href="https://marcinbochenek.com/" />
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/" />
+
+    <meta name="theme-color" content="#050506" />
+    <script>
+      // Runs before first paint so the page never flashes the wrong theme.
+      (function () {
+        try {
+          var stored = localStorage.getItem('mb-theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'light' ? '#eef0f3' : '#050506');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta property="og:title" content="Marcin Bochenek — inżynieria produktów cyfrowych" />
     <meta
       property="og:description"
-      content="Web, automatyzacja i AI dla małych firm. 4 produkcyjne realizacje. Umów 20-min audyt."
+      content="Platformy rezerwacji, automatyzacja finansów i audytowalne AI dla firm, które chcą mniej ręcznej pracy i więcej marży."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://marcinbochenek.com/" />
     <meta property="og:locale" content="pl_PL" />
-    <title>Bochen Studio — Mint · Plumm · iDrive · Agentic OS</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Syne:wght@500;600;700;800&display=swap"
-      rel="stylesheet"
+    <meta property="og:locale:alternate" content="en_GB" />
+    <meta property="og:locale:alternate" content="uk_UA" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Marcin Bochenek — inżynieria produktów cyfrowych" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Marcin Bochenek — inżynieria produktów cyfrowych" />
+    <meta
+      name="twitter:description"
+      content="Platformy rezerwacji, automatyzacja finansów i audytowalne AI dla firm."
     />
+    <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+
+    <!--
+      Only the display face is preloaded. A <canvas> is not an eligible LCP
+      element, so the hero's WebGL torus never is the measured paint — the
+      headline text is, and this is the file that paints it. The Latin-Extended
+      cut carries the Polish diacritics, so Polish copy needs both.
+    -->
+    <link
+      rel="preload"
+      href="/fonts/BricolageGrotesque-latin-wght.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/BricolageGrotesque-latin-ext-wght.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "ProfessionalService",
-        "name": "Bochen Studio",
-        "description": "Web development, automatyzacja i integracje AI dla małych firm w Polsce.",
-        "areaServed": "PL",
-        "knowsAbout": ["PropTech", "FinTech", "AI automation", "Astro", "React"],
-        "url": "https://github.com/BochenMint/portfolio-mb"
+        "name": "Marcin Bochenek",
+        "url": "https://marcinbochenek.com/",
+        "image": "https://marcinbochenek.com/brand/og-default.png",
+        "description": "Inżynieria produktów cyfrowych: platformy rezerwacji, automatyzacja finansów i audytowalne agenty AI dla firm w Polsce i Europie.",
+        "areaServed": ["PL", "EU"],
+        "knowsAbout": ["PropTech", "FinTech", "AI automation", "React", "TypeScript"],
+        "founder": {
+          "@type": "Person",
+          "name": "Marcin Bochenek",
+          "url": "https://marcinbochenek.com/"
+        }
       }
     </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/chrome/main.tsx"></script>
   </body>
 </html>

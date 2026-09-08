@@ -1,0 +1,47 @@
+# Cloudflare Pages redirects — https://developers.cloudflare.com/pages/configuration/redirects/
+# First matching rule wins (rules are not chained); only relative-URL proxying is
+# supported for 200 rules. Cloudflare's own docs list query-string matching as
+# unsupported and don't document automatic query-string forwarding on a match — if a
+# rule below ever needs to carry UTM/query params reliably, prefer a dashboard Bulk
+# Redirect (which has an explicit "preserve query string" option) over adding it here.
+
+# --- www -> apex, preserving path -----------------------------------------
+# Cloudflare Pages also does this automatically once marcinbochenek.com is added as the
+# PRIMARY custom domain on the project (added before www.marcinbochenek.com — see
+# docs/GO-LIVE.md). This rule is a defensive backstop in case that add-order ever
+# changes or www ends up routed here some other way.
+https://www.marcinbochenek.com/* https://marcinbochenek.com/:splat 301
+
+# --- Legacy /uk -> /ua, ported 1:1 from vite.config.ts's localeHtmlPlugin ---
+# (dev middleware: exact '/uk' or '/uk/' -> '/ua/'; '/uk/statti' and everything under it
+# -> the same path under '/ua/statti'; nothing else under /uk/ is handled by the plugin,
+# so nothing else is redirected here either.)
+/uk /ua/ 301
+/uk/ /ua/ 301
+/uk/statti /ua/statti 301
+/uk/statti/* /ua/statti/:splat 301
+/mb-ai-uk.html /mb-ai-ua.html 301
+
+# --- Locale-prefixed archive pages: same file, locale stays in the URL -----
+# vite.config.ts rewrites /(en|ua)/v[1-6].html internally to /v[[1-6].html] without
+# changing the browser URL (used by the language switcher on archive pages, see
+# src/i18n/path.ts switchPath/archivePath). 200 = proxy, not a redirect, to match that.
+/en/v1.html /v1.html 200
+/en/v2.html /v2.html 200
+/en/v3.html /v3.html 200
+/en/v4.html /v4.html 200
+/en/v5.html /v5.html 200
+/en/v6.html /v6.html 200
+/ua/v1.html /v1.html 200
+/ua/v2.html /v2.html 200
+/ua/v3.html /v3.html 200
+/ua/v4.html /v4.html 200
+/ua/v5.html /v5.html 200
+/ua/v6.html /v6.html 200
+
+# --- Vanity shortcut, ported from deploy/Caddyfile's path_shortcuts --------
+/v4 /v4.html 200
+/v4/ /v4.html 200
+
+# Note: /artykuly/<slug>/, /en/articles/<slug>/ and /ua/statti/<slug>/ need no rule —
+# Cloudflare Pages serves public/.../index.html at the pretty directory URL natively.

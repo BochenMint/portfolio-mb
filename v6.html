@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var p = location.pathname
+        document.documentElement.lang =
+          p.indexOf('/en/') === 0 ? 'en' : p.indexOf('/ua/') === 0 ? 'uk' : 'pl'
+      })()
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Marcin Bochenek — strony firmowe, lejki konwersji i systemy operacyjne dla polskich firm. Widełki przed rozmową. Umów 20-min audyt."
+    />
+    <meta name="theme-color" content="#080808" />
+    <link rel="canonical" href="https://marcinbochenek.com/v6.html" />
+    <meta name="robots" content="noindex, follow" />
+    <!-- Archive visual direction. Locale from /en/ /ua/ prefix. -->
+    <meta property="og:title" content="Marcin Bochenek — strony i systemy, które oddają godziny" />
+    <meta
+      property="og:description"
+      content="MB OS — wariant V6: strona firmowa od 6 500 PLN, konwersja od 25 000 PLN. Mint i Plumm w produkcji. 20-min audyt."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://marcinbochenek.com/v6.html" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content="https://marcinbochenek.com/projects/mint/hero-card.webp" />
+    <title>Marcin Bochenek — strony i systemy, które oddają godziny</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <noscript><p>JavaScript required. <a href="/en/v6.html">EN</a> · <a href="/ua/v6.html">UA</a></p></noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/v6/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var p = location.pathname
+        document.documentElement.lang =
+          p.indexOf('/en/') === 0 ? 'en' : p.indexOf('/ua/') === 0 ? 'uk' : 'pl'
+      })()
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Marcin Bochenek — VOLT. Oddaję Ci niedzielę: strony konwertujące, panele operacyjne i automatyzacje. Mierzalny odzysk godzin. Umów 20-min audyt."
+    />
+    <meta name="theme-color" content="#FF4D1A" />
+    <link rel="canonical" href="https://marcinbochenek.com/v5.html" />
+    <meta name="robots" content="noindex, follow" />
+    <!-- Archive visual direction. Locale from /en/ /ua/ prefix. -->
+    <meta property="og:title" content="Marcin Bochenek — VOLT · oddaję Ci niedzielę" />
+    <meta
+      property="og:description"
+      content="Wariant V5 portfolio: strony, które sprzedają, i systemy, które oddają godziny. Od 6 500 PLN (wizytówka) · od 25 000 PLN (konwersja). Audyt 20 min."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://marcinbochenek.com/v5.html" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content="https://marcinbochenek.com/projects/mint/hero-card.webp" />
+    <title>Marcin Bochenek — VOLT · oddaję Ci niedzielę</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <noscript><p>JavaScript required. <a href="/en/v5.html">EN</a> · <a href="/ua/v5.html">UA</a></p></noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/v5/main.tsx"></script>
+  </body>
+</html>

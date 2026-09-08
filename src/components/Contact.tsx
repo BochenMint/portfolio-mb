@@ -1,56 +1,60 @@
-import { site } from '../data/content'
+import { sections, site } from '../i18n/live'
 import { LeadForm } from './LeadForm'
 import { MagneticButton } from './MagneticButton'
+import { SectionIntro } from './SectionIntro'
 
 export function Contact() {
-  const ctaHref = site.calendly || `mailto:${site.email}`
+  // calendly is empty → fallback to #contact (scroll to form)
+  const ctaHref = site.calendly || '#contact'
 
   return (
-    <section id="kontakt" data-section className="gradient-mesh px-5 py-24 pb-32 md:px-10 md:py-36 md:pb-28">
-      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:gap-16">
-        <div>
-          <p data-reveal className="text-mint text-xs font-semibold tracking-[0.3em] uppercase">
-            Kontakt
-          </p>
-          <h2
-            data-reveal
-            className="font-display mt-4 text-[clamp(2rem,5vw,3.5rem)] leading-tight font-bold"
-          >
-            Porozmawiajmy o Twoim procesie — nie o „stronie”.
-          </h2>
-          <p data-reveal className="text-muted mt-6 text-lg leading-relaxed">
-            Wyślij brief albo umów audyt. {site.responseTime}.
+    <section id="contact" data-section className="section-pad relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_12%,rgba(245,165,36,0.1),transparent_26rem)]" aria-hidden />
+      <div className="relative mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.86fr_1.14fr] lg:gap-10">
+        {/* Left col: copy + CTAs */}
+        <div className="rounded-[1.8rem] border border-[var(--color-paper)]/12 bg-[var(--color-paper)]/[0.025] p-5 md:p-7">
+          <SectionIntro
+            num={sections.contact.num}
+            title={sections.contact.title}
+            lead={sections.contact.lead}
+          />
+
+          <p data-reveal className="text-muted mt-6 max-w-sm text-sm leading-relaxed">
+            Napisz kilka zdań o tym, co dziś zjada czas — brief w formularzu wystarczy na start.
+            Odpowiadam w&nbsp;jeden dzień roboczy.
           </p>
 
-          <ul data-reveal className="mt-8 space-y-3 text-sm text-cream/80">
-            <li>✓ Umowa + NDA standard</li>
-            <li>✓ Hosting EU · RODO w scope</li>
-            <li>✓ Możesz wysłać link do Plumm / Previo / Excel</li>
-          </ul>
-
-          <div data-reveal className="mt-10 flex flex-wrap gap-4">
+          <div data-reveal className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            {/* Primary CTA — btn-accent */}
             <MagneticButton
               href={ctaHref}
-              external={!!site.calendly}
-              className="rounded-full bg-mint px-8 py-3.5 text-sm font-bold text-ink"
+              className="btn-accent premium-cta justify-center"
+              external={Boolean(site.calendly)}
             >
               {site.ctaPrimary}
             </MagneticButton>
-            <a
-              href={site.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass rounded-full px-6 py-3.5 text-sm text-cream/80 hover:text-mint"
+
+            {/* Email link — clearly readable */}
+            <MagneticButton
+              href={`mailto:${site.email}`}
+              className="btn-soft premium-secondary-cta justify-center"
             >
-              GitHub →
-            </a>
+              {site.email}
+            </MagneticButton>
           </div>
 
-          <p data-reveal className="text-muted mt-12 text-xs">
-            © {new Date().getFullYear()} {site.name} · {site.brand}
-          </p>
+          {/* Meta info */}
+          <div data-reveal className="mt-10 grid gap-2">
+            <p className="rounded-2xl border border-[var(--color-paper)]/10 bg-[var(--color-ink)]/40 px-4 py-3 font-mono text-[10px] tracking-[0.14em] text-[var(--color-paper)]/45 uppercase">
+              {site.responseTime}
+            </p>
+            <p className="rounded-2xl border border-[var(--color-paper)]/10 bg-[var(--color-ink)]/40 px-4 py-3 font-mono text-[10px] tracking-[0.14em] text-[var(--color-paper)]/45 uppercase">
+              {site.icpBadge}
+            </p>
+          </div>
         </div>
 
+        {/* Right col: form */}
         <div data-reveal>
           <LeadForm />
         </div>

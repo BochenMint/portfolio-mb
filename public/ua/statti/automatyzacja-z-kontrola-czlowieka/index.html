@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Автоматизація HITL: ліміти, журнал аудиту й ескалація</title>
+    <meta name="description" content="Автоматизація з контролем людини (HITL) — дозволені дії, запис кроку й ескалація. Пояснюю, чим вона відрізняється від чату без відповідальності і коли взагалі має право вийти в продакшен." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://marcinbochenek.com/ua/statti/automatyzacja-z-kontrola-czlowieka/" />
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/artykuly/automatyzacja-z-kontrola-czlowieka/" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/articles/automatyzacja-z-kontrola-czlowieka/" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/statti/automatyzacja-z-kontrola-czlowieka/" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/artykuly/automatyzacja-z-kontrola-czlowieka/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Автоматизація HITL: ліміти, журнал аудиту й ескалація" />
+    <meta property="og:description" content="Автоматизація з контролем людини (HITL) — дозволені дії, запис кроку й ескалація. Пояснюю, чим вона відрізняється від чату без відповідальності і коли взагалі має право вийти в продакшен." />
+    <meta property="og:url" content="https://marcinbochenek.com/ua/statti/automatyzacja-z-kontrola-czlowieka/" />
+    <meta property="og:locale" content="uk_UA" />
+    <meta property="og:locale:alternate" content="pl_PL" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Автоматизація HITL: ліміти, журнал аудиту й ескалація" />
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Автоматизація HITL: ліміти, журнал аудиту й ескалація" />
+    <meta name="twitter:description" content="Автоматизація з контролем людини (HITL) — дозволені дії, запис кроку й ескалація. Пояснюю, чим вона відрізняється від чату без відповідальності і коли взагалі має право вийти в продакшен." />
+    <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta name="twitter:image:alt" content="Автоматизація HITL: ліміти, журнал аудиту й ескалація" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/journal.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":["Article","BlogPosting"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://marcinbochenek.com/ua/statti/automatyzacja-z-kontrola-czlowieka/"},"headline":"Автоматизація HITL: ліміти, журнал аудиту й ескалація","description":"Автоматизація з контролем людини (HITL) — дозволені дії, запис кроку й ескалація. Пояснюю, чим вона відрізняється від чату без відповідальності і коли взагалі має право вийти в продакшен.","inLanguage":"uk","datePublished":"2026-08-24","dateModified":"2026-08-24","wordCount":1408,"image":["https://marcinbochenek.com/brand/og-default.png"],"author":{"@type":"Person","@id":"https://marcinbochenek.com/#person","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","email":"kontakt@marcinbochenek.com","jobTitle":"Software engineer","image":"https://marcinbochenek.com/images/marcin-bochenek.webp","sameAs":["https://github.com/BochenMint"]},"publisher":{"@type":"Organization","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","logo":{"@type":"ImageObject","url":"https://marcinbochenek.com/brand/logo-mb.svg"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Головна","item":"https://marcinbochenek.com/ua/"},{"@type":"ListItem","position":2,"name":"Статті","item":"https://marcinbochenek.com/ua/statti/"},{"@type":"ListItem","position":3,"name":"Автоматизація з контролем людини: ліміти, запис, ескалація — або нічого","item":"https://marcinbochenek.com/ua/statti/automatyzacja-z-kontrola-czlowieka/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Чи HITL сповільнює автоматизацію?","acceptedAnswer":{"@type":"Answer","text":"Так, у спорах і на краї. Це ціна за те, що можна спати. Рутина йде без кліку; виняток не йде без людини."}},{"@type":"Question","name":"Чи лог має бути доступний кінцевому клієнту?","acceptedAnswer":{"@type":"Answer","text":"Ні. Має бути доступний оператору і для розбору інциденту. Прозорість перед гостем — окреме продуктове рішення."}},{"@type":"Question","name":"Чи це те саме, що RPA?","acceptedAnswer":{"@type":"Answer","text":"RPA клікає UI. HITL обмежує модель і людину в циклі. Інколи поєднуються. Не продаю магічного бота-клавіатуру як HITL."}},{"@type":"Question","name":"Чи можу купити Agentic OS?","acceptedAnswer":{"@type":"Answer","text":"Не як коробку. Купуєте впровадження під ваші дії, або нічого. Внутрішній рушій лишається внутрішнім."}},{"@type":"Question","name":"Чим HITL відрізняється від повільнішого чатбота?","acceptedAnswer":{"@type":"Answer","text":"Чатбот без списку дій — надія. HITL — allow-list, запис кроку, примусовий стоп і ескалація. Якщо не вмієте списати, що модель сміє зробити, автоматизації немає. Галюцинація в оферті чи декларації не проходить аудит. У Plumm асистент ескалує замість удавати, що PIT сам підписується. Той самий контракт несу в пошту і кваліфікацію лідів — не у віджет на hero візитівки «бо сучасно»."}},{"@type":"Question","name":"Як міряти, чи HITL працює, а не грає?","acceptedAnswer":{"@type":"Answer","text":"Не числом справ «закритих без людини» — тоді система вчиться ховати непевність. Рахую слушні ескалації, відхилені чернетки і правки людини, перш ніж текст вийде назовні. Нуль ескалацій за тиждень зазвичай означає мертві ліміти або мертвий інструмент. Один процес, один тиждень, один лог. Потім розширюємо allow-list або вимикаємо. Продакшен — не лабораторія."}},{"@type":"Question","name":"Чи Agentic або iDrive є доказом, що HITL працює в клієнтів?","acceptedAnswer":{"@type":"Answer","text":"Ні. Agentic OS — внутрішній інструмент без URL для вас. iDrive не live. Не продаю зграю аватарів як корпоративний кейс. Live, який можу клікнути — Mint і Plumm, і там автоматизація не вдає, що веде готель або проводить облік без людини. Якщо хочете агентів на продакшені, починаємо з однієї дії і одного власника, не зі слайда."}}]}</script>
+  </head>
+  <body>
+    <a class="j-skip" href="#content">Перейти до змісту</a>
+    <header class="j-header">
+      <a class="j-mark" href="/ua/">MB<span>Marcin Bochenek</span></a>
+      <nav class="j-nav" aria-label="Статті">
+        <a href="/ua/statti/">Статті</a>
+        <a href="/ua/#cennik">Пакети</a>
+        <a href="/ua/#kontakt">Контакт</a>
+      </nav>
+      <nav class="j-locales" aria-label="Мова"><a href="/artykuly/automatyzacja-z-kontrola-czlowieka/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/automatyzacja-z-kontrola-czlowieka/" lang="en" hreflang="en">EN</a><a href="/ua/statti/automatyzacja-z-kontrola-czlowieka/" aria-current="page" lang="uk" hreflang="uk">UA</a></nav>
+    </header>
+    <main class="j-main" id="content">
+      <nav class="j-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/ua/">Головна</a></li>
+          <li><a href="/ua/statti/">Статті</a></li>
+          <li>Автоматизація з контролем людини: ліміти, запис, ескалація — або нічого</li>
+        </ol>
+      </nav>
+      <article class="j-article">
+        <p class="j-kicker">HITL</p>
+        <h1>Автоматизація з контролем людини: ліміти, запис, ескалація — або нічого</h1>
+        <p class="j-meta">Автор: Marcin Bochenek · Оновлення: <time datetime="2026-08-24">2026-08-24</time></p>
+        <p class="j-lead">Автоматизація без людини в циклі добре виглядає на демо і погано в спорі з гостем або установою. HITL, який впроваджую, — не «людина тисне OK під кожним токеном». Це список дій, яких моделі можна торкатися, слід кожного кроку і поріг певності, після якого рішення повертається оператору. Agentic OS — внутрішній рушій, не коробка з прайса. Назовні складаю той самий хребет під ваш процес.</p>
+        <h2>Три елементи, без яких не вмикаю продакшен</h2>
+<ol><li>Allow-list: нічого поза узгодженим обсягом (надіслати шаблон, прочитати статус, не давати знижку).</li><li>Audit log: хто, що, на яких даних, який результат, яка певність.</li><li>Ескалація: низький score, спір, чутливі дані, сума понад поріг — людина.</li></ol>
+<p>Чат, який «робить усе», зручний для пітча і незручний для підтримки. Коли клієнт питає «чому система пообіцяла X», без логу ви беззахисні. З логом маєте розмову, не театр.</p>
+<h2>Де це вже сидить у живих продуктах</h2>
+<p>Mint: асистент гостя з контекстом апартаментів, не генеричний GPT, і передача людині. Plumm: податкове питання польською, складніші справи — бухгалтерці. Оцінки годин орієнтовні й описані при цих продуктах — не переношу їх на вашу фірму як гарантію.</p>
+<aside class="j-note">iDrive не live. Agentic не продукт для вас з URL. Нуль фальшивих впроваджень «у двадцяти корпораціях».</aside>
+<h2>Коли HITL — overkill</h2>
+<p>Внутрішні чернетки листів, мозковий штурм, переклад власної нотатки — досить інструменту з договором і заборони вставляти таємниці. HITL починається, коли автомат рухає стан світу: замок, рахунок, повідомлення клієнту, зміна в панелі. Тоді <a href="/ua/statti/wdrozyc-chatgpt-w-firmie/">впровадження ChatGPT як самі місця</a> закоротке.</p>
+<ul><li>Не автоматизую рішення, яких не вмієте списати вручну.</li><li>Не ховаю вартість токенів — оцінка до старту.</li><li>Не з’єдную модель із коренем бази «на хвилинку, подивимось».</li></ul>
+<h2>Зв’язок із панеллю, не з віджетом</h2>
+<p>HITL тримається на <a href="/ua/statti/panel-operacyjny-zamiast-excela/">операційній панелі</a> або вузькій інтеграції, не на бульбашці на візитівці. Візитівка має форму. Воронка має кваліфікацію. Панель має статуси. Модель читає статус і виконує дозволений крок. Зворотний порядок — спочатку чат, потім процес — закінчується галюцинацією в продакшені.</p>
+<h2>Вартість і чесність оферти</h2>
+<p>Оцінка після аудиту, зазвичай у Ops або модулі Conversion Build (наприклад асистент гостей). Немає позиції «ШІ 1999 злотих». Якщо процес не повторюваний — кажу ні. Якщо так — 20 хвилин досить, щоб сказати, чи allow-list узагалі можна написати.</p>
+<h2>Означення, яким користуюся, коли кажуть «давайте автоматизуємо»</h2>
+<p>Автоматизація з контролем людини — не повільніший чатбот. Це машина, яка сміє виконати лише дії зі списку, записує крок і знає, коли зупинитися. Якщо список не вмієте списати, автоматизації немає. Є надія. Надія не проходить аудит, коли клієнт дістає галюцинацію або податкова питає, хто затвердив документ.</p>
+<p>На практиці HITL виглядає так: модель або правило готує чернетку, система показує diff, людина клікає так/ні/ескалувати. Іноді людина в петлі завжди (бухгалтерія, оферта назовні). Іноді лише за низької певності або суми понад поріг. Поріг записуємо. «Якось буде» — не поріг.</p>
+<ul><li>Allow-list дій — усе поза ним є помилкою, не «креативністю моделі».</li><li>Ідентифікатор кроку й користувача. Без цього немає розмови про відповідальність.</li><li>Канал ескалації з SLA, не канал мемів у Messenger.</li><li>Тест на staging із даними, які можна зламати. Продакшен — не лабораторія.</li></ul>
+<h2>Де HITL сходиться з панеллю, а де не сходиться з чатом</h2>
+<p>У операційній панелі HITL природний: стани, ролі, кнопка. У чаті на сайті — ні, бо гість не оператор, а віджет хоче бути милим. Тому рідко врізаю модель у hero візитівки. Частіше у внутрішню чергу: чернетка відповіді, клас звернення, наступний крок для людини. <a href="/ua/statti/wdrozyc-chatgpt-w-firmie/">Впровадити ChatGPT</a> без цього розрізнення — покупка місця, не системи.</p>
+<p>Plumm показує асистента з ескалацією в продукті, який сам підтримую. Не показує двадцяти впроваджень у чужих бюро. Mint показує бронювання на власному домені, не «AI concierge, який сам скасовує перебування». Межі — частина оферти. Якщо хочете перейти межу, називаємо ризик і ціну — або стоп.</p>
+<h2>Помилки, які вбивають HITL у перший місяць</h2>
+<ol><li>Немає власника: «нехай ІТ і маркетинг разом постережуть». Разом означає ніхто.</li><li>Лог, який ніхто не читає. Запис без перегляду — алібі, не контроль.</li><li>Модель із ширшим доступом, ніж оператор. Це не автоматизація. Це ескалація не туди.</li><li>Успіх міряють «закрито без людини». Тоді система вчиться ховати непевність.</li></ol>
+<p>Міряю навпаки: скільки ескалацій були слушні, скільки чернеток відхилено, скільки разів людина править текст до виходу. Це здорові цифри. Нуль ескалацій за тиждень зазвичай означає, що ліміти мертві або інструментом ніхто не користується.</p>
+<aside class="j-note">Agentic OS — внутрішній інструмент. Не продаю його як кейс «для корпорацій». iDrive не live. HITL описую на тому, що можу підтримувати і показати.</aside>
+<h2>Як починаю, коли автоматизація має право вийти в продакшен</h2>
+<p>Одна дія. Один тиждень. Один лог. Потім рішення: розширити allow-list, лишити, вимкнути. Пакет HITL у прайсі — не «ШІ в тлі сайту». Це інженерна робота: інтеграція, ліміти, навчання, вимір. Якщо бюджет — візитівка 6 500–12 000, спочатку сайт і форма, які працюють. Автоматизація на зламаному follow-up лише прискорює сором.</p>
+<p>20 хвилин аудиту можуть закінчитися «ще не автоматизуйте». Це успіх, якщо стоп рятує витік. Якщо йдемо далі, записуємо, хто клікає в неділю, коли модель застрягне. Без цієї людини лишаєтесь з Excel і чатом. Тоді чесніше не починати.</p>
+<h2>Мінімальний тиждень, після якого знаємо, чи йти далі</h2>
+<p>Одна дія з allow-list, staging, лог, людина з правом стопу. Після семи днів: скільки ескалацій, відхилень, правок перед виходом назовні. Якщо цифри нуль, інструмент мертвий або ліміти фікція. Тоді вимикаємо, не «дошліфуємо промпт». Автоматизація з контролем людини не заслуговує на другий місяць ліцензії, коли перший тиждень не лишив сліду. Власник процесу мусить мати календар у неділю — інакше вернетесь до Excel і чату, лише з гіршим сумлінням.</p>
+<p>Пакет HITL в оферті — інженерна робота, не наліпка ШІ на візитівці. 6 500–12 000 корпоративного сайту цього не покриває. Якщо бюджет лише сайт, спочатку форма і follow-up. Прискорення хаосу не є трансформацією. 20 хвилин аудиту можна закінчити словами «ще не автоматизуйте». Це контроль. Решта — театр місця. Якщо за тиждень немає логу, немає впровадження — є чат із гарнішим вікном і ризиком, якого не вмієте назвати перед клієнтом і перед податковою. Тоді чесніше повернутися до ручної черги й одного власника, ніж удавати автоматизацію.</p>
+<h2>Одна дозволена дія — єдиний чесний старт HITL</h2>
+<p>Не починаю з «агентів для компанії». Починаю з однієї дії з allow-list, staging, логу і людини з правом стопу. Після семи днів рахую ескалації, відхилені чернетки і правки перед виходом назовні. Нуль — мертвий інструмент або фіктивні ліміти. Тоді вимикаємо, не «дошліфуємо промпт». Віджет на hero візитівки в ціні 6 500–12 000 цим не є. Це наліпка. Mint і Plumm не вдають, що модель веде готель або підписує PIT. Agentic без URL для вас не є кейсом. iDrive не live. Якщо 20 хвилин кінчаються «ще не автоматизуйте» — це контроль, не програш продажу. Лог, якого ніхто не читає раз на тиждень, теж наліпка — лише дорожча.</p>
+<p>Пакет HITL в оферті — інженерна робота. Не кладу його в ціну корпоративного сайту. Спочатку форма і людина по той бік. Потім, якщо є процес і власник, одна дозволена дія.</p>
+        <section class="j-faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">Питання</h2>
+          <details><summary>Чи HITL сповільнює автоматизацію?</summary><p>Так, у спорах і на краї. Це ціна за те, що можна спати. Рутина йде без кліку; виняток не йде без людини.</p></details>
+<details><summary>Чи лог має бути доступний кінцевому клієнту?</summary><p>Ні. Має бути доступний оператору і для розбору інциденту. Прозорість перед гостем — окреме продуктове рішення.</p></details>
+<details><summary>Чи це те саме, що RPA?</summary><p>RPA клікає UI. HITL обмежує модель і людину в циклі. Інколи поєднуються. Не продаю магічного бота-клавіатуру як HITL.</p></details>
+<details><summary>Чи можу купити Agentic OS?</summary><p>Не як коробку. Купуєте впровадження під ваші дії, або нічого. Внутрішній рушій лишається внутрішнім.</p></details>
+<details><summary>Чим HITL відрізняється від повільнішого чатбота?</summary><p>Чатбот без списку дій — надія. HITL — allow-list, запис кроку, примусовий стоп і ескалація. Якщо не вмієте списати, що модель сміє зробити, автоматизації немає. Галюцинація в оферті чи декларації не проходить аудит. У Plumm асистент ескалує замість удавати, що PIT сам підписується. Той самий контракт несу в пошту і кваліфікацію лідів — не у віджет на hero візитівки «бо сучасно».</p></details>
+<details><summary>Як міряти, чи HITL працює, а не грає?</summary><p>Не числом справ «закритих без людини» — тоді система вчиться ховати непевність. Рахую слушні ескалації, відхилені чернетки і правки людини, перш ніж текст вийде назовні. Нуль ескалацій за тиждень зазвичай означає мертві ліміти або мертвий інструмент. Один процес, один тиждень, один лог. Потім розширюємо allow-list або вимикаємо. Продакшен — не лабораторія.</p></details>
+<details><summary>Чи Agentic або iDrive є доказом, що HITL працює в клієнтів?</summary><p>Ні. Agentic OS — внутрішній інструмент без URL для вас. iDrive не live. Не продаю зграю аватарів як корпоративний кейс. Live, який можу клікнути — Mint і Plumm, і там автоматизація не вдає, що веде готель або проводить облік без людини. Якщо хочете агентів на продакшені, починаємо з однієї дії і одного власника, не зі слайда.</p></details>
+        </section>
+        <section class="j-cta">
+          <h2>Спишімо allow-list, перш ніж увімкнути модель</h2>
+          <p>Якщо її не можна написати, не автоматизуємо. <a href="/ua/#oferta">Обсяг</a>.</p>
+          <a href="/ua/#kontakt">Записатися на 20-хв аудит</a>
+        </section>
+        <section class="j-related">
+          <h2>Пов’язані статті</h2>
+          <ul><li><a href="/ua/statti/wdrozyc-chatgpt-w-firmie/">впровадити ChatGPT у фірмі замало</a></li><li><a href="/ua/statti/panel-operacyjny-zamiast-excela/">операційна панель, на якій тримається HITL</a></li><li><a href="/ua/statti/ksiegowosc-online-zamiast-excela/">ескалація до бухгалтерки в Plumm</a></li></ul>
+          <h3>Пропозиція</h3>
+          <ul><li><a href="/ua/#oferta">обсяг робіт: сайт, панель, HITL</a></li></ul>
+        </section>
+      </article>
+    </main>
+    <div class="j-header" style="border:0;padding-bottom:0">
+      <nav class="j-locales" aria-label="Мова"><a href="/artykuly/automatyzacja-z-kontrola-czlowieka/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/automatyzacja-z-kontrola-czlowieka/" lang="en" hreflang="en">EN</a><a href="/ua/statti/automatyzacja-z-kontrola-czlowieka/" aria-current="page" lang="uk" hreflang="uk">UA</a></nav>
+    </div>
+    <footer class="j-footer">
+      <p>Marcin Bochenek</p>
+      <div>
+        <a href="mailto:kontakt@marcinbochenek.com">kontakt@marcinbochenek.com</a>
+        ·
+        <a href="/ua/statti/">Статті</a>
+        ·
+        <a href="/ua/">Головна</a>
+      </div>
+    </footer>
+  </body>
+</html>

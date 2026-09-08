@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Швидкість сайту і SEO: INP, LCP і вимір після старту</title>
+    <meta name="description" content="Швидкість сайту і SEO: на телефоні рахуються INP і LCP, не FID і не сам Lighthouse. Пояснюю, чому стек (Astro/Next) і вимір після деплою є частиною конверсії, не прикрасою." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://marcinbochenek.com/ua/statti/szybkosc-strony-a-seo/" />
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/artykuly/szybkosc-strony-a-seo/" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/articles/szybkosc-strony-a-seo/" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/statti/szybkosc-strony-a-seo/" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/artykuly/szybkosc-strony-a-seo/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Швидкість сайту і SEO: INP, LCP і вимір після старту" />
+    <meta property="og:description" content="Швидкість сайту і SEO: на телефоні рахуються INP і LCP, не FID і не сам Lighthouse. Пояснюю, чому стек (Astro/Next) і вимір після деплою є частиною конверсії, не прикрасою." />
+    <meta property="og:url" content="https://marcinbochenek.com/ua/statti/szybkosc-strony-a-seo/" />
+    <meta property="og:locale" content="uk_UA" />
+    <meta property="og:locale:alternate" content="pl_PL" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Швидкість сайту і SEO: INP, LCP і вимір після старту" />
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Швидкість сайту і SEO: INP, LCP і вимір після старту" />
+    <meta name="twitter:description" content="Швидкість сайту і SEO: на телефоні рахуються INP і LCP, не FID і не сам Lighthouse. Пояснюю, чому стек (Astro/Next) і вимір після деплою є частиною конверсії, не прикрасою." />
+    <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta name="twitter:image:alt" content="Швидкість сайту і SEO: INP, LCP і вимір після старту" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/journal.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":["Article","BlogPosting"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://marcinbochenek.com/ua/statti/szybkosc-strony-a-seo/"},"headline":"Швидкість сайту і SEO: INP, LCP і вимір після старту","description":"Швидкість сайту і SEO: на телефоні рахуються INP і LCP, не FID і не сам Lighthouse. Пояснюю, чому стек (Astro/Next) і вимір після деплою є частиною конверсії, не прикрасою.","inLanguage":"uk","datePublished":"2026-08-24","dateModified":"2026-08-24","wordCount":1419,"image":["https://marcinbochenek.com/brand/og-default.png"],"author":{"@type":"Person","@id":"https://marcinbochenek.com/#person","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","email":"kontakt@marcinbochenek.com","jobTitle":"Software engineer","image":"https://marcinbochenek.com/images/marcin-bochenek.webp","sameAs":["https://github.com/BochenMint"]},"publisher":{"@type":"Organization","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","logo":{"@type":"ImageObject","url":"https://marcinbochenek.com/brand/logo-mb.svg"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Головна","item":"https://marcinbochenek.com/ua/"},{"@type":"ListItem","position":2,"name":"Статті","item":"https://marcinbochenek.com/ua/statti/"},{"@type":"ListItem","position":3,"name":"Швидкість сайту і SEO: INP на телефоні, не vanity score з Lighthouse","item":"https://marcinbochenek.com/ua/statti/szybkosc-strony-a-seo/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Чи 100 у Lighthouse гарантує позиції?","acceptedAnswer":{"@type":"Answer","text":"Ні. Це лабораторія. Ранжування — інтент, зміст, лінки й досвід у полі. 100 без запитів — хобі."}},{"@type":"Question","name":"Чи WordPress може бути швидким?","acceptedAnswer":{"@type":"Answer","text":"Може, за дисципліни, якої більшість тем не має. Тому не продаю його як типовий стек візитівки."}},{"@type":"Question","name":"Чи анімації завжди псують INP?","acceptedAnswer":{"@type":"Answer","text":"Не завжди. Псує непродуманий JS на критичному шляху. CSS-декор іноді дешевий. Three.js у герої візитівки — рідко."}},{"@type":"Question","name":"Коли міряти знову?","acceptedAnswer":{"@type":"Answer","text":"Після деплою на продакшені, на телефоні, з реальним кешем. Потім після додатків (чат, піксель, відео). Кожен додаток — новий аудит INP, не «уже було зелено»."}},{"@type":"Question","name":"Чи результат Lighthouse 100 на localhost щось означає?","acceptedAnswer":{"@type":"Answer","text":"Мало. Після деплою відкриваю сайт на телефоні, в мережі яку не контролюю, і дивлюсь LCP та INP. CrUX, коли трафік є. Lab без трафіку — гіпотеза, не сертифікат. Не публікую PageSpeed 98 на Mint — виміряйте самі. FID випав з Core Web Vitals; звіт FID у 2026 — аудит спогадів. Чат у hero, гідрація SPA і піксель «про всяк випадок» вбивають INP. Гра і 3D-ангар — окремі входи, не багаж візитівки."}},{"@type":"Question","name":"Чи цей журнал у SPA з хешем, якщо решта сайту буває застосунком?","acceptedAnswer":{"@type":"Answer","text":"Ні. Статті — статичний HTML під /artykuly/, /en/articles/ і /ua/statti/. Хеш не є адресою для Search Console. Hreflang української версії — uk або uk-UA; префікс URL — /ua/, позначка UA, ніколи UK як Україна. Три копії — три LCP. Візитівці без блогу не треба бути crawlable журналом. Кластерам — так. Не вирізаю текст, який продає, щоб Lighthouse усміхнувся. Порожній hero з результатом 100 не збирає запитів."}},{"@type":"Question","name":"Що лишаєш після старту замість скріншота дня прем’єри?","acceptedAnswer":{"@type":"Answer","text":"Спосіб виміру. Мережа змінюється, хтось вставляє Tag Manager на хвилинку, піксель додається. Швидкість — гігієна, не закритий проєкт. Якщо не хочете цієї гігієни, не обіцяю позицій і не беру відповідальності за кампанію, яка палить бюджет на спінері. Astro/Next, здорові зображення, згода перед сторонніми скриптами. Кожна чемність до маркетингу — нечемність до INP на старому Android."}}]}</script>
+  </head>
+  <body>
+    <a class="j-skip" href="#content">Перейти до змісту</a>
+    <header class="j-header">
+      <a class="j-mark" href="/ua/">MB<span>Marcin Bochenek</span></a>
+      <nav class="j-nav" aria-label="Статті">
+        <a href="/ua/statti/">Статті</a>
+        <a href="/ua/#cennik">Пакети</a>
+        <a href="/ua/#kontakt">Контакт</a>
+      </nav>
+      <nav class="j-locales" aria-label="Мова"><a href="/artykuly/szybkosc-strony-a-seo/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/szybkosc-strony-a-seo/" lang="en" hreflang="en">EN</a><a href="/ua/statti/szybkosc-strony-a-seo/" aria-current="page" lang="uk" hreflang="uk">UA</a></nav>
+    </header>
+    <main class="j-main" id="content">
+      <nav class="j-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/ua/">Головна</a></li>
+          <li><a href="/ua/statti/">Статті</a></li>
+          <li>Швидкість сайту і SEO: INP на телефоні, не vanity score з Lighthouse</li>
+        </ol>
+      </nav>
+      <article class="j-article">
+        <p class="j-kicker">Core Web Vitals</p>
+        <h1>Швидкість сайту і SEO: INP на телефоні, не vanity score з Lighthouse</h1>
+        <p class="j-meta">Автор: Marcin Bochenek · Оновлення: <time datetime="2026-08-24">2026-08-24</time></p>
+        <p class="j-lead">«Зробіть нам 100 у PageSpeed» — поганий бриф. Google роками міряє досвід, не знімок лабораторії на кабелі. Для взаємодії рахується INP (не мертвий FID), для малювання LCP, для стабільності CLS. Швидкість сайту і SEO зустрічаються там, де платний або органічний клік помирає, перш ніж H1 щось пообіцяє. У пакеті корпоративного сайту обіцяю on-page і CWV на телефоні — не релігію зелених коробок без конверсії.</p>
+        <h2>INP замість FID — щоб говорити однією мовою</h2>
+<p>FID випав із Core Web Vitals. Якщо агенція в 2026 звітує FID як успіх, вона аудитує спогади. INP описує, як сторінка реагує на тап і введення. Важкий JS, гідрація всього SPA, чат, встромлений у героя — убивці INP. Тому візитівки ставлю на легкому стеку (Astro/Next), а не на темі з двадцятьма плагінами «оптимізації».</p>
+<p>Lighthouse на десктопі з кешем розробника бреше двічі: пристрій і мережа. Рішення беру з поля (CrUX, якщо є трафік) або з виміру на реальному телефоні після деплою. <a href="/ua/statti/wdrozenie-strony-internetowej/">Впровадження</a> має крок «вимір після старту» саме тому.</p>
+<h2>Де швидкість є SEO, а де лише конверсією</h2>
+<p>Google використовує сигнали досвіду як частину ранжування, але позицію не купите самою компресією зображень, коли ніхто не лінкує і немає змісту з інтентом. З іншого боку: кампанія, що сідає на 6-секундний LCP, палить бюджет незалежно від title. Це відро 2 в <a href="/ua/statti/dlaczego-strona-nie-sprzedaje/">чому сайт не продає</a>.</p>
+<ul><li>Зображення: сучасний формат, розміри, не hero 4k з PNG.</li><li>Шрифти: preconnect, не п’ять родин «про всяк випадок».</li><li>JS: не вантажте Three.js на візитівку «бо гарно». Гра і ангар — окремі входи.</li><li>Сторонні скрипти: кожен піксель — це INP. Згода маркетингу не безкоштовна.</li></ul>
+<aside class="j-note">Не публікую тут фальшиве «PageSpeed 98 на Mint». Mint і Plumm можете виміряти самі. iDrive не live — немає чим хвалитися на продакшені.</aside>
+<h2>Crawlable HTML проти SPA з хешем</h2>
+<p>Цей журнал — статичний HTML у dist, не `/#artykuly`. Це рішення SEO, не мода. Hash routing не є адресою для Search Console. Якщо хочете органічний канал, URL має існувати без JavaScript як єдиного носія змісту. Візитівці без блогу це не потрібно. Кластерам — так.</p>
+<h2>Чого не роблю в ім’я результату 100</h2>
+<ol><li>Не вирізаю текст, який продає, щоб Lighthouse посміхнувся.</li><li>Не лишаю «швидку» сторінку без форми, яка працює на повільному LTE.</li><li>Не обіцяю Core Web Vitals у полі, коли ще немає трафіку — лабораторія це гіпотеза.</li><li>Не продаю щомісячне «оптимізуємо плагіни» на стеку, якого не ставлю.</li></ol>
+<p>У <a href="/ua/statti/strona-firmowa-b2b/">корпоративному сайті B2B</a> швидкість в обсязі, бо телефон — місце рішення. У Conversion Build додається вимір шляху: повільний крок оплати вбиває воронку сильніше, ніж три пункти Lighthouse.</p>
+<h2>Що насправді міряю після деплою, а чого не кладу на слайд</h2>
+<p>Швидкість сайту і SEO — не гонка Lighthouse на localhost з кабелем. Після старту відкриваю сайт на телефоні, в мережі, яку не контролюю, і дивлюсь LCP та INP. CrUX, коли трафік узагалі є. Якщо трафіку немає, lab — гіпотеза, не сертифікат. Не публікую тут фальшиве «PageSpeed 98 на Mint». Mint і Plumm можете виміряти самі. iDrive не live, тож хвалити продакшен немає чим.</p>
+<p>FID випав з Core Web Vitals. Агенція, яка в 2026 звітує FID як успіх, аудитить спогади. INP описує, як сторінка реагує на клік і введення. Важкий JS, гідрація всього SPA, чат у hero — вбивці INP. Тому візитівки ставлю на легкому стеку. Гра і 3D-ангар — окремі входи, не обов’язковий багаж корпоративного сайту.</p>
+<ul><li>LCP: hero не може бути декорацією на 4 МБ «бо гарно в портфоліо».</li><li>INP: сторонні скрипти, піксель, чат. Згода маркетингу не безкоштовна.</li><li>CLS: шрифти й банери cookie, які штовхають CTA після завантаження.</li><li>TTFB: хостинг і кеш. Тема з двадцятьма плагінами «оптимізації» зазвичай бреше.</li></ul>
+<h2>Crawlable HTML проти хешу, який Google не вважає адресою</h2>
+<p>Цей журнал — статичний HTML. Це рішення SEO, не мода. Hash routing не є адресою для Search Console. Якщо хочете органічний канал, URL має існувати без JavaScript як єдиного носія сенсу. Візитівці без блогу це не потрібно. Кластерам — так. Не плутаю це з «плагіном блогу в page builder», який плодить дублі параметрів і 200 на порожніх фасетах.</p>
+<p>Hreflang на українській версії — `uk` або `uk-UA`, не вигадка `ua`. Префікс URL — `/ua/`, бо так читає людина і так тримаємо узгодженість із homepage. Плутати UK (Велика Британія) з UA в UI — помилка, яку виправляю, коли бачу. Швидкість і i18n зустрічаються тут: три копії — три LCP, не один «перекладений div».</p>
+<h2>Чого не виріжу, щоб Lighthouse усміхнувся</h2>
+<ol><li>Тексту, який продає. Порожній hero з результатом 100 не збирає запитів.</li><li>Форми, яка працює на повільному LTE. «Швидкий» сайт без CTA — помилка виміру.</li><li>Доказу, який можна клікнути. Картинка з постера — не Mint.</li><li>Виміру запитів. Піксель має ціну INP — тому не встромляю п’ять «про всяк випадок».</li></ol>
+<p>Якщо платите за трафік, спочатку ремонтуємо INP і LCP на платному шляху, не «весь сайт на 100». <a href="/ua/statti/dlaczego-strona-nie-sprzedaje/">Чому сайт не продає</a> часто починається у відрі 2: люди приходять і тікають, бо перший екран важкий. Редизайн без виміру — покупка шпалер.</p>
+<h2>Стек, який використовую, коли швидкість є частиною оферти</h2>
+<p>Astro або Next для візитівки, не WordPress з ThemeForest і двадцятьма плагінами кешу, які б’ються між собою. Зображення в здоровому форматі, без hero-відео 4K під CTA. Обмежені шрифти. Сторонні скрипти за згодою, не на старті. Це не релігія JAMstack. Це арифметика: кожен кілобайт чемності до маркетингу — нечемність до INP на Android 2020 року.</p>
+<p>Після <a href="/ua/statti/wdrozenie-strony-internetowej/">впровадження</a> лишаю вам спосіб виміру, не скріншот дня прем’єри. Мережа змінюється, піксель додається, хтось вставляє Tag Manager «на хвилинку». Швидкість сайту і SEO — гігієна, не закритий проєкт. Якщо не хочете цієї гігієни, не обіцяю позицій — і не беру відповідальності за кампанію, яка палить бюджет на спінері.</p>
+<h2>Гігієна після деплою, якої не замінить скріншот прем’єри</h2>
+<p>Хтось вставить піксель. Хтось додасть чат. Мережа гостя не є вашою офісною. Лишаю спосіб виміру LCP та INP на телефоні, не диплом Lighthouse дня старту. Якщо не хочете цієї гігієни, не беру кампанію, яка має палити бюджет на спінері. Візитівка на Astro/Next, зображення без hero 4K, згода перед скриптами. Crawlable журнал під /artykuly/ і /ua/statti/, не хеш. Hreflang uk, позначка UA. FID у звіті 2026 — спогад. Швидкість сайту і SEO є частиною конверсії. Інакше платите за клік, який не встигне прочитати оферту. Скріншот прем’єри не захистить вас за три місяці, коли Tag Manager «на хвилинку» лишиться назавжди.</p>
+<h2>Лабораторія без поля не є сертифікатом</h2>
+<p>Lighthouse 100 на localhost мало значить. Після деплою відкриваю сайт на телефоні в мережі, яку не контролюю, і дивлюсь LCP та INP. CrUX — коли є трафік. Чат у hero, гідрація SPA і піксель «про всяк випадок» вбивають INP. Журнал — статичний HTML під /ua/statti/, не хеш SPA. Hreflang української версії — uk, префікс URL — /ua/, позначка UA.</p>
+        <section class="j-faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">Питання</h2>
+          <details><summary>Чи 100 у Lighthouse гарантує позиції?</summary><p>Ні. Це лабораторія. Ранжування — інтент, зміст, лінки й досвід у полі. 100 без запитів — хобі.</p></details>
+<details><summary>Чи WordPress може бути швидким?</summary><p>Може, за дисципліни, якої більшість тем не має. Тому не продаю його як типовий стек візитівки.</p></details>
+<details><summary>Чи анімації завжди псують INP?</summary><p>Не завжди. Псує непродуманий JS на критичному шляху. CSS-декор іноді дешевий. Three.js у герої візитівки — рідко.</p></details>
+<details><summary>Коли міряти знову?</summary><p>Після деплою на продакшені, на телефоні, з реальним кешем. Потім після додатків (чат, піксель, відео). Кожен додаток — новий аудит INP, не «уже було зелено».</p></details>
+<details><summary>Чи результат Lighthouse 100 на localhost щось означає?</summary><p>Мало. Після деплою відкриваю сайт на телефоні, в мережі яку не контролюю, і дивлюсь LCP та INP. CrUX, коли трафік є. Lab без трафіку — гіпотеза, не сертифікат. Не публікую PageSpeed 98 на Mint — виміряйте самі. FID випав з Core Web Vitals; звіт FID у 2026 — аудит спогадів. Чат у hero, гідрація SPA і піксель «про всяк випадок» вбивають INP. Гра і 3D-ангар — окремі входи, не багаж візитівки.</p></details>
+<details><summary>Чи цей журнал у SPA з хешем, якщо решта сайту буває застосунком?</summary><p>Ні. Статті — статичний HTML під /artykuly/, /en/articles/ і /ua/statti/. Хеш не є адресою для Search Console. Hreflang української версії — uk або uk-UA; префікс URL — /ua/, позначка UA, ніколи UK як Україна. Три копії — три LCP. Візитівці без блогу не треба бути crawlable журналом. Кластерам — так. Не вирізаю текст, який продає, щоб Lighthouse усміхнувся. Порожній hero з результатом 100 не збирає запитів.</p></details>
+<details><summary>Що лишаєш після старту замість скріншота дня прем’єри?</summary><p>Спосіб виміру. Мережа змінюється, хтось вставляє Tag Manager на хвилинку, піксель додається. Швидкість — гігієна, не закритий проєкт. Якщо не хочете цієї гігієни, не обіцяю позицій і не беру відповідальності за кампанію, яка палить бюджет на спінері. Astro/Next, здорові зображення, згода перед сторонніми скриптами. Кожна чемність до маркетингу — нечемність до INP на старому Android.</p></details>
+        </section>
+        <section class="j-cta">
+          <h2>Зміряймо телефон, не знімок з iMac</h2>
+          <p>Якщо LCP вбиває кампанію, це не проблема «кольорів». <a href="/ua/#oferta">Обсяг</a> включає CWV у пакеті сайту.</p>
+          <a href="/ua/#kontakt">Записатися на 20-хв аудит</a>
+        </section>
+        <section class="j-related">
+          <h2>Пов’язані статті</h2>
+          <ul><li><a href="/ua/statti/dlaczego-strona-nie-sprzedaje/">повільний сайт як одне з відер «не продає»</a></li><li><a href="/ua/statti/strona-firmowa-b2b/">CWV у пакеті корпоративного сайту, не як релігія</a></li><li><a href="/ua/statti/wdrozenie-strony-internetowej/">вимір на продакшені, не лише на staging</a></li></ul>
+          <h3>Пропозиція</h3>
+          <ul><li><a href="/ua/#oferta">обсяг робіт: сайт, панель, HITL</a></li></ul>
+        </section>
+      </article>
+    </main>
+    <div class="j-header" style="border:0;padding-bottom:0">
+      <nav class="j-locales" aria-label="Мова"><a href="/artykuly/szybkosc-strony-a-seo/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/szybkosc-strony-a-seo/" lang="en" hreflang="en">EN</a><a href="/ua/statti/szybkosc-strony-a-seo/" aria-current="page" lang="uk" hreflang="uk">UA</a></nav>
+    </div>
+    <footer class="j-footer">
+      <p>Marcin Bochenek</p>
+      <div>
+        <a href="mailto:kontakt@marcinbochenek.com">kontakt@marcinbochenek.com</a>
+        ·
+        <a href="/ua/statti/">Статті</a>
+        ·
+        <a href="/ua/">Головна</a>
+      </div>
+    </footer>
+  </body>
+</html>

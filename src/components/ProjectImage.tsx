@@ -1,4 +1,5 @@
-import type { Project } from '../data/content'
+import type { Project } from '../i18n/live'
+import { sceneFor } from '../lib/projectImageUrl'
 
 type Props = {
   project: Project
@@ -7,12 +8,9 @@ type Props = {
   priority?: boolean
 }
 
+const FULL_W = 3840
 const HERO_W = 1920
 const CARD_W = 1200
-
-function sceneFor(project: Project, variant: 'hero' | 'card') {
-  return project.id === 'mint' && variant === 'card' ? 'apartment' : 'hero'
-}
 
 export function ProjectImage({
   project,
@@ -24,6 +22,7 @@ export function ProjectImage({
   const base = `/projects/${project.id}/${scene}`
   const isFlagshipLcp = priority ?? (project.flagship && variant === 'hero')
 
+  const fullSrc = `${base}-full.webp`
   const heroSrc = `${base}-hero.webp`
   const cardSrc = `${base}-card.webp`
 
@@ -31,15 +30,11 @@ export function ProjectImage({
   const height = variant === 'hero' ? 1080 : 675
 
   return (
-    <picture className={`block h-full w-full overflow-hidden rounded-xl ${className}`}>
+    <picture className={`block h-full w-full ${className}`}>
       <source
         type="image/webp"
-        srcSet={`${cardSrc} 1200w, ${heroSrc} 1920w`}
-        sizes={
-          variant === 'hero'
-            ? '(min-width: 1024px) 42vw, 100vw'
-            : '(min-width: 1024px) 50vw, 100vw'
-        }
+        srcSet={`${cardSrc} ${CARD_W}w, ${heroSrc} ${HERO_W}w, ${fullSrc} ${FULL_W}w`}
+        sizes="100vw"
       />
       <img
         src={variant === 'hero' ? heroSrc : cardSrc}
@@ -49,7 +44,7 @@ export function ProjectImage({
         loading={isFlagshipLcp ? 'eager' : 'lazy'}
         decoding="async"
         fetchPriority={isFlagshipLcp ? 'high' : 'auto'}
-        className="h-full w-full object-cover object-top"
+        className="h-full w-full object-cover object-center"
       />
     </picture>
   )

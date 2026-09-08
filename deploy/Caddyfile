@@ -1,0 +1,129 @@
+# Portfolio MB — Caddy (statyczny dist/ za Cloudflare Tunnel)
+#
+# Cloudflare Tunnel kończy TLS; Caddy nasłuchuje tylko lokalnie.
+# Mac Mini: root może być np. ~/Sites/portfolio-mb/dist zamiast /var/www/...
+
+{
+	# Opcjonalnie: wyłącz automatyczny HTTPS (TLS robi Cloudflare)
+	auto_https off
+}
+
+(common_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		X-Frame-Options "DENY"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self'; connect-src 'self' https://api.web3forms.com https://cal.com https://*.cal.com https://calendly.com; frame-src https://cal.com https://calendly.com; worker-src 'self' blob:;"
+	}
+}
+
+# Wspólny katalog buildu Vite
+(portfolio_root) {
+	root * /var/www/portfolio-mb/dist
+}
+
+# Journal SEO (statyczne index.html w dist/artykuly, dist/en/articles, dist/ua/statti).
+# Brak SPA-fallback na homepage — nieistniejący slug ma zwrócić 404, nie 200 z index.html.
+(journal_routes) {
+	@journal path /artykuly /artykuly/ /artykuly/* /en/articles /en/articles/ /en/articles/* /ua/statti /ua/statti/ /ua/statti/*
+	handle @journal {
+		try_files {path} {path}/ {path}/index.html
+		file_server
+	}
+}
+
+# Skróty ścieżek na domenie głównej portfolio
+(path_shortcuts) {
+	@v4 path /v4 /v4/
+	rewrite @v4 /v4.html
+
+	# Archiwa v1–v6 pod /en/ i /ua/ — ten sam HTML, locale z prefiksu URL.
+	@archive_locale path_regexp arcloc ^/(en|ua)/(v[1-6]\.html)$
+	rewrite @archive_locale /{re.arcloc.2}
+}
+
+# Locale MPA: /en/ /ua/ → osobne index.html.
+# Artykuły obsługuje journal_routes (404 bez SPA-fallback na homepage).
+(locale_routes) {
+	@legacy_uk_home path /uk /uk/
+	redir @legacy_uk_home /ua/ permanent
+
+	@legacy_uk_statti path_regexp ukstatti ^/uk/statti(.*)$
+	redir @legacy_uk_statti /ua/statti{re.ukstatti.1} permanent
+
+	@en {
+		path /en /en/ /en/*
+		not path /en/articles*
+	}
+	handle @en {
+		try_files {path} {path}/ /en/index.html
+		file_server
+	}
+
+	@ua {
+		path /ua /ua/ /ua/*
+		not path /ua/statti*
+	}
+	handle @ua {
+		try_files {path} {path}/ /ua/index.html
+		file_server
+	}
+}
+
+# --- marcinbochenek.com (portfolio główne) ---
+
+127.0.0.1:8080 {
+	@apex host marcinbochenek.com
+	handle @apex {
+		import common_headers
+		import portfolio_root
+		import path_shortcuts
+		import journal_routes
+		import locale_routes
+		try_files {path} {path}/ /index.html
+		file_server
+	}
+
+	@www_marcin host www.marcinbochenek.com
+	handle @www_marcin {
+		redir https://marcinbochenek.com{uri} permanent
+	}
+
+	# --- gra.marcinbochenek.com (V4 — gra kosmiczna, indeksowana) ---
+
+	@gra host gra.marcinbochenek.com
+	handle @gra {
+		import common_headers
+		import portfolio_root
+		try_files {path} /gra.html
+		file_server
+	}
+
+	# --- mb-ai.pl (landing AI) ---
+
+	@mbai host mb-ai.pl
+	handle @mbai {
+		import common_headers
+		import portfolio_root
+		@mbai_en path /en /en/
+		rewrite @mbai_en /mb-ai-en.html
+		@mbai_ua path /ua /ua/
+		rewrite @mbai_ua /mb-ai-ua.html
+		@mbai_uk_legacy path /uk /uk/ /mb-ai-uk.html
+		redir @mbai_uk_legacy /ua/ permanent
+		try_files {path} /mb-ai.html
+		file_server
+	}
+
+	@www_mbai host www.mb-ai.pl
+	handle @www_mbai {
+		redir https://mb-ai.pl{uri} permanent
+	}
+
+	# Nieznany host na tym porcie
+	handle {
+		respond "Not Found" 404
+	}
+}

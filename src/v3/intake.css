@@ -1,0 +1,262 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   v3 — Discovery wizard ("wywiad z klientem") styles.
+   Scoped with .v3-intake- prefix. Reuses v3.css tokens (--v3-surface-2,
+   --v3-line, --v3-line-bright) — does not modify v3.css itself.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.v3-intake-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 560px;
+}
+
+/* ── Progress ──────────────────────────────────────────────────────────── */
+.v3-intake-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.v3-intake-progress-track {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--v3-line);
+  overflow: hidden;
+  margin-bottom: 1.75rem;
+}
+
+.v3-intake-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-accent-deep), var(--color-accent), var(--color-accent-bright));
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Step transitions ─────────────────────────────────────────────────── */
+.v3-intake-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: v3-intake-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.v3-intake-step[data-dir='back'] {
+  animation-name: v3-intake-in-back;
+}
+
+@keyframes v3-intake-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes v3-intake-in-back {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.v3-intake-step-title {
+  font-family: var(--font-grotesk);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-paper);
+  font-size: 1.35rem;
+}
+
+.v3-intake-step-hint {
+  color: var(--color-ink-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-top: 0.35rem;
+}
+
+/* ── Fields ────────────────────────────────────────────────────────────── */
+.v3-intake-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.v3-intake-input,
+.v3-intake-textarea,
+.v3-intake-select {
+  background: var(--v3-surface-2);
+  border: 1px solid var(--v3-line);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  width: 100%;
+  font-size: 0.875rem;
+  color: var(--color-paper);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.v3-intake-input::placeholder,
+.v3-intake-textarea::placeholder {
+  color: color-mix(in srgb, var(--color-ink-muted) 70%, transparent);
+}
+
+.v3-intake-input:focus,
+.v3-intake-textarea:focus,
+.v3-intake-select:focus {
+  border-color: var(--color-accent);
+}
+
+.v3-intake-textarea {
+  resize: none;
+}
+
+.v3-intake-field-error .v3-intake-input,
+.v3-intake-field-error .v3-intake-textarea,
+.v3-intake-field-error .v3-intake-select {
+  border-color: var(--color-oxblood);
+}
+
+.v3-intake-error-text {
+  font-size: 0.75rem;
+  color: var(--color-oxblood);
+}
+
+/* ── Option-card grid (replaces native <select> for key fields) ─────────── */
+.v3-intake-options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+}
+
+@media (min-width: 640px) {
+  .v3-intake-options {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.v3-intake-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: left;
+  border: 1px solid var(--v3-line);
+  background: var(--v3-surface-2);
+  border-radius: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--color-paper) 82%, transparent);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.v3-intake-option:hover {
+  border-color: var(--v3-line-bright);
+  color: var(--color-paper);
+}
+
+.v3-intake-option-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  border: 1px solid var(--v3-line-bright);
+  background: transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.v3-intake-option[data-selected='true'] {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, var(--v3-surface-2));
+  color: var(--color-paper);
+}
+
+.v3-intake-option[data-selected='true'] .v3-intake-option-dot {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+
+/* ── Nav buttons ───────────────────────────────────────────────────────── */
+.v3-intake-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.v3-intake-consent {
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--color-ink-muted) 90%, transparent);
+  text-align: center;
+  margin-top: 0.9rem;
+}
+
+/* ── Success screen ───────────────────────────────────────────────────── */
+.v3-intake-thanks {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+.v3-intake-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.v3-intake-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  color: color-mix(in srgb, var(--color-paper) 85%, transparent);
+}
+
+.v3-intake-timeline-num {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--v3-line-bright);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-accent);
+}
+
+.v3-intake-submit-error {
+  font-size: 0.8125rem;
+  color: var(--color-oxblood);
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-intake-step {
+    animation: none;
+  }
+  .v3-intake-progress-fill {
+    transition: none;
+  }
+}

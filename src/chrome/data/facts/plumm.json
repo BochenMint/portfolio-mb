@@ -1,0 +1,98 @@
+{
+  "facts": [
+    {
+      "id": "typescript-loc",
+      "value": "545 000",
+      "label": { "pl": "linii TypeScript/TSX w kodzie aplikacji", "en": "lines of TypeScript/TSX across the app" },
+      "evidence": "find . -name '*.ts' -o -name '*.tsx' | grep -v node_modules | xargs wc -l | tail -1  →  545064 lines w 2387 plikach (repo /home/user/fugazi)."
+    },
+    {
+      "id": "prisma-models",
+      "value": "118",
+      "label": { "pl": "modeli danych w schemacie Prisma", "en": "data models in the Prisma schema" },
+      "evidence": "grep -c '^model ' prisma/schema.prisma"
+    },
+    {
+      "id": "db-migrations",
+      "value": "199",
+      "label": { "pl": "migracji bazy danych (historia schematu)", "en": "database migrations (schema history)" },
+      "evidence": "ls prisma/migrations | grep -c '^[0-9]'"
+    },
+    {
+      "id": "api-routes",
+      "value": "456",
+      "label": { "pl": "endpointów API (route.ts) w Next.js App Router", "en": "API endpoints (route.ts) in the Next.js App Router" },
+      "evidence": "find app/api -name 'route.ts' | wc -l"
+    },
+    {
+      "id": "app-pages",
+      "value": "224",
+      "label": { "pl": "stron aplikacji (page.tsx)", "en": "application pages (page.tsx)" },
+      "evidence": "find app -name 'page.tsx' | grep -v node_modules | wc -l"
+    },
+    {
+      "id": "test-files",
+      "value": "779",
+      "label": { "pl": "plików testowych (765 vitest + 14 Playwright e2e)", "en": "test files (765 vitest + 14 Playwright e2e)" },
+      "evidence": "find __tests__ -name '*.test.ts' -o -name '*.test.tsx' | wc -l → 765; find e2e -name '*.spec.ts' | wc -l → 14."
+    },
+    {
+      "id": "test-cases",
+      "value": "9 314",
+      "label": { "pl": "przypadków testowych (bloki it/test)", "en": "test cases (it/test blocks)" },
+      "evidence": "grep -rhoE '^\\s*(it|test)\\(' __tests__ e2e | wc -l — liczba wywołań it()/test() (w tym test.each/it.each: 66 wystąpień generujących dodatkowe warianty parametryzowane)."
+    },
+    {
+      "id": "xsd-validated-formats",
+      "value": "16",
+      "label": { "pl": "formatów XML walidowanych względem oficjalnych schematów XSD Ministerstwa Finansów", "en": "XML formats validated against official Polish Ministry of Finance XSD schemas" },
+      "evidence": "package.json, skrypty 'validate:*' (16 sztuk): sf-xml, sf-mf-inna, sf-mf-mikro, sf-mf-mala, ksef-fa3, pit36, pit28, cit8, cit8e, pit36l, pit11, pit4r, jpk-fa, jpk-pkpir, jpk-v7, kedu."
+    },
+    {
+      "id": "tax-domain-test-density",
+      "value": "335 / 166 / 155 / 151",
+      "label": { "pl": "plików testowych dot. VAT / KSeF / ZUS / CIT", "en": "test files touching VAT / KSeF / ZUS / CIT" },
+      "evidence": "grep -rl -i vat __tests__ | wc -l → 335; grep -rl -i ksef __tests__ | wc -l → 166; grep -rl -i zus __tests__ | wc -l → 155; grep -rl -i cit __tests__ | wc -l → 151 (dodatkowo 81 plików dot. ryczałtu/PIT-28)."
+    },
+    {
+      "id": "tax-rate-configs",
+      "value": "21",
+      "label": { "pl": "aktywnych stawek podatkowych/składkowych w rejestrze na 2026", "en": "active tax/contribution rates in the 2026 rate registry" },
+      "evidence": "SELECT count(*) FROM \"TaxRateConfig\"; na bazie po `npm run db:seed` → 21 (potwierdzone bezpośrednim zapytaniem SQL, nie tylko logiem seeda)."
+    },
+    {
+      "id": "business-domains",
+      "value": "22",
+      "label": { "pl": "domen biznesowych wg wewnętrznej mapy kodu (codemap)", "en": "business domains per the internal code map" },
+      "evidence": "ls codemap/modules | wc -l (codemap/README.md, wygenerowany 2026-08-03: 419 route'ów / 201 stron w tamtym momencie — od tego czasu urosło do 456/224, patrz fakty api-routes/app-pages liczone bezpośrednio z bieżącego drzewa)."
+    },
+    {
+      "id": "ci-workflows",
+      "value": "4",
+      "label": { "pl": "działających pipeline'ów GitHub Actions (CI, Lighthouse, synthetic monitoring, pre-deploy smoke)", "en": "active GitHub Actions pipelines (CI, Lighthouse, synthetic monitoring, pre-deploy smoke)" },
+      "evidence": "ls .github/workflows → ci.yml, lighthouse.yml, synthetic-monitor.yml, pre-deploy-smoke.yml."
+    },
+    {
+      "id": "maintenance-scripts",
+      "value": "56",
+      "label": { "pl": "samodzielnych skryptów TS (walidacje XSD, migracje danych, importy, backup)", "en": "standalone TS scripts (XSD validation, data migrations, imports, backups)" },
+      "evidence": "find scripts -name '*.ts' | wc -l"
+    },
+    {
+      "id": "documented-briefs",
+      "value": "18",
+      "label": { "pl": "udokumentowanych decyzji inżynierskich (briefs) z datami", "en": "dated engineering decision briefs" },
+      "evidence": "ls briefs | grep -cE '^[0-9]{4}-[0-9]{2}-[0-9]{2}-.*\\.md$'"
+    },
+    {
+      "id": "npm-dependencies",
+      "value": "58",
+      "label": { "pl": "bezpośrednich zależności produkcyjnych npm", "en": "direct production npm dependencies" },
+      "evidence": "node -e \"console.log(Object.keys(require('./package.json').dependencies).length)\""
+    }
+  ],
+  "summary": {
+    "pl": "Plumm to polska platforma księgowości AI o realnej skali produkcyjnej: 118 modeli danych i 199 migracji pod 456 endpointami API i 224 stronami aplikacji, złożonej z ok. 545 tys. linii TypeScript. Silnik podatkowy obejmuje 16 formatów XML (PIT-28/36/36L, CIT-8/8E, JPK_V7/FA/PKPIR, KSeF FA(3), ustrukturyzowane faktury MF) walidowanych względem oficjalnych schematów XSD Ministerstwa Finansów, pokrytych 9314 przypadkami testowymi w 779 plikach — w tym setki testów dedykowanych osobno VAT, KSeF, ZUS i CIT.",
+    "en": "Plumm is a Polish AI accounting platform at genuine production scale: 118 data models and 199 migrations behind 456 API endpoints and 224 application pages, built from roughly 545k lines of TypeScript. Its tax engine spans 16 XML formats (PIT-28/36/36L, CIT-8/8E, JPK_V7/FA/PKPIR, KSeF FA(3), structured MF invoices) validated against official Polish Ministry of Finance XSD schemas, backed by 9,314 test cases across 779 test files — including hundreds of tests dedicated separately to VAT, KSeF, ZUS and CIT."
+  }
+}

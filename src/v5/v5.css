@@ -1,0 +1,1034 @@
+/* VOLT — independent design system */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  background: var(--volt-paper);
+  color: var(--volt-ink);
+  font-family: var(--volt-font-ui);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+:root {
+  --volt-ink: #0e1a1f;
+  --volt-paper: #f2f5f7;
+  --volt-signal: #ff4d1a;
+  --volt-acid: #b8f000;
+  --volt-depth: #0c6b6b;
+  --volt-font-display: 'Syne', system-ui, sans-serif;
+  --volt-font-ui: 'Manrope', system-ui, sans-serif;
+  --volt-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --volt-max: 1320px;
+  --volt-gutter: clamp(1rem, 4vw, 2.5rem);
+  --volt-cut: polygon(0 6%, 100% 0, 100% 94%, 0 100%);
+  --volt-cut-inv: polygon(0 0, 100% 6%, 100% 100%, 0 94%);
+}
+
+.volt-root {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+}
+
+.volt-bg-morph {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--volt-paper);
+  transition: background-color 0.4s ease;
+}
+
+.volt-mono {
+  font-family: var(--volt-font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.volt-display {
+  font-family: var(--volt-font-display);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+
+.volt-wrap {
+  width: min(var(--volt-max), 100% - var(--volt-gutter) * 2);
+  margin-inline: auto;
+}
+
+/* ── Nav ── */
+.volt-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem var(--volt-gutter);
+  color: var(--volt-ink);
+  pointer-events: none;
+}
+
+.volt-nav > * {
+  pointer-events: auto;
+}
+
+.volt-nav-mark,
+.volt-nav-links {
+  mix-blend-mode: difference;
+  color: #fff;
+}
+
+.volt-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.volt-nav-mark {
+  font-family: var(--volt-font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+}
+
+.volt-nav-links {
+  display: none;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.volt-nav-links a {
+  font-family: var(--volt-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.volt-nav-links a:hover {
+  opacity: 1;
+}
+
+.volt-nav-cta {
+  font-family: var(--volt-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.9rem;
+  background: var(--volt-signal);
+  color: #fff !important;
+  border: none;
+  text-decoration: none;
+}
+
+@media (min-width: 900px) {
+  .volt-nav-links {
+    display: flex;
+  }
+}
+
+/* ── Hero ── */
+.volt-hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  align-items: end;
+  padding: clamp(5rem, 12vh, 8rem) var(--volt-gutter) clamp(2.5rem, 8vh, 4rem);
+  background: var(--volt-signal);
+  clip-path: var(--volt-cut);
+  color: #fff;
+  overflow: hidden;
+}
+
+.volt-hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.volt-hero-inner {
+  position: relative;
+  z-index: 2;
+  width: min(var(--volt-max), 100%);
+  max-width: 100%;
+  margin-inline: auto;
+  overflow: visible;
+  container-type: inline-size;
+}
+
+.volt-hero-brand {
+  font-family: var(--volt-font-display);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 17cqi, 9.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  margin: 0 0 0.35em;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+.volt-hero-brand-line {
+  display: block;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+@media (max-width: 480px) {
+  .volt-hero-brand {
+    font-size: clamp(2.1rem, 14.5vw, 3.4rem);
+  }
+}
+
+.volt-hero-promise {
+  font-size: clamp(1.1rem, 2.4vw, 1.65rem);
+  font-weight: 600;
+  max-width: 28ch;
+  margin: 0 0 2rem;
+  line-height: 1.35;
+}
+
+.volt-hero-sunday {
+  position: absolute;
+  top: clamp(4rem, 14vh, 7rem);
+  right: var(--volt-gutter);
+  font-family: var(--volt-font-display);
+  font-size: clamp(3rem, 14vw, 11rem);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  opacity: 0.12;
+  text-align: right;
+  pointer-events: none;
+  user-select: none;
+}
+
+.volt-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.6rem;
+  background: var(--volt-ink);
+  color: #fff;
+  font-family: var(--volt-font-ui);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.volt-btn-primary:hover {
+  background: #1a2d35;
+}
+
+.volt-btn-primary .volt-btn-arrow {
+  font-family: var(--volt-font-mono);
+  font-size: 1.1rem;
+}
+
+/* ── Ledger ── */
+.volt-ledger {
+  padding: clamp(4rem, 10vh, 7rem) 0;
+  background: transparent;
+}
+
+.volt-ledger-head {
+  padding: 0 var(--volt-gutter) 2.5rem;
+}
+
+.volt-ledger-head h2 {
+  font-family: var(--volt-font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin: 0 0 0.5rem;
+  font-weight: 800;
+}
+
+.volt-ledger-head p {
+  margin: 0;
+  max-width: 42ch;
+  opacity: 0.75;
+}
+
+.volt-ledger-table {
+  border-top: 3px solid var(--volt-ink);
+}
+
+.volt-ledger-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+  padding: 1.35rem var(--volt-gutter);
+  border-bottom: 1px solid color-mix(in srgb, var(--volt-ink) 18%, transparent);
+}
+
+@media (min-width: 768px) {
+  .volt-ledger-row {
+    grid-template-columns: minmax(8rem, 12rem) 1fr auto;
+    align-items: baseline;
+    gap: 2rem;
+  }
+}
+
+.volt-ledger-value {
+  font-family: var(--volt-font-mono);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 600;
+  color: var(--volt-ink);
+  background: var(--volt-acid);
+  display: inline-block;
+  padding: 0.1em 0.35em;
+  line-height: 1.1;
+}
+
+.volt-ledger-label {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.volt-ledger-hint {
+  font-family: var(--volt-font-mono);
+  font-size: 0.72rem;
+  opacity: 0.6;
+  max-width: 28ch;
+}
+
+.volt-ledger-disclaimer {
+  padding: 1.5rem var(--volt-gutter) 0;
+  font-family: var(--volt-font-mono);
+  font-size: 0.68rem;
+  opacity: 0.55;
+  max-width: 62ch;
+}
+
+/* ── Work slabs ── */
+.volt-work {
+  padding: 0;
+}
+
+.volt-work-intro {
+  padding: clamp(3rem, 8vh, 5rem) var(--volt-gutter) 2rem;
+}
+
+.volt-work-intro h2 {
+  font-family: var(--volt-font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  margin: 0 0 0.5rem;
+  font-weight: 800;
+}
+
+.volt-work-intro p {
+  margin: 0;
+  max-width: 48ch;
+  opacity: 0.8;
+}
+
+.volt-slab {
+  position: relative;
+  min-height: clamp(28rem, 70vh, 42rem);
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(2rem, 6vh, 4rem) var(--volt-gutter);
+  margin-bottom: -1px;
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  clip-path: var(--volt-cut-inv);
+  overflow: hidden;
+}
+
+.volt-slab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--volt-ink) 15%, transparent) 0%,
+    color-mix(in srgb, var(--volt-ink) 88%, transparent) 72%
+  );
+  z-index: 1;
+}
+
+.volt-slab-inner {
+  position: relative;
+  z-index: 2;
+  width: min(var(--volt-max), 100%);
+  margin-inline: auto;
+}
+
+.volt-slab-num {
+  font-family: var(--volt-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  opacity: 0.7;
+  margin-bottom: 0.75rem;
+}
+
+.volt-slab-title {
+  font-family: var(--volt-font-display);
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+  line-height: 0.95;
+}
+
+.volt-slab-tagline {
+  font-size: 1rem;
+  opacity: 0.85;
+  max-width: 50ch;
+  margin: 0 0 1.25rem;
+}
+
+.volt-slab-pain {
+  font-size: 0.9rem;
+  opacity: 0.75;
+  max-width: 52ch;
+  margin: 0 0 0.5rem;
+  border-left: 3px solid var(--volt-signal);
+  padding-left: 0.85rem;
+}
+
+.volt-slab-outcome {
+  font-weight: 600;
+  max-width: 52ch;
+  margin: 0 0 1.5rem;
+}
+
+.volt-slab-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.volt-slab-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--volt-font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--volt-acid);
+  text-decoration: none;
+}
+
+.volt-slab-link--muted {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.volt-slab-link:hover {
+  text-decoration: underline;
+}
+
+.volt-slab-badge {
+  display: inline-block;
+  padding: 0.2em 0.5em;
+  background: var(--volt-acid);
+  color: var(--volt-ink);
+  font-family: var(--volt-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Offer fields ── */
+.volt-offer {
+  position: relative;
+}
+
+.volt-offer-head {
+  padding: clamp(4rem, 10vh, 6rem) var(--volt-gutter) 2rem;
+  color: #fff;
+}
+
+.volt-offer-head h2 {
+  font-family: var(--volt-font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  margin: 0 0 0.5rem;
+  font-weight: 800;
+}
+
+.volt-offer-head p {
+  margin: 0;
+  max-width: 48ch;
+  opacity: 0.85;
+}
+
+.volt-offer-track {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 900px) {
+  .volt-offer-track {
+    height: 300vh;
+    position: relative;
+  }
+}
+
+.volt-offer-field {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: clamp(3rem, 8vh, 5rem) var(--volt-gutter);
+  position: relative;
+}
+
+@media (min-width: 900px) {
+  .volt-offer-field {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+  }
+
+  .volt-offer-field:nth-child(1) {
+    background: var(--volt-depth);
+    color: #fff;
+    z-index: 1;
+  }
+
+  .volt-offer-field:nth-child(2) {
+    background: var(--volt-signal);
+    color: #fff;
+    z-index: 2;
+    clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 92%);
+  }
+
+  .volt-offer-field:nth-child(3) {
+    background: var(--volt-ink);
+    color: #fff;
+    z-index: 3;
+    clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 94%);
+  }
+}
+
+@media (max-width: 899px) {
+  .volt-offer-field:nth-child(1) {
+    background: var(--volt-depth);
+    color: #fff;
+    clip-path: var(--volt-cut);
+  }
+
+  .volt-offer-field:nth-child(2) {
+    background: var(--volt-signal);
+    color: #fff;
+    clip-path: var(--volt-cut);
+  }
+
+  .volt-offer-field:nth-child(3) {
+    background: var(--volt-ink);
+    color: #fff;
+    clip-path: var(--volt-cut);
+  }
+}
+
+.volt-offer-num {
+  font-family: var(--volt-font-mono);
+  font-size: clamp(4rem, 12vw, 8rem);
+  font-weight: 600;
+  opacity: 0.15;
+  position: absolute;
+  top: 1rem;
+  right: var(--volt-gutter);
+  line-height: 1;
+}
+
+.volt-offer-content {
+  width: min(var(--volt-max), 100%);
+  margin-inline: auto;
+}
+
+.volt-offer-content h3 {
+  font-family: var(--volt-font-display);
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  margin: 0 0 1rem;
+  font-weight: 800;
+  max-width: 16ch;
+}
+
+.volt-offer-content p {
+  max-width: 52ch;
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  opacity: 0.9;
+}
+
+.volt-offer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  font-family: var(--volt-font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.volt-offer-meta span {
+  opacity: 0.8;
+}
+
+/* ── Packages ── */
+.volt-packages {
+  padding: clamp(4rem, 10vh, 7rem) var(--volt-gutter);
+}
+
+.volt-packages h2 {
+  font-family: var(--volt-font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  margin: 0 0 0.5rem;
+  font-weight: 800;
+}
+
+.volt-packages-lead {
+  margin: 0 0 2.5rem;
+  max-width: 48ch;
+  opacity: 0.8;
+}
+
+.volt-packages-layout {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 900px) {
+  .volt-packages-layout {
+    grid-template-columns: minmax(12rem, 16rem) 1fr;
+    align-items: start;
+  }
+}
+
+.volt-packages-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.volt-packages-tab {
+  text-align: left;
+  padding: 0.85rem 1rem;
+  border: 2px solid color-mix(in srgb, var(--volt-ink) 15%, transparent);
+  background: transparent;
+  font-family: var(--volt-font-ui);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--volt-ink);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.volt-packages-tab[data-active='true'] {
+  background: var(--volt-ink);
+  color: #fff;
+  border-color: var(--volt-ink);
+}
+
+.volt-packages-tab[data-featured='true']::after {
+  content: ' · konwersja';
+  font-family: var(--volt-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.volt-package-panel {
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  background: #fff;
+  border: 3px solid var(--volt-ink);
+}
+
+.volt-package-panel[data-featured='true'] {
+  border-color: var(--volt-signal);
+  box-shadow: 8px 8px 0 var(--volt-signal);
+}
+
+.volt-package-range {
+  font-family: var(--volt-font-mono);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 600;
+  color: var(--volt-signal);
+  margin-bottom: 0.5rem;
+}
+
+.volt-package-name {
+  font-family: var(--volt-font-display);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+  margin: 0 0 0.75rem;
+}
+
+.volt-package-qualifier {
+  margin: 0 0 1rem;
+  opacity: 0.8;
+}
+
+.volt-package-best {
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+  padding-left: 0.85rem;
+  border-left: 3px solid var(--volt-acid);
+}
+
+.volt-package-list {
+  margin: 0 0 1.25rem;
+  padding-left: 1.1rem;
+}
+
+.volt-package-list li {
+  margin-bottom: 0.45rem;
+}
+
+.volt-package-proof {
+  font-family: var(--volt-font-mono);
+  font-size: 0.72rem;
+  opacity: 0.65;
+  margin: 0 0 1.5rem;
+}
+
+.volt-package-cta {
+  margin-top: 0.25rem;
+}
+
+/* ── Proof ── */
+.volt-proof {
+  padding: clamp(4rem, 10vh, 7rem) var(--volt-gutter);
+  color: #fff;
+  background: var(--volt-depth);
+  clip-path: var(--volt-cut);
+}
+
+.volt-proof h2 {
+  font-family: var(--volt-font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  margin: 0 0 2rem;
+  font-weight: 800;
+}
+
+.volt-proof-live {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .volt-proof-live {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.volt-proof-card {
+  padding: 1.5rem;
+  background: color-mix(in srgb, #fff 8%, transparent);
+  border: 1px solid color-mix(in srgb, #fff 20%, transparent);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: background 0.2s;
+}
+
+.volt-proof-card:hover {
+  background: color-mix(in srgb, #fff 14%, transparent);
+}
+
+.volt-proof-card h3 {
+  font-family: var(--volt-font-display);
+  font-size: 1.35rem;
+  margin: 0 0 0.35rem;
+  font-weight: 700;
+}
+
+.volt-proof-tag {
+  font-family: var(--volt-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  margin-bottom: 0.75rem;
+}
+
+.volt-proof-result {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.volt-trust-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .volt-trust-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.volt-trust-item h4 {
+  font-family: var(--volt-font-display);
+  font-size: 1.1rem;
+  margin: 0 0 0.4rem;
+  font-weight: 700;
+}
+
+.volt-trust-item p {
+  margin: 0;
+  font-size: 0.92rem;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+/* ── Contact ── */
+.volt-contact {
+  padding: clamp(4rem, 10vh, 7rem) var(--volt-gutter);
+  color: #fff;
+  background: var(--volt-signal);
+  clip-path: var(--volt-cut-inv);
+}
+
+.volt-contact-layout {
+  display: grid;
+  gap: 2.5rem;
+  width: min(var(--volt-max), 100%);
+  margin-inline: auto;
+}
+
+@media (min-width: 900px) {
+  .volt-contact-layout {
+    grid-template-columns: 1fr 1.1fr;
+    align-items: start;
+  }
+}
+
+.volt-contact h2 {
+  font-family: var(--volt-font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  margin: 0 0 0.75rem;
+  font-weight: 800;
+}
+
+.volt-contact-lead {
+  margin: 0 0 1.5rem;
+  max-width: 38ch;
+  opacity: 0.9;
+  font-size: 1.05rem;
+}
+
+.volt-contact-cal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--volt-font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.volt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: var(--volt-ink);
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.volt-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.volt-form label span {
+  font-family: var(--volt-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.volt-form input,
+.volt-form select,
+.volt-form textarea {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid color-mix(in srgb, #fff 18%, transparent);
+  background: color-mix(in srgb, #fff 6%, transparent);
+  color: #fff;
+  font-family: var(--volt-font-ui);
+  font-size: 0.92rem;
+  outline: none;
+}
+
+.volt-form input:focus,
+.volt-form select:focus,
+.volt-form textarea:focus {
+  border-color: var(--volt-acid);
+}
+
+.volt-form textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+
+.volt-form-error {
+  font-family: var(--volt-font-mono);
+  font-size: 0.72rem;
+  color: var(--volt-acid);
+}
+
+.volt-form-thanks {
+  background: var(--volt-ink);
+  padding: 2rem;
+}
+
+.volt-form-thanks h3 {
+  font-family: var(--volt-font-display);
+  margin: 0 0 0.5rem;
+}
+
+/* ── Footer ── */
+.volt-footer {
+  padding: 2.5rem var(--volt-gutter) 5rem;
+  background: var(--volt-ink);
+  color: color-mix(in srgb, #fff 75%, transparent);
+}
+
+.volt-footer-inner {
+  width: min(var(--volt-max), 100%);
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.volt-footer-brand {
+  font-family: var(--volt-font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: #fff;
+  margin: 0 0 0.25rem;
+}
+
+.volt-footer-tag {
+  font-family: var(--volt-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.volt-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.volt-footer-links a {
+  color: inherit;
+  font-family: var(--volt-font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  opacity: 0.7;
+}
+
+.volt-footer-links a:hover {
+  opacity: 1;
+  color: var(--volt-acid);
+}
+
+/* ── Mobile sticky CTA ── */
+.volt-sticky-cta {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  padding: 0.65rem var(--volt-gutter);
+  background: var(--volt-ink);
+  border-top: 3px solid var(--volt-signal);
+  transform: translateY(110%);
+  transition: transform 0.35s ease;
+}
+
+.volt-sticky-cta[data-visible='true'] {
+  transform: translateY(0);
+}
+
+@media (min-width: 768px) {
+  .volt-sticky-cta {
+    display: none;
+  }
+}
+
+.volt-sticky-cta a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.volt-sticky-cta small {
+  display: block;
+  font-family: var(--volt-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  font-weight: 400;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .volt-bg-morph {
+    transition: none;
+  }
+
+  .volt-sticky-cta {
+    transition: none;
+  }
+
+  .volt-split-word span {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .volt-slab {
+    clip-path: none !important;
+  }
+}

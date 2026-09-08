@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Операційна панель замість Excel: коли це сходиться</title>
+    <meta name="description" content="Операційна панель замість Excel має сенс, коли кілька людей псують один файл і процес повторюється. Вилка Ops 60 000–180 000+ злотих. Пишу, коли лишити аркуш, а коли будувати систему." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://marcinbochenek.com/ua/statti/panel-operacyjny-zamiast-excela/" />
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/artykuly/panel-operacyjny-zamiast-excela/" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/articles/panel-operacyjny-zamiast-excela/" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/statti/panel-operacyjny-zamiast-excela/" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/artykuly/panel-operacyjny-zamiast-excela/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Операційна панель замість Excel: коли це сходиться" />
+    <meta property="og:description" content="Операційна панель замість Excel має сенс, коли кілька людей псують один файл і процес повторюється. Вилка Ops 60 000–180 000+ злотих. Пишу, коли лишити аркуш, а коли будувати систему." />
+    <meta property="og:url" content="https://marcinbochenek.com/ua/statti/panel-operacyjny-zamiast-excela/" />
+    <meta property="og:locale" content="uk_UA" />
+    <meta property="og:locale:alternate" content="pl_PL" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Операційна панель замість Excel: коли це сходиться" />
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Операційна панель замість Excel: коли це сходиться" />
+    <meta name="twitter:description" content="Операційна панель замість Excel має сенс, коли кілька людей псують один файл і процес повторюється. Вилка Ops 60 000–180 000+ злотих. Пишу, коли лишити аркуш, а коли будувати систему." />
+    <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta name="twitter:image:alt" content="Операційна панель замість Excel: коли це сходиться" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/journal.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":["Article","BlogPosting"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://marcinbochenek.com/ua/statti/panel-operacyjny-zamiast-excela/"},"headline":"Операційна панель замість Excel: коли це сходиться","description":"Операційна панель замість Excel має сенс, коли кілька людей псують один файл і процес повторюється. Вилка Ops 60 000–180 000+ злотих. Пишу, коли лишити аркуш, а коли будувати систему.","inLanguage":"uk","datePublished":"2026-08-24","dateModified":"2026-08-24","wordCount":1418,"image":["https://marcinbochenek.com/brand/og-default.png"],"author":{"@type":"Person","@id":"https://marcinbochenek.com/#person","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","email":"kontakt@marcinbochenek.com","jobTitle":"Software engineer","image":"https://marcinbochenek.com/images/marcin-bochenek.webp","sameAs":["https://github.com/BochenMint"]},"publisher":{"@type":"Organization","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","logo":{"@type":"ImageObject","url":"https://marcinbochenek.com/brand/logo-mb.svg"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Головна","item":"https://marcinbochenek.com/ua/"},{"@type":"ListItem","position":2,"name":"Статті","item":"https://marcinbochenek.com/ua/statti/"},{"@type":"ListItem","position":3,"name":"Операційна панель замість Excel: коли аркуш бреше, а система має право коштувати","item":"https://marcinbochenek.com/ua/statti/panel-operacyjny-zamiast-excela/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Чи low-code (Airtable, Appsmith) не вистачить?","acceptedAnswer":{"@type":"Answer","text":"Інколи так — тоді не будую custom. Коли з’являються ролі, аудит, KSeF або замки, low-code починає брехати прихованими витратами."}},{"@type":"Question","name":"Скільки триває таке впровадження?","acceptedAnswer":{"@type":"Answer","text":"Зазвичай 6–12 тижнів до першого вимірюваного потоку, довше при багатьох інтеграціях. Не обіцяю «весь ERP за два спринт»."}},{"@type":"Question","name":"Чи можна почати з фрагмента?","acceptedAnswer":{"@type":"Answer","text":"Так. Один болісний потік, вимір, лише тоді решта. Великий вибух за 180 тис. без фрагмента — ризик, якого не беру наосліп."}},{"@type":"Question","name":"Що з даними в старому Excel?","acceptedAnswer":{"@type":"Answer","text":"Мігруємо те, що є джерелом правди. Решта — архів. Не переношу сміття, щоб «нічого не зникло»."}},{"@type":"Question","name":"Звідки знати, що Excel ще вистачає?","acceptedAnswer":{"@type":"Answer","text":"Одна людина, малий обсяг, немає паралельних правок, немає аудиту історії. Тоді дисципліна назв файлів і заступник на відпустку дешевші за Ops 60–180 тисяч. Не зручна правда: багатьом фірмам панель не потрібна. Потрібен власник аркуша. Панель має сенс, коли кілька ролей псують один файл, процес повторюється, а помилка стосується грошей або завантаження. Не продаю сором за те, що ще не «digital»."}},{"@type":"Question","name":"Чи «Excel плюс ChatGPT» замінює панель?","acceptedAnswer":{"@type":"Answer","text":"Не в мене. Не будую модель, яка вгадує VAT з PDF і одразу надсилає. HITL додаю, коли крок можна обмежити allow-list. ChatGPT в аркуші без логу — ризик, не система. Стани, ролі, запис кроків — це панель. Магія в комірці G17 — це тікет у неділю. Plumm як бухгалтерія — власний продукт, не обіцянка двадцяти бюро. Mint не вдає, що я написав PMS з нуля."}},{"@type":"Question","name":"Коли відмовляю будувати панель?","acceptedAnswer":{"@type":"Answer","text":"Немає власника процесу, бюджет «MVP як із шаблону за кілька тисяч», мета «замінити людей моделлю без логу», немає метрики яка має впасти. Тоді чесніший Audit Sprint або стоп. День вимкнення Excel треба списати. Якщо після старту всі вертаються до аркуша «бо швидше», панель була театром. Після рахунків код ваш або продукт — мій SaaS: дві угоди. Плутати їх — претензія за рік."}}]}</script>
+  </head>
+  <body>
+    <a class="j-skip" href="#content">Перейти до змісту</a>
+    <header class="j-header">
+      <a class="j-mark" href="/ua/">MB<span>Marcin Bochenek</span></a>
+      <nav class="j-nav" aria-label="Статті">
+        <a href="/ua/statti/">Статті</a>
+        <a href="/ua/#cennik">Пакети</a>
+        <a href="/ua/#kontakt">Контакт</a>
+      </nav>
+      <nav class="j-locales" aria-label="Мова"><a href="/artykuly/panel-operacyjny-zamiast-excela/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/panel-operacyjny-zamiast-excela/" lang="en" hreflang="en">EN</a><a href="/ua/statti/panel-operacyjny-zamiast-excela/" aria-current="page" lang="uk" hreflang="uk">UA</a></nav>
+    </header>
+    <main class="j-main" id="content">
+      <nav class="j-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/ua/">Головна</a></li>
+          <li><a href="/ua/statti/">Статті</a></li>
+          <li>Операційна панель замість Excel: коли аркуш бреше, а система має право коштувати</li>
+        </ol>
+      </nav>
+      <article class="j-article">
+        <p class="j-kicker">Ops System</p>
+        <h1>Операційна панель замість Excel: коли аркуш бреше, а система має право коштувати</h1>
+        <p class="j-meta">Автор: Marcin Bochenek · Оновлення: <time datetime="2026-08-24">2026-08-24</time></p>
+        <p class="j-lead">Excel не ворог. Ворог — Excel, що вдає ERP, CRM, календар і касу одночасно, коли у файлі сидить п’ятеро людей і ніхто не знає, яка копія правдива. Операційна панель, яку впроваджую, коштує 60 000–180 000+ злотих, бо це не «гарніша таблиця в браузері». Нижче пороги, на яких кажу «лишіть аркуш» — і ті, на яких аркуш уже краде години.</p>
+        <h2>Ознаки, що Excel перестав бути інструментом</h2>
+<ul><li>Дві версії файлу в пошті й на диску, обидві «остаточні».</li><li>Хтось боїться фільтрувати, бо формули роз’їдуться.</li><li>Той самий факт у трьох місцях (календар, рахунок, WhatsApp).</li><li>Новий працівник вчить процес від людини, не від системи.</li><li>Звіт для вас збирають вручну в неділю ввечері.</li></ul>
+<p>Якщо впізнаєте два пункти — розмовляємо. Якщо один — часто досить ладу в аркуші або готового інструменту. Не продаю панель зі звички. <a href="/ua/statti/audyt-strony-internetowej/">Audit Sprint</a> (2 500–6 000) існує, щоб не кодувати жаль за 80 тисяч.</p>
+<h2>Що є панеллю, а що черговим SaaS із карткою</h2>
+<p>Операційна панель — застосунок під ваш потік: ролі, статуси, один запис події, інтеграції, які вже є (рахунки, замки, календар). Готовий SaaS дешевший, коли ваш процес — ринковий стандарт. У Mint я не писав PMS — взяв Previo. У Plumm панель є продуктом, бо бухгалтерія ФОП + e-фактури + асистент — наш процес, не шаблон із маркетплейсу.</p>
+<div class="j-table-wrap"><table><tr><th>Ситуація</th><th>Лишити Excel / готове</th><th>Будувати панель (Ops)</th></tr><tr><td>Люди на процесі</td><td>1–2, довіра</td><td>3+, зміни змін</td></tr><tr><td>Ціна помилкової копії</td><td>Рідко, дешево</td><td>Дорого або сором перед установою / гостем</td></tr><tr><td>Інтеграції</td><td>Експорт CSV досить</td><td>KSeF, оплата, замок, CRM разом</td></tr><tr><td>Бюджет</td><td>< 25 тис. і спокій</td><td>60–180 тис.+ і вимірюване «до/після»</td></tr></table></div>
+<aside class="j-note">Немає публічного кейсу «повернули 400 годин у клієнта X». Публічно клікаєте <a href="https://plumm.pl" target="_blank" rel="noopener noreferrer">Plumm</a> і <a href="https://mintapartments.pl" target="_blank" rel="noopener noreferrer">Mint</a>. Agentic OS внутрішній — не продаю його як впровадження у вас.</aside>
+<h2>Ціна, якої не вдати корпоративним сайтом</h2>
+<p>Ops System: 60 000–180 000+ злотих. У цій сумі: панель або застосунок для команди, з’єднання з платежами / календарями / e-фактурами, автоматизація з лімітами й записом, staging, навчання, вимір після старту. Це не <a href="/ua/statti/ile-kosztuje-strona-firmowa/">корпоративний сайт за 6 500–12 000</a>. Хтось, хто «закине Excel в Airtable за вихідні», робить інший продукт — часто без ролей, аудиту, ескалації.</p>
+<p>Перед кодом фіксую метрики до/після: години на звіті, кількість помилок, час від події до рахунку. Якщо цього не назвати — не починаю. Гарний інтерфейс без результату при цьому бюджеті — втрата обох сторін.</p>
+<h2>Люди, не «цифрова трансформація»</h2>
+<ol><li>Тестова версія, перш ніж команда втратить старий файл.</li><li>Навчання 1–2 год, не PDF «як клікати».</li><li>Код і конфігурація після рахунків — ваші.</li><li>NDA. Жодного театру з фальшивими відгуками з впровадження панелі.</li></ol>
+<p>Якщо команда саботує інструмент, проблема не в React. Проблема в процесі, якого ніхто не списав. Панель цього не виправить. Спочатку мапа на аудиті.</p>
+<h2>Суміжні рішення</h2>
+<p>Готове vs custom — окрема стаття. Бухгалтерія замість Excel: <a href="/ua/statti/ksiegowosc-online-zamiast-excela/">Plumm як власний продукт</a>, не «впровадив у двадцяти бюро». HITL додаю, коли повторювані кроки можна обмежити списком дій — не коли хочете «ChatGPT в Excel».</p>
+<h2>Ознаки, що аркуш уже керує вами</h2>
+<p>Операційна панель замість Excel не починається з «хочемо сучасно». Починається з того, що двоє людей перезаписують один рядок, макрос падає на одному ноутбуці, а «final_v7_really» лежить у пошті. Коли процес повторюється щотижня і стосується грошей або завантаження, ціна помилки перестає бути «виправимо вручну». Тоді говоримо про систему, не про гарнішу таблицю.</p>
+<p>Лишаю Excel, коли одна людина тягне малий обсяг, немає паралельних правок і немає аудиту. Не зручна правда: багатьом фірмам панель не потрібна. Потрібна дисципліна назв файлів і людина, яка не їде без заступника. Ops 60 000–180 000+ злотих має сенс, коли ця ціна дешевша за місячний хаос, або коли Excel блокує зростання, яке ви вже не вдаєте.</p>
+<ul><li>Кілька ролей на одному файлі: рецепція, бухгалтерія, власник.</li><li>Історія змін, якої не відновити з «хтось видалив рядок».</li><li>Той самий процес у трьох локаціях або трьох об’єктах.</li><li>Інтеграція, яку Excel не втримає: KSeF, PMS, оплати, черга листів.</li></ul>
+<h2>Що в обсязі, а що є фантазією «Excel+ШІ»</h2>
+<p>Будую стани, ролі, записи кроків і списки дозволених дій. Не будую «ChatGPT в аркуші, який сам проводить облік». HITL додаю, коли повторюваний крок можна обмежити allow-list. Якщо хочете, щоб модель вгадувала VAT з PDF і одразу надсилала — це не панель, це ризик. <a href="/ua/statti/ksiegowosc-online-zamiast-excela/">Онлайн-бухгалтерія</a> у Plumm — власний продукт, не обіцянка, що я впровадив його в двадцяти бюро.</p>
+<p>SaaS чи custom вирішуємо окремо. Якщо ринок має інструмент на 80% процесу, беру його — як Previo для бронювань Mint. Якщо процес є вашою перевагою, як e-фактури й асистент у Plumm, будую. <a href="/ua/statti/saas-czy-wlasny-panel/">Готовець vs панель</a> — не релігійний слайд. Це арифметика lock-in і вартості зміни за два роки.</p>
+<h2>Впровадження панелі: дані, навчання, день смерті Excel</h2>
+<p>Міграція — не «вставимо CSV в п’ятницю». Це мапінг полів, сміття в старих колонках, рішення щодо історії. Навчання 1–2 год не замінює власника процесу. Якщо після старту всі вертаються до аркуша «бо так швидше», панель була театром. Тому списую, який день вимикає Excel і хто має право на виняток.</p>
+<p>Не гарантую, що команда полюбить UI. Гарантую, що не лишаю вас із паролем до сервера і PDF. Після рахунків код ваш, або продукт — мій SaaS: дві різні угоди. Плутати їх — найчастіше джерело претензій за рік.</p>
+<aside class="j-note">Не вигадую, що «впровадив панелі в 40 готелях». Публічний, клікабельний операційний доказ — те, що працює: Mint і Plumm. Решта розмови — про ваш процес, не про чужу галерею.</aside>
+<h2>Коли не беру проєкт панелі</h2>
+<ol><li>Немає власника процесу — є «команда, яка збере вимоги».</li><li>Бюджет — «зробімо MVP за кілька тисяч, як застосунок із шаблону».</li><li>Мета — замінити людей мовною моделлю без логу й ескалації.</li><li>Excel болить, але ніхто не вміє назвати одну метрику, яка має впасти.</li></ol>
+<p>Тоді чесніший <a href="/ua/statti/audyt-strony-internetowej/">Audit Sprint</a> або стоп. Операційна панель замість Excel дорога, бо помилка стану дорога. Якщо не відчуваєте цієї ціни, лишіться з аркушем і найміть того, хто його стереже. Це теж рішення. Не продаю сором за те, що ви ще не «digital».</p>
+<h2>День вимкнення аркуша треба вписати в угоду</h2>
+<p>Без дати Excel не помирає. Команда вертається «на хвилину», макрос живе на одному ноутбуці, панель стає музеєм. Навчання 1–2 год не замінює власника. CSV в п’ятницю не замінює мапінг сміття в старих колонках. Ops 60–180 тисяч має сенс, коли ця ціна дешевша за місячний хаос або коли аркуш блокує зростання. Якщо не вмієте назвати метрику, яка має впасти — не починаємо. Audit Sprint або стоп. Не продаю театр сучасності. Продаю стани, ролі і запис, або кажу лишитися з файлом і іменем охоронця.</p>
+<h2>Метрика, яка має впасти — або не починаємо</h2>
+<p>Ops 60–180 тисяч без названої метрики (години, помилки стану, обкладення) є театром сучасності. День вимкнення Excel треба вписати в угоду. Без дати команда вертається «на хвилину», макрос живе на одному ноутбуці, панель стає музеєм. Audit Sprint або стоп чесніші за MVP «як із шаблону за кілька тисяч».</p>
+        <section class="j-faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">Питання</h2>
+          <details><summary>Чи low-code (Airtable, Appsmith) не вистачить?</summary><p>Інколи так — тоді не будую custom. Коли з’являються ролі, аудит, KSeF або замки, low-code починає брехати прихованими витратами.</p></details>
+<details><summary>Скільки триває таке впровадження?</summary><p>Зазвичай 6–12 тижнів до першого вимірюваного потоку, довше при багатьох інтеграціях. Не обіцяю «весь ERP за два спринт».</p></details>
+<details><summary>Чи можна почати з фрагмента?</summary><p>Так. Один болісний потік, вимір, лише тоді решта. Великий вибух за 180 тис. без фрагмента — ризик, якого не беру наосліп.</p></details>
+<details><summary>Що з даними в старому Excel?</summary><p>Мігруємо те, що є джерелом правди. Решта — архів. Не переношу сміття, щоб «нічого не зникло».</p></details>
+<details><summary>Звідки знати, що Excel ще вистачає?</summary><p>Одна людина, малий обсяг, немає паралельних правок, немає аудиту історії. Тоді дисципліна назв файлів і заступник на відпустку дешевші за Ops 60–180 тисяч. Не зручна правда: багатьом фірмам панель не потрібна. Потрібен власник аркуша. Панель має сенс, коли кілька ролей псують один файл, процес повторюється, а помилка стосується грошей або завантаження. Не продаю сором за те, що ще не «digital».</p></details>
+<details><summary>Чи «Excel плюс ChatGPT» замінює панель?</summary><p>Не в мене. Не будую модель, яка вгадує VAT з PDF і одразу надсилає. HITL додаю, коли крок можна обмежити allow-list. ChatGPT в аркуші без логу — ризик, не система. Стани, ролі, запис кроків — це панель. Магія в комірці G17 — це тікет у неділю. Plumm як бухгалтерія — власний продукт, не обіцянка двадцяти бюро. Mint не вдає, що я написав PMS з нуля.</p></details>
+<details><summary>Коли відмовляю будувати панель?</summary><p>Немає власника процесу, бюджет «MVP як із шаблону за кілька тисяч», мета «замінити людей моделлю без логу», немає метрики яка має впасти. Тоді чесніший Audit Sprint або стоп. День вимкнення Excel треба списати. Якщо після старту всі вертаються до аркуша «бо швидше», панель була театром. Після рахунків код ваш або продукт — мій SaaS: дві угоди. Плутати їх — претензія за рік.</p></details>
+        </section>
+        <section class="j-cta">
+          <h2>Перевіримо, чи аркуш уже краде години</h2>
+          <p>20 хвилин або Audit Sprint. Якщо не сходиться — лишаєте Excel. <a href="/ua/#oferta">Обсяг</a> і <a href="/ua/#cennik">ціни</a>.</p>
+          <a href="/ua/#kontakt">Записатися на 20-хв аудит</a>
+        </section>
+        <section class="j-related">
+          <h2>Пов’язані статті</h2>
+          <ul><li><a href="/ua/statti/saas-czy-wlasny-panel/">готовий SaaS чи власна панель — як вирішую</a></li><li><a href="/ua/statti/ksiegowosc-online-zamiast-excela/">онлайн-бухгалтерія замість Excel у Plumm</a></li><li><a href="/ua/statti/ile-kosztuje-strona-firmowa/">це не сайт за 8 тисяч</a></li></ul>
+          <h3>Пропозиція</h3>
+          <ul><li><a href="/ua/#oferta">обсяг робіт: сайт, панель, HITL</a></li><li><a href="/ua/#cennik">пакети та поріг входу</a></li></ul>
+        </section>
+      </article>
+    </main>
+    <div class="j-header" style="border:0;padding-bottom:0">
+      <nav class="j-locales" aria-label="Мова"><a href="/artykuly/panel-operacyjny-zamiast-excela/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/panel-operacyjny-zamiast-excela/" lang="en" hreflang="en">EN</a><a href="/ua/statti/panel-operacyjny-zamiast-excela/" aria-current="page" lang="uk" hreflang="uk">UA</a></nav>
+    </div>
+    <footer class="j-footer">
+      <p>Marcin Bochenek</p>
+      <div>
+        <a href="mailto:kontakt@marcinbochenek.com">kontakt@marcinbochenek.com</a>
+        ·
+        <a href="/ua/statti/">Статті</a>
+        ·
+        <a href="/ua/">Головна</a>
+      </div>
+    </footer>
+  </body>
+</html>

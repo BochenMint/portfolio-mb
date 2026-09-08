@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Implementing ChatGPT at work is not a real deployment</title>
+    <meta name="description" content="Implementing ChatGPT in a company is not buying Team seats. Risk: leaks, hallucinations, no log. I describe HITL: allowed actions, escalation, an audit trail — no promise that AI replaces the team." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://marcinbochenek.com/en/articles/wdrozyc-chatgpt-w-firmie/" />
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/artykuly/wdrozyc-chatgpt-w-firmie/" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/articles/wdrozyc-chatgpt-w-firmie/" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/statti/wdrozyc-chatgpt-w-firmie/" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/artykuly/wdrozyc-chatgpt-w-firmie/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Implementing ChatGPT at work is not a real deployment" />
+    <meta property="og:description" content="Implementing ChatGPT in a company is not buying Team seats. Risk: leaks, hallucinations, no log. I describe HITL: allowed actions, escalation, an audit trail — no promise that AI replaces the team." />
+    <meta property="og:url" content="https://marcinbochenek.com/en/articles/wdrozyc-chatgpt-w-firmie/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="pl_PL" />
+    <meta property="og:locale:alternate" content="uk_UA" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Implementing ChatGPT at work is not a real deployment" />
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Implementing ChatGPT at work is not a real deployment" />
+    <meta name="twitter:description" content="Implementing ChatGPT in a company is not buying Team seats. Risk: leaks, hallucinations, no log. I describe HITL: allowed actions, escalation, an audit trail — no promise that AI replaces the team." />
+    <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta name="twitter:image:alt" content="Implementing ChatGPT at work is not a real deployment" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/journal.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":["Article","BlogPosting"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://marcinbochenek.com/en/articles/wdrozyc-chatgpt-w-firmie/"},"headline":"Implementing ChatGPT at work is not a real deployment","description":"Implementing ChatGPT in a company is not buying Team seats. Risk: leaks, hallucinations, no log. I describe HITL: allowed actions, escalation, an audit trail — no promise that AI replaces the team.","inLanguage":"en","datePublished":"2026-08-24","dateModified":"2026-08-24","wordCount":1721,"image":["https://marcinbochenek.com/brand/og-default.png"],"author":{"@type":"Person","@id":"https://marcinbochenek.com/#person","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","email":"kontakt@marcinbochenek.com","jobTitle":"Software engineer","image":"https://marcinbochenek.com/images/marcin-bochenek.webp","sameAs":["https://github.com/BochenMint"]},"publisher":{"@type":"Organization","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","logo":{"@type":"ImageObject","url":"https://marcinbochenek.com/brand/logo-mb.svg"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://marcinbochenek.com/en/"},{"@type":"ListItem","position":2,"name":"Journal","item":"https://marcinbochenek.com/en/articles/"},{"@type":"ListItem","position":3,"name":"Implementing ChatGPT at work: chat seats are not a deployment","item":"https://marcinbochenek.com/en/articles/wdrozyc-chatgpt-w-firmie/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is ChatGPT Team enough for the whole company?","acceptedAnswer":{"@type":"Answer","text":"As a drafting tool — maybe. As a system that talks to clients or moves data — not until there are limits, a log and escalation."}},{"@type":"Question","name":"Do you build autonomous agents?","acceptedAnswer":{"@type":"Answer","text":"I build processes with allowed actions. Autonomy without a list and a log is a risk I will not take to production at a client."}},{"@type":"Question","name":"How long does it take?","acceptedAnswer":{"@type":"Answer","text":"Depends on integrations, usually weeks inside a larger build, not “a plugin on Friday”. Process audit first."}},{"@type":"Question","name":"Is this lawful under the AI Act?","acceptedAnswer":{"@type":"Answer","text":"It depends on the use. I avoid systems that take high-risk decisions without a human. Detail — with your lawyer, not with the model."}},{"@type":"Question","name":"Are ChatGPT Team seats already an implementation at work?","acceptedAnswer":{"@type":"Answer","text":"No. That is a subscription. Implementation starts when we write down what the model may propose, what a human approves, and where the log lands. Enterprise reduces training on your data — it does not remove checks on what goes outside. GDPR and the AI Act are not a slide. I do not bolt a chat onto a naked form because competitors have one. A widget on the company-site hero is the wrong order: funnel and one CTA first, then maybe an assistant with limits."}},{"@type":"Question","name":"What must a model never do in your rollouts?","acceptedAnswer":{"@type":"Answer","text":"Sending outside without a human who understands context. Booking, wires, price changes, deletions as auto-send. A site chat into the CRM “because it is convenient”, with no log. Training on client data in a tool with no contract. Internal Agentic is not a “for corporations” case. iDrive is not live. Mint and Plumm do not pretend AI runs a hotel or signs a PIT return. The HITL package is not inside a PLN 6,500–12,000 brochure. Anyone stuffing AI into that number is lying about scope or about accountability."}},{"@type":"Question","name":"What is the minimum contract before we buy another seat?","acceptedAnswer":{"@type":"Answer","text":"One accountable person, not an innovation team. One process, not the whole firm. A week of measurement: drafts accepted, rejected, sent outside. If you cannot write that down, keep Team with no integrations — cheaper than appearances. Twenty minutes may end as “do not wire this into the form”. I will not sell a guilt sprint after that. A win is sometimes a stop that prevents a leak before anyone calls it an “AI rollout”."}}]}</script>
+  </head>
+  <body>
+    <a class="j-skip" href="#content">Skip to content</a>
+    <header class="j-header">
+      <a class="j-mark" href="/en/">MB<span>Marcin Bochenek</span></a>
+      <nav class="j-nav" aria-label="Journal">
+        <a href="/en/articles/">Journal</a>
+        <a href="/en/#cennik">Packages</a>
+        <a href="/en/#kontakt">Contact</a>
+      </nav>
+      <nav class="j-locales" aria-label="Language"><a href="/artykuly/wdrozyc-chatgpt-w-firmie/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/wdrozyc-chatgpt-w-firmie/" aria-current="page" lang="en" hreflang="en">EN</a><a href="/ua/statti/wdrozyc-chatgpt-w-firmie/" lang="uk" hreflang="uk">UA</a></nav>
+    </header>
+    <main class="j-main" id="content">
+      <nav class="j-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/en/">Home</a></li>
+          <li><a href="/en/articles/">Journal</a></li>
+          <li>Implementing ChatGPT at work: chat seats are not a deployment</li>
+        </ol>
+      </nav>
+      <article class="j-article">
+        <p class="j-kicker">HITL AI</p>
+        <h1>Implementing ChatGPT at work: chat seats are not a deployment</h1>
+        <p class="j-meta">Author: Marcin Bochenek · Updated: <time datetime="2026-08-24">2026-08-24</time></p>
+        <p class="j-lead">“We implemented ChatGPT” often means someone handed out logins and people paste contracts into the public model. That is not a deployment. That is shadow AI with a nicer name. A real deployment I ship has an allow-list of actions, a log of who/what/why, and a human at low confidence. I call it HITL — human in the loop — not “24/7 assistant with no accountability”. AI does not replace the team. It takes repetitive steps you can bound.</p>
+        <h2>Three risks a “be professional” prompt will not fix</h2>
+<ul><li>Leak: a contract, personal data, code, a price list in a public model.</li><li>Hallucination: a convincing answer that was never in the offer — sent to the client.</li><li>No audit: after an incident you cannot reconstruct who pasted what.</li></ul>
+<p>An AI policy on paper without technical control dies in a week. Enterprise/Team reduces training on your data — it does not remove the duty that a human checks what goes outside. GDPR and the AI Act are not a slide at the end of a deck; they are why I do not bolt a chat onto a naked form “because competitors do”.</p>
+<aside class="j-note">I am not a law firm. I do not sell a compliance pack. I sell action limits in a system you can audit. Legal interpretation stays with your lawyer.</aside>
+<h2>What I ship instead of a widget on a brochure</h2>
+<p>On a <a href="/en/articles/strona-firmowa-b2b/">company website</a> an AI chat is usually a bad CTA: it guesses, it does not qualify, it leaves no SLA. Form and human first. I add an assistant when there is context (apartment, invoice, job status) and a list of things the model must not do: no discount, no official deadline promise, no lock open without a rule.</p>
+<p>At Mint the guest assistant has listing context and escalation. At Plumm the tax assistant hands hard cases to a bookkeeper. Agentic OS is internal — not a “street client” case. I do not present iDrive as live.</p>
+<h2>HITL in one sentence and a checklist</h2>
+<p>The model proposes or executes only what is on the list; on doubt it hands over; every step has a trace. Longer form: <a href="/en/articles/automatyzacja-z-kontrola-czlowieka/">human-in-the-loop automation</a>.</p>
+<ol><li>Inventory: where you already paste data (usually more than you think).</li><li>Data classes: what must never go into a public chat.</li><li>A contracted tool (not the free web) or isolation.</li><li>Allowed actions in your panel, not a universal agent with root on the system.</li><li>Escalation and cost before production — no surprise on the API invoice.</li></ol>
+<h2>Price and package: this is not an PLN 8k website</h2>
+<p>A HITL assistant is priced after the audit, usually inside Conversion Build or Ops, not the brochure package. Twenty free minutes says whether you even have a process that may be automated. If not — you buy training and a ban on public chat, not an engine. I would rather say that than wire GPT into Excel and call it transformation.</p>
+<h2>What I will not promise</h2>
+<ul><li>That the model will not hallucinate — that is why a human is there.</li><li>That you will replace a desk or a bookkeeper in a dispute.</li><li>That you will “save 80% of a headcount” — I have no such statistic to publish.</li><li>Fake AI-rollout testimonials that are not on the live-proof list.</li></ul>
+<h2>What people call a “rollout” versus a Team seat</h2>
+<p>Implementing ChatGPT at work usually means: someone bought seats, pasted a policy, and considers the topic closed. That is not a rollout. That is a subscription. A rollout starts when we name which tasks the model may propose, which a human must approve, and where the log lands. Without that you get a leak in email, a hallucination in a client offer, and no way to say who clicked “send”.</p>
+<p>Enterprise/Team reduces training risk on your data. It does not remove the duty that a human checks what goes outside. GDPR and the AI Act are not a slide at the end of a deck. They are why I do not bolt a chat onto a naked form “because competitors have one”. If the CEO wants a widget on the company-site hero — first a <a href="/en/articles/lejek-konwersji-na-stronie/">funnel and one CTA</a>, then maybe an assistant with limits, not the other way around.</p>
+<ul><li>A list of systems the model may read — and must not.</li><li>Allowed actions: draft an email yes, send to a client no, a wire never.</li><li>Escalation: who gets the ticket when the model is unsure or the copy goes outside.</li><li>Log retention: how many days, who has access, what we do on an erasure request.</li></ul>
+<h2>HITL without which “AI in the company” is PR</h2>
+<p>A human in the loop is not “let the intern watch”. It is an allow-list, a forced stop, an audit of steps. In Plumm the accounting assistant escalates instead of pretending a tax return signs itself. I carry the same contract into firms that want to automate offers, mail or lead qualification. <a href="/en/articles/automatyzacja-z-kontrola-czlowieka/">Automation with control</a> is a separate article because ChatGPT is one engine, not a religion.</p>
+<p>I do not promise the model will replace the team. I do promise I will not sell you a feeling of modernity at the price of one bad email to a key client. If after two weeks everyone still writes in Excel and pastes private contracts into chat — there was no rollout. There was chaos with a nicer UI.</p>
+<h2>Where I refuse to wire a model at all</h2>
+<ol><li>Sending anything outside without approval from a human who understands context.</li><li>Booking, wires, price changes, data deletion — as auto-send.</li><li>A site chat with no log, no limits, and CRM access “because it is convenient”.</li><li>Training on client data in a tool you do not control by contract.</li></ol>
+<p>This is not fear of novelty. It is reputation arithmetic. The agentic stack I build internally is not a product with a URL for you — and I do not pretend I “rolled agents out to twenty corporations”. If you want agents in production, we start with one action, one log and one owner. Not a slide with a flock of avatars.</p>
+<aside class="j-note">iDrive is not live. I do not use it as proof that “AI at work works for clients”. Live are Mint and Plumm — and there AI does not pretend to run a hotel or sign a PIT return.</aside>
+<h2>A minimum contract before you buy another seat</h2>
+<p>One accountable person, not an “innovation team”. One process, not the whole firm. One week of measurement: how many drafts accepted, rejected, sent outside. If you cannot write that down, keep Team with no integrations. It is cheaper than the appearance of a rollout. A 20-minute audit may end as “do not wire this into the form”. I will not sell you a guilt sprint after that.</p>
+<p>The HITL package in the offer is not “ChatGPT included with the website”. It is a separate scope: limits, log, escalation, training. A brochure at PLN 6,500–12,000 does not include it. If someone stuffs AI into a company site at that price, someone is lying about scope or about accountability. Pick which version hurts less — and do not pick mine if you want a free widget.</p>
+<h2>Leave the seat without a contract. A rollout starts with a log</h2>
+<p>One person, one process, a week of numbers: accepted, rejected, sent outside. Without that, Team is cheaper than appearances. I do not wire a model into a company-site form at brochure price. HITL is a separate scope. Agentic is not your URL. iDrive is not live. Mint and Plumm do not pretend AI runs operations. If 20 minutes end as “do not wire it”, I do not sell guilt. Implementing ChatGPT at work is writing down what the model must not do — not buying another seat and pasting a policy into Notion.</p>
+        <section class="j-faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">Questions</h2>
+          <details><summary>Is ChatGPT Team enough for the whole company?</summary><p>As a drafting tool — maybe. As a system that talks to clients or moves data — not until there are limits, a log and escalation.</p></details>
+<details><summary>Do you build autonomous agents?</summary><p>I build processes with allowed actions. Autonomy without a list and a log is a risk I will not take to production at a client.</p></details>
+<details><summary>How long does it take?</summary><p>Depends on integrations, usually weeks inside a larger build, not “a plugin on Friday”. Process audit first.</p></details>
+<details><summary>Is this lawful under the AI Act?</summary><p>It depends on the use. I avoid systems that take high-risk decisions without a human. Detail — with your lawyer, not with the model.</p></details>
+<details><summary>Are ChatGPT Team seats already an implementation at work?</summary><p>No. That is a subscription. Implementation starts when we write down what the model may propose, what a human approves, and where the log lands. Enterprise reduces training on your data — it does not remove checks on what goes outside. GDPR and the AI Act are not a slide. I do not bolt a chat onto a naked form because competitors have one. A widget on the company-site hero is the wrong order: funnel and one CTA first, then maybe an assistant with limits.</p></details>
+<details><summary>What must a model never do in your rollouts?</summary><p>Sending outside without a human who understands context. Booking, wires, price changes, deletions as auto-send. A site chat into the CRM “because it is convenient”, with no log. Training on client data in a tool with no contract. Internal Agentic is not a “for corporations” case. iDrive is not live. Mint and Plumm do not pretend AI runs a hotel or signs a PIT return. The HITL package is not inside a PLN 6,500–12,000 brochure. Anyone stuffing AI into that number is lying about scope or about accountability.</p></details>
+<details><summary>What is the minimum contract before we buy another seat?</summary><p>One accountable person, not an innovation team. One process, not the whole firm. A week of measurement: drafts accepted, rejected, sent outside. If you cannot write that down, keep Team with no integrations — cheaper than appearances. Twenty minutes may end as “do not wire this into the form”. I will not sell a guilt sprint after that. A win is sometimes a stop that prevents a leak before anyone calls it an “AI rollout”.</p></details>
+        </section>
+        <section class="j-cta">
+          <h2>Before you hand out logins, let us write the allow-list</h2>
+          <p>Twenty minutes: shadow AI, HITL, or ship nothing. <a href="/en/#oferta">Scope</a>.</p>
+          <a href="/en/#kontakt">Book a 20-min audit</a>
+        </section>
+        <section class="j-related">
+          <h2>Related articles</h2>
+          <ul><li><a href="/en/articles/automatyzacja-z-kontrola-czlowieka/">human-in-the-loop automation — limits and a log</a></li><li><a href="/en/articles/saas-czy-wlasny-panel/">buying ChatGPT seats is not an operations panel</a></li><li><a href="/en/articles/audyt-strony-internetowej/">an audit before you paste company data into a chat</a></li></ul>
+          <h3>Services</h3>
+          <ul><li><a href="/en/#oferta">scope of work: site, panel, HITL</a></li></ul>
+        </section>
+      </article>
+    </main>
+    <div class="j-header" style="border:0;padding-bottom:0">
+      <nav class="j-locales" aria-label="Language"><a href="/artykuly/wdrozyc-chatgpt-w-firmie/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/wdrozyc-chatgpt-w-firmie/" aria-current="page" lang="en" hreflang="en">EN</a><a href="/ua/statti/wdrozyc-chatgpt-w-firmie/" lang="uk" hreflang="uk">UA</a></nav>
+    </div>
+    <footer class="j-footer">
+      <p>Marcin Bochenek</p>
+      <div>
+        <a href="mailto:kontakt@marcinbochenek.com">kontakt@marcinbochenek.com</a>
+        ·
+        <a href="/en/articles/">Journal</a>
+        ·
+        <a href="/en/">Home</a>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,211 @@
+/* ------------------------------------------------------------------
+   ProjectCube — a real 3D rounded-chrome cube (WebGL/three.js) for the
+   Work section. The stage hosts either the live <canvas> or a static
+   squircle-framed fallback image while three.js loads (or when WebGL /
+   reduced-motion rules it out).
+------------------------------------------------------------------- */
+
+/* Sized against the Work section's actual two-column grid (max-w-6xl,
+   lg:gap-16) rather than raw viewport width, so the cube can be enlarged
+   without overflowing its column once the grid switches to two columns
+   at the lg breakpoint (and the container caps out at 1152px). Below lg
+   the cube's column is the full (single) content column, so a viewport
+   fraction is safe there. */
+.cube-stage {
+  --size: clamp(280px, 78vw, 420px);
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  margin-inline: auto;
+  /* The canvas is intentionally larger than this box (see .cube-canvas)
+     so a rotated cube's wider silhouette never clips against the render
+     target. Letting it overflow here is safe: the canvas itself has
+     pointer-events:none and no ancestor in Work.tsx clips overflow, so
+     the oversized transparent margin never blocks neighbouring content. */
+  overflow: visible;
+}
+@media (min-width: 768px) {
+  .cube-stage {
+    --size: clamp(320px, 44vw, 480px);
+  }
+}
+@media (min-width: 1024px) {
+  .cube-stage {
+    --size: clamp(320px, 38vw, 520px);
+  }
+}
+@media (min-width: 1232px) {
+  .cube-stage {
+    --size: 520px;
+  }
+}
+
+/* Oversized and centered on the (square) stage so the rotated cube's
+   projected width — up to ~1.4x the front-on face width at 45deg — has
+   room to render without being clipped by the canvas bounds. The camera
+   is tuned in JS to compensate, so the front-on cube still reads at the
+   same on-screen size as a canvas sized 1:1 with the stage would give.
+   Purely visual: never receives pointer input. */
+.cube-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 125%;
+  transform: translate(-50%, -50%);
+  display: block;
+  pointer-events: none;
+}
+
+/* Stage-sized transparent hit target carrying all pointer/keyboard
+   interaction, so the oversized canvas never intercepts clicks meant for
+   neighbouring text/links. */
+.cube-overlay {
+  position: absolute;
+  inset: 0;
+  outline: none;
+  touch-action: pan-y;
+  cursor: grab;
+}
+.cube-overlay:active {
+  cursor: grabbing;
+}
+.cube-overlay:focus-visible {
+  outline: 2px solid rgba(247, 248, 250, 0.6);
+  outline-offset: 10px;
+  border-radius: calc(var(--size) * 0.17);
+}
+
+/* --- Static fallback: front face inside a chrome-bezelled squircle --- */
+.cube-fallback {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 78%;
+  height: 78%;
+  border-radius: calc(var(--size) * 0.17);
+  corner-shape: var(--corner, superellipse(1.7));
+  overflow: hidden;
+  outline: none;
+  background: linear-gradient(160deg, #ffffff, #5a5d64 35%, #e5e7eb 55%, #3b3e44 80%, #f2f3f5);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.6) inset,
+    0 30px 60px -20px rgba(0, 0, 0, 0.9);
+  padding: calc(var(--size) * 0.018);
+}
+.cube-fallback:focus-visible {
+  outline: 2px solid rgba(247, 248, 250, 0.6);
+  outline-offset: 6px;
+}
+.cube-fallback img {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border-radius: calc(var(--size) * 0.15);
+  corner-shape: var(--corner, superellipse(1.7));
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+.cube-fallback::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  corner-shape: inherit;
+  pointer-events: none;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0.25) 100%);
+}
+
+/* --- Dots / segmented control ----------------------------------------- */
+.cube-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 1.75rem;
+}
+.cube-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  background: var(--color-line-2, rgba(247, 248, 250, 0.16));
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+/* An 8px dot is a fine mark and an impossible touch target. Grow the hit area
+   to 24x44 without growing the dot. The row's gap is 16px, so 8px of bleed on
+   each side lands exactly at the midpoint between neighbours: every pixel
+   between two dots belongs to the nearer one, and none is claimed twice. */
+.cube-dot::after {
+  content: '';
+  position: absolute;
+  inset: -18px -8px;
+}
+.cube-dot:hover {
+  background: rgba(247, 248, 250, 0.4);
+}
+.cube-dot[aria-current='true'] {
+  background: #f7f8fa;
+  transform: scale(1.3);
+}
+.cube-dot:focus-visible {
+  outline: 2px solid rgba(247, 248, 250, 0.6);
+  outline-offset: 3px;
+}
+
+/* --- Caption row (cross-fade on active-face change) -------------------- */
+.cube-caption {
+  margin-top: 0.9rem;
+  text-align: center;
+  min-height: 60px;
+}
+.cube-caption__label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-white, #f7f8fa);
+  max-width: 36ch;
+  margin-inline: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  animation: cube-caption-in 0.4s ease both;
+}
+.cube-caption__text {
+  margin-top: 0.25rem;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-silver-2, #9a9ea6);
+  max-width: 36ch;
+  margin-inline: auto;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  animation: cube-caption-in 0.4s ease both;
+}
+
+@keyframes cube-caption-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cube-caption__label,
+  .cube-caption__text {
+    animation: none;
+  }
+}

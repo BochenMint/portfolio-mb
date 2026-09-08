@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Human-in-the-loop automation: limits and an audit log</title>
+    <meta name="description" content="Human-in-the-loop automation (HITL) is allowed actions, a step log and escalation. I explain how it differs from a chat with no accountability and when it may enter production at all." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://marcinbochenek.com/en/articles/automatyzacja-z-kontrola-czlowieka/" />
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/artykuly/automatyzacja-z-kontrola-czlowieka/" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/articles/automatyzacja-z-kontrola-czlowieka/" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/statti/automatyzacja-z-kontrola-czlowieka/" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/artykuly/automatyzacja-z-kontrola-czlowieka/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Human-in-the-loop automation: limits and an audit log" />
+    <meta property="og:description" content="Human-in-the-loop automation (HITL) is allowed actions, a step log and escalation. I explain how it differs from a chat with no accountability and when it may enter production at all." />
+    <meta property="og:url" content="https://marcinbochenek.com/en/articles/automatyzacja-z-kontrola-czlowieka/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="pl_PL" />
+    <meta property="og:locale:alternate" content="uk_UA" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Human-in-the-loop automation: limits and an audit log" />
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Human-in-the-loop automation: limits and an audit log" />
+    <meta name="twitter:description" content="Human-in-the-loop automation (HITL) is allowed actions, a step log and escalation. I explain how it differs from a chat with no accountability and when it may enter production at all." />
+    <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta name="twitter:image:alt" content="Human-in-the-loop automation: limits and an audit log" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/journal.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":["Article","BlogPosting"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://marcinbochenek.com/en/articles/automatyzacja-z-kontrola-czlowieka/"},"headline":"Human-in-the-loop automation: limits and an audit log","description":"Human-in-the-loop automation (HITL) is allowed actions, a step log and escalation. I explain how it differs from a chat with no accountability and when it may enter production at all.","inLanguage":"en","datePublished":"2026-08-24","dateModified":"2026-08-24","wordCount":1594,"image":["https://marcinbochenek.com/brand/og-default.png"],"author":{"@type":"Person","@id":"https://marcinbochenek.com/#person","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","email":"kontakt@marcinbochenek.com","jobTitle":"Software engineer","image":"https://marcinbochenek.com/images/marcin-bochenek.webp","sameAs":["https://github.com/BochenMint"]},"publisher":{"@type":"Organization","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","logo":{"@type":"ImageObject","url":"https://marcinbochenek.com/brand/logo-mb.svg"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://marcinbochenek.com/en/"},{"@type":"ListItem","position":2,"name":"Journal","item":"https://marcinbochenek.com/en/articles/"},{"@type":"ListItem","position":3,"name":"Human-in-the-loop automation: limits, a log, escalation — or nothing","item":"https://marcinbochenek.com/en/articles/automatyzacja-z-kontrola-czlowieka/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does HITL slow automation down?","acceptedAnswer":{"@type":"Answer","text":"Yes, on disputes and at the edge. That is the price of sleeping. Routine goes without a click; the exception does not go without a human."}},{"@type":"Question","name":"Must the log be visible to the end customer?","acceptedAnswer":{"@type":"Answer","text":"No. It must be available to the operator and for incident review. Transparency toward a guest is a separate product decision."}},{"@type":"Question","name":"Is this the same as RPA?","acceptedAnswer":{"@type":"Answer","text":"RPA clicks a UI. HITL bounds a model and a human in the loop. Sometimes they combine. I do not sell a magic keyboard-bot as HITL."}},{"@type":"Question","name":"Can I buy Agentic OS?","acceptedAnswer":{"@type":"Answer","text":"Not as a box. You buy a deployment under your actions, or nothing. The internal engine stays internal."}},{"@type":"Question","name":"How is HITL different from a slower chatbot?","acceptedAnswer":{"@type":"Answer","text":"A chatbot with no action list is hope. HITL is an allow-list, a step log, a forced stop and escalation. If you cannot write down what the model may do, you do not have automation. A hallucination in an offer or a tax return does not survive an audit. In Plumm the assistant escalates instead of pretending a PIT return signs itself. I carry the same contract into mail and lead qualification — not into a brochure-hero widget “because it looks modern”."}},{"@type":"Question","name":"How do you measure whether HITL works rather than performs?","acceptedAnswer":{"@type":"Answer","text":"Not by tickets “resolved without a human” — then the system learns to hide uncertainty. I count justified escalations, rejected drafts and human edits before copy leaves. Zero escalations after a week usually means dead limits or a dead tool. One process, one week, one log. Then we extend the allow-list or switch it off. Production is not a lab."}},{"@type":"Question","name":"Are Agentic or iDrive proof that HITL works for clients?","acceptedAnswer":{"@type":"Answer","text":"No. Agentic OS is an internal tool with no URL for you. iDrive is not live. I do not sell a flock of avatars as an enterprise case. Live proof I can click is Mint and Plumm — and there automation does not pretend to run a hotel or book accounts without a human. If you want agents in production, we start with one action and one owner, not a slide."}}]}</script>
+  </head>
+  <body>
+    <a class="j-skip" href="#content">Skip to content</a>
+    <header class="j-header">
+      <a class="j-mark" href="/en/">MB<span>Marcin Bochenek</span></a>
+      <nav class="j-nav" aria-label="Journal">
+        <a href="/en/articles/">Journal</a>
+        <a href="/en/#cennik">Packages</a>
+        <a href="/en/#kontakt">Contact</a>
+      </nav>
+      <nav class="j-locales" aria-label="Language"><a href="/artykuly/automatyzacja-z-kontrola-czlowieka/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/automatyzacja-z-kontrola-czlowieka/" aria-current="page" lang="en" hreflang="en">EN</a><a href="/ua/statti/automatyzacja-z-kontrola-czlowieka/" lang="uk" hreflang="uk">UA</a></nav>
+    </header>
+    <main class="j-main" id="content">
+      <nav class="j-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/en/">Home</a></li>
+          <li><a href="/en/articles/">Journal</a></li>
+          <li>Human-in-the-loop automation: limits, a log, escalation — or nothing</li>
+        </ol>
+      </nav>
+      <article class="j-article">
+        <p class="j-kicker">HITL</p>
+        <h1>Human-in-the-loop automation: limits, a log, escalation — or nothing</h1>
+        <p class="j-meta">Author: Marcin Bochenek · Updated: <time datetime="2026-08-24">2026-08-24</time></p>
+        <p class="j-lead">Automation without a human in the loop looks good in a demo and bad in a dispute with a guest or the tax office. HITL as I ship it is not “a human clicks OK under every token”. It is a list of actions the model may touch, a trace of every step, and a confidence threshold after which the decision returns to an operator. Agentic OS is an internal engine — I do not sell it as a boxed SKU. Externally I assemble the same spine under your process.</p>
+        <h2>Three parts I will not skip before production</h2>
+<ol><li>Allow-list: nothing outside the agreed scope (send a template, read a status, do not grant a discount).</li><li>Audit log: who, what, on which data, which result, which confidence.</li><li>Escalation: low score, a dispute, sensitive data, an amount above a threshold — a human.</li></ol>
+<p>A chat that “does everything” is convenient in a pitch and impossible to run. When a client asks “why did the system promise X”, without a log you are defenceless. With a log you have a conversation, not theatre.</p>
+<h2>Where this already sits in live products</h2>
+<p>Mint: a guest assistant with apartment context, not generic GPT, and a hand-off to a human. Plumm: a tax question in Polish, harder cases to a bookkeeper. Hour estimates are directional and described on those products — I do not transfer them onto your firm as a guarantee.</p>
+<aside class="j-note">iDrive is not live. Agentic is not a product for you with a URL. No fake rollouts “at twenty corporations”.</aside>
+<h2>When HITL is overkill</h2>
+<p>Internal mail drafts, brainstorming, translating your own note — a contracted tool and a ban on pasting secrets is enough. HITL starts when automation moves world state: a lock, an invoice, a message to a client, a change in the panel. Then <a href="/en/articles/wdrozyc-chatgpt-w-firmie/">ChatGPT seats as “implementation”</a> is too short.</p>
+<ul><li>I do not automate decisions you cannot write down by hand.</li><li>I do not hide token cost — an estimate before go-live.</li><li>I do not connect a model to database root “just to see”.</li></ul>
+<h2>It hangs on a panel, not a widget</h2>
+<p>HITL hangs on an <a href="/en/articles/panel-operacyjny-zamiast-excela/">operations panel</a> or a narrow integration, not a bubble on a brochure. A brochure has a form. A funnel has qualification. A panel has statuses. The model reads a status and executes an allowed step. Reverse order — chat first, process later — ends as a hallucination in production.</p>
+<h2>Cost and honesty of the offer</h2>
+<p>Priced after the audit, usually inside Ops or a Conversion Build module (e.g. a guest assistant). There is no “AI for PLN 1,999” line. If the process is not repetitive, I say no. If it is — twenty minutes is enough to say whether an allow-list can even be written.</p>
+<h2>The definition I use when someone says “let’s automate it”</h2>
+<p>Human-in-the-loop automation is not a slower chatbot. It is a machine that may execute only actions on a list, logs the step, and knows when to stop. If you cannot write that list, you do not have automation. You have hope. Hope does not survive an audit when a client gets a hallucination or the tax office asks who approved a document.</p>
+<p>In practice HITL looks like this: a model or a rule prepares a draft, the system shows a diff, a human clicks yes/no/escalate. Sometimes a human is always in the loop (accounting, an offer going outside). Sometimes only at low confidence or above a money threshold. We write the threshold down. “It will be fine” is not a threshold.</p>
+<ul><li>An allow-list of actions — everything else is an error, not “model creativity”.</li><li>A step id and a user id. Without that there is no conversation about accountability.</li><li>An escalation channel with an SLA, not a meme channel in Messenger.</li><li>A staging test with data you are allowed to break. Production is not a lab.</li></ul>
+<h2>Where HITL fits a panel, and where it does not fit a chat</h2>
+<p>In an operations panel HITL is natural: states, roles, a button. In a site chat it is unnatural, because the guest is not an operator and the widget wants to be nice. That is why I rarely wire a model into a brochure hero. More often into an internal queue: a reply draft, a ticket class, a next-step suggestion for a human. <a href="/en/articles/wdrozyc-chatgpt-w-firmie/">Implementing ChatGPT</a> without that distinction is buying a seat, not a system.</p>
+<p>Plumm shows an assistant with escalation in a product I maintain. It does not show twenty rollouts at other offices. Mint shows booking on your own domain, not an “AI concierge that cancels a stay by itself”. Boundaries are part of the offer. If you want to cross one, we name the risk and the price — or we stop.</p>
+<h2>Mistakes that kill HITL in the first month</h2>
+<ol><li>No owner: “IT and marketing will watch it together”. Together means nobody.</li><li>A log nobody reads. A record without review is an alibi, not control.</li><li>A model with broader access than the operator. That is not automation. That is escalation the wrong way.</li><li>Success measured as “resolved without a human”. Then the system learns to hide uncertainty.</li></ol>
+<p>I measure the other way: how many escalations were right, how many drafts rejected, how often a human edited copy before it left. Those are healthy numbers. Zero escalations after a week usually means limits are dead or nobody uses the tool.</p>
+<aside class="j-note">Agentic OS is an internal tool. I do not sell it as a “for corporations” case. iDrive is not live. I describe HITL on what I can maintain and show.</aside>
+<h2>How I start when automation may enter production</h2>
+<p>One action. One week. One log. Then a decision: extend the allow-list, keep it, switch it off. The HITL package in the price list is not “AI behind the website”. It is engineering: integration, limits, training, measurement. If the budget is a brochure at PLN 6,500–12,000, first a site and a form that work. Automation on a broken follow-up only accelerates embarrassment.</p>
+<p>A 20-minute audit may end as “do not automate yet”. That is a win if the stop prevents a leak. If we go on, we write down who clicks on Sunday when the model stalls. Without that person you are left with Excel and chat. Then it is more honest not to start.</p>
+<h2>A minimum week after which we know whether to continue</h2>
+<p>One allow-listed action, staging, a log, a human with a stop right. After seven days: how many escalations, rejections, edits before copy left. If the numbers are zero, the tool is dead or the limits are fiction. Then we switch off, we do not “polish the prompt”. Human-in-the-loop automation does not deserve a second month of licence when the first week left no trail. The process owner must have a Sunday calendar — otherwise you return to Excel and chat, only with a worse conscience.</p>
+<p>The HITL package in the offer is engineering, not an AI sticker on a brochure. A PLN 6,500–12,000 company site does not include it. If the budget is only a site, first the form and follow-up. Speeding up chaos is not transformation. A 20-minute audit may end as “do not automate yet”. That is control. The rest is seat theatre.</p>
+        <section class="j-faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">Questions</h2>
+          <details><summary>Does HITL slow automation down?</summary><p>Yes, on disputes and at the edge. That is the price of sleeping. Routine goes without a click; the exception does not go without a human.</p></details>
+<details><summary>Must the log be visible to the end customer?</summary><p>No. It must be available to the operator and for incident review. Transparency toward a guest is a separate product decision.</p></details>
+<details><summary>Is this the same as RPA?</summary><p>RPA clicks a UI. HITL bounds a model and a human in the loop. Sometimes they combine. I do not sell a magic keyboard-bot as HITL.</p></details>
+<details><summary>Can I buy Agentic OS?</summary><p>Not as a box. You buy a deployment under your actions, or nothing. The internal engine stays internal.</p></details>
+<details><summary>How is HITL different from a slower chatbot?</summary><p>A chatbot with no action list is hope. HITL is an allow-list, a step log, a forced stop and escalation. If you cannot write down what the model may do, you do not have automation. A hallucination in an offer or a tax return does not survive an audit. In Plumm the assistant escalates instead of pretending a PIT return signs itself. I carry the same contract into mail and lead qualification — not into a brochure-hero widget “because it looks modern”.</p></details>
+<details><summary>How do you measure whether HITL works rather than performs?</summary><p>Not by tickets “resolved without a human” — then the system learns to hide uncertainty. I count justified escalations, rejected drafts and human edits before copy leaves. Zero escalations after a week usually means dead limits or a dead tool. One process, one week, one log. Then we extend the allow-list or switch it off. Production is not a lab.</p></details>
+<details><summary>Are Agentic or iDrive proof that HITL works for clients?</summary><p>No. Agentic OS is an internal tool with no URL for you. iDrive is not live. I do not sell a flock of avatars as an enterprise case. Live proof I can click is Mint and Plumm — and there automation does not pretend to run a hotel or book accounts without a human. If you want agents in production, we start with one action and one owner, not a slide.</p></details>
+        </section>
+        <section class="j-cta">
+          <h2>Let us write the allow-list before we turn the model on</h2>
+          <p>If it cannot be written, we do not automate. <a href="/en/#oferta">Scope</a>.</p>
+          <a href="/en/#kontakt">Book a 20-min audit</a>
+        </section>
+        <section class="j-related">
+          <h2>Related articles</h2>
+          <ul><li><a href="/en/articles/wdrozyc-chatgpt-w-firmie/">implementing ChatGPT at work is not enough</a></li><li><a href="/en/articles/panel-operacyjny-zamiast-excela/">the operations panel HITL hangs on</a></li><li><a href="/en/articles/ksiegowosc-online-zamiast-excela/">escalation to a bookkeeper in Plumm</a></li></ul>
+          <h3>Services</h3>
+          <ul><li><a href="/en/#oferta">scope of work: site, panel, HITL</a></li></ul>
+        </section>
+      </article>
+    </main>
+    <div class="j-header" style="border:0;padding-bottom:0">
+      <nav class="j-locales" aria-label="Language"><a href="/artykuly/automatyzacja-z-kontrola-czlowieka/" lang="pl" hreflang="pl">PL</a><a href="/en/articles/automatyzacja-z-kontrola-czlowieka/" aria-current="page" lang="en" hreflang="en">EN</a><a href="/ua/statti/automatyzacja-z-kontrola-czlowieka/" lang="uk" hreflang="uk">UA</a></nav>
+    </div>
+    <footer class="j-footer">
+      <p>Marcin Bochenek</p>
+      <div>
+        <a href="mailto:kontakt@marcinbochenek.com">kontakt@marcinbochenek.com</a>
+        ·
+        <a href="/en/articles/">Journal</a>
+        ·
+        <a href="/en/">Home</a>
+      </div>
+    </footer>
+  </body>
+</html>

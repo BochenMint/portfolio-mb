@@ -1,62 +1,111 @@
-import { useCallback, useState } from 'react'
-import { CaseStudies } from './components/CaseStudies'
+import { useCallback, useEffect, useState } from 'react'
+import { useLocale } from './i18n'
+import { getArchiveUi } from './i18n/archive-ui'
+import { About } from './components/About'
 import { Contact } from './components/Contact'
-import { CustomCursor } from './components/CustomCursor'
-import { FAQ } from './components/FAQ'
+import { FaqSection } from './components/FaqSection'
+import { FeaturedWork } from './components/FeaturedWork'
+import { FooterCta } from './components/FooterCta'
 import { Hero } from './components/Hero'
-import { Marquee } from './components/Marquee'
+import { IntroCurtain } from './components/IntroCurtain'
+import { MobileStickyCta } from './components/MobileStickyCta'
 import { Nav } from './components/Nav'
-import { Preloader } from './components/Preloader'
-import { Pricing } from './components/Pricing'
-import { Process } from './components/Process'
+import { PricingSection } from './components/PricingSection'
+import { ProcessSection } from './components/ProcessSection'
 import { ProofBar } from './components/ProofBar'
 import { ResultsStrip } from './components/ResultsStrip'
-import { ScrollProgress } from './components/ScrollProgress'
 import { Services } from './components/Services'
-import { StickyCTA } from './components/StickyCTA'
-import { Testimonials } from './components/Testimonials'
-import { Work } from './components/Work'
-import { useIntroAnimations } from './hooks/useIntroAnimations'
+import { TestimonialsSection } from './components/TestimonialsSection'
+import { useKeyboardNav } from './hooks/useKeyboardNav'
 import { useLenis } from './hooks/useLenis'
+import { useScrollAnimations } from './hooks/useScrollAnimations'
+
+function SectionWipe() {
+  return (
+    <div
+      data-section-wipe
+      className="section-wipe pointer-events-none h-px w-full bg-[var(--color-paper)]/20"
+      aria-hidden
+    />
+  )
+}
+
+function ChapterBreak({ label }: { label: string }) {
+  return (
+    <div
+      className="chapter-break pointer-events-none flex min-h-[14vh] items-end border-t border-[var(--color-paper)]/12 px-6 pb-6 md:min-h-[18vh] md:px-10 md:pb-8 lg:px-16"
+      aria-hidden
+    >
+      <span className="font-headline text-[clamp(3rem,14vw,10rem)] leading-none text-[var(--color-paper)]/[0.06]">
+        {label}
+      </span>
+    </div>
+  )
+}
+
+const INTRO_MAX_MS = 1500
 
 function App() {
-  const [ready, setReady] = useState(false)
-  const onLoaded = useCallback(() => setReady(true), [])
+  const { locale } = useLocale()
+  const ui = getArchiveUi(locale)
+  const [introDone, setIntroDone] = useState(false)
+  const completeIntro = useCallback(() => {
+    setIntroDone((done) => (done ? done : true))
+  }, [])
+
+  useEffect(() => {
+    const failSafe = window.setTimeout(completeIntro, INTRO_MAX_MS)
+    return () => window.clearTimeout(failSafe)
+  }, [completeIntro])
 
   useLenis()
-  useIntroAnimations(ready)
+  useScrollAnimations(introDone)
+  useKeyboardNav()
 
   return (
     <>
-      {!ready && <Preloader onComplete={onLoaded} />}
+      {!introDone ? <IntroCurtain onComplete={completeIntro} /> : null}
+
       <div
-        className={`noise transition-opacity duration-700 ${ready ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+        data-progress-bar
+        className="scroll-progress bg-sunset fixed top-0 left-0 z-[60] h-[2px] w-full origin-left"
+        aria-hidden
+      />
+      <div className="film-grain pointer-events-none fixed inset-0 z-[55]" aria-hidden />
+
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-[var(--color-paper)] focus:px-4 focus:py-2 focus:font-medium focus:text-[var(--color-ink)]"
       >
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10003] focus:rounded-lg focus:bg-mint focus:px-4 focus:py-2 focus:text-ink"
-        >
-          Przejdź do treści
-        </a>
-        <ScrollProgress />
-        <CustomCursor />
-        <Nav />
-        <main id="main">
-          <Hero />
-          <ProofBar />
-          <Marquee />
-          <ResultsStrip />
-          <Work />
-          <CaseStudies />
-          <Services />
-          <Process />
-          <Pricing />
-          <Testimonials />
-          <FAQ />
-          <Contact />
-        </main>
-        <StickyCTA />
-      </div>
+        {ui.skip}
+      </a>
+      <Nav />
+      <MobileStickyCta />
+      <main id="main" className="max-w-none bg-[var(--color-ink)] p-0 text-[var(--color-paper)]">
+        <Hero animationsReady={introDone} />
+        <ProofBar />
+        <ResultsStrip />
+        <SectionWipe />
+        <ChapterBreak label="01" />
+        <About />
+        <SectionWipe />
+        <ChapterBreak label="02" />
+        <Services />
+        <SectionWipe />
+        <ChapterBreak label="03" />
+        <FeaturedWork />
+        <SectionWipe />
+        <ChapterBreak label="04" />
+        <PricingSection />
+        <SectionWipe />
+        <ProcessSection />
+        <TestimonialsSection />
+        <FaqSection />
+        <SectionWipe />
+        <ChapterBreak label="05" />
+        <Contact />
+        <FooterCta />
+      </main>
     </>
   )
 }

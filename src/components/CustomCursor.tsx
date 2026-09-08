@@ -3,14 +3,16 @@ import { useReducedMotion } from '../hooks/useReducedMotion'
 
 export function CustomCursor() {
   const reduced = useReducedMotion()
-  const [active, setActive] = useState(false)
+  const [active] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia('(hover: hover) and (pointer: fine)').matches
+      : false,
+  )
   const [hovering, setHovering] = useState(false)
 
   useEffect(() => {
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-    if (!fine || reduced) return
+    if (!active || reduced) return
 
-    setActive(true)
     document.body.classList.add('cursor-custom')
 
     const dot = document.querySelector('[data-cursor-dot]') as HTMLElement
@@ -26,13 +28,13 @@ export function CustomCursor() {
     const onMove = (e: MouseEvent) => {
       mx = e.clientX
       my = e.clientY
-      dot.style.transform = `translate(${mx}px, ${my}px)`
+      dot.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%, -50%)`
     }
 
     const loop = () => {
       rx += (mx - rx) * 0.15
       ry += (my - ry) * 0.15
-      ring.style.transform = `translate(${rx}px, ${ry}px)`
+      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`
       raf = requestAnimationFrame(loop)
     }
     raf = requestAnimationFrame(loop)
@@ -54,7 +56,7 @@ export function CustomCursor() {
       document.removeEventListener('mouseout', onOut)
       document.body.classList.remove('cursor-custom')
     }
-  }, [reduced])
+  }, [active, reduced])
 
   if (!active || reduced) return null
 
@@ -63,15 +65,17 @@ export function CustomCursor() {
       <div
         data-cursor-ring
         aria-hidden
-        className={`pointer-events-none fixed top-0 left-0 z-[10001] h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border transition-all duration-300 ${
-          hovering ? 'border-mint scale-150 opacity-90' : 'border-cream/30 scale-100 opacity-50'
+        className={`pointer-events-none fixed top-0 left-0 z-[10001] h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border transition-[opacity,border-color] duration-200 ease-out ${
+          hovering
+            ? 'border-[var(--s-accent)] opacity-90'
+            : 'border-[var(--s-fg)]/30 opacity-50'
         }`}
       />
       <div
         data-cursor-dot
         aria-hidden
-        className={`pointer-events-none fixed top-0 left-0 z-[10002] h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-200 ${
-          hovering ? 'bg-mint scale-[2]' : 'bg-cream'
+        className={`pointer-events-none fixed top-0 left-0 z-[10002] h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-200 ease-out ${
+          hovering ? 'bg-[var(--s-accent)]' : 'bg-[var(--s-fg)]'
         }`}
       />
     </>
