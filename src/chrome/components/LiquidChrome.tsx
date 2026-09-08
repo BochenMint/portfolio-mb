@@ -9,7 +9,7 @@ import './liquid.css'
  * the actual text nodes rendered inside the wrapper and ask the browser
  * where each word landed (`Range.getClientRects`). That gives pixel-perfect
  * positions + we read the *computed* font/letter-spacing per text node, so
- * mixed weights (the semibold line and the Light accent `<em>`) draw exactly
+ * mixed weights (the bold line and the regular-weight accent `<em>`) draw exactly
  * like the DOM does — including wrapping, since we never guess line breaks.
  *
  * The mask is drawn at a high, fixed resolution (>=2x CSS px) so glyph edges
@@ -177,11 +177,22 @@ vec3 chromeBands(float y, float lightMode) {
   float groundRise = smoothstep(horizon, 1.0, y);
   vec3 groundShaded = mix(mix(ground, horizonCol, 0.30), ground * 1.02, groundRise);
 
-  float toHorizon = smoothstep(horizon - 0.07, horizon, y);
-  float fromHorizon = smoothstep(horizon, horizon + 0.045, y);
+  // The seam is what makes metal read as metal. A soft blend between bands
+  // looks like airbrushed plastic; a mirror finish resolves the horizon it
+  // reflects almost to an edge. Roughly half the previous transition width.
+  float toHorizon = smoothstep(horizon - 0.030, horizon, y);
+  float fromHorizon = smoothstep(horizon, horizon + 0.018, y);
 
   vec3 col = mix(skyShaded, horizonCol, toHorizon);
   col = mix(col, groundShaded, fromHorizon);
+
+  // Second reflection edge: the hard strip of a softbox caught high in the
+  // curve. Polished type almost always shows two edges, not one — with a
+  // single seam the surface reads as a gradient that happens to be shiny.
+  // It inverts with the theme for the same reason the bands do: on a light
+  // page the metal is dark, so what it catches is a dark object.
+  float bar = smoothstep(0.016, 0.0, abs(y - 0.235));
+  col = mix(col, mix(vec3(1.0), vec3(0.06, 0.07, 0.08), lightMode), bar * 0.9);
   return col;
 }
 
@@ -205,7 +216,7 @@ void main() {
   // pour running across every letter instead of a separate effect stamped
   // into each. Amplitude is what sells it as liquid — 0.10 was a ripple.
   float wobble = flow(vUv, uTime);
-  float roll = sin(vUv.x * 2.1 - uTime * 0.33) * 0.055;
+  float roll = sin(vUv.x * 1.7 - uTime * 0.5) * 0.085;
   float mouseTilt = (uMouseUv.y - 0.5) * 0.09;
 
   // Refraction against the bevel. A curved metal surface bends whatever it
@@ -215,14 +226,14 @@ void main() {
   // term is what separates poured metal from a gradient clipped to text.
   float refract = baseN.y * 0.19;
 
-  float y = clamp(lineY + wobble * 0.26 + roll + mouseTilt + refract, 0.0, 1.0);
+  float y = clamp(lineY + wobble * 0.32 + roll + mouseTilt + refract, 0.0, 1.0);
 
   vec3 col = chromeBands(y, uLight);
 
   // Broad, soft-edged softbox streaks drifting slowly across the headline.
   for (int i = 0; i < 2; i++) {
     float fi = float(i);
-    float speed = 0.02 + fi * 0.015;
+    float speed = 0.05 + fi * 0.032;
     float width = 0.16 + fi * 0.06;
     float center = fract(0.28 + fi * 0.42 + uTime * speed);
     float d = abs(fract(vUv.x - center + 0.5) - 0.5);
