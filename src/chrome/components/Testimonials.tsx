@@ -1,5 +1,6 @@
 import { useLocale } from '../i18n/context'
 import { headlineFactsFor } from '../data/facts'
+import { pick } from '../i18n/pick'
 import { ChromeCard, SectionHeader } from './primitives'
 
 /**
@@ -49,13 +50,13 @@ export function Testimonials() {
                       {facts.map((fact) => (
                         <div key={fact.id}>
                           <dt className="sr-only">
-                            {(fact.short ?? fact.label)[locale === 'pl' ? 'pl' : 'en']}
+                            {pick(fact.short ?? fact.label, locale)}
                           </dt>
                           <dd className="font-display text-2xl font-semibold text-white">
                             {fact.value}
                           </dd>
                           <p className="mt-1 font-mono text-[10px] tracking-[0.12em] text-muted uppercase">
-                            {(fact.short ?? fact.label)[locale === 'pl' ? 'pl' : 'en']}
+                            {pick(fact.short ?? fact.label, locale)}
                           </p>
                         </div>
                       ))}
@@ -69,7 +70,7 @@ export function Testimonials() {
                   rel="noopener noreferrer"
                   className="mt-8 font-mono text-[11px] tracking-[0.14em] text-white uppercase transition-colors hover:text-silver-2"
                 >
-                  {c.testimonials.open(project.domain)} →
+                  {c.testimonials.open(project.domain)}
                 </a>
               </ChromeCard>
             )

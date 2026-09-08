@@ -1,16 +1,17 @@
+import type { Bag } from '../i18n/pick'
 export type Fact = {
   id: string
   value: string
-  label: { pl: string; en: string }
+  label: Bag
   /** Curated ≤2-word label for tight stat-tile layouts; falls back to `label`. */
-  short?: { pl: string; en: string }
+  short?: Bag
   evidence: string
 }
 
 type RawFact = {
   id?: string
   value?: string | number
-  label?: { pl?: string; en?: string }
+  label?: { pl?: string; en?: string; uk?: string }
   evidence?: string
 }
 

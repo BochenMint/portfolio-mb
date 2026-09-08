@@ -4,6 +4,7 @@ import { getContent } from '../data/i18n'
 import { LocaleContext } from './context'
 import { copyEn } from './copy.en'
 import { copyPl } from './copy.pl'
+import { copyUa } from './copy.ua'
 import type { ChromeCopy, Locale } from './types'
 
 const STORAGE_KEY = 'mb-locale'
@@ -11,10 +12,11 @@ const STORAGE_KEY = 'mb-locale'
 const copyByLocale: Record<Locale, ChromeCopy> = {
   pl: copyPl,
   en: copyEn,
+  uk: copyUa,
 }
 
 function isLocale(value: string | null): value is Locale {
-  return value === 'pl' || value === 'en'
+  return value === 'pl' || value === 'en' || value === 'uk'
 }
 
 function detectInitialLocale(): Locale {

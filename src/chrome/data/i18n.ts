@@ -18,6 +18,16 @@ import {
   servicesEn,
   siteEn,
 } from './content.en'
+import {
+  faqUa,
+  marqueeItemsUa,
+  pricingUa,
+  processUa,
+  projectsUa,
+  qualificationFieldsUa,
+  servicesUa,
+  siteUa,
+} from './content.ua'
 import type { Locale } from '../i18n/types'
 
 export type LocalizedContent = {
@@ -38,6 +48,19 @@ export type LocalizedContent = {
  * stay shared across locales.
  */
 export function getContent(locale: Locale): LocalizedContent {
+  if (locale === 'uk') {
+    return {
+      site: { ...site, ...siteUa },
+      projects: projectsUa,
+      services: servicesUa,
+      pricing: pricingUa,
+      faq: faqUa,
+      process: processUa,
+      marqueeItems: marqueeItemsUa,
+      qualificationFields: qualificationFieldsUa,
+    }
+  }
+
   if (locale === 'en') {
     return {
       site: { ...site, ...siteEn },

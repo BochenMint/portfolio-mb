@@ -8,7 +8,7 @@ import type { ChromeCopy } from './types'
 export const copyEn = {
   brand: 'Marcin Bochenek',
   mark: 'MB',
-  tagline: 'Engineering studio · Gdańsk / EU',
+  tagline: 'Digital product engineering · Gdańsk',
   skipLink: 'Skip to content',
   nav: [
     { href: '#realizacje', label: 'Work' },
@@ -27,6 +27,7 @@ export const copyEn = {
     ariaLabel: 'Change language',
     pl: 'PL',
     en: 'EN',
+    uk: 'UA',
   },
   themeLight: 'Light mode',
   themeDark: 'Dark mode',

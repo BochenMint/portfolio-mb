@@ -11,7 +11,7 @@ export function Services() {
         <SectionHeader eyebrow={c.services.eyebrow} title={c.services.title} lead={c.services.lead} />
 
         <div className="mt-14 grid gap-6 lg:grid-cols-3">
-          {services.map((service, i) => (
+          {services.map((service) => (
             <ChromeCard
               key={service.title}
               as="article"
@@ -19,9 +19,6 @@ export function Services() {
               tone="dark"
               className="flex flex-col gap-6 p-7 md:p-8"
             >
-              <p className="font-mono text-[11px] tracking-[0.2em] text-muted uppercase">
-                {String(i + 1).padStart(2, '0')}
-              </p>
               <div>
                 <h3 className="text-2xl font-semibold tracking-[-0.02em] text-white">{service.title}</h3>
                 <p className="mt-2 text-lg font-light text-silver-2">{service.subtitle}</p>

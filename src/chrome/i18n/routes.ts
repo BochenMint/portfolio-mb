@@ -8,9 +8,11 @@ import type { Locale } from './types'
 export const localeHome: Record<Locale, string> = {
   pl: '/',
   en: '/en/',
+  uk: '/ua/',
 }
 
 export const localeLabel: Record<Locale, string> = {
   pl: 'PL',
   en: 'EN',
+  uk: 'UA',
 }

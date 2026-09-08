@@ -68,6 +68,7 @@ function LangSwitch({ className = '' }: { className?: string }) {
     <div className={`ghost-btn flex items-center gap-0.5 !px-1 !py-1 ${className}`} role="group" aria-label={t.langSwitch.ariaLabel}>
       {option('pl', t.langSwitch.pl)}
       {option('en', t.langSwitch.en)}
+      {option('uk', t.langSwitch.uk)}
     </div>
   )
 }

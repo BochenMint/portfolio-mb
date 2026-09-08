@@ -9,7 +9,7 @@ import type { ChromeCopy } from './types'
 export const copyPl = {
   brand: 'Marcin Bochenek',
   mark: 'MB',
-  tagline: 'Engineering studio · Gdańsk / EU',
+  tagline: 'Inżynieria produktów cyfrowych · Gdańsk',
   skipLink: 'Przejdź do treści',
   nav: [
     { href: '#realizacje', label: 'Realizacje' },
@@ -28,6 +28,7 @@ export const copyPl = {
     ariaLabel: 'Zmień język',
     pl: 'PL',
     en: 'EN',
+    uk: 'UA',
   },
   themeLight: 'Tryb jasny',
   themeDark: 'Tryb ciemny',

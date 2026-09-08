@@ -18,21 +18,31 @@ import { useChromeReflection } from './hooks/useChromeReflection'
 import { useIntro } from './hooks/useIntro'
 import { useLocale } from './i18n/context'
 import { LocaleProvider } from './i18n/LocaleProvider'
+import type { Locale } from './i18n/types'
 import { ThemeProvider } from './theme/ThemeProvider'
 
-const metaDescription = {
+const metaDescription: Record<Locale, string> = {
   pl: 'Marcin Bochenek — inżynieria produktów cyfrowych. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Booking, FinTech, AI ops. Projekty od 25 000 PLN.',
   en: 'Marcin Bochenek — digital product engineering. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Booking, FinTech, AI ops. Projects from PLN 25,000.',
+  uk: 'Marcin Bochenek — інженерія цифрових продуктів. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Booking, FinTech, AI ops. Проєкти від 25 000 PLN.',
 }
 
+/**
+ * Each locale has its own entry HTML now, so the title and description in the
+ * document head are already the right ones — and they are better than anything
+ * built from `brand — tagline`, because they are written for search results.
+ * Overwriting them from JS also hid them from crawlers and link unfurlers that
+ * never run scripts. Kept only as the fallback for a locale switch that
+ * somehow happens without a navigation.
+ */
 function DocumentMeta() {
-  const { locale, t } = useLocale()
+  const { locale } = useLocale()
 
   useEffect(() => {
-    document.title = `${t.brand} — ${t.tagline}`
+    if (document.documentElement.dataset.locale === locale) return
     const meta = document.querySelector('meta[name="description"]')
     if (meta) meta.setAttribute('content', metaDescription[locale])
-  }, [locale, t])
+  }, [locale])
 
   return null
 }

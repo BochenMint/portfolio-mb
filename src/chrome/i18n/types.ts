@@ -1,4 +1,4 @@
-export type Locale = 'pl' | 'en'
+export type Locale = 'pl' | 'en' | 'uk'
 
 export type NavLink = { href: string; label: string }
 
@@ -18,6 +18,7 @@ export type ChromeCopy = {
     ariaLabel: string
     pl: string
     en: string
+    uk: string
   }
   themeLight: string
   themeDark: string

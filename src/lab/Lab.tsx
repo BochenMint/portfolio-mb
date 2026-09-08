@@ -24,16 +24,18 @@ const copy = {
   },
 } as const
 
+function readStoredLocale(): Locale {
+  try {
+    const stored = window.localStorage.getItem('mb-locale')
+    if (stored === 'en' || stored === 'pl') return stored
+  } catch {
+    // storage blocked — Polish stays the default
+  }
+  return 'pl'
+}
+
 function useLocale(): [Locale, (l: Locale) => void] {
-  const [locale, setLocale] = useState<Locale>('pl')
-  useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem('mb-locale')
-      if (stored === 'en' || stored === 'pl') setLocale(stored)
-    } catch {
-      // storage blocked — Polish stays the default
-    }
-  }, [])
+  const [locale, setLocale] = useState<Locale>(readStoredLocale)
   const update = (next: Locale) => {
     setLocale(next)
     try {
@@ -93,7 +95,7 @@ export default function Lab() {
           className="ghost-btn px-4 py-2 text-[13px]"
           aria-label={t.back}
         >
-          ← {t.back}
+          {t.back}
         </a>
         <div className="ghost-btn flex items-center gap-0.5 !px-1 !py-1" role="group">
           {(['pl', 'en'] as const).map((value) => (
@@ -135,7 +137,7 @@ export default function Lab() {
             {edition.note[locale]}
           </span>
           <span className="mt-2 font-mono text-[11px] tracking-[0.14em] text-white uppercase">
-            {t.open} →
+            {t.open}
           </span>
         </a>
       ))}

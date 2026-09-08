@@ -1,3 +1,4 @@
+import type { Bag } from '../i18n/pick'
 import idriveFaces from '../../../public/projects/idrive/faces.json'
 import mintFaces from '../../../public/projects/mint/faces.json'
 import plummFaces from '../../../public/projects/plumm/faces.json'
@@ -7,8 +8,8 @@ export type Face = {
   file: string
   light: string | null
   id: string
-  label: { pl: string; en: string }
-  caption: { pl: string; en: string }
+  label: Bag
+  caption: Bag
   provisional?: boolean
 }
 

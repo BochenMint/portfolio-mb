@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { pick } from '../i18n/pick'
 import type { Face } from '../data/faces'
 import type { Locale } from '../i18n/types'
 import { supportsWebGL } from '../webgl'
@@ -938,7 +939,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
             ref={overlayRef}
             className="cube-overlay"
             role="img"
-            aria-label={`${title} — ${activeFace.label[locale]}`}
+            aria-label={`${title} — ${pick(activeFace.label, locale)}`}
             tabIndex={0}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
@@ -953,7 +954,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
           <div
             className="cube-fallback"
             role="img"
-            aria-label={`${title} — ${fallbackFace.label[locale]}`}
+            aria-label={`${title} — ${pick(fallbackFace.label, locale)}`}
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === 'ArrowRight') {
@@ -969,7 +970,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
               key={fallbackFace.id}
               src={fallbackBase}
               sizes="(min-width: 1024px) 520px, 80vw"
-              alt={fallbackFace.label[locale]}
+              alt={pick(fallbackFace.label, locale)}
               loading={eagerFront ? 'eager' : 'lazy'}
               decoding="async"
             />
@@ -983,7 +984,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
             key={face.id}
             type="button"
             className="cube-dot"
-            aria-label={face.label[locale]}
+            aria-label={pick(face.label, locale)}
             aria-current={activeIndex === i}
             onClick={() => goToIndex(i)}
           />
@@ -991,8 +992,8 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
       </div>
 
       <div className="cube-caption" key={activeIndex}>
-        <p className="cube-caption__label">{activeFace.label[locale]}</p>
-        <p className="cube-caption__text">{activeFace.caption[locale]}</p>
+        <p className="cube-caption__label">{pick(activeFace.label, locale)}</p>
+        <p className="cube-caption__text">{pick(activeFace.caption, locale)}</p>
       </div>
     </div>
   )
