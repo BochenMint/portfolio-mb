@@ -4,10 +4,14 @@ import { useLocale } from '../i18n/context'
 
 type Props = { onComplete: () => void }
 
+/** Hard ceiling on how long the overlay may hold the page, in ms. */
+const MAX_HOLD_MS = 1400
+
 /** Minimal chrome preloader: monogram + hairline that fills like a light sweep. */
 export function Preloader({ onComplete }: Props) {
   const { t: c } = useLocale()
   const [done, setDone] = useState(false)
+
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -15,16 +19,31 @@ export function Preloader({ onComplete }: Props) {
       onComplete()
       return
     }
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setDone(true)
-        onComplete()
-      },
-    })
-    tl.fromTo('[data-pre-line]', { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: 'power3.inOut' })
-      .fromTo('[data-pre-mark]', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5 }, 0.2)
-      .to('[data-pre-wrap]', { opacity: 0, duration: 0.5, ease: 'power2.inOut' }, '+=0.15')
+
+    let settled = false
+    const finish = () => {
+      if (settled) return
+      settled = true
+      setDone(true)
+      onComplete()
+    }
+
+    const tl = gsap.timeline({ onComplete: finish })
+    // Shortened deliberately. This overlay is opaque and covers the headline,
+    // which is the page's LCP element, so every millisecond it runs is added
+    // to LCP directly.
+    tl.fromTo('[data-pre-line]', { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: 'power3.inOut' })
+      .fromTo('[data-pre-mark]', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35 }, 0.1)
+      .to('[data-pre-wrap]', { opacity: 0, duration: 0.35, ease: 'power2.inOut' }, '+=0.05')
+
+    // GSAP runs on requestAnimationFrame, which a browser throttles or stops
+    // outright for a background tab. Without this the timeline's onComplete
+    // may never fire and the visitor is left looking at an opaque overlay for
+    // as long as they leave the tab alone.
+    const safety = window.setTimeout(finish, MAX_HOLD_MS)
+
     return () => {
+      window.clearTimeout(safety)
       tl.kill()
     }
   }, [onComplete])

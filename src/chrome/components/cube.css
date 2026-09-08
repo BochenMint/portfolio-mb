@@ -124,10 +124,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 16px;
   margin-top: 1.75rem;
 }
 .cube-dot {
+  position: relative;
   width: 8px;
   height: 8px;
   border-radius: 999px;
@@ -136,6 +137,15 @@
   background: var(--color-line-2, rgba(247, 248, 250, 0.16));
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
+}
+/* An 8px dot is a fine mark and an impossible touch target. Grow the hit area
+   to 24x44 without growing the dot. The row's gap is 16px, so 8px of bleed on
+   each side lands exactly at the midpoint between neighbours: every pixel
+   between two dots belongs to the nearer one, and none is claimed twice. */
+.cube-dot::after {
+  content: '';
+  position: absolute;
+  inset: -18px -8px;
 }
 .cube-dot:hover {
   background: rgba(247, 248, 250, 0.4);
