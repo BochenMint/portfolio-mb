@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { pointerOnElement } from '../lib/pointerSurface'
 import {
   defaultThemeId,
@@ -7,13 +7,7 @@ import {
   themeById,
   type ThemeId,
 } from './themes'
-
-type ThemeContextValue = {
-  theme: ThemeId
-  setTheme: (id: ThemeId) => void
-}
-
-const ThemeContext = createContext<ThemeContextValue | null>(null)
+import { ThemeContext } from './theme-context-instance'
 
 function readInitialTheme(): ThemeId {
   if (typeof window === 'undefined') return defaultThemeId
@@ -68,10 +62,4 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const value = useMemo(() => ({ theme, setTheme }), [theme, setTheme])
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-}
-
-export function useTheme() {
-  const ctx = useContext(ThemeContext)
-  if (!ctx) throw new Error('useTheme outside ThemeProvider')
-  return ctx
 }

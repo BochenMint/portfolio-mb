@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { fit2dCanvas, pointerOnElement } from '../lib/pointerSurface'
-import { useTheme } from './ThemeContext'
+import { useTheme } from './useTheme'
 
 /** Deep space field: parallax stars and nebula only — no radar HUD. */
 export function MassiveField() {

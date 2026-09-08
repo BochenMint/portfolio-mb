@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { fit2dCanvas } from '../lib/pointerSurface'
-import { useTheme } from './ThemeContext'
+import { useTheme } from './useTheme'
 
 /** Aurora ribbons + operator grid. Distinct from Massive (space) and Glass (orbs). */
 export function V2Field() {

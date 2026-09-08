@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react'
 import { useStudioUi } from '../i18n'
 import { HangarShipPreview } from './HangarShipPreview'
-import { useTheme } from './ThemeContext'
+import { useTheme } from './useTheme'
 
 export function HangarPortal({ variant = 'inline' }: { variant?: 'inline' | 'hero' }) {
   const { theme } = useTheme()
   const ui = useStudioUi()
   const [open, setOpen] = useState(false)
   const [warping, setWarping] = useState(false)
+  const [prevTheme, setPrevTheme] = useState(theme)
 
-  useEffect(() => {
+  if (theme !== prevTheme) {
+    setPrevTheme(theme)
     if (theme !== 'massive') {
       setOpen(false)
       setWarping(false)
     }
-  }, [theme])
+  }
 
   useEffect(() => {
     if (!open) return

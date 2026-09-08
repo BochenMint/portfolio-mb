@@ -245,7 +245,7 @@ export async function createDisplacementEffect(
   displayScene.add(displayMesh)
 
   let targetMouse = { x: 0.5, y: 0.5, active: false, speed: 0 }
-  let smoothMouse = { x: 0.5, y: 0.5, speed: 0 }
+  const smoothMouse = { x: 0.5, y: 0.5, speed: 0 }
   let introProgress = 0
   let width = 1
   let height = 1

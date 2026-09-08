@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { fit2dCanvas } from '../lib/pointerSurface'
-import { useTheme } from './ThemeContext'
+import { useTheme } from './useTheme'
 
 /** Sunset + vanishing-point grid. This is the floor the retro UI stands on. */
 export function RetroField() {

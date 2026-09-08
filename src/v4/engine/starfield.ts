@@ -78,10 +78,10 @@ export function createStarfield(lowPower: boolean): Starfield {
 
   for (let i = 0; i < count; i++) {
     // Uniform-ish direction on the sphere (rejection-free: normalize a cube sample).
-    let x = 0
-    let y = 0
-    let z = 0
-    let l2 = 0
+    let x: number
+    let y: number
+    let z: number
+    let l2: number
     do {
       x = rng() * 2 - 1
       y = rng() * 2 - 1

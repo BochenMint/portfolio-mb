@@ -26,6 +26,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/" />
   </url>
   <url>
+    <loc>https://marcinbochenek.com/lab.html</loc>
+    <lastmod>2026-08-29</lastmod>
+  </url>
+  <url>
+    <loc>https://marcinbochenek.com/gra.html</loc>
+    <lastmod>2026-08-29</lastmod>
+  </url>
+  <url>
     <loc>https://marcinbochenek.com/artykuly/</loc>
     <lastmod>2026-08-29</lastmod>
     <xhtml:link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/artykuly/" />
@@ -384,13 +392,5 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/articles/wdrozyc-chatgpt-w-firmie/" />
     <xhtml:link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/statti/wdrozyc-chatgpt-w-firmie/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/artykuly/wdrozyc-chatgpt-w-firmie/" />
-  </url>
-  <url>
-    <loc>https://marcinbochenek.com/lab.html</loc>
-    <lastmod>2026-09-08</lastmod>
-  </url>
-  <url>
-    <loc>https://marcinbochenek.com/gra.html</loc>
-    <lastmod>2026-09-08</lastmod>
   </url>
 </urlset>

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useStudioUi } from '../i18n'
 import { themes, type ThemeGroup, type ThemeId } from './themes'
-import { useTheme } from './ThemeContext'
+import { useTheme } from './useTheme'
 
 const GROUP_IDS: ThemeGroup[] = ['now', 'signature', 'archive']
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { fit2dCanvas, pointerOnElement } from '../lib/pointerSurface'
-import { useTheme } from './ThemeContext'
+import { useTheme } from './useTheme'
 
 /** Optical light field: dark saturated emitters for Glass, quiet filled caustics for Liquid. */
 export function GlassField() {

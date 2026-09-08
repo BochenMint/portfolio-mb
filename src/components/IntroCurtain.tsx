@@ -16,7 +16,9 @@ export function IntroCurtain({ onComplete }: IntroCurtainProps) {
   const onCompleteRef = useRef(onComplete)
   const reduced = useReducedMotion()
 
-  onCompleteRef.current = onComplete
+  useEffect(() => {
+    onCompleteRef.current = onComplete
+  })
 
   useEffect(() => {
     const finish = () => {

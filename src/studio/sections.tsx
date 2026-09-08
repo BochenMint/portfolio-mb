@@ -6,9 +6,9 @@ import { useReducedMotion } from '../hooks/useReducedMotion'
 import { useWebGLCapable } from '../hooks/useWebGLCapable'
 import { AgenticSwarmCanvas } from '../v3/AgenticSwarmCanvas'
 import { StyleSelector } from './StyleSelector'
-import { useTheme } from './ThemeContext'
+import { useTheme } from './useTheme'
 import { HangarPortal } from './HangarPortal'
-import { themeKicker } from './ThemeChrome'
+import { themeKicker } from './themeKicker'
 import {
   hasArchiveRhythm,
   layoutFamily,

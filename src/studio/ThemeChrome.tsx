@@ -1,6 +1,4 @@
-import { getStudioUi } from '../i18n/studio-ui'
-import { localeFromWindow } from '../i18n/path'
-import { useTheme } from './ThemeContext'
+import { useTheme } from './useTheme'
 
 export function ThemeChrome() {
   const { theme } = useTheme()
@@ -17,9 +15,4 @@ export function ThemeChrome() {
       <span className="studio-cursor-probe" data-cursor-follow />
     </div>
   )
-}
-
-export function themeKicker(theme: string, fallback: string) {
-  const kickers = getStudioUi(localeFromWindow()).kickers
-  return kickers[theme] ?? fallback
 }

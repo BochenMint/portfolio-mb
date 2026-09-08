@@ -10,7 +10,20 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
   const ui = getArchiveUi(locale)
   const [q, setQ] = useState('')
   const [active, setActive] = useState(0)
+  const [prevOpen, setPrevOpen] = useState(open)
+  const [prevQ, setPrevQ] = useState(q)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  if (open !== prevOpen) {
+    setPrevOpen(open)
+    if (open) {
+      setQ('')
+      setActive(0)
+    }
+  } else if (q !== prevQ) {
+    setPrevQ(q)
+    setActive(0)
+  }
 
   const cmds: Cmd[] = useMemo(() => {
     const jump = (hash: string) => () => {
@@ -54,15 +67,10 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
   }, [q, cmds])
 
   useEffect(() => {
-    if (open) {
-      setQ('')
-      setActive(0)
-      const t = setTimeout(() => inputRef.current?.focus(), 20)
-      return () => clearTimeout(t)
-    }
+    if (!open) return
+    const t = setTimeout(() => inputRef.current?.focus(), 20)
+    return () => clearTimeout(t)
   }, [open])
-
-  useEffect(() => setActive(0), [q])
 
   useEffect(() => {
     if (!open) return

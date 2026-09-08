@@ -23,15 +23,17 @@ export function SplineEmbed({
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>(
     sceneUrl ? 'loading' : 'error',
   )
+  const [prevSceneUrl, setPrevSceneUrl] = useState(sceneUrl)
+
+  if (sceneUrl !== prevSceneUrl) {
+    setPrevSceneUrl(sceneUrl)
+    setStatus(sceneUrl ? 'loading' : 'error')
+  }
 
   const onLoad = useCallback(() => setStatus('ready'), [])
 
   useEffect(() => {
-    if (!sceneUrl) {
-      setStatus('error')
-      return
-    }
-    setStatus('loading')
+    if (!sceneUrl) return
     const timer = window.setTimeout(() => {
       setStatus((s) => (s === 'loading' ? 'error' : s))
     }, LOAD_TIMEOUT_MS)

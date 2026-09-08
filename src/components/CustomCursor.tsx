@@ -3,14 +3,16 @@ import { useReducedMotion } from '../hooks/useReducedMotion'
 
 export function CustomCursor() {
   const reduced = useReducedMotion()
-  const [active, setActive] = useState(false)
+  const [active] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia('(hover: hover) and (pointer: fine)').matches
+      : false,
+  )
   const [hovering, setHovering] = useState(false)
 
   useEffect(() => {
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-    if (!fine || reduced) return
+    if (!active || reduced) return
 
-    setActive(true)
     document.body.classList.add('cursor-custom')
 
     const dot = document.querySelector('[data-cursor-dot]') as HTMLElement
@@ -54,7 +56,7 @@ export function CustomCursor() {
       document.removeEventListener('mouseout', onOut)
       document.body.classList.remove('cursor-custom')
     }
-  }, [reduced])
+  }, [active, reduced])
 
   if (!active || reduced) return null
 

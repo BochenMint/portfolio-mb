@@ -33,8 +33,11 @@ export function ProjectImageWebGL({
   const onFallbackRef = useRef(onFallback)
   const onReadyRef = useRef(onReady)
   const mountedRef = useRef(true)
-  onFallbackRef.current = onFallback
-  onReadyRef.current = onReady
+
+  useEffect(() => {
+    onFallbackRef.current = onFallback
+    onReadyRef.current = onReady
+  })
 
   useEffect(() => {
     mountedRef.current = true

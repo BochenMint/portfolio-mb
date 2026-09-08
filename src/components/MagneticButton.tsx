@@ -23,7 +23,9 @@ export function MagneticButton(props: Props) {
   const className = `inline-flex will-change-transform ${props.className ?? ''}`
 
   if (props.as === 'button') {
-    const { as: _a, className: _cn, children, ...rest } = props
+    const { as: _as, className: _className, children, ...rest } = props
+    void _as
+    void _className
     return (
       <button ref={ref as RefObject<HTMLButtonElement>} className={className} {...rest}>
         {children}

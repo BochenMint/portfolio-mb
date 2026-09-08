@@ -1,14 +1,8 @@
-﻿import { useCallback, useEffect, useState } from 'react'
+﻿import { useCallback, useState } from 'react'
 
 export type Theme = 'light' | 'dark'
 
 const STORAGE_KEY = 'portfolio-theme'
-
-function getInitialTheme(): Theme {
-  if (typeof document === 'undefined') return 'dark'
-  const attr = document.documentElement.getAttribute('data-theme')
-  return attr === 'light' ? 'light' : 'dark'
-}
 
 function applyTheme(theme: Theme) {
   document.documentElement.setAttribute('data-theme', theme)
@@ -16,15 +10,18 @@ function applyTheme(theme: Theme) {
   localStorage.setItem(STORAGE_KEY, theme)
 }
 
+function getInitialTheme(): Theme {
+  if (typeof document === 'undefined') return 'dark'
+  if (typeof localStorage !== 'undefined' && !localStorage.getItem(STORAGE_KEY)) {
+    applyTheme('dark')
+    return 'dark'
+  }
+  const attr = document.documentElement.getAttribute('data-theme')
+  return attr === 'light' ? 'light' : 'dark'
+}
+
 export function useTheme() {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme)
-
-  useEffect(() => {
-    if (!localStorage.getItem(STORAGE_KEY)) {
-      applyTheme('dark')
-      setThemeState('dark')
-    }
-  }, [])
 
   const setTheme = useCallback((next: Theme) => {
     setThemeState(next)

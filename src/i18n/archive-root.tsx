@@ -1,5 +1,6 @@
 import { LanguageSwitcher } from './LanguageSwitcher'
-import { LocaleProvider, useLocale } from './context'
+import { LocaleProvider } from './context'
+import { useLocale } from './hooks'
 import { getArchiveUi } from './archive-ui'
 import './switcher.css'
 import type { ReactNode } from 'react'

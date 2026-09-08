@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { fit2dCanvas, pointerOnElement } from '../lib/pointerSurface'
-import { useTheme } from './ThemeContext'
+import { useTheme } from './useTheme'
 
 type Pixel = {
   x: number

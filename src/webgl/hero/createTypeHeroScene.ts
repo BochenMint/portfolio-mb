@@ -181,8 +181,8 @@ export async function createTypeHeroScene(
   let running = false
   let time = 0
   let lastFrame = 0
-  let smoothMouse = new THREE.Vector2(0.5, 0.5)
-  let targetMouse = new THREE.Vector2(0.5, 0.5)
+  const smoothMouse = new THREE.Vector2(0.5, 0.5)
+  const targetMouse = new THREE.Vector2(0.5, 0.5)
   let mouseActive = false
   let removePointer: (() => void) | undefined
 
