@@ -206,8 +206,16 @@ void main() {
   // into each. Amplitude is what sells it as liquid — 0.10 was a ripple.
   float wobble = flow(vUv, uTime);
   float roll = sin(vUv.x * 2.1 - uTime * 0.33) * 0.055;
-  float mouseTilt = (uMouseUv.y - 0.5) * 0.06;
-  float y = clamp(lineY + wobble * 0.26 + roll + mouseTilt, 0.0, 1.0);
+  float mouseTilt = (uMouseUv.y - 0.5) * 0.09;
+
+  // Refraction against the bevel. A curved metal surface bends whatever it
+  // reflects, so the horizon has to bow as it crosses each stroke instead of
+  // running through the glyph as a straight ruled line. The normal is the
+  // cap-height-blurred one, so the bend is broad and smooth — this single
+  // term is what separates poured metal from a gradient clipped to text.
+  float refract = baseN.y * 0.19;
+
+  float y = clamp(lineY + wobble * 0.26 + roll + mouseTilt + refract, 0.0, 1.0);
 
   vec3 col = chromeBands(y, uLight);
 

@@ -17,7 +17,15 @@
 .liquid-chrome__canvas {
   --liquid-pad: 16px;
   position: absolute;
-  inset: calc(-1 * var(--liquid-pad));
+  top: calc(-1 * var(--liquid-pad));
+  left: calc(-1 * var(--liquid-pad));
+  /* Width and height must be stated. A canvas is a replaced element, so with
+     `inset` alone and `width: auto` it takes its *buffer* size as its CSS size
+     instead of stretching to the offsets — which drew the headline at the
+     device pixel ratio, 1.5x oversized, blurred by the upscale, spilling off
+     the right edge and over the paragraph below. */
+  width: calc(100% + var(--liquid-pad) * 2);
+  height: calc(100% + var(--liquid-pad) * 2);
   z-index: 1;
   pointer-events: none;
   opacity: 0;
