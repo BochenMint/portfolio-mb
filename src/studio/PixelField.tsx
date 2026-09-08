@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { fit2dCanvas, pointerOnElement } from '../lib/pointerSurface'
 import { useTheme } from './ThemeContext'
 
 type Pixel = {
@@ -92,18 +93,16 @@ export function PixelField() {
     }
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      w = window.innerWidth
-      h = window.innerHeight
-      canvas.width = w * dpr
-      canvas.height = h * dpr
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const size = fit2dCanvas(canvas, ctx, 2)
+      w = size.w
+      h = size.h
       seed()
     }
 
     const onMove = (e: PointerEvent) => {
-      mouse.x = e.clientX
-      mouse.y = e.clientY
+      const p = pointerOnElement(e.clientX, e.clientY, canvas)
+      mouse.x = p.x
+      mouse.y = p.y
       mouse.inside = true
       if (reduced) return
       const dx = mouse.x - lastX
@@ -117,10 +116,11 @@ export function PixelField() {
 
     const onDown = (e: PointerEvent) => {
       if (reduced) return
+      const p = pointerOnElement(e.clientX, e.clientY, canvas)
       for (let i = 0; i < (coarse ? 16 : 28); i++) {
         const ang = (i / 28) * Math.PI * 2
         const sp = 1.8 + Math.random() * 4
-        spawn(e.clientX, e.clientY, Math.cos(ang) * sp, Math.sin(ang) * sp, true, 26)
+        spawn(p.x, p.y, Math.cos(ang) * sp, Math.sin(ang) * sp, true, 26)
       }
     }
 

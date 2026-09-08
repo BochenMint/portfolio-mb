@@ -6,9 +6,32 @@ import { createPlanetPlumm } from './planetPlumm'
 import { createPlanetIdrive } from './planetIdrive'
 import { createPlanetAgentic } from './planetAgentic'
 import { createMeteorField, type MeteorField } from './meteors'
+import { attachMoons, type PlanetMoons } from './moons'
 
 const EARTH_DAY_TEX_URL = '/v4/assets/tex/earth-day-2k.jpg'
 const CITY_LIGHTS_TEX_URL = '/v4/assets/tex/city-lights-2k.jpg'
+
+function fallbackWorldTexture(): THREE.Texture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 8
+  canvas.height = 8
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    ctx.fillStyle = '#141820'
+    ctx.fillRect(0, 0, 8, 8)
+  }
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.needsUpdate = true
+  return tex
+}
+
+async function loadWorldTexture(loader: THREE.TextureLoader, url: string): Promise<THREE.Texture> {
+  try {
+    return await loader.loadAsync(url)
+  } catch {
+    return fallbackWorldTexture()
+  }
+}
 
 export type WorldAssets = {
   manager: THREE.LoadingManager
@@ -25,6 +48,7 @@ export type World = {
   update(dt: number, elapsed: number, camera: THREE.PerspectiveCamera): void
   /** Dev/preview-only — see meteors.ts's debugForceSpawn. */
   debugForceMeteor(kind?: 'meteor' | 'comet'): void
+  forEachMoonCollider(fn: (position: THREE.Vector3, radius: number) => void): void
   dispose(): void
 }
 
@@ -45,8 +69,8 @@ export async function createWorld(scene: THREE.Scene, assets: WorldAssets): Prom
 
   const texLoader = new THREE.TextureLoader(manager)
   const [earthTex, cityTex] = await Promise.all([
-    texLoader.loadAsync(EARTH_DAY_TEX_URL),
-    texLoader.loadAsync(CITY_LIGHTS_TEX_URL),
+    loadWorldTexture(texLoader, EARTH_DAY_TEX_URL),
+    loadWorldTexture(texLoader, CITY_LIGHTS_TEX_URL),
   ])
   for (const tex of [earthTex, cityTex]) {
     tex.colorSpace = THREE.SRGBColorSpace
@@ -64,6 +88,7 @@ export async function createWorld(scene: THREE.Scene, assets: WorldAssets): Prom
   scene.add(meteors.object)
 
   const planetById = new Map<string, Planet>()
+  const moonSystems: PlanetMoons[] = []
   for (const slot of PLANET_SLOTS) {
     let planet: Planet
     switch (slot.id) {
@@ -86,17 +111,23 @@ export async function createWorld(scene: THREE.Scene, assets: WorldAssets): Prom
     planet.group.name = `planet-${slot.id}`
     scene.add(planet.group)
     planetById.set(slot.id, planet)
+    moonSystems.push(attachMoons(planet.group, slot.id, slot.radius, lowPower))
   }
 
   return {
     update(dt, elapsed, camera) {
       blackHole.update(dt, elapsed, camera)
       for (const planet of planetById.values()) planet.update(dt, elapsed)
+      for (const moons of moonSystems) moons.update(dt, elapsed)
       meteors.update(dt, camera)
     },
 
     debugForceMeteor(kind) {
       meteors.debugForceSpawn(kind)
+    },
+
+    forEachMoonCollider(fn) {
+      for (const moons of moonSystems) moons.forEachCollider(fn)
     },
 
     dispose() {
@@ -107,6 +138,8 @@ export async function createWorld(scene: THREE.Scene, assets: WorldAssets): Prom
         planet.dispose()
       }
       planetById.clear()
+      for (const moons of moonSystems) moons.dispose()
+      moonSystems.length = 0
       scene.remove(meteors.object)
       meteors.dispose()
       earthTex.dispose()

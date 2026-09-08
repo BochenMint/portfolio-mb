@@ -156,7 +156,7 @@ export function createPlanetAgentic(
   const [wSeg, hSeg] = lowPower ? [96, 64] : [128, 96]
   const geo = new THREE.SphereGeometry(radius, wSeg, hSeg)
   const mat = new THREE.MeshStandardMaterial({
-    color: 0x07070a,
+    color: 0x1a1c24,
     metalness: 1,
     // 0.3 dawało z bliska przepalony biały blob specularu ze słońca
     // kierunkowego (z widocznym fasetażem siatki) — wyższa szorstkość go

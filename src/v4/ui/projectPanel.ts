@@ -25,6 +25,8 @@ export type ProjectPanel = {
 export function createProjectPanel(container: HTMLElement): ProjectPanel {
   const root = document.createElement('div')
   root.className = 'v4-project-panel'
+  root.setAttribute('aria-hidden', 'true')
+  root.inert = true
   root.innerHTML = `
     <button type="button" class="v4-project-panel__close" aria-label="Zamknij panel projektu">&times;</button>
     <p class="v4-project-panel__eyebrow"></p>
@@ -51,6 +53,8 @@ export function createProjectPanel(container: HTMLElement): ProjectPanel {
 
   function hide() {
     root.classList.remove('is-open')
+    root.setAttribute('aria-hidden', 'true')
+    root.inert = true
     document.documentElement.classList.remove('v4-panel-open')
   }
 
@@ -80,17 +84,20 @@ export function createProjectPanel(container: HTMLElement): ProjectPanel {
         stackEl.appendChild(chip)
       }
 
-      if (isExternalLiveUrl(project.url)) {
+      if (isExternalLiveUrl(project.url) && project.id !== 'idrive' && project.id !== 'agentic') {
         liveEl.href = project.url
         liveEl.hidden = false
         statusEl.hidden = true
       } else {
         liveEl.hidden = true
+        liveEl.removeAttribute('href')
         statusEl.hidden = false
         statusEl.textContent = project.domain
       }
 
       root.classList.add('is-open')
+      root.setAttribute('aria-hidden', 'false')
+      root.inert = false
       // The top-right "MISJA" HUD blurb (ui/hud.ts) sits in the same corner
       // and would otherwise collide with this panel's header — the panel
       // already gives far richer context, so hide the generic one-liner

@@ -6,6 +6,10 @@ interface ImportMetaEnv {
   readonly VITE_FORM_ACCESS_KEY: string
   readonly VITE_CONTACT_EMAIL?: string
   readonly VITE_SITE_URL?: string
+  readonly VITE_PORTFOLIO_URL?: string
+  readonly VITE_MB_AI_URL?: string
+  readonly VITE_GAME_URL?: string
+  readonly VITE_LOAD_NORMANDY_GLB?: string
   readonly VITE_SPLINE_RETRO_URL?: string
   readonly VITE_SPLINE_TYPE_URL?: string
   readonly VITE_SPLINE_ORBIT_URL?: string

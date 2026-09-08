@@ -3,22 +3,25 @@ import type { PlanetId } from './world-anchors'
 
 export type PanelImage = { src: string; alt: string }
 
+const PROJECT_TITLE: Record<PlanetId, string> = {
+  mint: 'Mint Apartments',
+  plumm: 'Plumm',
+  idrive: 'iDrive Cars',
+  agentic: 'Agentic OS',
+}
+
 /**
  * Two screenshots per project for the discovery panel (ui/projectPanel.ts).
- * Mint/Plumm already have a real production gallery (src/data/gallery.ts) —
- * reuse its first two entries at the smaller `srcSmall` size (panel is only
- * ~460px wide, no need for the 2400w originals). iDrive/Agentic don't have a
- * gallery yet, so fall back to the two hero export variants already shipped
- * under public/projects/{id}/.
+ * Prefer the production gallery (src/data/gallery.ts) at `srcSmall`.
  */
 export function getPanelImages(id: PlanetId): PanelImage[] {
-  if (id === 'mint' || id === 'plumm') {
-    return galleryForProject(id)
-      .slice(0, 2)
-      .map((entry) => ({ src: entry.srcSmall, alt: entry.caption }))
+  const gallery = galleryForProject(id)
+  if (gallery.length >= 2) {
+    return gallery.slice(0, 2).map((entry) => ({ src: entry.srcSmall, alt: entry.caption }))
   }
+  const title = PROJECT_TITLE[id]
   return [
-    { src: `/projects/${id}/hero-card.webp`, alt: `${id} — zrzut ekranu 1` },
-    { src: `/projects/${id}/hero-full.webp`, alt: `${id} — zrzut ekranu 2` },
+    { src: `/projects/${id}/hero-card.webp`, alt: `${title} — podgląd interfejsu` },
+    { src: `/projects/${id}/hero-full.webp`, alt: `${title} — drugi kadr interfejsu` },
   ]
 }

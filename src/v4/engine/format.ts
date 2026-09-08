@@ -49,3 +49,16 @@ const HTML_ESCAPES: Record<string, string> = {
 export function escapeHtml(input: string): string {
   return input.replace(/[&<>"']/g, (ch) => HTML_ESCAPES[ch] ?? ch)
 }
+
+/** True only for absolute http(s) URLs — excludes `#`, `#agentic`, empty placeholders. */
+export function isExternalLiveUrl(url: string | undefined): boolean {
+  if (!url) return false
+  const trimmed = url.trim()
+  if (!trimmed || trimmed === '#' || trimmed.startsWith('#')) return false
+  try {
+    const parsed = new URL(trimmed)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}

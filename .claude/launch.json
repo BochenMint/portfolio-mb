@@ -12,6 +12,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["vite", "--port", "5197", "--strictPort"],
       "port": 5197
+    },
+    {
+      "name": "chrome-redesign",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", ".worktrees/chrome", "run", "dev", "--", "--port", "5191", "--strictPort"],
+      "port": 5191
     }
   ]
 }

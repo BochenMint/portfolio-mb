@@ -11,20 +11,20 @@ import { NOISE_GLSL, TONE_OUTPUT_GLSL } from '../../world/shaderChunks'
  * since buildShip.ts doesn't export these pieces individually.
  */
 
-const ENGINE_IDLE_INTENSITY = 0.6
-const ENGINE_FULL_INTENSITY = 3.5
-const ENGINE_COLOR_IDLE = new THREE.Color(0x4db8ff)
-const ENGINE_COLOR_FULL = new THREE.Color(0x9fd8ff)
+const ENGINE_IDLE_INTENSITY = 0.22
+const ENGINE_FULL_INTENSITY = 1.35
+const ENGINE_COLOR_IDLE = new THREE.Color(0x2a6a8c)
+const ENGINE_COLOR_FULL = new THREE.Color(0x5aa8c8)
 
-const LIGHT_IDLE_INTENSITY = 6
-const LIGHT_FULL_INTENSITY = 55
+const LIGHT_IDLE_INTENSITY = 2.2
+const LIGHT_FULL_INTENSITY = 12
 
-const PLUME_LENGTH_IDLE = 0.4
-const PLUME_LENGTH_FULL = 5.2
+const PLUME_LENGTH_IDLE = 0.45
+const PLUME_LENGTH_FULL = 4.6
 const PLUME_RADIUS_IDLE = 0.16
-const PLUME_RADIUS_FULL = 0.42
-const PLUME_COLOR_CORE = new THREE.Color(0xeaf6ff)
-const PLUME_COLOR_MID = new THREE.Color(0x39c9ff)
+const PLUME_RADIUS_FULL = 0.38
+const PLUME_COLOR_CORE = new THREE.Color(0xe8f4ff)
+const PLUME_COLOR_MID = new THREE.Color(0x2eb8e8)
 
 function createPlumeGeometry(): THREE.ConeGeometry {
   const geo = new THREE.ConeGeometry(1, 1, 20, 12, true)
@@ -106,7 +106,7 @@ export function createEngineFx(attachPoints: THREE.Vector3[]): EngineFx {
   const group = new THREE.Group()
   group.name = 'engine-fx'
 
-  const nozzleGeo = new THREE.CircleGeometry(0.34, 24)
+  const nozzleGeo = new THREE.CircleGeometry(0.4, 24)
   const nozzleMat = new THREE.MeshStandardMaterial({
     color: 0x18232e,
     emissive: ENGINE_COLOR_IDLE.clone(),
@@ -122,7 +122,7 @@ export function createEngineFx(attachPoints: THREE.Vector3[]): EngineFx {
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
-    opacity: 0.55,
+    opacity: 0.18,
   })
 
   const glowSprites: THREE.Sprite[] = []
@@ -137,8 +137,9 @@ export function createEngineFx(attachPoints: THREE.Vector3[]): EngineFx {
     group.add(nozzle)
 
     const sprite = new THREE.Sprite(glowMat)
-    sprite.position.copy(pos).add(new THREE.Vector3(0, 0, 0.5))
-    sprite.scale.set(1.4, 1.4, 1)
+    sprite.position.copy(pos).add(new THREE.Vector3(0, 0, 0.22))
+    sprite.scale.set(0.55, 0.55, 1)
+    sprite.visible = false
     group.add(sprite)
     glowSprites.push(sprite)
 
@@ -184,9 +185,9 @@ export function createEngineFx(attachPoints: THREE.Vector3[]): EngineFx {
       nozzleMat.emissive.copy(tmpColor)
       nozzleMat.emissiveIntensity = intensity
       glowMat.color.copy(tmpColor)
-      glowMat.opacity = THREE.MathUtils.lerp(0.45, 1, t)
+      glowMat.opacity = THREE.MathUtils.lerp(0.18, 0.48, t)
 
-      const spriteScale = THREE.MathUtils.lerp(1.2, 3.0, t)
+      const spriteScale = THREE.MathUtils.lerp(1.25, 2.05, t)
       for (const sprite of glowSprites) sprite.scale.set(spriteScale, spriteScale, 1)
 
       const lightIntensity = THREE.MathUtils.lerp(LIGHT_IDLE_INTENSITY, LIGHT_FULL_INTENSITY, t)
@@ -198,6 +199,7 @@ export function createEngineFx(attachPoints: THREE.Vector3[]): EngineFx {
       const plumeLength = THREE.MathUtils.lerp(PLUME_LENGTH_IDLE, PLUME_LENGTH_FULL, t)
       const plumeRadius = THREE.MathUtils.lerp(PLUME_RADIUS_IDLE, PLUME_RADIUS_FULL, t)
       for (const plume of plumes) {
+        plume.mesh.visible = t > 0.04
         plume.mesh.scale.set(plumeRadius, plumeRadius, plumeLength)
         plume.mat.uniforms.uTime.value = elapsed
         plume.mat.uniforms.uThrust.value = t

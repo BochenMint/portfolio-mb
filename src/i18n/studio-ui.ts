@@ -55,9 +55,14 @@ export type StudioChrome = StudioCopy & {
   hangarDialog: string
   hangarExit: string
   hangarIframe: string
+  hangarShipLoading: string
   archiveNote: string
   articlesNav: string
   workSlot: string
+  skipToContent: string
+  proofLiveAria: string
+  proofMintAlt: string
+  proofPlummAlt: string
   styleGroups: { now: string; signature: string; archive: string }
   themeLabels: Record<ThemeId, string>
   kickers: Record<string, string>
@@ -116,9 +121,15 @@ const pl: StudioChrome = {
   hangarDialog: 'Hangar 3D',
   hangarExit: 'Powrót do oferty · Esc',
   hangarIframe: 'Misja: nowa strona',
+  hangarShipLoading: 'Model ładuje się z hangaru',
   archiveNote: 'To archiwum wizualne. Aktualna strona:',
   articlesNav: 'Artykuły',
   workSlot: 'SLOT',
+  skipToContent: 'Przejdź do treści',
+  proofLiveAria: 'Wdrożenia na produkcji — Mint Apartments i Plumm',
+  proofMintAlt:
+    'Mint Apartments — strona rezerwacji 36 apartamentów w Gdańsku, check-in na własnej domenie',
+  proofPlummAlt: 'Plumm — panel firmy: księgowość, e-faktury, CRM i asystent podatkowy',
   styleGroups: { now: 'Aktualne', signature: 'Sygnatury', archive: 'Archiwum' },
   themeLabels: {
     swiss: 'Editorial szwajcarski',
@@ -135,7 +146,7 @@ const pl: StudioChrome = {
   },
   kickers: {
     swiss: 'Marcin Bochenek · strony i systemy dla firm',
-    liquid: 'Marcin Bochenek · projektowanie i wdrożenie',
+    liquid: 'Projektowanie i wdrożenie',
     glass: 'Marcin Bochenek · systemy cyfrowe dla firm',
     retro: 'Marcin Bochenek · inżynieria oprogramowania',
     brutal: 'Marcin Bochenek · projekt, kod, wdrożenie',
@@ -156,7 +167,7 @@ const pl: StudioChrome = {
     massive: { catalog: 'Kokpit i hangar', note: 'Wejście przez scenę 3D. Oferta w tym samym zakresie treści.' },
     v1: { catalog: 'Editorial ciemny', note: 'Serif, kadr filmowy, wolna oś narracji.' },
     v2: { catalog: 'Konsola operatorska', note: 'Gęstość informacji, siatka, bez kostiumu terminala.' },
-    v3: { catalog: 'Las i złoto', note: 'Cięte płaszczyzny na elementach, nie na całych sekcjach.' },
+    v3: { catalog: 'Las i złoto', note: 'Cięte płaszczyzny, plisy świetlne, pole za szkłem.' },
     v5: { catalog: 'Kampania chromatyczna', note: 'Tangerine, acid, skala plakatu.' },
   },
 }
@@ -229,9 +240,15 @@ const en: StudioChrome = {
   hangarDialog: '3D hangar',
   hangarExit: 'Back to the offer · Esc',
   hangarIframe: 'Mission: new site',
+  hangarShipLoading: 'Model is loading from the hangar',
   archiveNote: 'This is a visual archive. Current site:',
   articlesNav: 'Articles',
   workSlot: 'SLOT',
+  skipToContent: 'Skip to content',
+  proofLiveAria: 'Live production work — Mint Apartments and Plumm',
+  proofMintAlt:
+    'Mint Apartments — booking site for 36 apartments in Gdańsk, check-in on the operator’s own domain',
+  proofPlummAlt: 'Plumm — company panel: bookkeeping, e-invoices, CRM and tax assistant',
   styleGroups: { now: 'Current', signature: 'Signatures', archive: 'Archive' },
   themeLabels: {
     swiss: 'Swiss Editorial',
@@ -248,7 +265,7 @@ const en: StudioChrome = {
   },
   kickers: {
     swiss: 'Marcin Bochenek · websites and systems for companies',
-    liquid: 'Marcin Bochenek · design and delivery',
+    liquid: 'Design and delivery',
     glass: 'Marcin Bochenek · digital systems for companies',
     retro: 'Marcin Bochenek · software engineering',
     brutal: 'Marcin Bochenek · design, code, delivery',
@@ -269,7 +286,7 @@ const en: StudioChrome = {
     massive: { catalog: 'Cockpit and hangar', note: 'Entry through a 3D scene. Same content scope.' },
     v1: { catalog: 'Dark editorial', note: 'Serif, film frame, slow narrative axis.' },
     v2: { catalog: 'Ops console', note: 'Information density, grid, no terminal costume.' },
-    v3: { catalog: 'Forest and gold', note: 'Cut planes on elements, not on whole sections.' },
+    v3: { catalog: 'Forest and gold', note: 'Cut planes, pleated light, field behind glass.' },
     v5: { catalog: 'Chromatic campaign', note: 'Tangerine, acid, poster scale.' },
   },
 }
@@ -342,9 +359,15 @@ const uk: StudioChrome = {
   hangarDialog: '3D-ангар',
   hangarExit: 'Повернутися до пропозиції · Esc',
   hangarIframe: 'Місія: новий сайт',
+  hangarShipLoading: 'Модель завантажується з ангара',
   archiveNote: 'Це візуальний архів. Актуальний сайт:',
   articlesNav: 'Статті',
   workSlot: 'СЛОТ',
+  skipToContent: 'Перейти до змісту',
+  proofLiveAria: 'Впровадження в продакшені — Mint Apartments і Plumm',
+  proofMintAlt:
+    'Mint Apartments — сайт бронювання 36 апартаментів у Гданську, заселення на власному домені',
+  proofPlummAlt: 'Plumm — панель компанії: бухгалтерія, e-фактури, CRM і податковий асистент',
   styleGroups: { now: 'Поточні', signature: 'Сигнатури', archive: 'Архів' },
   themeLabels: {
     swiss: 'Швейцарський editorial',
@@ -361,7 +384,7 @@ const uk: StudioChrome = {
   },
   kickers: {
     swiss: 'Марцін Бохенек · сайти та системи для бізнесу',
-    liquid: 'Марцін Бохенек · проєктування та впровадження',
+    liquid: 'Проєктування та впровадження',
     glass: 'Марцін Бохенек · цифрові системи для компаній',
     retro: 'Марцін Бохенек · інженерія програмного забезпечення',
     brutal: 'Марцін Бохенек · дизайн, код, впровадження',
@@ -382,7 +405,7 @@ const uk: StudioChrome = {
     massive: { catalog: 'Кокпіт і ангар', note: 'Вхід через 3D-сцену. Той самий зміст пропозиції.' },
     v1: { catalog: 'Темний editorial', note: 'Антиква, кінокадр, повільна наративна вісь.' },
     v2: { catalog: 'Операторська консоль', note: 'Щільність інформації, сітка, без костюма термінала.' },
-    v3: { catalog: 'Ліс і золото', note: 'Зрізи площин на елементах, не на цілих секціях.' },
+    v3: { catalog: 'Ліс і золото', note: 'Зрізи площин, складки світла, поле за склом.' },
     v5: { catalog: 'Хроматична кампанія', note: 'Tangerine, acid, масштаб плаката.' },
   },
 }

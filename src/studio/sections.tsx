@@ -1,6 +1,10 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { lazy, Suspense, useCallback, useState, type FormEvent, type ReactNode } from 'react'
 import { LanguageSwitcher, articleIndexPath, useContent, useLocale, useStudioUi } from '../i18n'
 import type { ContactField, PricingPackage } from '../data/content'
+import { useCoarsePointer } from '../hooks/useCoarsePointer'
+import { useReducedMotion } from '../hooks/useReducedMotion'
+import { useWebGLCapable } from '../hooks/useWebGLCapable'
+import { AgenticSwarmCanvas } from '../v3/AgenticSwarmCanvas'
 import { StyleSelector } from './StyleSelector'
 import { useTheme } from './ThemeContext'
 import { HangarPortal } from './HangarPortal'
@@ -12,6 +16,10 @@ import {
   type LayoutFamily,
 } from './layoutFamily'
 import { ctaHref, formAccessKey, formEndpoint, isExternalCta, projectImage, projectLiveUrl } from './utils'
+
+const HeroWebGLCanvas = lazy(() =>
+  import('../components/hero/HeroWebGLCanvas').then((m) => ({ default: m.HeroWebGLCanvas })),
+)
 
 function useOrderedProjects() {
   const { projects } = useContent()
@@ -33,6 +41,67 @@ function CtaLink({ className = 'studio-cta', large = false }: { className?: stri
     >
       {site.ctaPrimary}
     </a>
+  )
+}
+
+function liveProofShot(name: string): { src: string; srcSet: string; altKey: 'proofMintAlt' | 'proofPlummAlt' } | null {
+  const n = name.toLowerCase()
+  if (n.includes('mint')) {
+    return {
+      src: '/projects/mint/hero-card.webp',
+      srcSet: '/projects/mint/hero-card.webp 1200w, /projects/mint/hero-hero.webp 1920w',
+      altKey: 'proofMintAlt',
+    }
+  }
+  if (n.includes('plumm')) {
+    return {
+      src: '/projects/plumm/hero-hero.webp',
+      srcSet: '/projects/plumm/hero-card.webp 1200w, /projects/plumm/hero-hero.webp 1920w',
+      altKey: 'proofPlummAlt',
+    }
+  }
+  return null
+}
+
+function HeroProofFigure({ priority = false }: { priority?: boolean }) {
+  const { liveProof } = useContent()
+  const ui = useStudioUi()
+  const shots = liveProof.slice(0, 2)
+  if (shots.length === 0) return null
+
+  return (
+    <div className="studio-hero-proof" aria-label={ui.proofLiveAria}>
+      {shots.map((item, index) => {
+        const shot = liveProofShot(item.name)
+        if (!shot) return null
+        const eager = priority && index === 0
+        return (
+          <a
+            key={item.name}
+            className={`studio-hero-proof-card studio-hero-proof-${index === 0 ? 'a' : 'b'}`}
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src={shot.src}
+              srcSet={shot.srcSet}
+              sizes="(max-width: 899px) 92vw, 38vw"
+              alt={ui[shot.altKey]}
+              width={1600}
+              height={900}
+              decoding="async"
+              loading={eager ? 'eager' : 'lazy'}
+              fetchPriority={eager ? 'high' : 'low'}
+            />
+            <span className="studio-hero-proof-cap">
+              <span className="studio-hero-proof-live">{ui.statusLive}</span>
+              {item.name}
+            </span>
+          </a>
+        )
+      })}
+    </div>
   )
 }
 
@@ -98,6 +167,7 @@ function HeroDashboard({ kicker }: { kicker: string }) {
           <CtaLink large />
         </div>
       </aside>
+      <HeroProofFigure priority />
     </section>
   )
 }
@@ -126,6 +196,10 @@ function HeroCockpit({ kicker }: { kicker: string }) {
           <span>{site.headline[1]}</span>
         </h1>
         <p className="studio-hero-lead studio-hero-lead-hud">{ui.heroLead}</p>
+        <div className="studio-hero-cockpit-cta">
+          <CtaLink />
+        </div>
+        <HeroProofFigure />
       </div>
     </section>
   )
@@ -136,6 +210,42 @@ function HeroAtmospheric({ kicker, children }: { kicker: string; children: React
     <section className="studio-hero studio-hero-atmospheric" id="top" aria-labelledby="studio-hero-title">
       <p className="studio-kicker">{kicker}</p>
       {children}
+    </section>
+  )
+}
+
+function HeroV3({ kicker }: { kicker: string }) {
+  const reduced = useReducedMotion()
+  const coarse = useCoarsePointer()
+  const { capable } = useWebGLCapable()
+  const createScene = useCallback(
+    (canvas: HTMLCanvasElement) =>
+      import('../v3/pleatedScene').then((m) =>
+        m.createPleatedScene(canvas, { reducedMotion: reduced, lowPower: coarse }),
+      ),
+    [reduced, coarse],
+  )
+  const PleatsFallback = <div className="studio-v3-pleats" aria-hidden />
+
+  return (
+    <section className="studio-hero studio-hero-v3" id="top" aria-labelledby="studio-hero-title">
+      <div className="studio-hero-v3-stage" aria-hidden>
+        {capable ? (
+          <Suspense fallback={<div className="studio-v3-pleats" aria-hidden />}>
+            <HeroWebGLCanvas
+              className="studio-hero-v3-gl"
+              createScene={createScene}
+              fallback={<div className="studio-v3-pleats" aria-hidden />}
+            />
+          </Suspense>
+        ) : (
+          PleatsFallback
+        )}
+      </div>
+      <div className="studio-hero-v3-copy">
+        <p className="studio-kicker">{kicker}</p>
+        <HeroCore proof={false} />
+      </div>
     </section>
   )
 }
@@ -181,11 +291,12 @@ function HeroLiquidBody() {
         <p className="studio-hero-band-copy">{site.icpBadge}</p>
         <CtaLink large />
       </div>
+      <HeroProofFigure priority />
     </>
   )
 }
 
-function HeroCore() {
+function HeroCore({ proof = true }: { proof?: boolean }) {
   const { site } = useContent()
   return (
     <>
@@ -194,6 +305,7 @@ function HeroCore() {
         <p className="studio-hero-band-copy">{site.icpBadge}</p>
         <CtaLink large />
       </div>
+      {proof ? <HeroProofFigure priority /> : null}
     </>
   )
 }
@@ -204,6 +316,7 @@ export function HeroStudio() {
   const kicker = themeKicker(theme, ui.kicker)
   const family = layoutFamily(theme)
 
+  if (theme === 'v3') return <HeroV3 kicker={kicker} />
   if (family === 'cockpit') return <HeroCockpit kicker={kicker} />
   if (family === 'optical') return <HeroOptical kicker={kicker}><HeroLiquidBody /></HeroOptical>
   if (family === 'dashboard') return <HeroDashboard kicker={kicker} />
@@ -572,7 +685,19 @@ function WorkV3() {
             data-flagship={Boolean(project.flagship)}
           >
             <div className="studio-work-media">
-              <img src={projectImage(project.id)} alt={`${project.title} — ${project.tagline}`} width={1600} height={900} />
+              {project.id === 'agentic' ? (
+                <AgenticSwarmCanvas
+                  className="studio-work-swarm"
+                  imgProps={{
+                    src: projectImage(project.id),
+                    alt: `${project.title} — ${project.tagline}`,
+                    width: 1600,
+                    height: 900,
+                  }}
+                />
+              ) : (
+                <img src={projectImage(project.id)} alt={`${project.title} — ${project.tagline}`} width={1600} height={900} />
+              )}
             </div>
             <div className="studio-work-copy">
               <h3>{project.title}</h3>
@@ -1208,13 +1333,21 @@ export function TrustStudio() {
       <p className="studio-kicker">{ui.trustKicker}</p>
       <h2 id="studio-trust-title">{ui.trustTitle}</h2>
       <div className="studio-trust-live">
-        {liveProof.map((item) => (
-          <a key={item.name} className="studio-trust-card" href={item.url} target="_blank" rel="noopener noreferrer">
-            <p>{item.tag}</p>
-            <h3>{item.name}</h3>
-            <p>{item.result}</p>
-          </a>
-        ))}
+        {liveProof.map((item) => {
+          const shot = liveProofShot(item.name)
+          return (
+            <a key={item.name} className="studio-trust-card" href={item.url} target="_blank" rel="noopener noreferrer">
+              {shot ? (
+                <span className="studio-trust-shot">
+                  <img src={shot.src} srcSet={shot.srcSet} sizes="(max-width: 799px) 92vw, 28vw" alt="" width={1200} height={675} loading="lazy" decoding="async" />
+                </span>
+              ) : null}
+              <p>{item.tag}</p>
+              <h3>{item.name}</h3>
+              <p>{item.result}</p>
+            </a>
+          )
+        })}
       </div>
       <div className="studio-trust-grid">
         {trustPoints.map((point) => (
@@ -1409,8 +1542,12 @@ export function StickyCtaStudio() {
 }
 
 export function ShellStudio() {
+  const ui = useStudioUi()
   return (
     <>
+      <a className="studio-skip" href="#top">
+        {ui.skipToContent}
+      </a>
       <NavStudio />
       <main>
         <HeroStudio />

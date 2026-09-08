@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import type { TouchInput } from './touchControls'
 
 /**
  * Newtonian flight controls with DIRECT yaw + cosmetic coordinated lean.
@@ -13,37 +14,26 @@ import * as THREE from 'three'
  *   Space          — main thrust along +forward
  *   Shift          — retro-brake (thrust opposite velocity, weaker than main)
  *
- * A/D command a YAW RATE directly — target = ±YAW_MAX, and the actual rate
- * chases it with a fast exponential response (YAW_ATTACK while a key is
- * held, YAW_RELEASE once it's let go). This is precision-first: heading
- * starts responding within ~150ms of a keypress and stops promptly on
- * release, so short taps produce small, discrete heading changes instead of
- * a slow lag-then-drift.
- *
- * Bank (roll) is purely COSMETIC and reads off the current yaw rate — it no
- * longer feeds back into yaw. targetBank tracks (yawRate / YAW_MAX) *
- * BANK_MAX, so holding D (turning right, yaw rate negative) leans the hull
- * into the turn with the RIGHT wing down, and releasing auto-levels the
- * bank back toward 0 (or the Q/E trim value) as the yaw rate decays. Q/E add
- * a trim offset to this visual target only.
- *
- * A slight automatic nose-up (PITCH_COUPLE) rides along in proportion to
- * the current yaw rate, for the "podnosimy dziób" look while turning.
- *
- * W/S remain pure manual pitch (own accel/clamp/damping). Linear velocity
- * persists after thrust stops — releasing SPACE must NOT stop the ship —
- * with only a tiny passive damping and a soft asymptotic speed cap.
+ * Physics quaternion is pitch + yaw only. Cosmetic bank lives in `bankAngle`
+ * and is applied to the mesh in GameShell — it is NEVER integrated into the
+ * physics quat. Integrating roll-from-bank in object space while yawing is
+ * what left the hull permanently twisted to the left (non-commutative
+ * composition + leftover ω.z). After each pitch/yaw step we also kill
+ * accumulated roll vs world-up (Euler YXZ, z=0) so yaw cannot masquerade
+ * as roll and the chase camera cannot drift under the belly.
  */
 
 const X_AXIS = new THREE.Vector3(1, 0, 0)
 const Y_AXIS = new THREE.Vector3(0, 1, 0)
-const Z_AXIS = new THREE.Vector3(0, 0, 1)
 
 const DEG2RAD = Math.PI / 180
 
-const PITCH_ACCEL = 4.2 // rad/s^2 — góra-dół wyraźnie mocniejsze (feedback: „zwiększ możliwość sterowania góra-dół")
-const MAX_PITCH_RATE = 1.9 // rad/s
-const ANGULAR_DAMPING = 0.9 // flat per-frame multiplier on the manual pitch rate (house style — frame-based, not dt-scaled)
+const PITCH_MAX = 1.9 // rad/s
+/** Exponential pitch-rate response — same feel as yaw, less twitch than raw accel. */
+const PITCH_ATTACK = 6.5 // 1/s
+const PITCH_RELEASE = 8 // 1/s
+/** Per-second angular damping on manual pitch rate (framerate-independent). */
+const PITCH_DAMPING = 3.2 // 1/s
 
 /** Direct yaw-rate command from A/D. */
 const YAW_MAX = 1.15 // rad/s
@@ -53,7 +43,7 @@ const YAW_ATTACK = 7 // 1/s
 const YAW_RELEASE = 9 // 1/s
 
 /** Cosmetic bank magnitude at full yaw rate — hull leans into the turn, no effect on heading. */
-const BANK_MAX_RAD = 48 * DEG2RAD
+const BANK_MAX_RAD = 52 * DEG2RAD
 /** Extra bank trim from Q/E, added on top of the yaw-derived target — visual only. */
 const BANK_TRIM_MAX_RAD = 20 * DEG2RAD
 /** Exponential approach rate of the cosmetic bank toward its target. */
@@ -61,13 +51,13 @@ const BANK_RESPONSE = 5 // 1/s
 /** Automatic nose-up pitch coupling at full yaw rate — the "podnosimy dziób" look. */
 const PITCH_COUPLE = 0.1 // rad/s
 
-const MAIN_THRUST_ACCEL = 44 // u/s^2 — „przyspiesz normandię"
-const BRAKE_ACCEL = 26 // u/s^2 — weaker than main thrust
+const MAIN_THRUST_ACCEL = 54 // u/s^2 — bumped for snappier Normandy cruise
+const BRAKE_ACCEL = 30 // u/s^2 — weaker than main thrust
 const PASSIVE_DAMPING = 0.999 // flat per-frame multiplier — inertia persists
-const SOFT_SPEED_CAP = 80 // u/s, asymptotic
+const SOFT_SPEED_CAP = 92 // u/s, asymptotic
 
-const THRUST_SPOOL_UP = 3.5 // 1/s
-const THRUST_SPOOL_DOWN = 2.0 // 1/s
+const THRUST_SPOOL_UP = 4.2 // 1/s — slightly snappier spool for punchy Normandy thrust
+const THRUST_SPOOL_DOWN = 2.4 // 1/s
 
 /** Exported so ui/hud.ts can size its gravity-fairness warning threshold
  * (engine/gravity.ts) relative to how hard the ship can push back. */
@@ -79,8 +69,8 @@ export type ControlsState = {
   velocity: THREE.Vector3
   angularVelocity: THREE.Vector3
   /** Current smoothed cosmetic bank angle, radians — positive = left (hull
-   * rolls so the left wing dips). Purely visual: read by camera-rig.ts for
-   * its partial roll inherit, and has no effect on yaw/heading. */
+   * rolls so the left wing dips). Purely visual: applied to the mesh in
+   * GameShell, never written into the physics quaternion. */
   bankAngle: number
   /** Smoothed 0..1 — drives engine emissive/glow, not raw physics. */
   thrustLevel: number
@@ -113,7 +103,7 @@ const PREVENT_DEFAULT_CODES = new Set([
   'ArrowRight',
 ])
 
-export function createControls(startPosition: THREE.Vector3): Controls {
+export function createControls(startPosition: THREE.Vector3, touch?: TouchInput): Controls {
   const pressed = new Set<string>()
 
   const state: ControlsState = {
@@ -149,25 +139,32 @@ export function createControls(startPosition: THREE.Vector3): Controls {
   const forwardVec = new THREE.Vector3()
   const qx = new THREE.Quaternion()
   const qy = new THREE.Quaternion()
-  const qz = new THREE.Quaternion()
+  const levelEuler = new THREE.Euler(0, 0, 0, 'YXZ')
 
   return {
     state,
 
     update(dt) {
-      // ─── Manual pitch (W/S) — own accel/clamp/damping, unchanged character ──
+      // ─── Pitch (W/S) — exponential rate chase, framerate-independent damping ─
       let pitchInput = 0
       if (has(PITCH_DOWN_KEYS)) pitchInput -= 1
       if (has(PITCH_UP_KEYS)) pitchInput += 1
+      if (touch && (touch.pitch !== 0 || pitchInput === 0)) {
+        pitchInput = Math.max(-1, Math.min(1, pitchInput + touch.pitch))
+      }
 
-      state.angularVelocity.x += pitchInput * PITCH_ACCEL * dt
-      state.angularVelocity.x = THREE.MathUtils.clamp(state.angularVelocity.x, -MAX_PITCH_RATE, MAX_PITCH_RATE)
-      state.angularVelocity.x *= ANGULAR_DAMPING
+      const targetPitchRate = pitchInput * PITCH_MAX
+      const pitchResponse = pitchInput !== 0 ? PITCH_ATTACK : PITCH_RELEASE
+      state.angularVelocity.x += (targetPitchRate - state.angularVelocity.x) * Math.min(1, pitchResponse * dt)
+      state.angularVelocity.x *= Math.exp(-PITCH_DAMPING * dt)
 
       // ─── Direct yaw-rate command from A/D — precise, no bank coupling ──
       let turnInput = 0
       if (has(TURN_LEFT_KEYS)) turnInput += 1
       if (has(TURN_RIGHT_KEYS)) turnInput -= 1
+      if (touch && (touch.turn !== 0 || turnInput === 0)) {
+        turnInput = Math.max(-1, Math.min(1, turnInput + touch.turn))
+      }
 
       const targetYawRate = turnInput * YAW_MAX
       const yawResponse = targetYawRate !== 0 ? YAW_ATTACK : YAW_RELEASE
@@ -183,26 +180,28 @@ export function createControls(startPosition: THREE.Vector3): Controls {
       if (has(TRIM_RIGHT_KEYS)) trimInput -= 1
 
       const targetBank = (state.angularVelocity.y / YAW_MAX) * BANK_MAX_RAD + trimInput * BANK_TRIM_MAX_RAD
-
-      const prevBank = state.bankAngle
       state.bankAngle += (targetBank - state.bankAngle) * Math.min(1, BANK_RESPONSE * dt)
-
-      // Roll rate that reproduces this frame's bank delta. Positive Z_AXIS
-      // rotation physically rolls the hull LEFT (right wing up), matching
-      // the "positive bankAngle = left" convention directly — no negation.
-      const rollDelta = state.bankAngle - prevBank
-      state.angularVelocity.z = dt > 1e-6 ? rollDelta / dt : 0
+      // Visual only — do not integrate into the physics quat (that leftover
+      // ω.z is what kept the hull rolled left after the turn ended).
+      state.angularVelocity.z = 0
 
       // ─── Integrate rotation in local space (post-multiply → object-space axes) ─
       qx.setFromAxisAngle(X_AXIS, (state.angularVelocity.x + pitchCouple) * dt)
       qy.setFromAxisAngle(Y_AXIS, state.angularVelocity.y * dt)
-      qz.setFromAxisAngle(Z_AXIS, state.angularVelocity.z * dt)
-      state.quaternion.multiply(qx).multiply(qy).multiply(qz)
+      state.quaternion.multiply(qx).multiply(qy)
       state.quaternion.normalize()
 
+      // Kill accumulated roll so yaw cannot collect as a permanent left twist.
+      // Skip when nearly vertical — YXZ gimbal would steal yaw into roll.
+      levelEuler.setFromQuaternion(state.quaternion, 'YXZ')
+      if (Math.abs(levelEuler.x) < 1.35) {
+        levelEuler.z = 0
+        state.quaternion.setFromEuler(levelEuler)
+      }
+
       // ─── Linear thrust ──────────────────────────────────────────────────
-      const thrustHeld = has(FORWARD_KEYS)
-      const brakeHeld = has(BRAKE_KEYS)
+      const thrustHeld = has(FORWARD_KEYS) || (touch?.thrust ?? false)
+      const brakeHeld = has(BRAKE_KEYS) || (touch?.brake ?? false)
       if (thrustHeld) state.hasThrusted = true
 
       forwardVec.set(0, 0, -1).applyQuaternion(state.quaternion)

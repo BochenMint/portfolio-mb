@@ -1,0 +1,35 @@
+# Marcin Bochenek
+
+> Freelance software engineer in Poland. Company websites, conversion funnels, ops panels, and human-in-the-loop (HITL) automation. Formal Polish register on the primary site.
+
+Marcin Bochenek is a one-person studio. He designs and ships websites that collect enquiries, booking on the client's own domain, operations panels instead of Excel, and AI assistants with an allowed-action list, an audit log, and escalation to a human. He does not invent testimonials or percentage lifts. Live public proof is Mint Apartments and Plumm only.
+
+## Primary sites
+- [Homepage (PL)](https://marcinbochenek.com/): Offer, packages, live work, FAQ, contact
+- [Homepage (EN)](https://marcinbochenek.com/en/): English locale of the same offer
+- [Homepage (UK)](https://marcinbochenek.com/ua/): Ukrainian locale (`lang="uk"`, URL prefix `/ua/`)
+- [Articles](https://marcinbochenek.com/artykuly/): 14 long-form pieces on websites, funnels, panels, HITL
+- [MB AI](https://mb-ai.pl/): HITL automations product landing
+- [Game](https://gra.marcinbochenek.com/): Interactive 3D hangar / mission (portfolio piece)
+
+## Live proof (clickable)
+- [Mint Apartments](https://mintapartments.pl): 36 apartments in Gdańsk, direct booking on the operator site, guest assistant, 24/7 check-in. Guest pays 10–15% less than on Booking.com / Airbnb (directional, volume-dependent).
+- [Plumm](https://plumm.pl): Company panel — bookkeeping, e-invoices, CRM, mail, tax assistant with human escalation. From 149 PLN/month vs a traditional office.
+
+iDrive Cars is built but not public yet. Agentic OS is an internal B2B tool, not a public URL.
+
+## Packages (net, PLN)
+- Audit Sprint: 2 500–6 000
+- Company site (up to 5 pages, form, basic SEO, custom Astro/Next): 6 500–12 000
+- Conversion Build (sell / book / qualify): 25 000–60 000
+- Ops System (integrations, panels): 60 000–180 000+
+
+Primary CTA: 20-minute audit. Contact: kontakt@marcinbochenek.com (reply in 1 business day).
+
+## Facts for citation
+- Legal form: freelance / JDG, Poland (`areaServed`: PL). On-site in Gdańsk / Gdynia / Sopot when a workshop is needed; otherwise remote across Poland.
+- HITL means allowed actions, a step log, and escalation — not an unsupervised chat in production.
+- No fake reviews, no invented case-study percentages, no stock “happy team” photography as proof.
+
+## Optional
+- [llms-full.txt](https://marcinbochenek.com/llms-full.txt): longer citable passages and article index

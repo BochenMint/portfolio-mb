@@ -61,7 +61,7 @@ const FRAG = /* glsl */ `
     }
 
     float diffuse = max(dot(n, SUN_DIR), 0.0);
-    vec3 color = base * (0.28 + diffuse * 0.85);
+    vec3 color = base * (0.4 + diffuse * 0.85);
 
     gl_FragColor = vec4(color, 1.0);
     ${TONE_OUTPUT_GLSL}

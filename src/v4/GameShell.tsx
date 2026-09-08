@@ -23,7 +23,21 @@ import { projects } from '../i18n/live'
 // impostor (half-size 305u), offset sideways so the ship doesn't occlude the
 // hole, and close to the (18°-tilted) disk plane so the accretion disk reads
 // near-edge-on — thin front band + over-pole halo arcs, the Gargantua frame.
-const START_POSITION = new THREE.Vector3(72, -32, 248)
+const START_POSITION = new THREE.Vector3(158, -70, 534)
+const START_QUATERNION = (() => {
+  const radial = START_POSITION.clone().normalize()
+  const tangent = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), radial).normalize()
+  const toHole = radial.clone().negate()
+  const forward = tangent.clone().multiplyScalar(0.42).addScaledVector(toHole, 0.58)
+  forward.y = 0
+  forward.normalize()
+  // lookAt keeps +Y close to world up — setFromUnitVectors was rolling the
+  // hull so chase sat under the hammer (frog + one-armed młot).
+  const dummy = new THREE.Object3D()
+  dummy.up.set(0, 1, 0)
+  dummy.lookAt(forward)
+  return dummy.quaternion.clone()
+})()
 
 /** The low-end heuristic used elsewhere in the codebase is "coarse pointer",
  * which doesn't apply here (v4 already requires a fine pointer + WebGL2 to
@@ -49,6 +63,9 @@ type V4Debug = {
   haltShip(): void
   /** Dev/preview-only — procedural vs CC0 GLB hull source. */
   getHullSource(): string
+  /** Dev/preview-only — hide the hull so BH/planet probes aren't blocked by it. */
+  setShipVisible(visible: boolean): void
+  getChaseInfo(): { heightDot: number; backDot: number; dist: number; upDot: number }
 }
 
 declare global {
@@ -145,6 +162,7 @@ export function GameShell() {
       touchControls = touchControlsInstance
 
       const controlsInstance = createControls(START_POSITION, touchControlsInstance.input)
+      controlsInstance.state.quaternion.copy(START_QUATERNION)
       controls = controlsInstance
 
       const cameraRig = createCameraRig(engineInstance.camera)
@@ -176,7 +194,7 @@ export function GameShell() {
         controlsInstance.state.velocity.set(0, 0, 0)
         controlsInstance.state.angularVelocity.set(0, 0, 0)
         controlsInstance.state.bankAngle = 0
-        controlsInstance.state.quaternion.identity()
+        controlsInstance.state.quaternion.copy(START_QUATERNION)
         controlsInstance.state.thrustLevel = 0
         controlsInstance.state.brakeLevel = 0
         controlsInstance.state.speed = 0
@@ -195,6 +213,7 @@ export function GameShell() {
         gameOverOverlay?.reset()
         completionOverlay?.reset()
         commPanel?.restart()
+        hudInstance.reset()
       }
 
       const gameOverOverlayInstance = createGameOverOverlay(hudContainer, {
@@ -257,10 +276,27 @@ export function GameShell() {
           getHullSource() {
             return (shipInstance.group.userData.hullSource as string | undefined) ?? 'unknown'
           },
+          setShipVisible(visible) {
+            shipInstance.group.visible = visible
+          },
+          getChaseInfo() {
+            const cam = engineInstance.camera
+            const rel = cam.position.clone().sub(shipInstance.group.position)
+            const shipUp = new THREE.Vector3(0, 1, 0).applyQuaternion(shipInstance.group.quaternion)
+            const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(shipInstance.group.quaternion)
+            return {
+              heightDot: rel.dot(shipUp),
+              backDot: -rel.dot(fwd),
+              dist: rel.length(),
+              upDot: shipUp.dot(new THREE.Vector3(0, 1, 0)),
+            }
+          },
         }
       }
 
       const collisionNormal = new THREE.Vector3()
+      const visualBankQ = new THREE.Quaternion()
+      const visualBankAxis = new THREE.Vector3(0, 0, 1)
 
       unsubscribeTick = engineInstance.onTick((dt, elapsed) => {
         // Ukończenie misji NIE zatrzymuje lotu — completion to karta w rogu,
@@ -268,14 +304,26 @@ export function GameShell() {
         const flightActive = !gameOverTriggered
 
         if (flightActive) {
-          // Gravity first, then the controls' own thrust/damping/position
-          // integration — same semi-implicit-Euler convention controls.ts
-          // already uses internally, so this frame's position update sees
-          // the combined velocity.
-          applyBlackHoleGravity(controlsInstance.state.position, controlsInstance.state.velocity, dt)
+          const launched = controlsInstance.state.hasThrusted
+          if (launched) {
+            applyBlackHoleGravity(controlsInstance.state.position, controlsInstance.state.velocity, dt)
+          }
           controlsInstance.update(dt)
+          if (!controlsInstance.state.hasThrusted && !debugFreeCam) {
+            // Establishing shot stays put until the first thrust — otherwise
+            // the well pulls the ship into the horizon while the player is
+            // still reading the start prompt.
+            controlsInstance.state.position.copy(START_POSITION)
+            controlsInstance.state.velocity.set(0, 0, 0)
+            controlsInstance.state.angularVelocity.set(0, 0, 0)
+            controlsInstance.state.quaternion.copy(START_QUATERNION)
+            controlsInstance.state.bankAngle = 0
+          }
           shipInstance.group.position.copy(controlsInstance.state.position)
-          shipInstance.group.quaternion.copy(controlsInstance.state.quaternion)
+          // Physics quat is roll-free; cosmetic bank is mesh-only so the
+          // chase cam cannot inherit a leftover twist.
+          visualBankQ.setFromAxisAngle(visualBankAxis, controlsInstance.state.bankAngle)
+          shipInstance.group.quaternion.copy(controlsInstance.state.quaternion).multiply(visualBankQ)
           shipInstance.updateThrust(controlsInstance.state.thrustLevel, elapsed)
 
           // First thrust of a run — starts the mission clock and dismisses
@@ -348,6 +396,19 @@ export function GameShell() {
               }
             }
           }
+          worldInstance.forEachMoonCollider((moonPos, moonRadius) => {
+            collisionNormal.copy(controlsInstance.state.position).sub(moonPos)
+            const surfaceDist = moonRadius * 1.2 + 1.4
+            const d = collisionNormal.length()
+            if (d < surfaceDist && d > 1e-4) {
+              collisionNormal.multiplyScalar(1 / d)
+              controlsInstance.state.position.copy(moonPos).addScaledVector(collisionNormal, surfaceDist)
+              const inward = controlsInstance.state.velocity.dot(collisionNormal)
+              if (inward < 0) {
+                controlsInstance.state.velocity.addScaledVector(collisionNormal, -inward)
+              }
+            }
+          })
         }
 
         if (debugFreeCam) {
@@ -378,11 +439,23 @@ export function GameShell() {
 
       engineInstance.start()
 
-      if (loadingOverlayRef.current) loadingOverlayRef.current.classList.add('is-hidden')
+      if (loadingOverlayRef.current) {
+        loadingOverlayRef.current.classList.add('is-hidden')
+        loadingOverlayRef.current.setAttribute('aria-busy', 'false')
+        loadingOverlayRef.current.setAttribute('aria-hidden', 'true')
+      }
     }
 
     init().catch((err) => {
       console.error('[v4] init failed', err)
+      const overlay = loadingOverlayRef.current
+      if (overlay) {
+        overlay.classList.add('is-error')
+        overlay.setAttribute('aria-busy', 'false')
+      }
+      if (loadingLabelRef.current) {
+        loadingLabelRef.current.textContent = 'Nie udało się wczytać misji. Odśwież stronę.'
+      }
     })
 
     return () => {
@@ -410,7 +483,13 @@ export function GameShell() {
     <div className="v4-root" ref={rootRef}>
       <canvas className="v4-canvas" ref={canvasRef} />
       <div className="v4-hud-container" ref={hudContainerRef} />
-      <div className="v4-loading" ref={loadingOverlayRef}>
+      <div
+        className="v4-loading"
+        ref={loadingOverlayRef}
+        aria-live="polite"
+        aria-busy="true"
+        role="status"
+      >
         <div className="v4-loading__label" ref={loadingLabelRef}>
           WCZYTYWANIE MISJI… 0%
         </div>

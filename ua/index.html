@@ -9,7 +9,7 @@
       name="description"
       content="Марцін Бохенек — сайти, що збирають запити, операційні панелі та автоматизації. Бронювання на власному домені, менше ручної роботи, вимір до і після. Аудит 20 хв."
     />
-    <meta name="theme-color" content="#0A100D" />
+    <meta name="theme-color" content="#f3efe6" />
     <link rel="canonical" href="https://marcinbochenek.com/ua/" />
     <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/" />
     <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/" />
@@ -26,7 +26,11 @@
     <meta property="og:locale" content="uk_UA" />
     <meta property="og:locale:alternate" content="pl_PL" />
     <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:site_name" content="Marcin Bochenek" />
     <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Марцін Бохенек — сайти та системи для бізнесу" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Марцін Бохенек — premium IT" />
     <meta
@@ -34,6 +38,8 @@
       content="Сайти, системи та автоматизації для власників компаній. Аудит, впровадження, вимір до/після."
     />
     <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta name="twitter:image:alt" content="Марцін Бохенек — сайти та системи для бізнесу" />
+    <link rel="preload" as="image" href="/projects/mint/hero-card.webp" type="image/webp" fetchpriority="high" />
     <title>Марцін Бохенек — сайти та системи для бізнесу</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -44,19 +50,57 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "ProfessionalService",
-        "name": "Marcin Bochenek",
-        "description": "Сайти, що конвертують, операційні панелі та автоматизації для власників компаній — менше ручної роботи, більше PLN на рахунку.",
-        "areaServed": "PL",
-        "knowsAbout": ["Web design", "PropTech", "Automation", "Корпоративні сайти", "Автоматизація HITL"],
-        "url": "https://marcinbochenek.com/ua/",
-        "email": "kontakt@marcinbochenek.com",
-        "priceRange": "6500+ PLN",
-        "inLanguage": "uk",
-        "sameAs": [
-          "https://github.com/BochenMint",
-          "https://mb-ai.pl",
-          "https://gra.marcinbochenek.com"
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://marcinbochenek.com/#person",
+            "name": "Marcin Bochenek",
+            "url": "https://marcinbochenek.com/ua/",
+            "image": "https://marcinbochenek.com/images/marcin-bochenek.webp",
+            "jobTitle": "Software engineer",
+            "email": "kontakt@marcinbochenek.com",
+            "sameAs": [
+              "https://github.com/BochenMint",
+              "https://mb-ai.pl",
+              "https://gra.marcinbochenek.com"
+            ]
+          },
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://marcinbochenek.com/#service",
+            "name": "Marcin Bochenek",
+            "url": "https://marcinbochenek.com/ua/",
+            "inLanguage": "uk",
+            "email": "kontakt@marcinbochenek.com",
+            "description": "Марцін Бохенек — freelance software engineer у Польщі: корпоративні сайти, воронки конверсії, операційні панелі та автоматизація HITL. Live proof: Mint Apartments (mintapartments.pl) і Plumm (plumm.pl).",
+            "image": "https://marcinbochenek.com/brand/og-default.png",
+            "logo": "https://marcinbochenek.com/brand/logo-mb.svg",
+            "priceRange": "6500+ PLN",
+            "areaServed": { "@type": "Country", "name": "Poland" },
+            "address": { "@type": "PostalAddress", "addressCountry": "PL" },
+            "founder": { "@id": "https://marcinbochenek.com/#person" },
+            "employee": { "@id": "https://marcinbochenek.com/#person" },
+            "knowsAbout": [
+              "Корпоративні сайти",
+              "Воронки конверсії",
+              "Операційні панелі",
+              "Автоматизація HITL",
+              "PropTech"
+            ],
+            "sameAs": [
+              "https://github.com/BochenMint",
+              "https://mb-ai.pl",
+              "https://gra.marcinbochenek.com"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://marcinbochenek.com/#website",
+            "url": "https://marcinbochenek.com/",
+            "name": "Marcin Bochenek",
+            "inLanguage": ["pl", "en", "uk"],
+            "publisher": { "@id": "https://marcinbochenek.com/#person" }
+          }
         ]
       }
     </script>

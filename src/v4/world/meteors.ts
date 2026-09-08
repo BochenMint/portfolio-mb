@@ -116,6 +116,7 @@ export function createMeteorField(): MeteorField {
       transparent: true,
       opacity: 0,
       depthWrite: false,
+      depthTest: true,
       blending: THREE.AdditiveBlending,
     })
     const sprite = new THREE.Sprite(mat)

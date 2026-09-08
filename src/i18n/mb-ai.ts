@@ -6,6 +6,7 @@ export type MbAiCopy = {
   navHow: string
   navContact: string
   ctaAudit: string
+  skipToContent: string
   heroTitleBefore: string
   heroTitleEm: string
   heroTitleAfter: string
@@ -56,6 +57,7 @@ const pl: MbAiCopy = {
   navHow: 'Jak działa',
   navContact: 'Kontakt',
   ctaAudit: 'Umów audyt',
+  skipToContent: 'Przejdź do treści',
   heroTitleBefore: 'Automatyzacje AI z ',
   heroTitleEm: 'kontrolą człowieka',
   heroTitleAfter: ', jasnym zakresem i audytem kroków',
@@ -155,6 +157,7 @@ const en: MbAiCopy = {
   navHow: 'How it works',
   navContact: 'Contact',
   ctaAudit: 'Book an audit',
+  skipToContent: 'Skip to content',
   heroTitleBefore: 'AI automation with a ',
   heroTitleEm: 'human in the loop',
   heroTitleAfter: ', a hard action scope and a step audit',
@@ -254,6 +257,7 @@ const uk: MbAiCopy = {
   navHow: 'Як це працює',
   navContact: 'Контакт',
   ctaAudit: 'Замовити аудит',
+  skipToContent: 'Перейти до змісту',
   heroTitleBefore: 'Автоматизації AI з ',
   heroTitleEm: 'контролем людини',
   heroTitleAfter: ', чітким обсягом дій і аудитом кроків',

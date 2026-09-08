@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="#050508"/>
-  <path d="M8 22V10h4.2c3.1 0 5 1.6 5 4.2 0 1.5-.7 2.7-1.9 3.4L18 22h-3.4l-2.5-3.8H11.2V22H8zm3.2-6.6h.9c1.4 0 2.2-.7 2.2-1.8s-.8-1.8-2.2-1.8h-.9v3.6zM20 22l5.2-12h3.5L32 22h-3.4l-1-2.6h-4.4L22 22h-2z" fill="#3ee8c4"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="MB">
+  <rect width="32" height="32" fill="#0A100D"/>
+  <path fill="none" stroke="#B8734A" stroke-width="1.15" stroke-linecap="square" d="M6.2 8.8H4.8V23.2H6.2"/>
+  <path fill="none" stroke="#B8734A" stroke-width="1.15" stroke-linecap="square" d="M25.8 8.8H27.2V23.2H25.8"/>
+  <path fill="#E6EAE4" d="M8 23.5V8.5h2l2.25 8.5 2.25-8.5H16.5v15h-1.9V13l-1.5 6h-1.7l-1.5-6v10.5H8z"/>
+  <path fill="#E6EAE4" fill-rule="evenodd" d="M17.3 8.5h2.5c2.4 0 3.95 1.15 3.95 3.1 0 1.45-.8 2.5-2.2 2.9 1.7.45 2.75 1.55 2.75 3.3 0 2.2-1.75 3.9-4.5 3.9H17.3V8.5zm2 1.6h.8c1.1 0 1.7.55 1.7 1.5s-.6 1.5-1.7 1.5h-.8v-3zm0 5.25h1.2c1.25 0 2 .7 2 1.85s-.75 1.9-2 1.9h-1.2v-3.75z"/>
 </svg>

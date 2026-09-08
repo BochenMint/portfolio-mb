@@ -13,6 +13,8 @@ export function ThemeChrome() {
       <span className="studio-chrome-d" />
       <span className="studio-chrome-scan" />
       <span className="studio-chrome-grain" />
+      <span className="studio-chrome-spot" data-cursor-spot />
+      <span className="studio-cursor-probe" data-cursor-follow />
     </div>
   )
 }

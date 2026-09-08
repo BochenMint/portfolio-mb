@@ -21,17 +21,23 @@ export function createCompletionOverlay(
 ): CompletionOverlay {
   const root = document.createElement('div')
   root.className = 'v4-overlay v4-overlay--completion'
+  root.setAttribute('aria-hidden', 'true')
+  root.inert = true
   root.innerHTML = `
     <div class="v4-overlay__card v4-overlay__card--wide">
-      <h1 class="v4-overlay__title">MISJA WYKONANA</h1>
+      <h1 class="v4-overlay__title" id="v4-completion-title">Misja wykonana</h1>
       <p class="v4-overlay__time">Twój czas: <strong class="v4-overlay__time-value">00:00.0</strong></p>
       <p class="v4-overlay__dilation"></p>
       <form class="v4-overlay__save">
-        <input class="v4-overlay__nick" type="text" maxlength="16" placeholder="Twój znak (max 16)" autocomplete="off" />
-        <button type="submit" class="v4-overlay__button">Zapisz wynik</button>
+        <div class="v4-overlay__save-row">
+          <label class="sr-only" for="v4-nick">Znak na tablicy wyników</label>
+          <input class="v4-overlay__nick" id="v4-nick" name="nick" type="text" maxlength="16" placeholder="Twój znak (max 16)" autocomplete="off" aria-describedby="v4-nick-hint" />
+          <button type="submit" class="v4-overlay__button">Zapisz wynik</button>
+        </div>
+        <p class="v4-overlay__nick-hint" id="v4-nick-hint">Maksymalnie 16 znaków — ranking lokalny na tym urządzeniu.</p>
       </form>
       <div class="v4-overlay__board">
-        <div class="v4-overlay__board-label">NAJSZYBSI ODKRYWCY</div>
+        <div class="v4-overlay__board-label">Najszybsi odkrywcy</div>
         <table class="v4-overlay__table">
           <thead>
             <tr><th>#</th><th>Znak</th><th>Czas</th><th>Data</th></tr>
@@ -100,13 +106,21 @@ export function createCompletionOverlay(
       saveBtn.textContent = 'Zapisz wynik'
 
       renderBoard(leaderboard)
+      root.setAttribute('role', 'dialog')
+      root.setAttribute('aria-labelledby', 'v4-completion-title')
       root.classList.add('is-visible')
+      root.setAttribute('aria-hidden', 'false')
+      root.inert = false
+      nickInput.focus({ preventScroll: true })
     },
     updateBoard(leaderboard) {
       renderBoard(leaderboard)
     },
     reset() {
       root.classList.remove('is-visible')
+      root.removeAttribute('role')
+      root.setAttribute('aria-hidden', 'true')
+      root.inert = true
     },
     dispose() {
       nickInput.removeEventListener('keydown', stopPropagation)

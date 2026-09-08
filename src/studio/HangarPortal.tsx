@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useStudioUi } from '../i18n'
+import { HangarShipPreview } from './HangarShipPreview'
 import { useTheme } from './ThemeContext'
 
 export function HangarPortal({ variant = 'inline' }: { variant?: 'inline' | 'hero' }) {
@@ -20,10 +21,10 @@ export function HangarPortal({ variant = 'inline' }: { variant?: 'inline' | 'her
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
     }
-    window.addEventListener('keydown', onKey)
+    window.addEventListener('keydown', onKey, true)
     document.documentElement.classList.add('studio-hangar-lock')
     return () => {
-      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('keydown', onKey, true)
       document.documentElement.classList.remove('studio-hangar-lock')
     }
   }, [open])
@@ -55,14 +56,21 @@ export function HangarPortal({ variant = 'inline' }: { variant?: 'inline' | 'her
           aria-expanded={open}
           aria-controls="studio-hangar-stage"
         >
-          <span className="studio-cockpit-beam" aria-hidden />
-          <span className="studio-cockpit-copy">
-            <span className="studio-cockpit-alert">{ui.hangarAlert}</span>
-            <span className="studio-cockpit-title">{ui.hangarCta}</span>
-            <span className="studio-cockpit-hint">{ui.hangarLead}</span>
-          </span>
-          <span className="studio-cockpit-action" aria-hidden>
-            {ui.hangarConfirm}
+          {isHero ? (
+            <span className="studio-hangar-ship-bay" aria-hidden>
+              <HangarShipPreview loadingLabel={ui.hangarShipLoading} />
+            </span>
+          ) : null}
+          <span className="studio-cockpit-chrome">
+            <span className="studio-cockpit-beam" aria-hidden />
+            <span className="studio-cockpit-copy">
+              <span className="studio-cockpit-alert">{ui.hangarAlert}</span>
+              <span className="studio-cockpit-title">{ui.hangarCta}</span>
+              <span className="studio-cockpit-hint">{ui.hangarLead}</span>
+            </span>
+            <span className="studio-cockpit-action" aria-hidden>
+              {ui.hangarConfirm}
+            </span>
           </span>
         </button>
       </div>

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { pointerOnElement } from '../lib/pointerSurface'
 import {
   defaultThemeId,
   isThemeId,
@@ -40,10 +41,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
       const root = document.documentElement
-      root.style.setProperty('--spot-x', `${e.clientX}px`)
-      root.style.setProperty('--spot-y', `${e.clientY}px`)
-      root.style.setProperty('--spot-nx', (e.clientX / window.innerWidth).toFixed(4))
-      root.style.setProperty('--spot-ny', (e.clientY / window.innerHeight).toFixed(4))
+      const surface = document.querySelector('.studio-chrome') ?? root
+      const p = pointerOnElement(e.clientX, e.clientY, surface)
+      root.style.setProperty('--spot-x', `${p.x}px`)
+      root.style.setProperty('--spot-y', `${p.y}px`)
+      root.style.setProperty('--spot-nx', p.nx.toFixed(4))
+      root.style.setProperty('--spot-ny', p.ny.toFixed(4))
     }
     window.addEventListener('pointermove', onMove, { passive: true })
     return () => window.removeEventListener('pointermove', onMove)

@@ -1,0 +1,28 @@
+# Cloudflare Tunnel — przykładowa konfiguracja dla Mac Mini
+#
+# 1. Utwórz tunel: cloudflared tunnel create portfolio-mb
+# 2. Skopiuj ten plik: ~/.cloudflared/config.yml
+# 3. Podmień <TUNNEL_ID> i ścieżkę do credentials JSON
+# 4. DNS: cloudflared tunnel route dns portfolio-mb marcinbochenek.com (powtórz dla każdej domeny)
+
+tunnel: <TUNNEL_ID>
+credentials-file: /Users/<USER>/.cloudflared/<TUNNEL_ID>.json
+
+ingress:
+  - hostname: marcinbochenek.com
+    service: http://127.0.0.1:8080
+
+  - hostname: www.marcinbochenek.com
+    service: http://127.0.0.1:8080
+
+  - hostname: gra.marcinbochenek.com
+    service: http://127.0.0.1:8080
+
+  - hostname: mb-ai.pl
+    service: http://127.0.0.1:8080
+
+  - hostname: www.mb-ai.pl
+    service: http://127.0.0.1:8080
+
+  # Catch-all — wymagany na końcu listy
+  - service: http_status:404

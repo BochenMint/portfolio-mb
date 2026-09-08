@@ -6,7 +6,7 @@
     "width": 2400,
     "height": 1500,
     "page": "https://mintapartments.pl",
-    "caption": "Strona główna Mint Apartments z wyszukiwarką terminów (przyjazd, wyjazd, liczba gości) i oznaczeniami zaufania — ocena 4,6/5 z 271 opinii, samodzielne zameldowanie 24/7 i najlepsza cena bezpośrednio u nas."
+    "caption": "Strona główna Mint Apartments — wyszukiwarka terminów, social proof (4,9/5 Google) i direct booking bez prowizji OTA."
   },
   {
     "project": "mint",
@@ -15,7 +15,7 @@
     "width": 2400,
     "height": 1500,
     "page": "https://mintapartments.pl/apartamenty",
-    "caption": "Katalog apartamentów z wyszukiwarką opisową, filtrami lokalizacji, liczby gości i budżetu oraz kartami apartamentów z oznaczeniem Premium i najlepszą ceną u nas."
+    "caption": "Katalog 36 apartamentów — filtry lokalizacji, gości i budżetu; karty z ceną direct i oznaczeniem Premium."
   },
   {
     "project": "mint",
@@ -23,34 +23,97 @@
     "srcSmall": "/projects/mint/gallery/03-apartament-rezerwacja-sm.webp",
     "width": 2400,
     "height": 1500,
-    "page": "https://mintapartments.pl/apartamenty/mint-seaside",
-    "caption": "Karta apartamentu Mint Apartments Seaside z galerią zdjęć, wirtualnym obchodem i widżetem rezerwacji — wybór dat, liczby gości i bezpłatna anulacja do 7 dni przed przyjazdem."
+    "page": "https://mintapartments.pl/apartamenty/luksusowy-seaside/",
+    "caption": "Karta apartamentu z galerią i widżetem rezerwacji — wybór dat, gości i bezpłatna anulacja do 7 dni przed przyjazdem."
   },
   {
     "project": "plumm",
-    "src": "/projects/plumm/gallery/01-strona-glowna.webp",
-    "srcSmall": "/projects/plumm/gallery/01-strona-glowna-sm.webp",
+    "src": "/projects/plumm/gallery/01-panel-operacyjny.webp",
+    "srcSmall": "/projects/plumm/gallery/01-panel-operacyjny-sm.webp",
+    "width": 2400,
+    "height": 1500,
+    "page": "https://plumm.pl/#panel",
+    "caption": "Podgląd panelu Plumm — faktury, rozliczenia i CRM w jednym UX (marketingowy mock na landing; pełny panel po logowaniu na app.plumm.pl)."
+  },
+  {
+    "project": "plumm",
+    "src": "/projects/plumm/gallery/02-strona-glowna.webp",
+    "srcSmall": "/projects/plumm/gallery/02-strona-glowna-sm.webp",
     "width": 2400,
     "height": 1500,
     "page": "https://plumm.pl",
-    "caption": "Strona główna Plumm z podglądem aplikacji mobilnej (dochód netto, ostatnia aktywność, skróty do faktur i płatności) oraz wyróżnikami: księgowa na pokładzie, zgodność z RODO, pełna integracja z KSeF, bez ukrytych kosztów."
+    "caption": "Landing Plumm — hub operacyjny firmy: księgowość, CRM, poczta i AI asystent podatkowy 24/7."
   },
   {
     "project": "plumm",
-    "src": "/projects/plumm/gallery/02-cennik.webp",
-    "srcSmall": "/projects/plumm/gallery/02-cennik-sm.webp",
+    "src": "/projects/plumm/gallery/03-cennik.webp",
+    "srcSmall": "/projects/plumm/gallery/03-cennik-sm.webp",
     "width": 2400,
     "height": 1500,
     "page": "https://plumm.pl/cennik-ksiegowosci-online",
-    "caption": "Cennik Plumm z przełącznikami rozliczenia miesięcznego i rocznego oraz netto/brutto, a także planami Darmowy (0 zł), Starter (149 zł/mies.) i polecany Standard (299 zł/mies.) wraz z listą funkcji każdego planu."
+    "caption": "Cennik — plany od 0 zł (Darmowy) do Enterprise; przełącznik miesięczny/roczny i netto/brutto."
   },
   {
     "project": "plumm",
-    "src": "/projects/plumm/gallery/03-ai-asystent.webp",
-    "srcSmall": "/projects/plumm/gallery/03-ai-asystent-sm.webp",
+    "src": "/projects/plumm/gallery/04-ai-asystent.webp",
+    "srcSmall": "/projects/plumm/gallery/04-ai-asystent-sm.webp",
     "width": 2400,
     "height": 1500,
     "page": "https://plumm.pl/ai-asystent-ksiegowy",
-    "caption": "Podstrona AI Asystenta Podatkowego Plumm z hasłem Twój ekspert w kieszeni 24/7, znacznikami zaufania (baza wiedzy 2026, weryfikacja księgowej, RODO compliant, bez karty) oraz sekcją o codziennych problemach JDG i spółek."
+    "caption": "AI Asystent Podatkowy — odpowiedzi po polsku, baza wiedzy 2026, eskalacja do księgowej przy compliance."
+  },
+  {
+    "project": "idrive",
+    "src": "/projects/idrive/gallery/01-strona-glowna.webp",
+    "srcSmall": "/projects/idrive/gallery/01-strona-glowna-sm.webp",
+    "width": 2400,
+    "height": 1500,
+    "page": "",
+    "caption": "Strona główna iDrive Cars — editorial layout, sekcje testów i felietonów, szybkie ładowanie bez WordPressa."
+  },
+  {
+    "project": "idrive",
+    "src": "/projects/idrive/gallery/02-katalog-testow.webp",
+    "srcSmall": "/projects/idrive/gallery/02-katalog-testow-sm.webp",
+    "width": 2400,
+    "height": 1500,
+    "page": "",
+    "caption": "Katalog testów — karty artykułów z miniaturami WEBP, datą i kategorią; struktura pod SEO i indeksację."
+  },
+  {
+    "project": "idrive",
+    "src": "/projects/idrive/gallery/03-artykul-test.webp",
+    "srcSmall": "/projects/idrive/gallery/03-artykul-test-sm.webp",
+    "width": 2400,
+    "height": 1500,
+    "page": "",
+    "caption": "Długi format testu — typografia pod czytanie, galeria zdjęć i responsywny layout pod mobile."
+  },
+  {
+    "project": "agentic",
+    "src": "/projects/agentic/gallery/01-workflow-dashboard.webp",
+    "srcSmall": "/projects/agentic/gallery/01-workflow-dashboard-sm.webp",
+    "width": 2400,
+    "height": 1500,
+    "page": "",
+    "caption": "Dashboard orkiestracji — aktywne workflow, KPI zadań i ostatnie uruchomienia agentów z audytem każdego kroku."
+  },
+  {
+    "project": "agentic",
+    "src": "/projects/agentic/gallery/02-audyt-krokow.webp",
+    "srcSmall": "/projects/agentic/gallery/02-audyt-krokow-sm.webp",
+    "width": 2400,
+    "height": 1500,
+    "page": "",
+    "caption": "Widok audytu — log kto/co/dlaczego dla każdego kroku agenta; human-in-the-loop przy niskiej pewności."
+  },
+  {
+    "project": "agentic",
+    "src": "/projects/agentic/gallery/03-agenci-narzedzia.webp",
+    "srcSmall": "/projects/agentic/gallery/03-agenci-narzedzia-sm.webp",
+    "width": 2400,
+    "height": 1500,
+    "page": "",
+    "caption": "Rejestr agentów i whitelist narzędzi — kontrolowany dostęp zamiast dowolnego shell; szacowanie kosztów modeli."
   }
 ]

@@ -129,35 +129,31 @@ function createSkyDome(skyTex: THREE.Texture) {
 }
 
 export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOptions): Promise<Engine> {
-  const { lowPower, manager } = opts
+  const { lowPower, manager, reducedMotion } = opts
+  const verificationMode =
+    typeof location !== 'undefined' && new URLSearchParams(location.search).has('debug')
 
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: !lowPower,
     alpha: false,
     powerPreference: lowPower ? 'default' : 'high-performance',
-    // Matches src/webgl/createDisplacementEffect.ts — without this, a WebGL
-    // canvas reads back as blank (readPixels/toDataURL/screenshot tooling)
-    // any time the read happens between frames rather than in the same tick
-    // as the draw call, which software-rendering verification (SwiftShader,
-    // very slow per-frame) hits constantly.
-    preserveDrawingBuffer: true,
+    // `?debug=1` verification only — preserveDrawingBuffer costs a full extra
+    // GPU copy every frame in production and is unused by real visitors.
+    preserveDrawingBuffer: verificationMode,
   })
   renderer.setPixelRatio(getDpr(lowPower))
   renderer.setClearColor(0x000000, 1)
   renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.1
+  renderer.toneMappingExposure = 1.18
   renderer.outputColorSpace = THREE.SRGBColorSpace
 
   const scene = new THREE.Scene()
-  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 6000)
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.8, 6000)
   camera.position.set(0, 4, 16)
 
-  // Camera-attached fill light — keeps the ship's near side readable regardless
-  // of where the fixed world "sun" happens to be relative to the chase angle.
-  // (Point lights in three's physically-based lighting need large intensity to
-  // read at these travel distances — inverse-square falloff over ~30-40 units.)
-  const cameraFill = new THREE.PointLight(0xbfd6ff, 1400, 220, 2)
+  // Chase fill — readable charcoal hull without bleaching to clay (640).
+  const cameraFill = new THREE.PointLight(0xd0dcea, 250, 120, 2)
   camera.add(cameraFill)
   scene.add(camera)
 
@@ -209,11 +205,17 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   // The 4K env source has served its purpose once PMREM is baked.
   envSrcTex?.dispose()
 
-  // ─── Lighting — starlight fill + a directional "sun" for specular pop ───────
-  scene.add(new THREE.HemisphereLight(0x8fa6ff, 0x0a0a12, 0.6))
-  const sun = new THREE.DirectionalLight(0xffffff, 2.2)
+  // ─── Lighting — starlight fill + sun spec + cool rim + warm disk bounce ──
+  scene.add(new THREE.HemisphereLight(0x8aa0c8, 0x0a0c10, 0.55))
+  const sun = new THREE.DirectionalLight(0xfff1dc, 1.65)
   sun.position.set(600, 400, 250)
   scene.add(sun)
+  const starRim = new THREE.DirectionalLight(0xb4c6e4, 0.95)
+  starRim.position.set(-420, 260, -380)
+  scene.add(starRim)
+  const diskBounce = new THREE.PointLight(0xffc070, 130, 520, 1.7)
+  diskBounce.position.set(0, 0, 0)
+  scene.add(diskBounce)
 
   // ─── Near-camera dust — sells velocity in otherwise-empty space ────────────
   const dust = createDustField(lowPower)
@@ -233,9 +235,12 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   const composer = new EffectComposer(renderer, { multisampling: lowPower ? 0 : 4 })
   composer.addPass(new RenderPass(scene, camera))
   const bloom = new BloomEffect({
-    intensity: lowPower ? 0.55 : 0.9,
-    luminanceThreshold: 0.65,
-    luminanceSmoothing: 0.3,
+    // Disk/photon-ring sit near white after ACES; a low threshold + mipmap
+    // kernel smeared that gold band straight through the event-horizon disk.
+    // Engines/stars still bloom — they remain well above this cut.
+    intensity: reducedMotion ? 0.14 : lowPower ? 0.22 : 0.28,
+    luminanceThreshold: 0.96,
+    luminanceSmoothing: 0.08,
     mipmapBlur: true,
   })
 
@@ -243,19 +248,15 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   // stays subtle over bright disk/bloom highlights. Kept at the low end of
   // the 0.05–0.08 target range on lowPower (less visible noise to resolve).
   const grain = new NoiseEffect({ premultiply: true })
-  grain.blendMode.opacity.value = lowPower ? 0.05 : 0.07
+  grain.blendMode.opacity.value = reducedMotion ? 0 : lowPower ? 0.03 : 0.05
 
-  // Subtle framing vignette — offset/darkness kept gentle so it reads as
-  // lens falloff, not a tunnel around the ship.
-  const vignette = new VignetteEffect({ offset: 0.32, darkness: 0.55 })
+  const vignette = new VignetteEffect({ offset: 0.3, darkness: 0.62 })
 
-  // Filmic restraint: a touch of contrast, slightly desaturated highlights —
-  // the "not Instagram" grade the brief for this pass calls for.
-  const contrast = new BrightnessContrastEffect({ contrast: 0.06 })
-  const desaturate = new HueSaturationEffect({ saturation: -0.04 })
+  const contrast = new BrightnessContrastEffect({ contrast: 0.08, brightness: 0.01 })
+  const desaturate = new HueSaturationEffect({ saturation: -0.06 })
 
   const cinematicEffects: Effect[] = [bloom, contrast, desaturate, grain, vignette]
-  if (!lowPower) {
+  if (!lowPower && !reducedMotion) {
     // Chromatic aberration — tiny lens-edge color fringing. radialModulation
     // concentrates it at the frame edges (clean center, filmic fringe at the
     // rim) rather than a uniform shift across the whole image.
@@ -268,26 +269,10 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   }
   composer.addPass(new EffectPass(camera, ...cinematicEffects))
 
-  // `?debug=1` verification-only fallback: some headless/automation browser
-  // contexts report document.hidden = true for the tab under test forever
-  // (no real window ever gets focus). Two separate things break in that
-  // case, both worked around only in this mode (real visitors always have
-  // document.hidden === false, so production behavior — pausing the sim
-  // while backgrounded — is completely unchanged):
-  //  1. Chrome never invokes requestAnimationFrame callbacks for a hidden
-  //     page, so the render loop would silently freeze forever with no
-  //     error — scheduleTick() below falls back to setTimeout.
-  //  2. THREE.Timer's Page Visibility integration (timer.connect(document))
-  //     hard-zeroes getDelta() for every update() call while document.hidden
-  //     is true, by design (it exists to avoid huge deltas after a real tab
-  //     switch) — which would leave dt permanently 0 even once (1) is
-  //     worked around, freezing all physics/animation while still rendering
-  //     (mostly) static frames. Skipping connect() in verification mode
-  //     avoids that.
-  const verificationMode = new URLSearchParams(location.search).has('debug')
-
   // ─── RAF loop — THREE.Timer (Clock is deprecated as of r180) ────────────────
   const timer = new THREE.Timer()
+  // `?debug=1` skips Page Visibility (hidden tabs freeze THREE.Timer + RAF).
+  // Production still pauses when the tab is backgrounded.
   if (!verificationMode) timer.connect(document)
   const tickers = new Set<(dt: number, elapsed: number) => void>()
   let raf = 0

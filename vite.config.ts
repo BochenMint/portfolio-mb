@@ -83,6 +83,7 @@ export default defineConfig({
         mbAi: 'mb-ai.html',
         mbAiEn: 'mb-ai-en.html',
         mbAiUa: 'mb-ai-ua.html',
+        notFound: '404.html',
         v5: 'v5.html',
         v6: 'v6.html',
       },

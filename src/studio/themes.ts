@@ -43,6 +43,15 @@ export const themes: ThemeDef[] = [
     fonts: 'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap',
   },
   {
+    id: 'v3',
+    group: 'now',
+    label: 'V3',
+    catalog: 'Las i złoto',
+    note: 'Cięte płaszczyzny, plisy świetlne, pole za szkłem.',
+    fonts:
+      'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap',
+  },
+  {
     id: 'glass',
     group: 'now',
     label: 'Glassmorphism',
@@ -104,15 +113,6 @@ export const themes: ThemeDef[] = [
     note: 'Gęstość informacji, siatka, bez kostiumu terminala.',
     fonts:
       'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap',
-  },
-  {
-    id: 'v3',
-    group: 'archive',
-    label: 'V3',
-    catalog: 'Las i złoto',
-    note: 'Cięte płaszczyzny na elementach, nie na całych sekcjach.',
-    fonts:
-      'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap',
   },
   {
     id: 'v5',

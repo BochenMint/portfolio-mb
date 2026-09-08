@@ -12,6 +12,8 @@ const VISIBLE_MS = 2500
 export function createDiscoveryToast(container: HTMLElement): DiscoveryToast {
   const root = document.createElement('div')
   root.className = 'v4-toast'
+  root.setAttribute('aria-live', 'polite')
+  root.setAttribute('aria-hidden', 'true')
   container.appendChild(root)
 
   let hideTimer = 0
@@ -25,9 +27,11 @@ export function createDiscoveryToast(container: HTMLElement): DiscoveryToast {
       // restarts the transition instead of no-opping.
       void root.offsetWidth
       root.classList.add('is-visible')
+      root.setAttribute('aria-hidden', 'false')
       window.clearTimeout(hideTimer)
       hideTimer = window.setTimeout(() => {
         root.classList.remove('is-visible')
+        root.setAttribute('aria-hidden', 'true')
       }, VISIBLE_MS)
     },
     dispose() {

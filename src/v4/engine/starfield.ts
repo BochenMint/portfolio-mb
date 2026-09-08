@@ -122,6 +122,7 @@ export function createStarfield(lowPower: boolean): Starfield {
     fragmentShader: FRAG,
     transparent: true,
     depthWrite: false,
+    depthTest: true,
     blending: THREE.AdditiveBlending,
   })
 

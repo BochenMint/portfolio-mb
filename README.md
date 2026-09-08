@@ -1,13 +1,17 @@
-# Portfolio MB — Bochen Studio
+# Portfolio MB — Marcin Bochenek
 
-Portfolio **nastawione na konwersję** (React + Vite + GSAP + Lenis): case studies PSR, cennik, brief kwalifikacyjny, sticky CTA, custom cursor (desktop).
+Portfolio konwersyjne (React + Vite + GSAP + Lenis): case studies, cennik, intake, sticky CTA.
 
-Produkty: **Plumm.pl**, **Mintapartments.pl**, **iDrive Cars**, **Agentic OS**.
+**Produkcja:**
+- [marcinbochenek.com](https://marcinbochenek.com) — portfolio IT (V3)
+- [gra.marcinbochenek.com](https://gra.marcinbochenek.com) — gra kosmiczna (V4)
+- [mb-ai.pl](https://mb-ai.pl) — landing automatyzacji AI
+
+Kontakt: `kontakt@marcinbochenek.com` (Cloudflare Email Routing).
 
 ## Uruchomienie
 
-
-Portfolio dev: **http://localhost:5190** (dedykowany port Vite, strictPort — nie używa 5173 ani sąsiednich portów).
+Dev: **http://localhost:5190** (`strictPort`).
 
 ```bash
 npm install
@@ -18,26 +22,21 @@ npm run dev
 
 Build: `npm run build` → `dist/`
 
-Regeneracja screenów produktów (4K WebP): `npm run capture:screens` — viewport 3840×2160, warianty full/hero/card.
+Deploy Mac Mini + Cloudflare Tunnel: patrz [`docs/DEPLOY-MAC-MINI.md`](docs/DEPLOY-MAC-MINI.md).
 
 ## Konfiguracja sprzedaży
 
-| Plik / env | Co ustawić |
-|------------|------------|
-| `src/data/content.ts` | `site.email`, `site.name`, metryki w `results` |
-| `.env` → `VITE_CALENDLY_URL` | Link Cal.com / Calendly — **wszystkie CTA audytu** |
-| `.env` → `VITE_FORM_ENDPOINT` | `https://api.web3forms.com/submit` lub Formspree URL |
-| `.env` → `VITE_FORM_ACCESS_KEY` | Klucz Web3Forms (nie commituj `.env`) |
-| Testimonials | Prawdziwe cytaty + zgoda — patrz `docs/CONVERSION.md` |
+| Env | Co ustawić |
+|-----|------------|
+| `VITE_CONTACT_EMAIL` | `kontakt@marcinbochenek.com` |
+| `VITE_SITE_URL` | `https://marcinbochenek.com` |
+| `VITE_CALENDLY_URL` | Link Cal.com / Calendly |
+| `VITE_FORM_ACCESS_KEY` | Klucz Web3Forms |
+| `VITE_PORTFOLIO_URL` / `VITE_GAME_URL` / `VITE_MB_AI_URL` | Cross-linki między hostami |
 
 ## Stack
 
-- React 19 + TypeScript + Vite
+- React 19 + TypeScript + Vite 8
 - Tailwind CSS v4
-- GSAP ScrollTrigger (scroll-driven, pin horizontal)
-- Lenis (smooth scroll)
-- `prefers-reduced-motion` — animacje wyłączone gdy użytkownik tego wymaga
-
-## Research
-
-Zobacz [docs/RESEARCH.md](./docs/RESEARCH.md) — wzorce z portfolio Awwwards / Codrops 2025–2026.
+- GSAP ScrollTrigger + Lenis
+- Three.js (hero V3 / gra V4)

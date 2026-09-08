@@ -361,11 +361,15 @@ ${['pl_PL', 'en_US', 'uk_UA']
   .map((og) => `    <meta property="og:locale:alternate" content="${og}" />`)
   .join('\n')}
     <meta property="og:image" content="${OG}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="${escAttr(title)}" />
     <meta property="og:site_name" content="${AUTHOR}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${escAttr(title)}" />
     <meta name="twitter:description" content="${escAttr(description)}" />
     <meta name="twitter:image" content="${OG}" />
+    <meta name="twitter:image:alt" content="${escAttr(title)}" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -694,11 +698,13 @@ function patchSitemap(docs) {
   }
 
   const lastmod = PUBLISHED_DEFAULT
+  const landingMod = '2026-08-29'
   const blocks = []
   for (const loc of kept) {
     const links = xhtmlForKeptLoc(loc)
     const extra = links ? `\n${links}` : ''
-    blocks.push(`  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>${extra}\n  </url>`)
+    const mod = loc.includes('/artykuly') || loc.includes('/articles/') || loc.includes('/statti/') ? lastmod : landingMod
+    blocks.push(`  <url>\n    <loc>${loc}</loc>\n    <lastmod>${mod}</lastmod>${extra}\n  </url>`)
   }
 
   const indexLocs = [
@@ -707,7 +713,7 @@ function patchSitemap(docs) {
     [LOCALES.uk.indexPath, indexXhtmlLinks()],
   ]
   for (const [p, links] of indexLocs) {
-    blocks.push(`  <url>\n    <loc>${SITE}${p}</loc>\n    <lastmod>${lastmod}</lastmod>\n${links}\n  </url>`)
+    blocks.push(`  <url>\n    <loc>${SITE}${p}</loc>\n    <lastmod>${landingMod}</lastmod>\n${links}\n  </url>`)
   }
   for (const doc of docs) {
     for (const locale of ['pl', 'en', 'uk']) {

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { fit2dCanvas } from '../lib/pointerSurface'
 import { useTheme } from './ThemeContext'
 
 /** Aurora ribbons + operator grid. Distinct from Massive (space) and Glass (orbs). */
@@ -20,12 +21,9 @@ export function V2Field() {
     let t = 0
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.6)
-      w = window.innerWidth
-      h = window.innerHeight
-      canvas.width = w * dpr
-      canvas.height = h * dpr
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const size = fit2dCanvas(canvas, ctx, 1.6)
+      w = size.w
+      h = size.h
     }
 
     const tick = () => {

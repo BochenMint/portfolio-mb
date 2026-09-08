@@ -1,5 +1,6 @@
 import type { HeroScene, HeroSceneOptions } from '../webgl/hero/heroSceneTypes'
 import { getDpr, HERO_ROTATION_DAMP } from '../webgl/hero/heroSceneTypes'
+import { pointerOnElement } from '../lib/pointerSurface'
 
 /**
  * Agentic OS — live particle swarm ("north-studio"-style generative canvas).
@@ -455,8 +456,9 @@ export async function createAgenticSwarmScene(
   // Window-level pointer tracking — the swarm reads as ambient/alive even
   // when the cursor isn't directly over its (often small) card.
   const onPointerMove = (e: PointerEvent) => {
-    const nx = (e.clientX / window.innerWidth) * 2 - 1
-    const ny = (e.clientY / window.innerHeight) * 2 - 1
+    const p = pointerOnElement(e.clientX, e.clientY, canvas)
+    const nx = p.nx * 2 - 1
+    const ny = p.ny * 2 - 1
     targetTiltY = nx * MAX_TILT
     targetTiltX = ny * MAX_TILT
   }

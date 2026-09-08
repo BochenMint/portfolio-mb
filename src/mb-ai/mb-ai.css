@@ -1,0 +1,481 @@
+/* ───────────────────────────────────────────────────────────────────────────
+
+   MB AI — landing mb-ai.pl. Dark luminous, angular layout.
+
+   Reużywa tokenów Tarragon Sanctum z index.css. Bez pill clusters.
+
+   ─────────────────────────────────────────────────────────────────────────── */
+
+
+
+@theme {
+
+  --font-grotesk: 'Space Grotesk', 'DM Sans', system-ui, sans-serif;
+
+}
+
+
+
+:root {
+
+  --mbai-line: color-mix(in srgb, var(--color-paper) 10%, transparent);
+
+  --mbai-line-bright: color-mix(in srgb, var(--color-paper) 22%, transparent);
+
+  --mbai-surface: #0d120f;
+
+}
+
+
+
+.mbai-root {
+
+  font-family: 'DM Sans', system-ui, sans-serif;
+
+  background: var(--color-ink);
+
+  color: var(--color-paper);
+
+}
+
+
+
+.mbai-skip {
+
+  position: absolute;
+
+  left: -9999px;
+
+  top: 0.75rem;
+
+  z-index: 200;
+
+  padding: 0.55rem 0.9rem;
+
+  background: var(--color-accent);
+
+  color: var(--color-on-accent);
+
+  font-weight: 650;
+
+  text-decoration: none;
+
+}
+
+.mbai-skip:focus {
+
+  left: 1rem;
+
+}
+
+
+
+/* ── Typografia ────────────────────────────────────────────────────────── */
+
+.mbai-display {
+
+  font-family: var(--font-grotesk);
+
+  font-weight: 500;
+
+  letter-spacing: -0.035em;
+
+  line-height: 1.05;
+
+}
+
+
+
+.mbai-serif-accent {
+
+  font-family: var(--font-headline);
+
+  font-style: italic;
+
+  font-weight: 400;
+
+  letter-spacing: -0.01em;
+
+  color: var(--color-accent-bright);
+
+}
+
+
+
+.mbai-label {
+
+  font-family: var(--font-mono);
+
+  font-size: 10.5px;
+
+  font-weight: 500;
+
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+
+  color: var(--color-ink-muted);
+
+}
+
+
+
+.mbai-mono {
+
+  font-family: var(--font-mono);
+
+}
+
+
+
+/* ── Hero atmosphere (CSS fallback pod WebGL) ─────────────────────────── */
+
+.mbai-hero-atmo {
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+
+    repeating-linear-gradient(
+
+      90deg,
+
+      rgba(255, 255, 255, 0.05) 0px,
+
+      rgba(212, 165, 116, 0.10) 3px,
+
+      rgba(0, 0, 0, 0.42) 13px,
+
+      rgba(0, 0, 0, 0.6) 24px,
+
+      rgba(255, 255, 255, 0.05) 26px
+
+    ),
+
+    radial-gradient(58% 52% at 76% 24%, #d4a574 0%, #b8734a 22%, #3d6b72 46%, rgba(20, 32, 28, 0.85) 72%, transparent 100%),
+
+    radial-gradient(40% 36% at 14% 88%, rgba(107, 74, 50, 0.5), transparent 70%),
+
+    radial-gradient(55% 60% at 10% 12%, rgba(61, 107, 114, 0.9), transparent 70%),
+
+    #0a100d;
+
+}
+
+
+
+.mbai-hero-atmo::after {
+
+  content: '';
+
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+
+    105deg,
+
+    rgba(10, 16, 13, 0.92) 0%,
+
+    rgba(10, 16, 13, 0.55) 42%,
+
+    rgba(10, 16, 13, 0.25) 68%,
+
+    transparent 100%
+
+  );
+
+}
+
+
+
+/* ── Proof strip ───────────────────────────────────────────────────────── */
+
+.mbai-proof-strip {
+
+  border-block: 1px solid var(--mbai-line);
+
+  background: var(--mbai-surface);
+
+}
+
+
+
+.mbai-proof-item {
+
+  border-right: 1px solid var(--mbai-line);
+
+  padding: 1.5rem 1.25rem;
+
+  transition: background 0.25s ease;
+
+}
+
+
+
+.mbai-proof-shot {
+
+  display: block;
+
+  width: calc(100% + 2.5rem);
+
+  max-width: none;
+
+  margin: -1.5rem -1.25rem 1rem;
+
+  height: auto;
+
+  aspect-ratio: 16 / 10;
+
+  object-fit: cover;
+
+}
+
+
+
+.mbai-proof-item:last-child {
+
+  border-right: none;
+
+}
+
+
+
+@media (hover: hover) {
+
+  .mbai-proof-item:hover {
+
+    background: color-mix(in srgb, var(--color-accent) 6%, transparent);
+
+  }
+
+}
+
+
+
+/* ── How it works — vertical rail ──────────────────────────────────────── */
+
+.mbai-steps {
+
+  position: relative;
+
+}
+
+
+
+.mbai-steps::before {
+
+  content: '';
+
+  position: absolute;
+
+  left: 0.6875rem;
+
+  top: 0.5rem;
+
+  bottom: 0.5rem;
+
+  width: 1px;
+
+  background: var(--mbai-line-bright);
+
+}
+
+
+
+@media (min-width: 768px) {
+
+  .mbai-steps::before {
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    top: 2rem;
+
+    bottom: 2rem;
+
+  }
+
+}
+
+
+
+.mbai-step-node {
+
+  width: 1.375rem;
+
+  height: 1.375rem;
+
+  border: 1px solid var(--color-accent);
+
+  background: var(--color-ink);
+
+  display: grid;
+
+  place-items: center;
+
+  flex-shrink: 0;
+
+}
+
+
+
+.mbai-step-node span {
+
+  font-family: var(--font-mono);
+
+  font-size: 9px;
+
+  font-weight: 500;
+
+  color: var(--color-accent);
+
+}
+
+
+
+/* ── Contact card ──────────────────────────────────────────────────────── */
+
+.mbai-contact-card {
+
+  border: 1px solid var(--mbai-line);
+
+  background: color-mix(in srgb, var(--mbai-surface) 80%, transparent);
+
+}
+
+
+
+.mbai-input,
+
+.mbai-textarea {
+
+  width: 100%;
+
+  border: 1px solid var(--mbai-line);
+
+  background: color-mix(in srgb, var(--color-ink) 60%, transparent);
+
+  color: var(--color-paper);
+
+  padding: 0.75rem 1rem;
+
+  font-size: 0.9375rem;
+
+  line-height: 1.5;
+
+  transition: border-color 0.2s ease;
+
+}
+
+
+
+.mbai-input:focus,
+
+.mbai-textarea:focus {
+
+  outline: none;
+
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+
+}
+
+
+
+.mbai-textarea {
+
+  resize: vertical;
+
+  min-height: 7rem;
+
+}
+
+
+
+.mbai-input::placeholder,
+
+.mbai-textarea::placeholder {
+
+  color: var(--color-ink-muted);
+
+}
+
+
+
+/* ── Fade-in ───────────────────────────────────────────────────────────── */
+
+@keyframes mbai-fade-up {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(14px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+  }
+
+}
+
+
+
+.mbai-fade-up {
+
+  animation: mbai-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+}
+
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  .mbai-fade-up {
+
+    animation: none;
+
+  }
+
+}
+
+.mbai-lang,
+.i18n-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  font-family: var(--font-grotesk);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.i18n-lang a {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.48;
+  padding: 0.25rem 0.35rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.i18n-lang a:hover,
+.i18n-lang a[aria-current='page'] {
+  opacity: 1;
+}
+
+.i18n-lang-sep {
+  opacity: 0.28;
+}
+
+

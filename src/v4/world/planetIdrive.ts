@@ -67,7 +67,7 @@ const BASALT_FRAG = /* glsl */ `
     // direction so cratered/ridged patches catch a bit of extra light.
     vec3 n = normalize(vNormalW + (vec3(micro, macro, relief) - 0.5) * 0.12 + fineWobble * 0.1);
     float diffuse = max(dot(n, SUN_DIR), 0.0);
-    vec3 color = base * (0.15 + diffuse * 0.95);
+    vec3 color = base * (0.55 + diffuse * 0.95);
 
     gl_FragColor = vec4(color, 1.0);
     ${TONE_OUTPUT_GLSL}

@@ -124,6 +124,15 @@
   letter-spacing: 0.03em;
 }
 
+.v4-hud__fps {
+  bottom: 1.25rem;
+  left: 1.25rem;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .v4-hud__pips {
   margin-top: 0.55rem;
   display: flex;
@@ -159,13 +168,65 @@
   text-transform: uppercase;
   color: var(--color-accent);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
 .v4-hud__warning.is-visible {
   opacity: 1;
+  visibility: visible;
   animation: v4-warning-pulse 0.9s ease-in-out infinite;
+}
+
+.v4-hud__start-prompt {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(0.85rem, 2.8vw, 1rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-paper);
+  text-align: center;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 82%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  opacity: 1;
+  animation: v4-start-pulse 2.4s ease-in-out infinite;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    animation 0.5s ease;
+  pointer-events: none;
+  max-width: min(90vw, 22rem);
+  line-height: 1.5;
+}
+
+.v4-hud__start-prompt.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, calc(-50% + 0.5rem));
+  animation: none;
+}
+
+@keyframes v4-start-pulse {
+  0%,
+  100% {
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+  50% {
+    border-color: color-mix(in srgb, var(--color-accent-bright) 70%, transparent);
+    box-shadow: 0 0 32px color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+}
+
+.v4-hud__start-keys {
+  color: var(--color-accent-bright);
+  font-weight: 600;
 }
 
 @keyframes v4-warning-pulse {
@@ -188,7 +249,7 @@
   font-size: 11px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-ink-muted);
+  color: color-mix(in srgb, var(--color-paper) 78%, transparent);
   white-space: nowrap;
   opacity: 0;
   transition:
@@ -251,7 +312,12 @@
 
 .v4-loading.is-hidden {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
+}
+
+.v4-loading.is-error .v4-loading__bar {
+  display: none;
 }
 
 .v4-loading__label {
@@ -369,6 +435,140 @@
   border-color: var(--color-accent);
 }
 
+.v4-fallback__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin-top: 2rem;
+}
+
+.v4-fallback__cta {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  text-decoration: none;
+  padding: 0.7rem 1.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.v4-fallback__cta:hover {
+  background: var(--color-accent-bright);
+}
+
+.v4-fallback__hint {
+  margin-top: 1.75rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+}
+
+.v4-fallback__hint a {
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.v4-fallback__hint a:hover {
+  border-color: var(--color-accent);
+}
+
+/* ─── Touch flight controls (coarse pointer) ───────────────────────────── */
+
+.v4-touch {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.v4-touch__stick-zone {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(42vw, 200px);
+  height: min(42vw, 200px);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.v4-touch__stick-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 104px;
+  height: 104px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--color-paper) 22%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 45%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+.v4-touch__stick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-accent) 75%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+
+.v4-touch__actions {
+  position: absolute;
+  right: 1rem;
+  bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.55rem;
+  pointer-events: auto;
+}
+
+.v4-touch__btn {
+  border: 1px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 70%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.25rem;
+  min-width: 5.75rem;
+  min-height: 48px;
+  touch-action: none;
+  user-select: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.v4-touch__btn--thrust {
+  padding: 1.05rem 1.35rem;
+  font-size: 12px;
+  min-height: 52px;
+}
+
+.v4-touch__btn.is-active,
+.v4-touch__btn:active {
+  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  border-color: var(--color-accent-bright);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
 /* ─── Discovery toast ──────────────────────────────────────────────────── */
 
 .v4-toast {
@@ -386,13 +586,16 @@
   color: var(--color-accent-bright);
   text-shadow: 0 0 16px color-mix(in srgb, var(--color-accent) 55%, transparent);
   opacity: 0;
+  visibility: hidden;
   transition:
     opacity 0.5s ease,
-    transform 0.5s ease;
+    transform 0.5s ease,
+    visibility 0.5s ease;
 }
 
 .v4-toast.is-visible {
   opacity: 1;
+  visibility: visible;
   transform: translate(-50%, 0);
 }
 
@@ -663,6 +866,29 @@
   color: var(--color-accent-bright);
 }
 
+.v4-project-panel__live {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-paper);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.v4-project-panel__live:hover {
+  border-color: var(--color-paper);
+  color: var(--color-accent-bright);
+}
+
+.v4-project-panel__status {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  letter-spacing: 0.02em;
+  max-width: 55%;
+  line-height: 1.35;
+}
+
 /* ─── Event-horizon flash + game-over / completion overlays ────────────── */
 
 @keyframes v4-horizon-flash {
@@ -710,16 +936,20 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: color-mix(in srgb, var(--color-ink) 90%, transparent);
-  backdrop-filter: blur(12px);
+  background: transparent;
+  backdrop-filter: none;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 .v4-overlay.is-visible {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
+  background: color-mix(in srgb, var(--color-ink) 90%, transparent);
+  backdrop-filter: blur(12px);
 }
 
 .v4-overlay__card {
@@ -738,6 +968,10 @@
   background: none;
   backdrop-filter: none;
   z-index: 24;
+}
+.v4-overlay--completion.is-visible {
+  background: none;
+  backdrop-filter: none;
 }
 .v4-overlay--completion .v4-overlay__card,
 .v4-overlay--completion .v4-overlay__card--wide {
@@ -838,9 +1072,19 @@
 }
 
 .v4-overlay__save {
+  margin: 0 0 2rem;
+}
+
+.v4-overlay__save-row {
   display: flex;
   gap: 0.6rem;
-  margin: 0 0 2rem;
+}
+
+.v4-overlay__nick-hint {
+  margin: 0.45rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+  text-align: left;
 }
 
 .v4-overlay__nick {
@@ -930,6 +1174,17 @@
   .v4-hud__mission {
     display: none;
   }
+  .v4-hud__start-prompt {
+    top: 42%;
+    font-size: 0.78rem;
+    padding: 0.7rem 1rem;
+  }
+  .v4-hud__legend {
+    white-space: normal;
+    text-align: center;
+    max-width: 92vw;
+    bottom: 7.5rem;
+  }
   .v4-hud__mission-status {
     top: 0.85rem;
     min-width: 9rem;
@@ -959,7 +1214,7 @@
     left: 0.75rem;
     bottom: 0.75rem;
   }
-  .v4-overlay__save {
+  .v4-overlay__save-row {
     flex-direction: column;
   }
 }
@@ -973,5 +1228,11 @@
   .v4-hud__warning.is-visible {
     animation: none;
     color: var(--color-coral);
+  }
+  .v4-hud__start-prompt {
+    animation: none;
+  }
+  .v4-loading {
+    transition: none;
   }
 }

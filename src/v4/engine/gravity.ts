@@ -16,23 +16,20 @@ import { BLACK_HOLE_POS } from './world-anchors'
  *
  * Numerically verified curve (falloff = 1 for r <= 250; GM and the falloff
  * band are unchanged by the visual black-hole rescale — only EVENT_HORIZON_R
- * below moved, from 26 to 44, to stay just outside the new, much bigger
- * visual horizon (world/blackHole.ts HORIZON_R 36)):
+ * below tracks world/blackHole.ts HORIZON_R (now 124)):
  *  - a(300) ≈ 1.26 u/s^2 — light drift, easy correction, edge of the falloff band.
  *  - a(150) ≈ 5.33 u/s^2 — clearly felt, needs active correction, still flyable.
- *  - a(95)  ≈ 13.3 u/s^2 (0.3x thrust) — HUD fairness-warning threshold
+ *  - a(95)  ≈ 13.3 u/s^2 (0.25x thrust) — HUD fairness-warning threshold
  *    ("UWAGA: STUDNIA GRAWITACYJNA", ui/hud.ts).
- *  - a(52)  ≈ 44 u/s^2 — equal to MAIN_THRUST_ACCEL (44, ship/controls.ts):
+ *  - a(47)  ≈ 54 u/s^2 — equal to MAIN_THRUST_ACCEL (54, ship/controls.ts):
  *    the force-balance point of no return sits at r = sqrt(GM/thrust) =
- *    sqrt(120000/44) ≈ 52u, where full outward thrust can no longer even
+ *    sqrt(120000/54) ≈ 47u, where full outward thrust can no longer even
  *    hold position, let alone climb.
- *  - a(50)  ≈ 48 u/s^2 (~1.09x thrust) — just inside the force-balance
+ *  - a(45)  ≈ 59 u/s^2 (~1.09x thrust) — just inside the force-balance
  *    radius, already doomed without prior outward speed.
- *  - a(44)  ≈ 62 u/s^2 (~1.4x thrust) — EVENT_HORIZON_R itself (game over).
- *    IMPORTANT: the margin between the force-balance point (52u) and the
- *    death radius (44u) is now only 8 units — thin. Cross under ~52u without
- *    already carrying real outward speed and there is very little room left
- *    to react before the horizon ends the run.
+ *  - a(58)  ≈ 36 u/s^2 — EVENT_HORIZON_R itself (game over). The margin
+ *    between the force-balance point (~47u) and the death radius (58u) is
+ *    ~11 units — thin but reactable with the faster ship.
  *
  * Energy check (work-energy integral of a(r) from r0 out to 600u, the
  * radius past which gravity is fully spent — this integral only depends on
@@ -54,10 +51,9 @@ const FALLOFF_START = 250
 /** Pull fades to exactly zero by this radius — free flight beyond it. */
 const FALLOFF_END = 600
 
-/** Gameplay game-over trigger — just outside the visual horizon (36u,
- * world/blackHole.ts HORIZON_R). Note the force-balance radius (~52u, see
- * doc-block above) is only 8u further out — a thin margin. */
-export const EVENT_HORIZON_R = 44
+/** Gameplay game-over trigger — just outside the visual horizon mesh (100u)
+ * and inside the photon ring (~114u) in world/blackHole.ts. */
+export const EVENT_HORIZON_R = 108
 
 /** Floor on r so the accel doesn't spike toward infinity this close to the
  * singularity — irrelevant in practice since EVENT_HORIZON_R (26) always

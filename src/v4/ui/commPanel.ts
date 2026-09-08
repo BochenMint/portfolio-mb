@@ -40,7 +40,7 @@ function typeText(el: HTMLElement, text: string, reducedMotion: boolean): () => 
  * human photo: a stylized frame with a thin amber border and a small
  * canvas-drawn animated waveform standing in for a voice signal.
  */
-export function createCommPanel(container: HTMLElement, opts: { reducedMotion: boolean }): CommPanel {
+export function createCommPanel(container: HTMLElement, opts: { reducedMotion: boolean; startCollapsed?: boolean }): CommPanel {
   const root = document.createElement('div')
   root.className = 'v4-comm'
   root.innerHTML = `
@@ -165,6 +165,7 @@ export function createCommPanel(container: HTMLElement, opts: { reducedMotion: b
   renderBoard()
   scheduleLines()
   startWave()
+  if (opts.startCollapsed) collapse()
 
   return {
     dismiss() {

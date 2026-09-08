@@ -49,7 +49,7 @@ const FRAG = /* glsl */ `
     // Faint day-side lift so the lit hemisphere doesn't look flat black.
     vec3 n = normalize(vNormalW);
     float diffuse = max(dot(n, SUN_DIR), 0.0);
-    color += baseDark * diffuse * 1.4;
+    color += baseDark * (0.55 + diffuse * 1.6);
 
     // Slow twinkle so the city grid doesn't look static from orbit.
     float coverage = clamp(district * 0.6 + network + cityLum, 0.0, 1.0);

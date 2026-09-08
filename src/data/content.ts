@@ -64,6 +64,32 @@ export type ContactField = {
   options?: string[]
 }
 
+/** Ignoruje placeholdery z .env.example — puste / cal.com root nie są linkiem audytu. */
+function normalizeCalendlyUrl(raw: string | undefined): string {
+  const url = (raw || '').trim()
+  if (!url) return ''
+
+  try {
+    const { hostname, pathname } = new URL(url)
+    const isSchedulerHost =
+      hostname === 'cal.com' ||
+      hostname === 'www.cal.com' ||
+      hostname === 'calendly.com' ||
+      hostname === 'www.calendly.com'
+    if (!isSchedulerHost) return url
+
+    const bareRoot = pathname === '/' || pathname === ''
+    if (bareRoot) return ''
+
+    const placeholderSlug = /\/(twoj-link|your-user)(\/|$)/i.test(pathname)
+    if (placeholderSlug) return ''
+
+    return url
+  } catch {
+    return ''
+  }
+}
+
 export const site = {
   name: 'Marcin Bochenek',
   role: 'Premium IT studio · systemy, automatyzacje, strony konwertujące',
@@ -74,15 +100,15 @@ export const site = {
   photoHeight: 1024,
   headline: ['Marcin', 'Bochenek'],
   subhead:
-    'Projektuję i wdrażam systemy, które zdejmują pracę z właściciela: nowoczesna strona, która sprzedaje, mniej ręcznej obsługi, automatyzacje z kontrolą.',
+    'Projektuję i wdrażam systemy, które zdejmują pracę z właściciela: strona, która zbiera zapytania, mniej ręcznej obsługi, automatyzacje z kontrolą człowieka.',
   valueProp:
-    'Buduję nowoczesne strony, które sprzedają — i narzędzia, które za nimi pracują w produkcji: direct booking, panele operacyjne, AI z kontrolą, pomiar przed/po.',
+    'Buduję strony, które zbierają zapytania i sprzedają — oraz narzędzia, które za nimi pracują: rezerwacje na własnej stronie, panel zamiast Excela, automatyzacja z kontrolą człowieka, pomiar przed i po.',
   aboutQuote:
-    'Nie sprzedaję slajdów — wdrażam to, co działa w niedzielę o 23:00, gdy nikt z biura nie odbiera.',
+    'Nie sprzedaję slajdów — wdrażam to, co działa poza godzinami biura, gdy nikt z zespołu nie odbiera.',
   aboutLead:
-    'Jestem builderem: najpierw liczę godziny i PLN, potem kod. React, Next.js, Astro, integracje i AI — mierzalne efekty po wdrożeniu, nie obietnice z pitch decka.',
+    'Jestem builderem: najpierw liczę godziny i PLN, potem kod. Strony, panele i automatyzacje — mierzalne efekty po wdrożeniu, nie obietnice z prezentacji.',
   aboutAside:
-    'Polska, zdalnie i on-site w Trójmieście. Odpowiadam w jeden dzień roboczy. Projekty od 25 000 PLN, gdy ROI ma sens po obu stronach — zwykle gdy odzyskujesz 8+ godzin miesięcznie lub realnie obniżasz koszt obsługi.',
+    'Polska, zdalnie i on-site w Trójmieście. Odpowiadam w jeden dzień roboczy. Mała firma dostaje sensowną stronę firmową od 6 500 PLN (do 5 podstron, bez szablonu z marketplace); lejki konwersji i systemy operacyjne — od 25 000 PLN, gdy ROI ma sens po obu stronach.',
   ctaPrimary: 'Umów 20-min audyt',
   ctaSecondary: 'Zobacz realizacje',
   ctaCalendly: 'Umów 20-min audyt',
@@ -90,28 +116,33 @@ export const site = {
     line1: '20 minut audytu',
     line2: 'ile godzin oddajesz sobie?',
   },
-  email: import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@bochen.studio',
-  calendly: import.meta.env.VITE_CALENDLY_URL || '',
+  email: import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@marcinbochenek.com',
+  calendly: normalizeCalendlyUrl(import.meta.env.VITE_CALENDLY_URL),
   github: 'https://github.com/BochenMint',
+  siteUrl: import.meta.env.VITE_SITE_URL || 'https://marcinbochenek.com',
+  portfolioUrl: import.meta.env.VITE_PORTFOLIO_URL || 'https://marcinbochenek.com',
+  mbAiUrl: import.meta.env.VITE_MB_AI_URL || 'https://mb-ai.pl',
+  gameUrl: import.meta.env.VITE_GAME_URL || 'https://gra.marcinbochenek.com',
   location: 'Polska · zdalnie',
   responseTime: 'Odpowiedź w 1 dzień roboczy',
-  icpBadge: 'Projekty od 25 000 PLN · właściciele i operatorzy',
+  icpBadge: 'Strony firmowe od 6 500 PLN · lejki konwersji od 25 000 PLN',
+  icpBadgeShort: 'Od 6 500 PLN · strona firmowa',
 }
 
 export const navLinks = [
-  { href: '#about', label: 'O mnie' },
-  { href: '#services', label: 'Co robię' },
-  { href: '#work', label: 'Realizacje' },
-  { href: '#pricing', label: 'Pakiety' },
-  { href: '#contact', label: 'Kontakt' },
+  { href: '#o-mnie', label: 'O mnie' },
+  { href: '#uslugi', label: 'Co robię' },
+  { href: '#realizacje', label: 'Realizacje' },
+  { href: '#cennik', label: 'Pakiety' },
+  { href: '#kontakt', label: 'Kontakt' },
 ]
 
 export const menuLinks = [
-  { href: '#about', label: 'O mnie', num: '01' },
-  { href: '#services', label: 'Co robię', num: '02' },
-  { href: '#work', label: 'Realizacje', num: '03' },
-  { href: '#pricing', label: 'Pakiety', num: '04' },
-  { href: '#contact', label: 'Kontakt', num: '05' },
+  { href: '#o-mnie', label: 'O mnie', num: '01' },
+  { href: '#uslugi', label: 'Co robię', num: '02' },
+  { href: '#realizacje', label: 'Realizacje', num: '03' },
+  { href: '#cennik', label: 'Pakiety', num: '04' },
+  { href: '#kontakt', label: 'Kontakt', num: '05' },
 ]
 
 export const sections = {
@@ -138,7 +169,7 @@ export const sections = {
   pricing: {
     num: '04',
     title: 'Pakiety i próg wejścia',
-    lead: 'Widełki przed rozmową, żeby odsiać projekty bez sensu ekonomicznego i wejść od razu w liczby.',
+    lead: 'Widełki przed rozmową — od wizytówki dla małej firmy po system operacyjny. Każdy pakiet ma jasny zakres stron i funkcji; bez ukrytych kosztów i bez szablonu z marketplace.',
   },
   testimonials: {
     num: '06',
@@ -164,16 +195,16 @@ export const results: ResultMetric[] = [
   {
     value: '8–15 h',
     label: 'mniej na mailach i WhatsApp od gości / mies.*',
-    hint: 'Concierge + direct booking (operator STR)',
+    hint: 'Asystent dla gości + rezerwacje na własnej stronie',
   },
   {
     value: '10–15%',
     label: 'taniej dla gościa vs Booking/Airbnb',
-    hint: 'Mint Apartments — direct booking',
+    hint: 'Mint Apartments — rezerwacje na własnej stronie',
   },
   {
     value: '12–20 h',
-    label: 'mniej na fakturach i JPK / mies.*',
+    label: 'mniej na fakturach i deklaracjach / mies.*',
     hint: 'JDG z Plumm vs Excel + osobne programy',
   },
   {
@@ -196,50 +227,50 @@ export const proofProducts: ProofProduct[] = [
 export const services = [
   {
     num: '01',
-    title: 'Nowoczesna strona, która sprzedaje',
+    title: 'Strona firmowa i lejek konwersji',
     description:
-      'Landing lub strona firmowa pod konwersję: szybkość, techniczne SEO, formularze kwalifikujące leady zamiast ogólnego „napisz do nas”. Dla hoteli i najmu krótkoterminowego dochodzi direct booking jako specjalizacja — np. rezerwacja bez prowizji OTA (Previo).',
-    tags: ['Konwersja', 'Astro / Next.js', 'SEO'],
-    outcome: 'Strona, która realnie sprzedaje — nie wizytówka',
+      'Dla małej firmy — solidna wizytówka z formularzem i jasnym wezwaniem do działania, żeby klienci trafiali do Ciebie, nie w próżnię. Gdy rośniesz — strona pod sprzedaż, kwalifikacja zapytań i rezerwacje na własnej domenie (taniej niż na Booking.com). Wizytówka to nie pełny silnik sprzedaży; rozbudowę planujemy od początku.',
+    tags: ['Konwersja', 'Szybka strona', 'Widoczność w Google'],
+    outcome: 'Od wizytówki po stronę, która sprzedaje',
     timeline: '2–6 tygodni',
-    from: 'od 25 000 PLN',
+    from: 'od 6 500 PLN',
     deliverables: [
-      'Projekt i wdrożenie strony (React / Astro / Next.js)',
-      'Formularz kwalifikujący leady zamiast ogólnego kontaktu',
-      'SEO techniczne i wydajność (Core Web Vitals)',
-      'Pomiar konwersji po starcie i pierwsze poprawki',
+      'Do 5 podstron (np. start, oferta, o firmie, realizacje, kontakt) — projekt pod Twoją markę, nie szablon z marketplace',
+      'Formularz kontaktowy z powiadomieniami — kwalifikacja zapytań w pakiecie Conversion Build',
+      'Szybkość na telefonie, podstawowe SEO on-page i pomiar zapytań po starcie',
+      'Ścieżka rozbudowy: landingi, rezerwacje na własnej stronie, pełny lejek — w Conversion Build',
     ],
   },
   {
     num: '02',
     title: 'Panel i integracje zamiast Excela',
     description:
-      'Faktury, kalendarze, smart locki, eksporty JPK — jeden przepływ zamiast pięciu kartek i pięciu logowań. Zespół robi to samo w 10 minut, nie w 2 godziny w niedzielę.',
-    tags: ['KSeF', 'PMS', 'Workflow'],
+      'Faktury, kalendarze rezerwacji, zamki do drzwi, deklaracje podatkowe — jeden przepływ zamiast pięciu kartek i pięciu logowań. Zespół robi to samo w 10 minut, nie w dwóch godzinach ręcznej obsługi.',
+    tags: ['E-faktury', 'Kalendarze', 'Jeden proces'],
     outcome: 'Koniec z Excelem i pięcioma logowaniami',
     timeline: '6–12 tygodni',
     from: 'wycena po audycie',
     deliverables: [
-      'Panel operacyjny lub integracja z istniejącym systemem',
-      'Integracje: faktury / KSeF, kalendarze / PMS, smart locki, eksporty JPK',
+      'Panel operacyjny lub integracja z programem, którego już używasz',
+      'Połączenia: e-faktury, kalendarze rezerwacji, zamki, wysyłka deklaracji do urzędu',
       'Jeden przepływ danych zamiast osobnych logowań',
-      'Staging i szkolenie zespołu przed startem',
+      'Wersja testowa i szkolenie zespołu przed startem na żywo',
     ],
   },
   {
     num: '03',
     title: 'AI, które zna Twoją ofertę',
     description:
-      'Concierge 24/7, asystent księgowy, agenci z whitelistą narzędzi i pełnym audytem kroków. Mniej telefonów „gdzie jest kod?” — eskalacja do człowieka, gdy trzeba.',
-    tags: ['Concierge', 'Asystent', 'Audyt'],
+      'Asystent dla gości 24/7, pomocnik księgowy, automatyzacja powtarzalnych zadań — z kontrolą człowieka i pełnym zapisem każdego kroku. Mniej telefonów „gdzie jest kod?” — eskalacja do człowieka, gdy trzeba.',
+    tags: ['Asystent 24/7', 'Obsługa klienta', 'Pełny audyt'],
     outcome: 'Obsługa 24/7 bez powiększania zespołu',
     timeline: '4–10 tygodni',
     from: 'wycena po audycie',
     deliverables: [
-      'Agent AI z whitelistą narzędzi i zdefiniowanym zakresem',
-      'Log każdego kroku — audyt kto/co/dlaczego',
+      'Asystent AI z jasno określonym zakresem — tylko dozwolone akcje',
+      'Zapis każdego kroku — wiadomo kto, co i dlaczego zrobił',
       'Eskalacja do człowieka przy niskiej pewności',
-      'Szacowanie kosztów modeli przed wdrożeniem na produkcję',
+      'Szacunek kosztów przed wdrożeniem na żywo',
     ],
   },
 ]
@@ -260,15 +291,31 @@ export const pricingPackages: PricingPackage[] = [
     proof: 'Kwota sprintu może zostać zaliczona na wdrożenie, jeśli obie strony widzą sens po audycie.',
   },
   {
+    name: 'Strona firmowa',
+    range: '6 500–12 000 PLN',
+    qualifier:
+      'Do 5 podstron, formularz, podstawowe SEO — custom pod Twoją markę (Astro/Next), nie szablon za 2–4 tys. z AI ani WordPressa z ThemeForest.',
+    bestFor:
+      'Mała firma, freelancer lub lokalny biznes: potrzebujesz profesjonalnej strony, formularza kontaktowego i jasnego CTA — bez budżetu na pełny lejek konwersji ani rezerwacji na własnej domenie.',
+    deliverables: [
+      'do 5 podstron: start, oferta, o firmie, realizacje/kontakt (zakres ustalamy na audycie)',
+      'formularz kontaktowy z powiadomieniami i podstawową ochroną przed spamem',
+      'projekt pod markę, responsywność, mapa i godziny — to, co klient musi zobaczyć',
+      'szybkość na telefonie (Core Web Vitals), SEO on-page i pomiar zapytań po starcie',
+    ],
+    proof:
+      'Poza zakresem: copywriting od zera, blog, wielojęzyczność, integracje CRM, landingi kampanii — to dopłaty lub pakiet Conversion Build. Gdy zapytań przybywa, rozszerzamy o kwalifikację i rezerwacje na własnej stronie.',
+  },
+  {
     name: 'Conversion Build',
     range: '25 000–60 000 PLN',
-    qualifier: 'Najlepszy próg startu dla strony, która ma sprzedawać, nie tylko wyglądać.',
+    qualifier: 'Gdy strona ma sprzedawać lub rezerwować — nie tylko informować.',
     bestFor:
-      'Firma premium potrzebuje nowej strony, direct bookingu, formularzy kwalifikujących lub ścieżki sprzedaży z analityką.',
+      'Firma premium potrzebuje nowej strony, rezerwacji na własnej domenie, formularzy kwalifikujących lub ścieżki sprzedaży z pomiarem wyników.',
     deliverables: [
       'strategia komunikacji i struktura strony',
-      'projekt i wdrożenie React / Astro / Next.js',
-      'formularz leadowy, CTA, SEO techniczne',
+      'projekt i wdrożenie strony pod sprzedaż',
+      'formularz zapytań, wezwania do działania, widoczność w Google',
       'pomiar konwersji i poprawki po starcie',
     ],
     proof: 'Zakres zamykamy na mierzalnym celu: lead, rezerwacja, zapytanie albo krótsza obsługa.',
@@ -279,12 +326,12 @@ export const pricingPackages: PricingPackage[] = [
     range: '60 000–180 000+ PLN',
     qualifier: 'Dla firm, w których problemem jest operacja, nie tylko marketing.',
     bestFor:
-      'Masz sprzedaż, zespół i powtarzalny proces: faktury, rezerwacje, raporty, obsługa klienta, wewnętrzne workflow.',
+      'Masz sprzedaż, zespół i powtarzalny proces: faktury, rezerwacje, raporty, obsługa klienta, wewnętrzne zadania.',
     deliverables: [
-      'panel operacyjny lub aplikacja B2B',
-      'integracje API, płatności, kalendarze, KSeF / PMS',
-      'AI z ograniczeniami, logami i eskalacją do człowieka',
-      'staging, szkolenie zespołu i pomiar po wdrożeniu',
+      'panel operacyjny lub aplikacja dla zespołu',
+      'połączenia z płatnościami, kalendarzami, e-fakturami i systemami rezerwacji',
+      'automatyzacja z ograniczeniami, zapisem kroków i eskalacją do człowieka',
+      'wersja testowa, szkolenie zespołu i pomiar po wdrożeniu',
     ],
     proof: 'Przed kodem ustalamy metryki „przed/po”, bo przy tym budżecie ładny interfejs bez wyniku to za mało.',
   },
@@ -296,30 +343,30 @@ export const projects: Project[] = [
     title: 'Mint Apartments',
     domain: 'mintapartments.pl',
     url: 'https://mintapartments.pl',
-    tagline: '36 apartamentów · direct booking · concierge 24/7',
+    tagline: '36 apartamentów · rezerwacje na własnej stronie · asystent dla gości 24/7',
     description:
-      'System dla operatora najmu krótkoterminowego: rezerwacja na własnej domenie (10–15% taniej niż OTA), samodzielny check-in Tedee/Nuki, concierge AI w 7 językach. Szacunek: 8–15 h/mies.* mniej na powtarzalnych pytaniach gości.',
+      'System dla operatora najmu krótkoterminowego: rezerwacja na własnej domenie (10–15% taniej niż na Booking.com), samodzielny check-in Tedee/Nuki, asystent dla gości w 7 językach. Szacunek: 8–15 h/mies.* mniej na powtarzalnych pytaniach gości.',
     client: 'Mint Apartments — operator 36 apartamentów w Gdańsku (od 2017)',
     outcome:
-      'Gość płaci mniej niż na Booking, melduje się o dowolnej porze, zespół prowadzi 3 dzielnice z jednego Previo. Prowizja OTA zostaje u Ciebie — jako marża, nie koszt portalu.',
-    pain: 'Prowizje OTA zjadały marżę. Oferta rozproszona po językach. Check-in wymagał recepcji. Legacy PHP nie nadążał za mobile i SEO.',
+      'Gość płaci mniej niż na portalu rezerwacyjnym, melduje się o dowolnej porze, zespół prowadzi 3 dzielnice z jednego panelu Previo. Prowizja portalu zostaje u Ciebie — jako marża, nie koszt pośrednika.',
+    pain: 'Prowizje portali (Booking, Airbnb) zjadały marżę. Oferta rozproszona po językach. Check-in wymagał recepcji. Stara strona nie nadążała za telefonami i wyszukiwarką.',
     contribution:
-      'Astro + React, Previo (PMS + booking), concierge z dostępnością i WhatsApp, Tedee/Nuki, MINTAX dla właścicieli, SEO wielojęzyczne.',
+      'Szybka strona + panel rezerwacji Previo, asystent dla gości z WhatsApp, zamki Tedee/Nuki, rozliczenia do Plumm, wersje językowe.',
     decisions: [
-      'Direct booking na każdej karcie — ta sama noc taniej, bez ukrytej prowizji',
-      'Concierge z kontekstem apartamentu — nie generyczny chat',
-      'Previo zamiast budowy własnego channel managera',
+      'Rezerwacja na każdej karcie — ta sama noc taniej, bez ukrytej prowizji portalu',
+      'Asystent z kontekstem apartamentu — nie generyczny czat',
+      'Previo zamiast budowy własnego systemu kanałów sprzedaży',
     ],
-    tags: ['Hospitality', 'Direct booking', 'AI Concierge'],
+    tags: ['Noclegi', 'Rezerwacje własne', 'Asystent dla gości'],
     flagship: true,
     heroMediaFill: { zoom: 1, centerY: 0.5 },
-    stack: ['Astro', 'React', 'Previo (PMS + booking engine)', 'Tedee / Nuki', 'WhatsApp', 'SEO wielojęzyczne'],
+    stack: ['Astro', 'React', 'Previo (rezerwacje + kalendarz)', 'Tedee / Nuki', 'WhatsApp', 'Wielojęzyczność'],
     howItWorks: [
       'Gość wybiera apartament i termin — kalendarz i ceny na żywo z Previo',
-      'Płaci online na Twojej domenie — taniej niż na OTA',
+      'Płaci online na Twojej stronie — taniej niż na Booking.com',
       'Dostaje kod do zamka Tedee/Nuki i melduje się sam, o dowolnej porze',
-      'Concierge AI odpowiada na pytania w 7 językach, eskaluje do człowieka gdy trzeba',
-      'Właściciel widzi rezerwacje i rozliczenia w module MINTAX',
+      'Asystent odpowiada na pytania w 7 językach, przekazuje sprawę człowiekowi, gdy trzeba',
+      'Właściciel widzi rezerwacje w Previo — faktury i rozliczenia trafiają do Plumm',
     ],
   },
   {
@@ -327,27 +374,27 @@ export const projects: Project[] = [
     title: 'Plumm',
     domain: 'plumm.pl',
     url: 'https://plumm.pl',
-    tagline: 'Księgowość JDG w jednym panelu · KSeF · AI 24/7',
+    tagline: 'Panel firmy · księgowość · CRM · AI',
     description:
-      'Polska platforma SaaS: faktury KSeF, PIT/VAT/ZUS, JPK-V7, asystent podatkowy po polsku. Dla JDG i spółek — zamiast Excela + biura 300–600 zł/mies. Benchmark produktu: ~80% mniej czasu na papierologii*; typowo 12–20 h/mies.* przy regularnym wolumenie faktur.',
-    client: 'PLUMM Sp. z o.o. — własny produkt SaaS',
+      'Polska platforma online: księgowość dla JDG i spółek, asystent podatkowy, CRM i poczta — jeden panel zamiast Excela, osobnych programów i biura 300–600 zł/mies. E-faktury do urzędu, PIT/VAT/ZUS, deklaracje jednym kliknięciem. Typowo 12–20 h/mies.* mniej na papierologii przy regularnym wolumenie faktur.',
+    client: 'PLUMM Sp. z o.o. — własny produkt online',
     outcome:
-      'Jeden panel po zalogowaniu: KSeF od dnia 1, terminy w kalendarzu, zamknięcie miesiąca i JPK jednym kliknięciem. Odpowiedź podatkowa w minutach — nie po 2 dniach od biura.',
-    pain: 'Faktury, KPiR, ZUS i JPK w osobnych narzędziach. Biuro drogie i wolne. Jedno przeoczone JPK = kara.',
+      'Jeden panel po zalogowaniu: e-faktury, CRM, poczta i rozliczenia w jednym miejscu. Terminy w kalendarzu, deklaracje do urzędu jednym kliknięciem. Odpowiedź podatkowa w minutach — nie po 2 dniach od biura.',
+    pain: 'Faktury, KPiR, ZUS i deklaracje w osobnych narzędziach. Biuro drogie i wolne. Jedno przeoczone zgłoszenie = kara.',
     contribution:
-      'Next.js/TypeScript: landing, cennik, app.plumm.pl, KSeF, AI z wiedzą podatkową + eskalacja do księgowej, plany 0–2000+ zł/mies.',
+      'Strona, cennik, panel app.plumm.pl: e-faktury, CRM, poczta firmowa, asystent podatkowy z eskalacją do księgowej, plany 0–2000+ zł/mies.',
     decisions: [
-      'Jedna aplikacja — faktury, rozliczenia, AI w jednym UX',
-      'KSeF jako fundament — nie „dodatek za dopłatą”',
-      'AI + człowiek przy compliance — szybkość bez ryzyka',
+      'Jedna aplikacja — faktury, rozliczenia i asystent w jednym miejscu',
+      'E-faktury do urzędu od podstaw — nie „dodatek za dopłatą”',
+      'Asystent + księgowa przy trudnych sprawach — szybkość bez ryzyka',
     ],
-    tags: ['SaaS', 'KSeF', 'JDG'],
-    stack: ['Next.js', 'TypeScript', 'KSeF', 'JPK-V7', 'AI asystent podatkowy', 'app.plumm.pl'],
+    tags: ['Księgowość online', 'E-faktury', 'JDG'],
+    stack: ['Next.js', 'TypeScript', 'KSeF', 'Deklaracje JPK', 'CRM', 'Poczta firmowa', 'Asystent podatkowy', 'app.plumm.pl'],
     howItWorks: [
-      'Wystawiasz fakturę — trafia do KSeF automatycznie, od razu zgodna z przepisami',
+      'Wystawiasz fakturę — trafia do urzędu automatycznie, od razu zgodna z przepisami',
       'Plumm liczy PIT, VAT i ZUS na bieżąco — widzisz zobowiązania przed terminem',
-      'Zamykasz miesiąc i wysyłasz JPK-V7 jednym kliknięciem z panelu',
-      'Masz pytanie podatkowe — pytasz AI asystenta po polsku, przy trudniejszej sprawie rozmowa trafia do księgowej',
+      'Zamykasz miesiąc i wysyłasz deklarację do urzędu jednym kliknięciem z panelu',
+      'Masz pytanie podatkowe — pytasz asystenta po polsku, przy trudniejszej sprawie rozmowa trafia do księgowej',
     ],
   },
   {
@@ -357,26 +404,26 @@ export const projects: Project[] = [
     url: '#',
     tagline: 'Blog motoryzacyjny · publikacja bez WordPressa',
     description:
-      'Autorski dziennik: testy, galerie WEBP, Next.js + MDX. Szybsza publikacja i lepsze SEO = więcej wejść z wyszukiwarki na ten sam wysiłek redakcyjny (bez obietnicy „10× leadów”).',
+      'Autorski dziennik: testy, zoptymalizowane zdjęcia, szybka strona. Łatwiejsza publikacja i lepsza widoczność w Google = więcej wejść z wyszukiwarki na ten sam wysiłek redakcyjny.',
     client: 'Własny produkt medialny',
     outcome:
-      'Setki artykułów w jednej szybkiej witrynie. Publikacja z repozytorium — bez pluginów, które psują się po aktualizacji.',
-    pain: 'Word, ciężkie JPG, brak szablonu. Każdy tekst trwał za długo od pomysłu do URL.',
+      'Setki artykułów w jednej szybkiej witrynie. Publikacja z jednego miejsca — bez wtyczek, które psują się po aktualizacji.',
+    pain: 'Word, ciężkie zdjęcia, brak szablonu. Każdy tekst trwał za długo od pomysłu do opublikowania.',
     contribution:
-      'Next.js 15, MDX, Sharp → WEBP, sitemap, layout pod długie testy i galerie.',
+      'Szybka strona, edytor treści, automatyczna optymalizacja zdjęć, mapa strony pod wyszukiwarkę.',
     decisions: [
-      'Treść w repo (MDX) — kontrola wersji jak w kodzie produktu',
-      'WEBP i kuratorowane galerie — szybkość mobile',
-      'Kanoniczny idrivecars.pl — jeden adres pod indeksację',
+      'Treść w jednym miejscu — pełna kontrola nad wersjami',
+      'Lekkie zdjęcia i kuratorowane galerie — szybkość na telefonie',
+      'Jeden adres strony pod wyszukiwarkę',
     ],
-    tags: ['Media', 'SEO', 'Next.js'],
+    tags: ['Media', 'Widoczność w Google', 'Szybka strona'],
     imageScene: 'hero',
-    stack: ['Next.js 15', 'MDX', 'Sharp (WEBP)', 'Sitemap / SEO techniczne'],
+    stack: ['Next.js', 'MDX', 'Optymalizacja zdjęć', 'Mapa strony'],
     howItWorks: [
-      'Piszesz tekst w MDX — treść trzymana w repozytorium, wersjonowana jak kod',
-      'Zdjęcia i galerie przechodzą przez Sharp — automatyczna konwersja do WEBP',
-      'Publikujesz z repo — bez WordPressa, wtyczek i aktualizacji, które coś psują',
-      'Artykuł trafia do sitemapy i jest gotowy pod SEO od pierwszej minuty',
+      'Piszesz tekst w edytorze — treść jest bezpiecznie przechowywana i wersjonowana',
+      'Zdjęcia i galerie są automatycznie kompresowane — szybkie ładowanie na telefonie',
+      'Publikujesz bez WordPressa, wtyczek i aktualizacji, które coś psują',
+      'Artykuł od razu gotowy pod wyszukiwarkę Google',
     ],
   },
   {
@@ -386,26 +433,26 @@ export const projects: Project[] = [
     url: '#agentic',
     tagline: 'Powtarzalne procesy · audyt każdego kroku',
     description:
-      'Orkiestracja agentów AI: workflow, narzędzia na whitelistcie, human-in-the-loop. Szacunek: 5–10 h/tydz.* mniej na raportach, synchronizacjach i powtarzalnych zapytaniach — z logiem kto/co/dlaczego.',
-    client: 'Produkt wewnętrzny · automatyzacja B2B',
+      'Automatyzacja powtarzalnej pracy z kontrolą człowieka: jasno określone dozwolone akcje, zapis każdego kroku. Szacunek: 5–10 h/tydz.* mniej na raportach, synchronizacjach i powtarzalnych zapytaniach — z pełną historią kto/co/dlaczego.',
+    client: 'Produkt wewnętrzny · automatyzacja dla firm',
     outcome:
-      'Zespół odpuszcza ręczne kopiuj-wklej. Każdy krok agenta zapisany — audyt bez „czarnej skrzynki” ChatGPT.',
-    pain: 'Prompty w czacie bez odpowiedzialności. Klient nie wdroży tego u siebie bez logów i limitów.',
+      'Zespół odpuszcza ręczne kopiuj-wklej. Każdy krok zapisany — audyt bez „czarnej skrzynki” czatu.',
+    pain: 'Polecenia w czacie bez odpowiedzialności. Klient nie wdroży tego u siebie bez zapisów i limitów.',
     contribution:
-      'Silnik workflow, tool calling, kolejki, human-in-the-loop, szacowanie kosztów modeli.',
+      'Silnik procesów, połączenia z zewnętrznymi systemami, kolejki zadań, kontrola człowieka, szacunek kosztów.',
     decisions: [
-      'Log każdego kroku — nie tylko końcowa odpowiedź',
-      'Whitelist narzędzi — mniej ryzyka niż dowolny shell',
-      'Operator przejmuje przy niskiej pewności',
+      'Zapis każdego kroku — nie tylko końcowa odpowiedź',
+      'Tylko dozwolone akcje — mniej ryzyka niż pełny dostęp do systemu',
+      'Człowiek przejmuje przy niskiej pewności',
     ],
-    tags: ['AI', 'Workflow', 'Automatyzacja'],
+    tags: ['Automatyzacja', 'Kontrola człowieka', 'Audyt'],
     imageScene: 'hero',
-    stack: ['Silnik workflow', 'Tool calling', 'Whitelist narzędzi', 'Kolejki zadań', 'Human-in-the-loop', 'Szacowanie kosztów modeli'],
+    stack: ['Silnik procesów', 'Integracje', 'Dozwolone akcje', 'Kolejki zadań', 'Kontrola człowieka', 'Szacunek kosztów'],
     howItWorks: [
-      'Agent dostaje zadanie i listę dozwolonych narzędzi — nic poza whitelistą',
-      'Wykonuje kroki, a każdy krok trafia do logu — wiadomo kto/co/dlaczego',
+      'Asystent dostaje zadanie i listę dozwolonych akcji — nic poza ustalonym zakresem',
+      'Wykonuje kroki, a każdy trafia do zapisu — wiadomo kto, co i dlaczego',
       'Przy niskiej pewności system oddaje decyzję człowiekowi zamiast zgadywać',
-      'Koszt modeli jest szacowany na bieżąco — bez niespodzianek na fakturze',
+      'Koszt działania jest szacowany na bieżąco — bez niespodzianek na fakturze',
     ],
   },
 ]
@@ -415,19 +462,19 @@ export const process: ProcessStep[] = [
     num: '01',
     title: '20-min audyt (bezpłatnie)',
     description:
-      'Rozmawiamy o tym, co dziś zjada czas: telefony, faktury, rezerwacje, raporty. Na koniec: szacunek godzin do odzyskania i czy projekt ma sens od 25 000 PLN.',
+      'Rozmawiamy o tym, co dziś zjada czas: telefony, faktury, rezerwacje, raporty. Na koniec: szacunek godzin do odzyskania i który pakiet ma sens — od wizytówki po system operacyjny.',
   },
   {
     num: '02',
     title: 'Plan na 90 dni',
     description:
-      'Jeden dokument: zakres, integracje, pierwszy mierzalny efekt (np. direct booking live albo KSeF wysyłający faktury). Bez „fazy discovery” na kwartał.',
+      'Jeden dokument: zakres, integracje, pierwszy mierzalny efekt (np. rezerwacje na żywo albo e-faktury wysyłane do urzędu). Bez „fazy odkrywania” na kwartał.',
   },
   {
     num: '03',
     title: 'Wdrożenie w produkcji',
     description:
-      'Krótkie iteracje, dostęp do stagingu, szkolenie 1–2 h dla Twojego zespołu. Nie zostawiam Cię z PDF-em „jak obsługiwać”.',
+      'Krótkie iteracje, dostęp do wersji testowej przed startem, szkolenie 1–2 h dla Twojego zespołu. Nie zostawiam Cię z PDF-em „jak obsługiwać”.',
   },
   {
     num: '04',
@@ -441,7 +488,7 @@ export const faq: FaqItem[] = [
   {
     question: 'Ile to kosztuje i od czego zależy cena?',
     answer:
-      'Projekty produkcyjne zaczynam od ok. 25 000 PLN netto — gdy ROI ma sens (zwykle odzysk 8+ h/mies. lub realna oszczędność na prowizjach / biurze). Po audycie dostajesz widełki i jedną rekomendację, nie trzy wyceny „na wyczucie”.',
+      'Strona firmowa (do 5 podstron, formularz, podstawowe SEO): 6 500–12 000 PLN netto. Na rynku szablon WordPress/AI to często 2–5 tys. — tu dostajesz custom pod markę i szybki stack. Lejek sprzedaży, rezerwacje na własnej stronie lub panel: zwykle 25 000–60 000 PLN — gdy zwrot ma sens (odzysk 8+ h/mies., prowizje portali, koszt ręcznej obsługi). Systemy operacyjne od 60 000 PLN. Po audycie dostajesz widełki i jedną rekomendację, nie trzy wyceny „na wyczucie”.',
   },
   {
     question: 'Czy podpisujemy NDA i kto jest właścicielem kodu?',
@@ -451,17 +498,17 @@ export const faq: FaqItem[] = [
   {
     question: 'AI zastąpi mój zespół?',
     answer:
-      'Nie. AI przejmuje powtarzalne pytania i kroki (concierge, draft faktury, raport). Człowiek zostaje przy decyzjach, sporach i compliance. Każdy agent ma audyt kroków — wiesz, skąd wzięła się odpowiedź.',
+      'Nie. Asystent przejmuje powtarzalne pytania i kroki (odpowiedzi gościom, szkic faktury, raport). Człowiek zostaje przy decyzjach, sporach i sprawach urzędowych. Każda automatyzacja ma zapis kroków — wiesz, skąd wzięła się odpowiedź.',
   },
   {
     question: 'Jak długo trwa pierwsze wdrożenie?',
     answer:
-      'Landing + formularz: 2–4 tygodnie. Direct booking / panel z integracjami: zwykle 6–12 tygodni, zależnie od API (Previo, KSeF, smart lock). Na audycie podam konkret dla Twojego stosu.',
+      'Strona z formularzem: 2–4 tygodnie. Rezerwacje na własnej stronie / panel z połączeniami do innych programów: zwykle 6–12 tygodni, zależnie od tego, z czym łączymy (Previo, e-faktury, zamki do drzwi). Na audycie podam konkret dla Twojego przypadku.',
   },
   {
     question: 'Co jeśli już mam agencję / innego developera?',
     answer:
-      'Mogę wejść w istniejący kod (Astro, React, Next) albo zbudować moduł obok — np. concierge albo eksport JPK. Bez przepisywania wszystkiego „bo tak ładniej”.',
+      'Mogę wejść w istniejącą stronę albo zbudować moduł obok — np. asystent dla gości albo eksport deklaracji. Bez przepisywania wszystkiego „bo tak ładniej”.',
   },
   {
     question: 'Czy obsługujesz firmy spoza Trójmiasta?',
@@ -481,21 +528,21 @@ export const liveProof: LiveProof[] = [
     name: 'Mint Apartments',
     url: 'https://mintapartments.pl',
     result:
-      '36 apartamentów na direct bookingu — gość płaci 10–15% mniej niż na OTA, check-in 24/7, concierge AI w 7 językach.',
-    tag: 'Hospitality',
+      '36 apartamentów z rezerwacjami na własnej stronie — gość płaci 10–15% mniej niż na Booking.com, check-in 24/7, asystent dla gości w 7 językach.',
+    tag: 'Noclegi',
   },
   {
     name: 'Plumm',
     url: 'https://plumm.pl',
     result:
-      'Księgowość JDG w jednym panelu: faktury KSeF, JPK i asystent podatkowy zamiast Excela i osobnego biura.',
-    tag: 'SaaS',
+      'Panel firmy: księgowość online, e-faktury, CRM, poczta i asystent podatkowy — zamiast Excela i osobnego biura.',
+    tag: 'Księgowość online',
   },
   // iDrive wróci tu po publicznym starcie — idrivecars.pl to dziś strona parkingowa,
   // a sekcja obiecuje „kliknij i sprawdź". Zero linków do parkingu.
 ]
 
-// Zasady współpracy = realne sygnały zaufania pod ticket 25k+ (zamiast pustych frazesów).
+// Zasady współpracy = realne sygnały zaufania (zamiast pustych frazesów).
 export type TrustPoint = { title: string; description: string }
 
 export const trustPoints: TrustPoint[] = [
@@ -507,7 +554,7 @@ export const trustPoints: TrustPoint[] = [
   {
     title: 'Kod należy do Ciebie',
     description:
-      'NDA standardowo. Po opłaceniu faktur kod i konfiguracja są Twoje — bez vendor lock-inu „na zawsze”.',
+      'NDA standardowo. Po opłaceniu faktur kod i konfiguracja są Twoje — bez uzależnienia od jednego dostawcy „na zawsze”.',
   },
   {
     title: 'Wdrażam i zostaję na liczbach',
@@ -543,10 +590,11 @@ export const contactFields: ContactField[] = [
     type: 'select',
     required: true,
     options: [
-      'Strona / landing, który ma lepiej sprzedawać',
-      'Direct booking / rezerwacje / płatności',
+      'Strona firmowa / wizytówka z formularzem',
+      'Strona / landing pod konwersję',
+      'Rezerwacje na własnej stronie / płatności',
       'Panel operacyjny lub integracje',
-      'AI concierge / automatyzacja obsługi',
+      'Asystent dla gości / automatyzacja obsługi',
       'Audyt i priorytetyzacja przed wdrożeniem',
     ],
   },
@@ -557,7 +605,8 @@ export const contactFields: ContactField[] = [
     required: true,
     options: [
       '2 500–6 000 PLN — audyt',
-      '25 000–60 000 PLN — strona / konwersja',
+      '6 500–12 000 PLN — strona firmowa',
+      '25 000–60 000 PLN — konwersja / rezerwacje własne',
       '60 000–180 000+ PLN — system / integracje',
       'Nie wiem — chcę policzyć ROI',
     ],
@@ -618,7 +667,7 @@ export const intakeSteps: { id: string; title: string; hint?: string; fields: In
           'Hotele / najem krótkoterminowy',
           'Usługi profesjonalne / B2B',
           'E-commerce / sprzedaż',
-          'SaaS / produkt cyfrowy',
+          'Produkt cyfrowy / aplikacja online',
           'Inna branża',
         ],
       },
@@ -649,10 +698,11 @@ export const intakeSteps: { id: string; title: string; hint?: string; fields: In
         type: 'select',
         required: true,
         options: [
-          'Strona / landing, który ma lepiej sprzedawać',
-          'Direct booking / rezerwacje / płatności',
+          'Strona firmowa / wizytówka z formularzem',
+          'Strona / landing pod konwersję',
+          'Rezerwacje na własnej stronie / płatności',
           'Panel operacyjny lub integracje',
-          'AI concierge / automatyzacja obsługi',
+          'Asystent dla gości / automatyzacja obsługi',
           'Audyt i priorytetyzacja przed wdrożeniem',
         ],
       },
@@ -685,7 +735,8 @@ export const intakeSteps: { id: string; title: string; hint?: string; fields: In
         required: true,
         options: [
           '2 500–6 000 PLN — audyt',
-          '25 000–60 000 PLN — strona / konwersja',
+          '6 500–12 000 PLN — strona firmowa',
+          '25 000–60 000 PLN — konwersja / rezerwacje własne',
           '60 000–180 000+ PLN — system / integracje',
           'Nie wiem — chcę policzyć ROI',
         ],

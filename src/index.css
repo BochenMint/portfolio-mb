@@ -7,18 +7,52 @@
   --font-body: 'DM Sans', system-ui, sans-serif;
   --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
+  /* Tarragon Sanctum — domyślny motyw V3 */
+  --color-paper: #e6eae4;
+  --color-paper-bright: #f0f3ed;
+  --color-ink: #0a100d;
+  --color-ink-muted: #8a9588;
+
+  --color-accent: #b8734a;
+  --color-accent-bright: #d4a574;
+  --color-accent-deep: #6b4a32;
+  --color-oxblood: #3d6b72;
+  --color-coral: #3d6b72;
+  --color-sea: #3d6b72;
+
+  --color-rule: color-mix(in srgb, var(--color-paper) 18%, transparent);
+  --color-surface: #101512;
+  --color-on-accent: #0a100d;
+}
+
+/* Nocturne Brass — rollback: <html data-theme="nocturne-brass"> */
+[data-theme='nocturne-brass'] {
+  --color-paper: #e8e9ed;
+  --color-paper-bright: #f2f3f7;
+  --color-ink: #0b0e14;
+  --color-ink-muted: #8891a0;
+  --color-accent: #c9a55c;
+  --color-accent-bright: #e2c88a;
+  --color-accent-deep: #9a7b3f;
+  --color-oxblood: #8b3d4a;
+  --color-coral: var(--color-oxblood);
+  --color-sea: #2e5661;
+  --color-surface: #12161e;
+  --color-on-accent: #0b0e14;
+}
+
+/* Sunset — rollback: <html data-theme="sunset"> */
+[data-theme='sunset'] {
   --color-paper: #eceae4;
   --color-paper-bright: #f5f3ee;
   --color-ink: #080807;
   --color-ink-muted: #9a9690;
-
-  /* Sygnaturowy akcent — ciepły bursztyn / sunset */
   --color-accent: #f5a524;
   --color-accent-bright: #ffc861;
   --color-accent-deep: #e8761a;
-  --color-coral: #ff5e3a;
-
-  --color-rule: color-mix(in srgb, var(--color-paper) 18%, transparent);
+  --color-oxblood: #ff5e3a;
+  --color-coral: var(--color-oxblood);
+  --color-sea: #3a6a78;
   --color-surface: #111110;
   --color-on-accent: #080807;
 }
@@ -302,9 +336,9 @@
   .premium-hero {
     isolation: isolate;
     background:
-      radial-gradient(circle at 78% 18%, rgba(245, 165, 36, 0.17), transparent 28rem),
-      radial-gradient(circle at 16% 78%, rgba(255, 94, 58, 0.12), transparent 26rem),
-      linear-gradient(135deg, #080807 0%, #10100e 44%, #070706 100%);
+      radial-gradient(circle at 78% 18%, color-mix(in srgb, var(--color-accent) 17%, transparent), transparent 28rem),
+      radial-gradient(circle at 16% 78%, color-mix(in srgb, var(--color-coral) 12%, transparent), transparent 26rem),
+      linear-gradient(135deg, var(--color-ink) 0%, #101512 44%, #060907 100%);
   }
 
   .hero-premium-grid {
@@ -334,8 +368,8 @@
     z-index: -1;
     border-radius: inherit;
     background:
-      radial-gradient(circle at 22% 16%, rgba(245, 165, 36, 0.28), transparent 15rem),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02) 38%, rgba(245, 165, 36, 0.12));
+      radial-gradient(circle at 22% 16%, color-mix(in srgb, var(--color-accent) 28%, transparent), transparent 15rem),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02) 38%, color-mix(in srgb, var(--color-accent) 12%, transparent));
   }
 
   .hero-console-card,
@@ -354,8 +388,8 @@
 
   .hero-console-card--accent {
     background:
-      radial-gradient(circle at 95% 0%, rgba(245, 165, 36, 0.14), transparent 10rem),
-      linear-gradient(180deg, rgba(245, 165, 36, 0.08), rgba(255, 255, 255, 0.025));
+      radial-gradient(circle at 95% 0%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 10rem),
+      linear-gradient(180deg, color-mix(in srgb, var(--color-accent) 8%, transparent), rgba(255, 255, 255, 0.025));
   }
 
   .hero-metric-card {

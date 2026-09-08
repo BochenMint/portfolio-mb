@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { fit2dCanvas, pointerOnElement } from '../lib/pointerSurface'
 import { prefersReducedMotion } from './utils'
 
 const GRID = 4
@@ -115,20 +116,16 @@ export function PixelSparkles() {
     }
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      w = window.innerWidth
-      h = window.innerHeight
-      canvas.width = Math.floor(w * dpr)
-      canvas.height = Math.floor(h * dpr)
-      canvas.style.width = `${w}px`
-      canvas.style.height = `${h}px`
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const size = fit2dCanvas(canvas, ctx, 2)
+      w = size.w
+      h = size.h
       seedField()
     }
 
     const onMove = (e: PointerEvent) => {
-      mouse.x = e.clientX
-      mouse.y = e.clientY
+      const p = pointerOnElement(e.clientX, e.clientY, canvas)
+      mouse.x = p.x
+      mouse.y = p.y
       mouse.inside = true
       if (reduced) return
 
@@ -158,22 +155,23 @@ export function PixelSparkles() {
 
     const onDown = (e: PointerEvent) => {
       if (e.button !== 0 && e.pointerType === 'mouse') return
-      mouse.x = e.clientX
-      mouse.y = e.clientY
+      const p = pointerOnElement(e.clientX, e.clientY, canvas)
+      mouse.x = p.x
+      mouse.y = p.y
       mouse.inside = true
       if (reduced) return
 
-      burst(e.clientX, e.clientY, coarse ? 18 : 32)
-      for (const p of pixels) {
-        if (!p.field) continue
-        const dx = p.x - e.clientX
-        const dy = p.y - e.clientY
+      burst(p.x, p.y, coarse ? 18 : 32)
+      for (const pix of pixels) {
+        if (!pix.field) continue
+        const dx = pix.x - p.x
+        const dy = pix.y - p.y
         const d2 = dx * dx + dy * dy
         if (d2 < 180 * 180 && d2 > 1) {
           const d = Math.sqrt(d2)
           const kick = ((180 - d) / 180) * 6.5
-          p.vx += (dx / d) * kick
-          p.vy += (dy / d) * kick
+          pix.vx += (dx / d) * kick
+          pix.vy += (dy / d) * kick
         }
       }
     }

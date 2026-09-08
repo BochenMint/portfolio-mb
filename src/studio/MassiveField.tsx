@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { fit2dCanvas, pointerOnElement } from '../lib/pointerSurface'
 import { useTheme } from './ThemeContext'
 
 /** Deep space field: parallax stars and nebula only — no radar HUD. */
@@ -26,17 +27,15 @@ export function MassiveField() {
     }))
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      w = window.innerWidth
-      h = window.innerHeight
-      canvas.width = w * dpr
-      canvas.height = h * dpr
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const size = fit2dCanvas(canvas, ctx, 2)
+      w = size.w
+      h = size.h
     }
 
     const onMove = (e: PointerEvent) => {
-      mouse.x = e.clientX / Math.max(w, 1)
-      mouse.y = e.clientY / Math.max(h, 1)
+      const p = pointerOnElement(e.clientX, e.clientY, canvas)
+      mouse.x = p.nx
+      mouse.y = p.ny
     }
 
     const tick = () => {

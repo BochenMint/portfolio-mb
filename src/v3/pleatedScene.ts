@@ -1,5 +1,6 @@
 import type { HeroScene, HeroSceneOptions } from '../webgl/hero/heroSceneTypes'
 import { getDpr } from '../webgl/hero/heroSceneTypes'
+import { pointerOnElement } from '../lib/pointerSurface'
 
 /**
  * "Fluted glass" — ryflowane szkło podświetlone od tyłu.
@@ -216,8 +217,9 @@ export async function createPleatedScene(
   }
 
   const onMove = (e: PointerEvent) => {
-    targetMX = e.clientX / window.innerWidth
-    targetMY = 1 - e.clientY / window.innerHeight
+    const p = pointerOnElement(e.clientX, e.clientY, canvas)
+    targetMX = p.nx
+    targetMY = 1 - p.ny
   }
 
   return {
