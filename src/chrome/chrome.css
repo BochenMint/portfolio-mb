@@ -93,29 +93,23 @@
   --chrome-lo: #55585e;
   --chrome-mid: #d7dae0;
   --specular-blend: screen;
-  --shadow-card: 0 30px 60px -30px rgba(0, 0, 0, 0.9);
+  --shadow-card: 0 12px 32px -22px rgba(0, 0, 0, 0.85);
 
-  --card-surface:
-    linear-gradient(168deg, #232529 0%, #0e0f12 32%, #16171b 49%, #08080a 51%, #131417 78%, #1b1c20 100%) padding-box,
-    conic-gradient(
-        from var(--angle),
-        #ffffff 0deg,
-        #8a8e95 40deg,
-        #3c3f45 90deg,
-        #d9dce1 150deg,
-        #4a4d53 200deg,
-        #f5f6f8 250deg,
-        #5c5f66 300deg,
-        #ffffff 360deg
-      )
-      border-box;
-  --card-inset: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 -1px 0 rgba(0, 0, 0, 0.6) inset;
+  /* Flat surface, hairline edge. The old value painted a six-stop metallic
+     gradient across every card plus a conic border — chrome simulated in 2D on
+     something that is not a dimensional object. It ran a hard tonal band
+     straight through body copy. Real metal on this page belongs to the three
+     WebGL surfaces (headline, torus, project cubes) and nowhere else. */
+  --card-surface: #101114;
+  --card-border: rgba(247, 248, 250, 0.1);
+  --card-inset: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
 
-  --flagship-surface:
-    linear-gradient(168deg, #ffffff 0%, #dfe2e7 30%, #f6f7f9 46%, #a9adb4 52%, #e9ebee 70%, #ffffff 100%) padding-box,
-    conic-gradient(from var(--angle), #ffffff, #6b6f76, #ffffff, #40434a, #eef0f3, #7d8188, #ffffff) border-box;
-  --flagship-inset: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 -1px 0 rgba(0, 0, 0, 0.25) inset;
-  --flagship-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.9);
+  /* The flagship card earns hierarchy by inverting against the page, not by
+     pretending to be polished metal. */
+  --flagship-surface: #f4f5f7;
+  --flagship-border: rgba(11, 11, 13, 0.12);
+  --flagship-inset: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  --flagship-shadow: 0 16px 40px -26px rgba(0, 0, 0, 0.85);
 
   --field-bg: rgba(5, 5, 6, 0.7);
   --focus-ring: rgba(247, 248, 250, 0.06);
@@ -144,32 +138,19 @@
   --chrome-lo: #6d727a;
   --chrome-mid: #cdd1d8;
   --specular-blend: overlay;
-  --shadow-card: 0 30px 60px -30px rgba(20, 24, 30, 0.35);
+  --shadow-card: 0 12px 32px -22px rgba(20, 24, 30, 0.18);
 
-  /* Chrome cards flip to bright mirror-on-white in light mode. */
-  --card-surface:
-    linear-gradient(168deg, #ffffff 0%, #d4d8de 24%, #f9fafb 44%, #6d727a 50%, #6d727a 52%, #e6e8ec 62%, #ffffff 100%)
-      padding-box,
-    conic-gradient(
-        from var(--angle),
-        #ffffff 0deg,
-        #b9bdc4 40deg,
-        #6e727a 90deg,
-        #ffffff 150deg,
-        #7c8088 200deg,
-        #ffffff 250deg,
-        #9a9ea6 300deg,
-        #ffffff 360deg
-      )
-      border-box;
-  --card-inset: 0 1px 0 rgba(255, 255, 255, 0.95) inset, 0 -1px 0 rgba(20, 24, 30, 0.3) inset;
+  /* The light-theme value was the worst offender: a hard #6d727a band pinned
+     at 50-52% cut a dark diagonal straight across every card, and on a form
+     card it crossed the copy. */
+  --card-surface: #ffffff;
+  --card-border: rgba(11, 11, 13, 0.1);
+  --card-inset: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
 
-  /* Flagship inverts to a dark graphite mirror for hierarchy. */
-  --flagship-surface:
-    linear-gradient(168deg, #2b2d31 0%, #101114 30%, #1a1c20 46%, #050506 52%, #17181c 70%, #26282c 100%) padding-box,
-    conic-gradient(from var(--angle), #f2f3f5, #3c3f45, #eef0f3, #16171a, #d9dce1, #2c2e33, #f2f3f5) border-box;
-  --flagship-inset: 0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 -1px 0 rgba(0, 0, 0, 0.7) inset;
-  --flagship-shadow: 0 40px 80px -30px rgba(20, 24, 30, 0.55);
+  --flagship-surface: #14161a;
+  --flagship-border: rgba(247, 248, 250, 0.12);
+  --flagship-inset: 0 1px 0 rgba(255, 255, 255, 0.1) inset;
+  --flagship-shadow: 0 16px 40px -26px rgba(20, 24, 30, 0.35);
 
   --field-bg: rgba(255, 255, 255, 0.75);
   --focus-ring: rgba(11, 11, 13, 0.07);
@@ -325,9 +306,9 @@
     isolation: isolate;
     border-radius: var(--r-card);
     corner-shape: var(--corner);
-    border: 1px solid transparent;
+    border: 1px solid var(--card-border);
     background: var(--card-surface);
-    box-shadow: var(--card-inset), var(--shadow-card), 0 0 0 1px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--card-inset), var(--shadow-card);
     transition:
       transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
       background 0.4s ease,
@@ -335,7 +316,11 @@
     will-change: transform;
   }
 
-  /* Sharp specular reflection that tracks the cursor. */
+  /* Sharp specular reflection that tracks the cursor. Only ever rendered
+     where a cursor exists: useChromeReflection deliberately does not run on
+     coarse pointers, so on a phone these variables never move off their
+     defaults and the streak becomes a permanent diagonal stripe. */
+  @media (hover: hover) and (pointer: fine) {
   .chrome-card::before {
     content: '';
     position: absolute;
@@ -378,6 +363,7 @@
       );
     transition: opacity 0.35s ease;
   }
+  }
 
   /* Static environment reflection (dark studio horizon). */
   .chrome-card::after {
@@ -393,9 +379,8 @@
       linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0%, transparent 12%);
   }
 
-  /* Light theme: bright mirror cards need a dark companion streak (multiply)
-     tracking the cursor, so the highlight reads with definition against the
-     bright surface — a strong dark "environment reflection". */
+  /* Light theme companion streak, also cursor-driven and so also gated. */
+  @media (hover: hover) and (pointer: fine) {
   :root[data-theme='light'] .chrome-card:not(.chrome-card-light)::after {
     mix-blend-mode: multiply;
     opacity: calc(0.55 + var(--near) * 0.3);
@@ -412,6 +397,7 @@
       linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, transparent 20%),
       linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, transparent 16%);
   }
+  }
 
   .chrome-card > * {
     position: relative;
@@ -422,6 +408,7 @@
      dark graphite mirror in light theme so hierarchy stays intact. */
   .chrome-card-light {
     background: var(--flagship-surface);
+    border-color: var(--flagship-border);
     color: var(--bg);
     box-shadow: var(--flagship-inset), var(--flagship-shadow);
     transition:
@@ -490,6 +477,9 @@
       url('/chrome/brushed.webp');
   }
   /* Irregular anisotropic sheen — soft, no hard cursor reflection (brushed diffuses). */
+  /* Same cursor affordance as the chrome cards, same gate: with no pointer to
+     track, --mx stays at 50% and this becomes a fixed band down the middle. */
+  @media (hover: hover) and (pointer: fine) {
   .brushed::before {
     content: '';
     position: absolute;
@@ -519,6 +509,7 @@
       transparent calc(var(--mx) + 40%)
     );
     mix-blend-mode: overlay;
+  }
   }
   .brushed > * {
     position: relative;
