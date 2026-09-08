@@ -22,7 +22,7 @@ export function Hero() {
 
           {/* 15ch, not 14: the closing line measures 641px against a 636px
               box at 14ch, so it used to break onto a fourth line by 5px. */}
-          <h1 className="mt-6 max-w-[15ch] text-[clamp(2.5rem,5.2vw,4.75rem)] leading-[1.02] font-semibold">
+          <h1 className="mt-6 max-w-[15ch] text-[clamp(2.5rem,5.2vw,4.75rem)] leading-[1.02] font-bold tracking-[-0.035em]">
             <LiquidChrome>
               <span data-hero-line className="chrome-text inline-block">
                 {c.hero.h1a} {c.hero.h1b}
@@ -79,7 +79,7 @@ export function Hero() {
         <ul className="grid grid-cols-2 gap-x-6 gap-y-8 py-8 md:grid-cols-4">
           {c.hero.stats.map((s) => (
             <li key={s.label} data-stat>
-              <p className="chrome-text font-display text-4xl font-semibold tracking-[-0.04em] md:text-5xl">
+              <p className="chrome-text font-display text-4xl font-bold tracking-[-0.04em] md:text-5xl">
                 {s.value}
               </p>
               <p className="mt-2 text-[13px] text-muted">{s.label}</p>

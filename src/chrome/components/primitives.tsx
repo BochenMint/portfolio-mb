@@ -96,7 +96,7 @@ export function SectionHeader({ eyebrow, title, lead, align = 'left', className 
       </p>
       <h2
         data-reveal
-        className="chrome-text mt-5 text-[clamp(2rem,5vw,3.75rem)] leading-[1.02] font-semibold"
+        className="chrome-text mt-5 text-[clamp(2rem,5vw,3.75rem)] leading-[1.02] font-bold tracking-[-0.03em]"
       >
         {title}
       </h2>
@@ -115,7 +115,7 @@ export function SectionHeader({ eyebrow, title, lead, align = 'left', className 
  * only read through glyph shape — colour and style differences vanish
  * underneath it. Light against the headline's semibold does read. */
 export function Em({ children }: { children: ReactNode }) {
-  return <em className="font-light tracking-[-0.02em] not-italic">{children}</em>
+  return <em className="font-normal tracking-[-0.02em] not-italic">{children}</em>
 }
 
 /* ---------- Arrow icon ------------------------------------------------ */
