@@ -411,7 +411,7 @@
     isolation: isolate;
     border-radius: var(--r-card);
     corner-shape: var(--corner);
-    background-color: #17181c;
+    background-color: #15171b;
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.18) inset,
       0 -1px 0 rgba(0, 0, 0, 0.7) inset,
@@ -419,7 +419,7 @@
     transition: box-shadow 0.4s ease;
   }
   :root[data-theme='light'] .brushed {
-    background-color: #d9dce1;
+    background-color: #d6dae0;
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.8) inset,
       0 -1px 0 rgba(20, 24, 30, 0.28) inset,
@@ -436,13 +436,10 @@
     corner-shape: inherit;
     pointer-events: none;
     background-image:
-      linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0) 30%,
-        rgba(0, 0, 0, 0.25) 60%,
-        rgba(255, 255, 255, 0.06) 100%
-      ),
+      /* Text-legibility scrim: a steady vertical darkening (not a single
+         mid-card band) so body copy stays readable (>=4.5:1) against the
+         low-contrast streaks/sheen wherever it sits on the card. */
+      linear-gradient(180deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.58)),
       url('/chrome/brushed.webp');
     background-size: auto, 1400px auto;
   }
@@ -454,13 +451,12 @@
        competing with it on the bright theme. */
     opacity: 0.72;
     background-image:
-      linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.5) 0%,
-        rgba(255, 255, 255, 0) 30%,
-        rgba(20, 24, 30, 0.1) 60%,
-        rgba(255, 255, 255, 0.35) 100%
-      ),
+      /* Inverse scrim for light-theme brushed aluminium: a steady vertical
+         lightening so dark engraved text keeps its contrast (>=4.5:1)
+         against the metal regardless of where it falls on the card. Applied
+         *before* the invert/contrast filter above, which flips it dark, so
+         start from black stops that the filter turns into a light wash. */
+      linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.72)),
       url('/chrome/brushed.webp');
   }
   /* Irregular anisotropic sheen — soft, no hard cursor reflection (brushed diffuses). */

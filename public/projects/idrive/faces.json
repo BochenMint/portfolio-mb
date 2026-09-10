@@ -38,5 +38,15 @@
       "pl": "Relacja z uruchomienia produkcji Škody Peaq na linii obok Octavii i Enyaqa.",
       "en": "Coverage of the Škoda Peaq entering production alongside the Octavia and Enyaq."
     }
+  },
+  {
+    "file": "face-5.webp",
+    "light": null,
+    "id": "galleries",
+    "label": { "pl": "Galerie zdjęć", "en": "Photo galleries" },
+    "caption": {
+      "pl": "Galerie z testów — siatka własnych zdjęć, po jednej galerii na każdy testowany samochód.",
+      "en": "Test galleries — a grid of the author own photography, one gallery per car tested."
+    }
   }
 ]

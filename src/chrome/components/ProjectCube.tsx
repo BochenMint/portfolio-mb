@@ -3,6 +3,7 @@ import { pick } from '../i18n/pick'
 import type { Face } from '../data/faces'
 import type { Locale } from '../i18n/types'
 import { supportsWebGL } from '../webgl'
+import { BrandMark } from './BrandMark'
 import './cube.css'
 
 type Props = {
@@ -18,6 +19,7 @@ type ThemeName = 'light' | 'dark'
 
 const AUTO_ROTATE_MS = 4500
 const DRAG_SENSITIVITY = 0.32
+const PITCH_SENSITIVITY = 0.3
 const FRICTION = 0.94
 const MIN_VELOCITY = 0.02
 const TWEEN_MS = 600
@@ -33,9 +35,80 @@ const HOVER_TILT_RANGE = 6
 const CANVAS_W_RATIO = 1.5
 const CANVAS_H_RATIO = 1.25
 
-function indexFromRot(rot: number) {
-  const i = Math.round(-rot / 90) % 4
-  return ((i % 4) + 4) % 4
+// ---------------------------------------------------------------------
+// Orientation model
+//
+// All six faces are reachable. The cube's orientation is two angles held
+// on the spin group: yaw about its own Y (picks one of the four lateral
+// faces) and pitch about *world* X (±90° brings the top / bottom face to
+// the camera). three.js's default Euler order 'XYZ' composes as
+// Rx * Ry * v — yaw first in local space, pitch second in world space —
+// which is exactly the trackball feel we want, so the group's rotation
+// can be set directly with no quaternion bookkeeping.
+// ---------------------------------------------------------------------
+
+const FACE_COUNT = 6
+/** Index → the face's outward normal in the cube's own space. */
+const FACE_NORMALS: ReadonlyArray<readonly [number, number, number]> = [
+  [0, 0, 1], // 0 front  (+Z)
+  [1, 0, 0], // 1 right  (+X)
+  [0, 0, -1], // 2 back   (-Z)
+  [-1, 0, 0], // 3 left   (-X)
+  [0, 1, 0], // 4 top    (+Y)
+  [0, -1, 0], // 5 bottom (-Y)
+]
+const PITCH_LIMIT = 90
+/** Rubber-band budget past ±90° while dragging; the clamp is asymptotic. */
+const PITCH_OVERSHOOT = 14
+/** Past this much pitch, releasing a drag settles on the top/bottom face. */
+const PITCH_SNAP_THRESHOLD = 45
+
+const DEG = Math.PI / 180
+
+/**
+ * How strongly a face points at the camera after the orientation is applied:
+ * the world-space Z of its normal. The camera sits on +Z (12° above), so the
+ * largest value wins. Kept as plain trigonometry rather than three.js maths so
+ * the static fallback — which never builds a scene — derives the same active
+ * index from the same numbers.
+ */
+function facingZ(normal: readonly [number, number, number], yawDeg: number, pitchDeg: number) {
+  const yaw = yawDeg * DEG
+  const pitch = pitchDeg * DEG
+  const [nx, ny, nz] = normal
+  // Ry(yaw) then Rx(pitch); only the resulting Z is needed.
+  const z1 = -nx * Math.sin(yaw) + nz * Math.cos(yaw)
+  return ny * Math.sin(pitch) + z1 * Math.cos(pitch)
+}
+
+function indexFromOrientation(yawDeg: number, pitchDeg: number) {
+  let best = 0
+  let bestZ = -Infinity
+  for (let i = 0; i < FACE_COUNT; i += 1) {
+    const z = facingZ(FACE_NORMALS[i], yawDeg, pitchDeg)
+    if (z > bestZ) {
+      bestZ = z
+      best = i
+    }
+  }
+  return best
+}
+
+/** The yaw/pitch pair that squares face `index` up to the camera, reached from
+ *  the current orientation by the shortest route. */
+function orientationForIndex(index: number, yawDeg: number) {
+  if (index >= 4) {
+    return { yaw: nearestSnap(yawDeg), pitch: index === 4 ? PITCH_LIMIT : -PITCH_LIMIT }
+  }
+  return { yaw: nearestRotForIndex(yawDeg, ((index % 4) + 4) % 4), pitch: 0 }
+}
+
+/** Asymptotic rubber band: pitch can be dragged past ±90° but never reaches
+ *  ±(90 + PITCH_OVERSHOOT), so the cube can't be tumbled onto its back. */
+function softClampPitch(pitch: number) {
+  const over = Math.abs(pitch) - PITCH_LIMIT
+  if (over <= 0) return pitch
+  return Math.sign(pitch) * (PITCH_LIMIT + (PITCH_OVERSHOOT * over) / (over + PITCH_OVERSHOOT))
 }
 
 function nearestRotForIndex(currentRot: number, index: number) {
@@ -50,6 +123,15 @@ function nearestRotForIndex(currentRot: number, index: number) {
 
 function nearestSnap(rot: number) {
   return Math.round(rot / 90) * 90
+}
+
+/** The six faces a cube shows, padded by repetition if a project ships fewer. */
+function takeCubeFaces(faces: Face[]): Face[] {
+  if (faces.length === 0) return []
+  if (faces.length >= FACE_COUNT) return faces.slice(0, FACE_COUNT)
+  const out = faces.slice()
+  while (out.length < FACE_COUNT) out.push(faces[out.length % faces.length])
+  return out
 }
 
 function readTheme(): ThemeName {
@@ -74,7 +156,7 @@ type FaceSlot = {
 
 type SceneHandle = {
   setSize: (w: number, h: number) => void
-  setRotationDeg: (rot: number) => void
+  setOrientationDeg: (yaw: number, pitch: number) => void
   setTiltDeg: (tilt: number) => void
   setTheme: (theme: ThemeName) => void
   render: () => void
@@ -84,10 +166,10 @@ type SceneHandle = {
 // The screen is baked directly into each side face's texture set (rather
 // than a separate plane) so it sits flush with — and bends along — the
 // RoundedBoxGeometry's own curved edge band instead of floating in front
-// of it. All four side faces share the same UV layout, so the screen
-// rect geometry below is computed once in normalized (canvas-pixel)
-// texture space and reused for every face; only the emissive screenshot
-// layer differs per face/theme.
+// of it. All six faces share the same UV layout, so the screen rect
+// geometry below is computed once in normalized (canvas-pixel) texture
+// space and reused for every face; only the emissive screenshot layer
+// differs per face/theme.
 const FACE_TEX_SIZE = 2048
 const SCREEN_MARGIN_FRAC = 0.04 // -> 92% of the face width/height (was 0.1 -> 80%)
 const SCREEN_CORNER_FRAC = 0.069 // keeps the same corner-radius:screen-size ratio as the old 0.06/80%
@@ -98,6 +180,17 @@ const SCREEN_RECT = {
   r: FACE_TEX_SIZE * SCREEN_CORNER_FRAC,
 }
 const SEAM_WIDTH = FACE_TEX_SIZE * 0.003
+
+// --- Brand plate (the engraved sixth face) ---------------------------
+/** Mark width as a fraction of the face. */
+const BRAND_MARK_FRAC = 0.46
+/** Bevel offset in texture pixels — roughly a 1 px lip at display size. */
+const BRAND_BEVEL = FACE_TEX_SIZE * 0.002
+/** Slightly off-white so the recess's lit lower lip has somewhere to go. */
+const BRAND_PLATE = '#eef0f3'
+const BRAND_LIP = '#ffffff'
+const BRAND_WALL = '#7c808a'
+const BRAND_FLOOR = '#a8acb5'
 
 function traceRoundedRect(
   ctx: CanvasRenderingContext2D,
@@ -118,6 +211,34 @@ function traceRoundedRect(
   ctx.lineTo(x, y + r)
   ctx.arcTo(x, y, x + r, y, r)
   ctx.closePath()
+}
+
+/**
+ * The helmet mark as a Path2D, taken from the same SVG the DOM `<BrandMark>`
+ * renders (a single even-odd path on a 64×64 viewBox) so the plate can never
+ * drift from the logo. Fetched once per document and shared by every cube.
+ */
+let markPathPromise: Promise<Path2D | null> | null = null
+function getMarkPath(): Promise<Path2D | null> {
+  markPathPromise ??= fetch('/brand/logo-mb-white.svg')
+    .then((res) => (res.ok ? res.text() : Promise.reject(new Error('mark svg'))))
+    .then((svg) => {
+      const d = svg.match(/\sd="([^"]+)"/)?.[1]
+      return d ? new Path2D(d) : null
+    })
+    .catch(() => null)
+  return markPathPromise
+}
+
+function fillMark(ctx: CanvasRenderingContext2D, path: Path2D, dx: number, dy: number, color: string) {
+  const size = FACE_TEX_SIZE * BRAND_MARK_FRAC
+  const offset = (FACE_TEX_SIZE - size) / 2
+  ctx.save()
+  ctx.translate(offset + dx, offset + dy)
+  ctx.scale(size / 64, size / 64)
+  ctx.fillStyle = color
+  ctx.fill(path, 'evenodd')
+  ctx.restore()
 }
 
 /** object-fit: cover, top-aligned, clipped to the screen rect. */
@@ -193,6 +314,42 @@ function buildFaceMaskMap(THREE: typeof import('three')) {
   }
   const tex = new THREE.CanvasTexture(canvas)
   return tex
+}
+
+/**
+ * Brand plate base color: unbroken chrome with the mark engraved into it.
+ * The recess is faked with three stacked copies of the same path — a lit lip
+ * offset down-right, a shaded wall offset up-left (the key light sits above
+ * and to the left), and a slightly darker floor in the middle.
+ */
+function buildBrandColorMap(THREE: typeof import('three'), path: Path2D | null) {
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = FACE_TEX_SIZE
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    ctx.fillStyle = BRAND_PLATE
+    ctx.fillRect(0, 0, FACE_TEX_SIZE, FACE_TEX_SIZE)
+    if (path) {
+      fillMark(ctx, path, BRAND_BEVEL, BRAND_BEVEL, BRAND_LIP)
+      fillMark(ctx, path, -BRAND_BEVEL, -BRAND_BEVEL, BRAND_WALL)
+      fillMark(ctx, path, 0, 0, BRAND_FLOOR)
+    }
+  }
+  return new THREE.CanvasTexture(canvas)
+}
+
+/** Same packing as buildFaceMaskMap: metal everywhere, with the engraved
+ *  floor left a touch rougher so it reads satin against the polished plate. */
+function buildBrandMaskMap(THREE: typeof import('three'), path: Path2D | null) {
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = FACE_TEX_SIZE
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    ctx.fillStyle = `rgb(0, ${Math.round(0.12 * 255)}, 255)`
+    ctx.fillRect(0, 0, FACE_TEX_SIZE, FACE_TEX_SIZE)
+    if (path) fillMark(ctx, path, 0, 0, `rgb(0, ${Math.round(0.26 * 255)}, 255)`)
+  }
+  return new THREE.CanvasTexture(canvas)
 }
 
 function loadImageElement(url: string): Promise<HTMLImageElement> {
@@ -284,6 +441,10 @@ async function buildScene(
 
   // Studio lighting: two crisp key/fill bands plus a soft rim, fixed in
   // world space so highlights sweep across the chrome as the cube turns.
+  // Deliberately left world-fixed now that the cube also pitches: the top
+  // and bottom plates swing into the same key/fill/rim rig the lateral
+  // faces meet, so the engraved mark is raked by the key light exactly the
+  // way a screen face is.
   const keyLight = new THREE.RectAreaLight(0xffffff, 9, 2.4, 0.3)
   keyLight.position.set(-1.6, 1.9, 2.1)
   keyLight.lookAt(0, 0, 0)
@@ -377,6 +538,12 @@ async function buildScene(
   // [0,1] UV) rather than a separate plane sitting in front of the face.
   // That's what makes the screen bend into the curved edge band exactly
   // like the chrome around it, with no floating edges or corner gaps.
+  //
+  // BoxGeometry's UV winding puts image-up along -Z on the +Y face and
+  // along +Z on the -Y face, which is precisely the direction that ends up
+  // pointing at the top of the screen once the cube is pitched ±90° — so
+  // the top and bottom faces read upright with no per-face texture
+  // rotation.
   const maxAniso = renderer.capabilities.getMaxAnisotropy()
   const sharedColorMap = buildFaceColorMap(THREE)
   sharedColorMap.colorSpace = THREE.SRGBColorSpace
@@ -384,7 +551,7 @@ async function buildScene(
   const sharedMaskMap = buildFaceMaskMap(THREE)
   sharedMaskMap.anisotropy = maxAniso
 
-  function makeSideMaterial() {
+  function makeScreenMaterial() {
     return new THREE.MeshPhysicalMaterial({
       map: sharedColorMap,
       metalnessMap: sharedMaskMap,
@@ -402,31 +569,67 @@ async function buildScene(
     })
   }
 
-  const capMat = new THREE.MeshPhysicalMaterial({
-    metalness: 1,
-    roughness: 0.12,
-    clearcoat: 0.6,
-    clearcoatRoughness: 0.12,
-    envMapIntensity: 1,
-  })
+  // No emissive at all: the brand plate is lit chrome, not a screen. Its
+  // maps arrive asynchronously (the mark path is fetched once per page), so
+  // until then it is simply a blank polished face — never a white glow.
+  function makeBrandMaterial() {
+    return new THREE.MeshPhysicalMaterial({
+      metalness: 1,
+      roughness: 1,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.1,
+      envMapIntensity: 1,
+    })
+  }
 
-  const four: Face[] = opts.faces.length >= 4 ? opts.faces.slice(0, 4) : []
-  while (four.length < 4 && opts.faces.length > 0) four.push(opts.faces[four.length % opts.faces.length])
-
-  // Index order matches `FACE_ORDER`/`four` in the component: 0 front, 1
-  // right, 2 back, 3 left.
-  const faceSlots: FaceSlot[] = four.map((face) => ({ material: makeSideMaterial(), texture: null, face }))
-  const [frontSlot, rightSlot, backSlot, leftSlot] = faceSlots
+  const cubeFaces = takeCubeFaces(opts.faces)
+  const faceSlots: FaceSlot[] = cubeFaces.map((face) => ({
+    material: face.kind === 'brand' ? makeBrandMaterial() : makeScreenMaterial(),
+    texture: null,
+    face,
+  }))
 
   // BoxGeometry group order: 0 +X(right), 1 -X(left), 2 +Y(top),
-  // 3 -Y(bottom), 4 +Z(front), 5 -Z(back).
-  body.material = [rightSlot.material, leftSlot.material, capMat, capMat, frontSlot.material, backSlot.material]
+  // 3 -Y(bottom), 4 +Z(front), 5 -Z(back) — mapped onto the component's
+  // face indices 0 front, 1 right, 2 back, 3 left, 4 top, 5 bottom.
+  body.material = [
+    faceSlots[1].material,
+    faceSlots[3].material,
+    faceSlots[4].material,
+    faceSlots[5].material,
+    faceSlots[0].material,
+    faceSlots[2].material,
+  ]
+
+  let disposed = false
+  const brandMaps: import('three').Texture[] = []
+
+  const brandSlots = faceSlots.filter((slot) => slot.face.kind === 'brand')
+  if (brandSlots.length > 0) {
+    void getMarkPath().then((path) => {
+      if (disposed) return
+      const colorMap = buildBrandColorMap(THREE, path)
+      colorMap.colorSpace = THREE.SRGBColorSpace
+      colorMap.anisotropy = maxAniso
+      const maskMap = buildBrandMaskMap(THREE, path)
+      maskMap.anisotropy = maxAniso
+      brandMaps.push(colorMap, maskMap)
+      brandSlots.forEach((slot) => {
+        slot.material.map = colorMap
+        slot.material.metalnessMap = maskMap
+        slot.material.roughnessMap = maskMap
+        slot.material.needsUpdate = true
+      })
+      renderer.render(scene, camera)
+    })
+  }
 
   async function applyFaceTextures(theme: ThemeName) {
     await Promise.all(
       faceSlots.map(async (slot) => {
-        if (!slot.face) return
+        if (!slot.face || slot.face.kind === 'brand') return
         const src = theme === 'light' && slot.face.light ? slot.face.light : slot.face.file
+        if (!src) return
         const url = `/projects/${opts.projectId}/${src}`
         try {
           const img = await loadImageElement(url)
@@ -470,9 +673,6 @@ async function buildScene(
     // Slightly darker reflections in light theme (rather than brighter)
     // keep the chrome from washing into a pale page background.
     const chromeColor = isLight ? 0xe6e8ec : 0xe3e5ea
-    const envIntensity = isLight ? 0.95 : 1.0
-    capMat.color.set(chromeColor)
-    capMat.envMapIntensity = envIntensity
     faceSlots.forEach((slot) => {
       slot.material.color.set(chromeColor)
     })
@@ -502,8 +702,10 @@ async function buildScene(
     fitShadow()
   }
 
-  function setRotationDeg(rot: number) {
-    spinGroup.rotation.y = THREE.MathUtils.degToRad(rot)
+  /** Yaw about the cube's own Y, then pitch about world X — see the
+   *  "Orientation model" note at the top of the file. */
+  function setOrientationDeg(yaw: number, pitch: number) {
+    spinGroup.rotation.set(THREE.MathUtils.degToRad(pitch), THREE.MathUtils.degToRad(yaw), 0)
   }
 
   function setTiltDeg(tilt: number) {
@@ -515,10 +717,11 @@ async function buildScene(
   }
 
   function dispose() {
+    disposed = true
     bodyGeo.dispose()
     sharedColorMap.dispose()
     sharedMaskMap.dispose()
-    capMat.dispose()
+    brandMaps.forEach((map) => map.dispose())
     faceSlots.forEach((slot) => {
       slot.material.dispose()
       slot.texture?.dispose()
@@ -531,7 +734,7 @@ async function buildScene(
     renderer.dispose()
   }
 
-  return { setSize, setRotationDeg, setTiltDeg, setTheme: applyTheme, render, dispose }
+  return { setSize, setOrientationDeg, setTiltDeg, setTheme: applyTheme, render, dispose }
 }
 
 export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Props) {
@@ -540,10 +743,12 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
   const overlayRef = useRef<HTMLDivElement>(null)
 
   const rotRef = useRef(0)
+  const pitchRef = useRef(0)
   const tiltRef = useRef(BASE_TILT_DEG)
   const velocityRef = useRef(0)
   const draggingRef = useRef(false)
   const pointerLastXRef = useRef(0)
+  const pointerLastYRef = useRef(0)
   const pointerLastTRef = useRef(0)
   const momentumRafRef = useRef<number | null>(null)
   const tweenRafRef = useRef<number | null>(null)
@@ -553,6 +758,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
   const inViewRef = useRef(false)
   const reducedMotionRef = useRef(false)
   const autoTimerRef = useRef<number | null>(null)
+  const activeIndexRef = useRef(0)
 
   const sceneRef = useRef<SceneHandle | null>(null)
   const buildingRef = useRef(false)
@@ -563,18 +769,20 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
   const [threeReady, setThreeReady] = useState(false)
   const [fallbackOnly, setFallbackOnly] = useState(false)
 
-  const four = faces.length >= 4 ? faces.slice(0, 4) : [...faces, ...faces, ...faces, ...faces].slice(0, 4)
+  const cubeFaces = takeCubeFaces(faces)
 
   const requestRender = useCallback(() => {
     sceneRef.current?.render()
   }, [])
 
-  const setRot = useCallback(
-    (rot: number) => {
-      rotRef.current = rot
-      sceneRef.current?.setRotationDeg(rot)
+  const setOrientation = useCallback(
+    (yaw: number, pitch: number) => {
+      rotRef.current = yaw
+      pitchRef.current = pitch
+      sceneRef.current?.setOrientationDeg(yaw, pitch)
       requestRender()
-      const idx = indexFromRot(rot)
+      const idx = indexFromOrientation(yaw, pitch)
+      activeIndexRef.current = idx
       setActiveIndex((prev) => (prev === idx ? prev : idx))
     },
     [requestRender],
@@ -594,19 +802,24 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
     }
   }, [])
 
-  const snapTo = useCallback(
-    (target: number, animate: boolean) => {
+  /** Eases yaw and pitch together, so a move that changes both (say, the top
+   *  face from a lateral one) arrives as a single gesture. */
+  const tweenTo = useCallback(
+    (targetYaw: number, targetPitch: number, animate: boolean) => {
       stopTween()
-      if (!animate || reducedMotionRef.current) {
-        setRot(target)
+      if (!animate || reducedMotionRef.current || !sceneRef.current) {
+        setOrientation(targetYaw, targetPitch)
         return
       }
-      const from = rotRef.current
-      const distance = target - from
+      const fromYaw = rotRef.current
+      const fromPitch = pitchRef.current
+      const dYaw = targetYaw - fromYaw
+      const dPitch = targetPitch - fromPitch
       const start = performance.now()
       const tick = (now: number) => {
         const t = Math.min(1, (now - start) / TWEEN_MS)
-        setRot(from + distance * easeOutCubic(t))
+        const e = easeOutCubic(t)
+        setOrientation(fromYaw + dYaw * e, fromPitch + dPitch * e)
         if (t < 1) {
           tweenRafRef.current = requestAnimationFrame(tick)
         } else {
@@ -615,47 +828,64 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
       }
       tweenRafRef.current = requestAnimationFrame(tick)
     },
-    [setRot, stopTween],
+    [setOrientation, stopTween],
   )
 
   const goToIndex = useCallback(
     (index: number) => {
       stopMomentum()
-      if (sceneRef.current) {
-        const target = nearestRotForIndex(rotRef.current, ((index % 4) + 4) % 4)
-        snapTo(target, true)
-      } else {
-        setActiveIndex(((index % 4) + 4) % 4)
-      }
+      const i = ((index % FACE_COUNT) + FACE_COUNT) % FACE_COUNT
+      const target = orientationForIndex(i, rotRef.current)
+      tweenTo(target.yaw, target.pitch, true)
     },
-    [snapTo, stopMomentum],
+    [stopMomentum, tweenTo],
   )
 
-  const step = useCallback(
+  /** ←/→: a quarter turn of yaw. From the top or bottom plate it first drops
+   *  back to the lateral ring rather than skipping a face. */
+  const stepYaw = useCallback(
     (dir: 1 | -1) => {
       stopMomentum()
-      if (sceneRef.current) {
-        snapTo(rotRef.current - dir * 90, true)
-      } else {
-        setActiveIndex((prev) => ((prev + dir) % 4 + 4) % 4)
-      }
-    },
-    [snapTo, stopMomentum],
-  )
-
-  const runMomentum = useCallback(() => {
-    const tick = () => {
-      velocityRef.current *= FRICTION
-      if (Math.abs(velocityRef.current) < MIN_VELOCITY) {
-        momentumRafRef.current = null
-        snapTo(nearestSnap(rotRef.current), true)
+      if (Math.abs(pitchRef.current) > 1) {
+        tweenTo(nearestSnap(rotRef.current), 0, true)
         return
       }
-      setRot(rotRef.current + velocityRef.current)
+      tweenTo(rotRef.current - dir * 90, 0, true)
+    },
+    [stopMomentum, tweenTo],
+  )
+
+  /** ↑/↓: one step along bottom → lateral → top. */
+  const stepPitch = useCallback(
+    (dir: 1 | -1) => {
+      stopMomentum()
+      const current = Math.round(pitchRef.current / 90) * 90
+      const next = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, current + dir * 90))
+      tweenTo(nearestSnap(rotRef.current), next, true)
+    },
+    [stopMomentum, tweenTo],
+  )
+
+  /** Spins down the flick's yaw momentum while easing pitch onto its target,
+   *  then snaps to the nearest face. One driver for both axes so they can
+   *  never fight over the orientation. */
+  const runSettle = useCallback(
+    (targetPitch: number) => {
+      const tick = () => {
+        velocityRef.current *= FRICTION
+        const pitch = pitchRef.current + (targetPitch - pitchRef.current) * 0.18
+        if (Math.abs(velocityRef.current) < MIN_VELOCITY) {
+          momentumRafRef.current = null
+          tweenTo(nearestSnap(rotRef.current), targetPitch, true)
+          return
+        }
+        setOrientation(rotRef.current + velocityRef.current, pitch)
+        momentumRafRef.current = requestAnimationFrame(tick)
+      }
       momentumRafRef.current = requestAnimationFrame(tick)
-    }
-    momentumRafRef.current = requestAnimationFrame(tick)
-  }, [setRot, snapTo])
+    },
+    [setOrientation, tweenTo],
+  )
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
@@ -666,6 +896,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
       stopTween()
       draggingRef.current = true
       pointerLastXRef.current = e.clientX
+      pointerLastYRef.current = e.clientY
       pointerLastTRef.current = performance.now()
       velocityRef.current = 0
       overlay.setPointerCapture(e.pointerId)
@@ -678,14 +909,18 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
       if (!draggingRef.current) return
       const now = performance.now()
       const dx = e.clientX - pointerLastXRef.current
+      const dy = e.clientY - pointerLastYRef.current
       const dt = Math.max(1, now - pointerLastTRef.current)
-      const delta = dx * DRAG_SENSITIVITY
-      velocityRef.current = (delta / dt) * 16
+      const yawDelta = dx * DRAG_SENSITIVITY
+      // Dragging up tips the far side down and brings the top plate forward.
+      const pitchDelta = -dy * PITCH_SENSITIVITY
+      velocityRef.current = (yawDelta / dt) * 16
       pointerLastXRef.current = e.clientX
+      pointerLastYRef.current = e.clientY
       pointerLastTRef.current = now
-      setRot(rotRef.current + delta)
+      setOrientation(rotRef.current + yawDelta, softClampPitch(pitchRef.current + pitchDelta))
     },
-    [setRot],
+    [setOrientation],
   )
 
   const endDrag = useCallback(
@@ -700,13 +935,18 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
           // capture may already be released
         }
       }
-      if (reducedMotionRef.current || Math.abs(velocityRef.current) < MIN_VELOCITY) {
-        snapTo(nearestSnap(rotRef.current), true)
+      const pitch = pitchRef.current
+      const targetPitch =
+        Math.abs(pitch) > PITCH_SNAP_THRESHOLD ? Math.sign(pitch) * PITCH_LIMIT : 0
+      // A flick that ends on the top/bottom plate settles straight onto it —
+      // carrying yaw momentum there would spin a face the drag never chose.
+      if (targetPitch !== 0 || reducedMotionRef.current || Math.abs(velocityRef.current) < MIN_VELOCITY) {
+        tweenTo(nearestSnap(rotRef.current), targetPitch, true)
       } else {
-        runMomentum()
+        runSettle(0)
       }
     },
-    [runMomentum, snapTo],
+    [runSettle, tweenTo],
   )
 
   // --- Hover tilt (fine pointer only) ------------------------------
@@ -765,13 +1005,19 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'ArrowRight') {
         e.preventDefault()
-        step(1)
+        stepYaw(1)
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault()
-        step(-1)
+        stepYaw(-1)
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        stepPitch(1)
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        stepPitch(-1)
       }
     },
-    [step],
+    [stepPitch, stepYaw],
   )
 
   // --- Init: reduced motion + theme observer --------------------------
@@ -864,7 +1110,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
           .then((handle) => {
             sceneRef.current = handle
             handle.setTiltDeg(tiltRef.current)
-            handle.setRotationDeg(rotRef.current)
+            handle.setOrientationDeg(rotRef.current, pitchRef.current)
             handle.render()
             setThreeReady(true)
           })
@@ -912,6 +1158,9 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
   }, [stopMomentum, stopTween])
 
   // --- Auto-rotate -------------------------------------------------------
+  // Walks the full six-face cycle (lateral ring, then the brand plate on top,
+  // then the bottom face) rather than only the yaw ring, so every face gets
+  // shown to a visitor who never touches the cube.
   useEffect(() => {
     const tick = () => {
       autoTimerRef.current = window.setTimeout(() => {
@@ -924,7 +1173,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
           momentumRafRef.current === null &&
           sceneRef.current
         ) {
-          step(1)
+          goToIndex(activeIndexRef.current + 1)
         }
         tick()
       }, AUTO_ROTATE_MS)
@@ -933,7 +1182,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
     return () => {
       if (autoTimerRef.current !== null) window.clearTimeout(autoTimerRef.current)
     }
-  }, [step])
+  }, [goToIndex])
 
   const onMouseEnter = () => {
     hoveredRef.current = true
@@ -949,12 +1198,23 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
     focusedRef.current = false
   }
 
-  const activeFace = four[activeIndex]
+  if (cubeFaces.length === 0) return null
+
+  const activeFace = cubeFaces[activeIndex]
   const showFallback = fallbackOnly || !threeReady
-  const fallbackFace = four[activeIndex]
-  const fallbackSrc =
-    theme === 'light' && fallbackFace.light ? fallbackFace.light : fallbackFace.file
+  const fallbackFace = activeFace
+  const fallbackSrc = theme === 'light' && fallbackFace.light ? fallbackFace.light : fallbackFace.file
   const fallbackBase = `/projects/${projectId}/${fallbackSrc}`
+
+  const onFallbackKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'ArrowRight') {
+      e.preventDefault()
+      goToIndex(activeIndexRef.current + 1)
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault()
+      goToIndex(activeIndexRef.current - 1)
+    }
+  }
 
   return (
     <div className="flex flex-col items-center cube-wrapper">
@@ -991,32 +1251,34 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
             role="img"
             aria-label={`${title} — ${pick(fallbackFace.label, locale)}`}
             tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'ArrowRight') {
-                e.preventDefault()
-                step(1)
-              } else if (e.key === 'ArrowLeft') {
-                e.preventDefault()
-                step(-1)
-              }
-            }}
+            onKeyDown={onFallbackKeyDown}
           >
-            <img
-              key={fallbackFace.id}
-              src={fallbackBase}
-              sizes="(min-width: 1024px) 520px, 80vw"
-              alt={pick(fallbackFace.label, locale)}
-              loading={eagerFront ? 'eager' : 'lazy'}
-              decoding="async"
-            />
+            {fallbackFace.kind === 'brand' ? (
+              // No screenshot behind this face — the same mark the plate is
+              // engraved with, sitting on the fallback's chrome gradient.
+              <div className="cube-fallback__brand">
+                <BrandMark size={64} />
+              </div>
+            ) : (
+              <img
+                key={fallbackFace.id}
+                src={fallbackBase}
+                sizes="(min-width: 1024px) 520px, 80vw"
+                alt={pick(fallbackFace.label, locale)}
+                loading={eagerFront ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            )}
           </div>
         )}
       </div>
 
       <div className="cube-dots" role="tablist" aria-label={title}>
-        {four.map((face, i) => (
+        {cubeFaces.map((face, i) => (
           <button
-            key={face.id}
+            // Index-suffixed: a project shipping fewer than six faces has the
+            // set padded by repetition, so ids alone are not unique here.
+            key={`${face.id}-${i}`}
             type="button"
             className="cube-dot"
             aria-label={pick(face.label, locale)}

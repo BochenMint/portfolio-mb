@@ -115,6 +115,24 @@
   object-position: top;
   display: block;
 }
+/* The brand plate has no screenshot behind it: the mark sits directly on the
+   fallback's chrome gradient, engraved rather than printed — a dark fill with
+   a one-pixel light lip below it, mirroring the bevel baked into the WebGL
+   face texture. Sized to the same 46% of the face the texture uses. */
+.cube-fallback__brand {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(22, 24, 28, 0.62);
+}
+.cube-fallback__brand svg {
+  width: 46%;
+  height: auto;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.5));
+}
+
 .cube-fallback::after {
   content: '';
   position: absolute;
