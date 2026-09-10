@@ -911,9 +911,9 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
       const dx = e.clientX - pointerLastXRef.current
       const dy = e.clientY - pointerLastYRef.current
       const dt = Math.max(1, now - pointerLastTRef.current)
-      // Dragging right brings the right face forward (as if turning the cube
+      // Dragging left brings the right face forward (as if turning the cube
       // by its near-right edge); dragging up brings the bottom face forward.
-      const yawDelta = -dx * DRAG_SENSITIVITY
+      const yawDelta = dx * DRAG_SENSITIVITY
       const pitchDelta = dy * PITCH_SENSITIVITY
       velocityRef.current = (yawDelta / dt) * 16
       pointerLastXRef.current = e.clientX
