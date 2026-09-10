@@ -1,0 +1,57 @@
+# Cloudflare Pages headers — https://developers.cloudflare.com/pages/configuration/headers/
+#
+# Rules are cumulative: every block whose path pattern matches a request applies its
+# headers, and if two matching blocks set the SAME header name, Cloudflare joins the
+# values with a comma instead of one overriding the other. So Cache-Control is only ever
+# set from ONE block per request below — the asset/font blocks and the html blocks match
+# disjoint paths (nothing under /assets/ or /fonts/ ends in .html or lives under
+# /en/, /ua/, /artykuly/, or is the bare "/"), so they can never collide.
+
+# Vite fingerprints every build output under /assets/* with a content hash, so a given
+# URL's bytes never change — a new deploy ships new hashes instead of overwriting these,
+# which makes "cache forever" safe.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Self-hosted variable fonts (public/fonts/*.woff2) aren't hash-named, but in practice we
+# only ever swap them by changing the filename too, so long-cache them the same way.
+# They're also <link rel=preload as=font crossorigin> in the document head — the spec
+# requires font preloads to run in CORS mode even for same-origin requests, so without
+# Access-Control-Allow-Origin the preloaded fetch is discarded as a mismatch and the
+# browser downloads the font a second time when the @font-face actually applies.
+/fonts/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# HTML must always revalidate: a cached shell references the previous build's /assets/*
+# hashes, and those files are gone as soon as the next deploy prunes them. max-age=0 +
+# must-revalidate (rather than no-store) still allows a conditional GET, so a repeat
+# visit with no new deploy is a cheap 304 rather than a full re-download.
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/artykuly/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/en/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/ua/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Baseline security headers for every response on this static marketing site.
+# No Content-Security-Policy here on purpose: the pages boot with an inline
+# theme-bootstrap <script> (to avoid a light/dark flash before hydration) and the hero
+# sections run WebGL/three.js with dynamically created blob/data resources. A CSP tight
+# enough to be worth shipping would need per-page script hashes and a WebGL-aware
+# worker-src/connect-src, tuned and tested page by page — a wrong policy fails silently
+# (blocked inline script, blank hero) rather than throwing, which is worse than no CSP
+# for a marketing site's launch week. Add one later, deliberately, with a report-only
+# rollout first.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()

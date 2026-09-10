@@ -1,0 +1,42 @@
+[
+  {
+    "file": "face-1.webp",
+    "light": null,
+    "id": "home",
+    "label": { "pl": "Strona główna", "en": "Homepage" },
+    "caption": {
+      "pl": "Hero strony głównej z wyszukiwarką terminów, opiniami gości i gwarancją najlepszej ceny.",
+      "en": "Homepage hero pairing a live availability search with guest reviews and a best-price guarantee."
+    }
+  },
+  {
+    "file": "face-2.webp",
+    "light": null,
+    "id": "apartment",
+    "label": { "pl": "Strona apartamentu", "en": "Apartment page" },
+    "caption": {
+      "pl": "Strona apartamentu łącząca galerię zdjęć, opis wnętrza i panel rezerwacji.",
+      "en": "Apartment detail page combining a photo gallery, full description and a booking panel."
+    }
+  },
+  {
+    "file": "face-3.webp",
+    "light": null,
+    "id": "listing-en",
+    "label": { "pl": "Lista apartamentów", "en": "Apartments listing" },
+    "caption": {
+      "pl": "Katalog apartamentów z filtrami lokalizacji, budżetu i liczby gości.",
+      "en": "Apartments catalogue with filters for location, budget and guest count."
+    }
+  },
+  {
+    "file": "face-4.webp",
+    "light": null,
+    "id": "admin-dashboard",
+    "label": { "pl": "Panel administracyjny", "en": "Admin dashboard" },
+    "caption": {
+      "pl": "Panel administracyjny z podsumowaniem rezerwacji, apartamentów i właścicieli.",
+      "en": "Admin dashboard summarizing bookings, apartments and owners at a glance."
+    }
+  }
+]

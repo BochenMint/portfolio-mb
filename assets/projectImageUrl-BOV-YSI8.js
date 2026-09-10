@@ -1,0 +1,1 @@
+function e(e,t){return e.id===`mint`?t===`card`?`apartment`:`hero`:e.id===`plumm`?`split`:e.imageScene?e.imageScene:`hero`}function t(t,n=`card`){let r=e(t,n);return`/projects/${t.id}/${r}-hero.webp`}export{e as n,t};

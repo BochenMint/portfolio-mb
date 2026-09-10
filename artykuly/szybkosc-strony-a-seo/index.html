@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Szybkość strony a SEO: INP, LCP i pomiar po starcie</title>
+    <meta name="description" content="Szybkość strony a SEO: liczy się INP i LCP na telefonie, nie FID i nie sam Lighthouse. Tłumaczę, dlaczego stack (Astro/Next) i pomiar po deploju są częścią konwersji, nie ozdobą." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://marcinbochenek.com/artykuly/szybkosc-strony-a-seo/" />
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/artykuly/szybkosc-strony-a-seo/" />
+    <link rel="alternate" hreflang="en" href="https://marcinbochenek.com/en/articles/szybkosc-strony-a-seo/" />
+    <link rel="alternate" hreflang="uk" href="https://marcinbochenek.com/ua/statti/szybkosc-strony-a-seo/" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/artykuly/szybkosc-strony-a-seo/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Szybkość strony a SEO: INP, LCP i pomiar po starcie" />
+    <meta property="og:description" content="Szybkość strony a SEO: liczy się INP i LCP na telefonie, nie FID i nie sam Lighthouse. Tłumaczę, dlaczego stack (Astro/Next) i pomiar po deploju są częścią konwersji, nie ozdobą." />
+    <meta property="og:url" content="https://marcinbochenek.com/artykuly/szybkosc-strony-a-seo/" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="uk_UA" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Szybkość strony a SEO: INP, LCP i pomiar po starcie" />
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Szybkość strony a SEO: INP, LCP i pomiar po starcie" />
+    <meta name="twitter:description" content="Szybkość strony a SEO: liczy się INP i LCP na telefonie, nie FID i nie sam Lighthouse. Tłumaczę, dlaczego stack (Astro/Next) i pomiar po deploju są częścią konwersji, nie ozdobą." />
+    <meta name="twitter:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta name="twitter:image:alt" content="Szybkość strony a SEO: INP, LCP i pomiar po starcie" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/journal.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":["Article","BlogPosting"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://marcinbochenek.com/artykuly/szybkosc-strony-a-seo/"},"headline":"Szybkość strony a SEO: INP, LCP i pomiar po starcie","description":"Szybkość strony a SEO: liczy się INP i LCP na telefonie, nie FID i nie sam Lighthouse. Tłumaczę, dlaczego stack (Astro/Next) i pomiar po deploju są częścią konwersji, nie ozdobą.","inLanguage":"pl","datePublished":"2026-08-24","dateModified":"2026-08-24","wordCount":1405,"image":["https://marcinbochenek.com/brand/og-default.png"],"author":{"@type":"Person","@id":"https://marcinbochenek.com/#person","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","email":"kontakt@marcinbochenek.com","jobTitle":"Software engineer","image":"https://marcinbochenek.com/images/marcin-bochenek.webp","sameAs":["https://github.com/BochenMint"]},"publisher":{"@type":"Organization","name":"Marcin Bochenek","url":"https://marcinbochenek.com/","logo":{"@type":"ImageObject","url":"https://marcinbochenek.com/brand/logo-mb.svg"}}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Strona główna","item":"https://marcinbochenek.com/"},{"@type":"ListItem","position":2,"name":"Artykuły","item":"https://marcinbochenek.com/artykuly/"},{"@type":"ListItem","position":3,"name":"Szybkość strony a SEO: INP na telefonie, nie vanity score z Lighthouse","item":"https://marcinbochenek.com/artykuly/szybkosc-strony-a-seo/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Czy 100 w Lighthouse gwarantuje pozycje?","acceptedAnswer":{"@type":"Answer","text":"Nie. To laboratorium. Ranking to intencja, treść, linki i doświadczenie w polu. 100 bez zapytań to hobby."}},{"@type":"Question","name":"Czy WordPress może być szybki?","acceptedAnswer":{"@type":"Answer","text":"Może, przy dyscyplinie, której większość motywów nie ma. Dlatego go nie sprzedaję jako domyślnego stacku wizytówki."}},{"@type":"Question","name":"Czy animacje zawsze psują INP?","acceptedAnswer":{"@type":"Answer","text":"Nie zawsze. Psuje nieprzemyślany JS na ścieżce krytycznej. Animacja CSS na dekoracji bywa tania. Three.js w hero wizytówki — rzadko."}},{"@type":"Question","name":"Kiedy mierzyć ponownie?","acceptedAnswer":{"@type":"Answer","text":"Po deploju na produkcji, na telefonie, przy realnym cache. Potem po dokładkach (czat, pixel, film). Każdy dodatek to nowy audyt INP, nie „już było zielono”."}},{"@type":"Question","name":"Czy wynik Lighthouse 100 na localhostcie coś znaczy?","acceptedAnswer":{"@type":"Answer","text":"Mało. Po deploju otwieram stronę na telefonie, na sieci której nie kontroluję, i patrzę na LCP oraz INP. CrUX, gdy ruch istnieje. Lab bez ruchu jest hipotezą, nie certyfikatem. Nie publikuję PageSpeed 98 na Mint — zmierz sam. FID wypadł z Core Web Vitals; raportowanie FID w 2026 to audyt wspomnień. Czat w hero, hydracja SPA i pixel „na wszelki wypadek” zabijają INP. Gra i hangar 3D są osobnymi wejściami, nie bagażem wizytówki."}},{"@type":"Question","name":"Czy ten dziennik jest w SPA z hashem, skoro reszta strony bywa aplikacją?","acceptedAnswer":{"@type":"Answer","text":"Nie. Artykuły są statycznym HTML pod /artykuly/, /en/articles/ i /ua/statti/. Hash nie jest adresem dla Search Console. Hreflang ukraińskiej wersji to uk albo uk-UA; prefiks URL to /ua/, etykieta UA, nigdy UK jako Ukraina. Trzy kopie to trzy LCP. Wizytówka bez bloga nie musi być crawlable dziennikiem. Klastry — tak. Nie wycinam treści sprzedającej, żeby Lighthouse się uśmiechnął. Pusty hero z wynikiem 100 nie zbiera zapytań."}},{"@type":"Question","name":"Co zostawiasz po starcie zamiast screenshotu z dnia premiery?","acceptedAnswer":{"@type":"Answer","text":"Sposób pomiaru. Sieć się zmienia, ktoś wkleja Tag Managera na chwilę, pixel się dokłada. Szybkość to higiena, nie projekt zamknięty. Jeśli nie chcecie tej higieny, nie obiecuję pozycji i nie biorę odpowiedzialności za kampanię palącą budżet na spinnerze. Astro/Next, rozsądne obrazy, zgoda przed trzecimi skryptami. Każda uprzejmość wobec marketingu jest nieuprzejmością wobec INP na starym Androidzie."}}]}</script>
+  </head>
+  <body>
+    <a class="j-skip" href="#content">Przejdź do treści</a>
+    <header class="j-header">
+      <a class="j-mark" href="/">MB<span>Marcin Bochenek</span></a>
+      <nav class="j-nav" aria-label="Artykuły">
+        <a href="/artykuly/">Artykuły</a>
+        <a href="/#cennik">Pakiety</a>
+        <a href="/#kontakt">Kontakt</a>
+      </nav>
+      <nav class="j-locales" aria-label="Język"><a href="/artykuly/szybkosc-strony-a-seo/" aria-current="page" lang="pl" hreflang="pl">PL</a><a href="/en/articles/szybkosc-strony-a-seo/" lang="en" hreflang="en">EN</a><a href="/ua/statti/szybkosc-strony-a-seo/" lang="uk" hreflang="uk">UA</a></nav>
+    </header>
+    <main class="j-main" id="content">
+      <nav class="j-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Start</a></li>
+          <li><a href="/artykuly/">Artykuły</a></li>
+          <li>Szybkość strony a SEO: INP na telefonie, nie vanity score z Lighthouse</li>
+        </ol>
+      </nav>
+      <article class="j-article">
+        <p class="j-kicker">Core Web Vitals</p>
+        <h1>Szybkość strony a SEO: INP na telefonie, nie vanity score z Lighthouse</h1>
+        <p class="j-meta">Autor: Marcin Bochenek · Aktualizacja: <time datetime="2026-08-24">2026-08-24</time></p>
+        <p class="j-lead">„Zrób nam 100 w PageSpeed” to zły brief. Google od lat mierzy doświadczenie, nie zrzut z laboratorium na kablu. Dla interakcji liczy się INP (nie martwy FID), dla malowania LCP, dla stabilności CLS. Szybkość strony a SEO spotykają się tam, gdzie płatny albo organiczny klik umiera, zanim H1 cokolwiek obieca. W pakiecie strony firmowej obiecuję on-page i CWV na telefonie — nie religię zielonych pudełek bez konwersji.</p>
+        <h2>INP zamiast FID — żebyśmy mówili tym samym językiem</h2>
+<p>FID wypadł z Core Web Vitals. Jeśli agencja w 2026 raportuje FID jako sukces, audytuje wspomnienia. INP opisuje, jak strona reaguje na klik i pisanie. Ciężki JS, hydracja całego SPA, czat wklejony w hero — to zabójcy INP. Dlatego wizytówki stawiam na lekkim stacku (Astro/Next), a nie na motywie z dwudziestoma wtyczkami „optymalizacji”.</p>
+<p>Lighthouse na desktopie z cache’em dewelopera kłamie dwukrotnie: urządzenie i sieć. Decyzje biorę z pola (CrUX, jeśli jest ruch) albo z pomiaru na realnym telefonie po deploju. <a href="/artykuly/wdrozenie-strony-internetowej/">Wdrożenie</a> ma krok „pomiar po starcie” właśnie dlatego.</p>
+<h2>Gdzie szybkość jest SEO, a gdzie jest tylko konwersją</h2>
+<p>Google używa sygnałów doświadczenia jako części rankingu, ale nie kupisz pozycji samą kompresją obrazków, gdy nikt nie linkuje i nie ma treści z intencją. Z drugiej strony: kampania, która ląduje na 6-sekundowym LCP, pali budżet niezależnie od title. To wiadro 2 w <a href="/artykuly/dlaczego-strona-nie-sprzedaje/">dlaczego strona nie sprzedaje</a>.</p>
+<ul><li>Obrazy: nowoczesny format, wymiary, nie hero 4k z PNG.</li><li>Czcionki: preconnect, nie pięć rodzin „na wszelki wypadek”.</li><li>JS: nie ładuj Three.js na wizytówce „bo ładnie”. Gra i hangar są osobnymi wejściami.</li><li>Trzecie skrypty: każdy pixel to INP. Zgoda marketingu nie jest darmowa.</li></ul>
+<aside class="j-note">Nie publikuję tu fałszywego „PageSpeed 98 na Mint”. Mint i Plumm możesz zmierzyć sam. iDrive nie jest live — nie ma czego chwalić na produkcji.</aside>
+<h2>Crawlable HTML kontra SPA z hashem</h2>
+<p>Ten dziennik jest statycznym HTML w dist, nie `/#artykuly`. To decyzja SEO, nie moda. Hash routing nie jest adresem dla Search Console. Jeśli chcesz organiczny kanał, URL musi istnieć bez JavaScriptu jako jedynego nośnika treści. Wizytówka bez bloga tego nie potrzebuje. Klastry — tak.</p>
+<h2>Czego nie robię w imię wyniku 100</h2>
+<ol><li>Nie wycinam treści, która sprzedaje, żeby Lighthouse się uśmiechnął.</li><li>Nie zostawiam „szybkiej” strony bez formularza, który działa na wolnym LTE.</li><li>Nie obiecuję Core Web Vitals w polu, gdy nie ma jeszcze ruchu — lab to hipoteza.</li><li>Nie sprzedaję comiesięcznego „optymalizujemy wtyczki” na stacku, którego nie stawiam.</li></ol>
+<p>W <a href="/artykuly/strona-firmowa-b2b/">stronie firmowej B2B</a> szybkość jest w zakresie, bo telefon jest miejscem decyzji. W pakiecie Launch dochodzi pomiar ścieżki: wolny krok płatności zabija lejek mocniej niż trzy punkty Lighthouse.</p>
+<h2>Co naprawdę mierzę po deploju, a czego nie wklejam na slajd</h2>
+<p>Szybkość strony a SEO to nie wyścig Lighthouse na localhostcie z kablem. Po starcie otwieram stronę na telefonie, na sieci, której nie kontroluję, i patrzę na LCP oraz INP. Lab z CrUX, gdy ruch w ogóle istnieje. Jeśli ruchu nie ma, lab jest hipotezą — nie certyfikatem. Nie publikuję tu fałszywego „PageSpeed 98 na Mint”. Mint i Plumm możesz zmierzyć sam. iDrive nie jest live, więc nie ma czego chwalić na produkcji.</p>
+<p>FID wypadł z Core Web Vitals. Agencja, która w 2026 raportuje FID jako sukces, audytuje wspomnienia. INP opisuje, jak strona reaguje na klik i pisanie. Ciężki JS, hydracja całego SPA, czat wklejony w hero — to zabójcy INP. Dlatego wizytówki stawiam na lekkim stacku. Gra i hangar 3D są osobnymi wejściami, nie obowiązkowym bagażem strony firmowej.</p>
+<ul><li>LCP: hero nie może być dekoracją 4 MB „bo ładnie w portfolio”.</li><li>INP: trzecie skrypty, pixel, czat. Zgoda marketingu nie jest darmowa.</li><li>CLS: fonty i banery cookie, które przepychają CTA po załadowaniu.</li><li>TTFB: hosting i cache. Motyw z dwudziestoma wtyczkami „optymalizacji” zwykle kłamie.</li></ul>
+<h2>Crawlable HTML kontra hash, którego Google nie traktuje jak adresu</h2>
+<p>Ten dziennik jest statycznym HTML. To decyzja SEO, nie moda. Hash routing nie jest adresem dla Search Console. Jeśli chcesz organiczny kanał, URL musi istnieć bez JavaScriptu jako jedynego nośnika treści. Wizytówka bez bloga tego nie potrzebuje. Klastry — tak. Nie mieszam tego z „wtyczką blog w page builderze”, która produkuje zduplikowane parametry i 200 na puste facety.</p>
+<p>Hreflang na wersji ukraińskiej to `uk` albo `uk-UA`, nie wymysł `ua`. Prefiks URL jest `/ua/`, bo tak czyta człowiek i tak trzymamy spójność z homepage. Mylenie UK (Wielka Brytania) z UA w UI to błąd, który sam naprawiam, gdy go widzę. Szybkość i i18n spotykają się tu: trzy kopie to trzy LCP, nie jeden „przetłumaczony div”.</p>
+<h2>Czego nie wytnę, żeby Lighthouse się uśmiechnął</h2>
+<ol><li>Treści, która sprzedaje. Pusty hero z wynikiem 100 nie zbiera zapytań.</li><li>Formularza, który działa na wolnym LTE. „Szybka” strona bez CTA to błąd pomiaru.</li><li>Dowodu, który można kliknąć. Obrazek z posteru nie jest Mint.</li><li>Pomiaru zapytań. Pixel ma koszt INP — dlatego nie wpinam pięciu naraz „na wszelki wypadek”.</li></ol>
+<p>Jeśli płacicie za ruch, najpierw naprawiamy INP i LCP na ścieżce płatnej, nie „cały serwis na 100”. <a href="/artykuly/dlaczego-strona-nie-sprzedaje/">Dlaczego strona nie sprzedaje</a> często zaczyna się w wiadrze 2: ludzie przychodzą i uciekają, bo pierwszy ekran jest ciężki. Redesign bez pomiaru to zakup tapety.</p>
+<h2>Stack, którego używam, gdy szybkość jest częścią oferty</h2>
+<p>Astro albo Next na wizytówkę, nie WordPress z ThemeForest i dwudziestoma wtyczkami cache, które walczą ze sobą. Obrazy w rozsądnym formacie, bez hero-wideo 4K pod CTA. Czcionki ograniczone. Trzecie skrypty na zgodę, nie na starcie. To nie jest religia JAMstack. To rachunek: każda kilobajtowa uprzejmość wobec marketingu jest nieuprzejmością wobec INP na Androidzie z 2020 roku.</p>
+<p>Po <a href="/artykuly/wdrozenie-strony-internetowej/">wdrożeniu</a> zostawiam Wam sposób pomiaru, nie screenshot z dnia premiery. Sieć się zmienia, pixel się dokłada, ktoś wkleja Tag Managera „na chwilę”. Szybkość strony a SEO to higiena, nie projekt zamknięty. Jeśli nie chcecie tej higieny, nie obiecuję pozycji — i nie biorę odpowiedzialności za kampanię, która pali budżet na spinnerze.</p>
+<h2>Higiena po deploju, której nie zastąpi screenshot z premiery</h2>
+<p>Ktoś wklei pixel. Ktoś doda czat. Sieć gościa nie jest Waszą siecią z biura. Zostawiam sposób pomiaru LCP i INP na telefonie, nie dyplom Lighthouse z dnia startu. Jeśli nie chcecie tej higieny, nie biorę kampanii, która ma palić budżet na spinnerze. Wizytówka na Astro/Next, obrazy bez hero 4K, zgoda przed skryptami. Dziennik crawlable pod /artykuly/ i /ua/statti/, nie hash. Hreflang uk, etykieta UA. FID w raporcie 2026 jest wspomnieniem. Szybkość strony a SEO jest częścią konwersji. Inaczej płacicie za klik, który nie zdąży przeczytać oferty. Screenshot z premiery nie broni Was trzy miesiące później, gdy Tag Manager „na chwilę” zostanie na stałe.</p>
+        <section class="j-faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">Pytania</h2>
+          <details><summary>Czy 100 w Lighthouse gwarantuje pozycje?</summary><p>Nie. To laboratorium. Ranking to intencja, treść, linki i doświadczenie w polu. 100 bez zapytań to hobby.</p></details>
+<details><summary>Czy WordPress może być szybki?</summary><p>Może, przy dyscyplinie, której większość motywów nie ma. Dlatego go nie sprzedaję jako domyślnego stacku wizytówki.</p></details>
+<details><summary>Czy animacje zawsze psują INP?</summary><p>Nie zawsze. Psuje nieprzemyślany JS na ścieżce krytycznej. Animacja CSS na dekoracji bywa tania. Three.js w hero wizytówki — rzadko.</p></details>
+<details><summary>Kiedy mierzyć ponownie?</summary><p>Po deploju na produkcji, na telefonie, przy realnym cache. Potem po dokładkach (czat, pixel, film). Każdy dodatek to nowy audyt INP, nie „już było zielono”.</p></details>
+<details><summary>Czy wynik Lighthouse 100 na localhostcie coś znaczy?</summary><p>Mało. Po deploju otwieram stronę na telefonie, na sieci której nie kontroluję, i patrzę na LCP oraz INP. CrUX, gdy ruch istnieje. Lab bez ruchu jest hipotezą, nie certyfikatem. Nie publikuję PageSpeed 98 na Mint — zmierz sam. FID wypadł z Core Web Vitals; raportowanie FID w 2026 to audyt wspomnień. Czat w hero, hydracja SPA i pixel „na wszelki wypadek” zabijają INP. Gra i hangar 3D są osobnymi wejściami, nie bagażem wizytówki.</p></details>
+<details><summary>Czy ten dziennik jest w SPA z hashem, skoro reszta strony bywa aplikacją?</summary><p>Nie. Artykuły są statycznym HTML pod /artykuly/, /en/articles/ i /ua/statti/. Hash nie jest adresem dla Search Console. Hreflang ukraińskiej wersji to uk albo uk-UA; prefiks URL to /ua/, etykieta UA, nigdy UK jako Ukraina. Trzy kopie to trzy LCP. Wizytówka bez bloga nie musi być crawlable dziennikiem. Klastry — tak. Nie wycinam treści sprzedającej, żeby Lighthouse się uśmiechnął. Pusty hero z wynikiem 100 nie zbiera zapytań.</p></details>
+<details><summary>Co zostawiasz po starcie zamiast screenshotu z dnia premiery?</summary><p>Sposób pomiaru. Sieć się zmienia, ktoś wkleja Tag Managera na chwilę, pixel się dokłada. Szybkość to higiena, nie projekt zamknięty. Jeśli nie chcecie tej higieny, nie obiecuję pozycji i nie biorę odpowiedzialności za kampanię palącą budżet na spinnerze. Astro/Next, rozsądne obrazy, zgoda przed trzecimi skryptami. Każda uprzejmość wobec marketingu jest nieuprzejmością wobec INP na starym Androidzie.</p></details>
+        </section>
+        <section class="j-cta">
+          <h2>Zmierzmy telefon, nie zrzut z iMaca</h2>
+          <p>Jeśli LCP zabija kampanię, to nie jest problem „kolorów”. <a href="/#oferta">Zakres</a> obejmuje CWV w pakiecie strony.</p>
+          <a href="/#kontakt">Umów 20-min audyt</a>
+        </section>
+        <section class="j-related">
+          <h2>Powiązane artykuły</h2>
+          <ul><li><a href="/artykuly/dlaczego-strona-nie-sprzedaje/">wolna strona jako jedno z wiader „nie sprzedaje”</a></li><li><a href="/artykuly/strona-firmowa-b2b/">CWV w pakiecie strony firmowej, nie jako religia</a></li><li><a href="/artykuly/wdrozenie-strony-internetowej/">pomiar na produkcji, nie tylko na stagingu</a></li></ul>
+          <h3>Oferta</h3>
+          <ul><li><a href="/#oferta">zakres prac: strona, panel, HITL</a></li></ul>
+        </section>
+      </article>
+    </main>
+    <div class="j-header" style="border:0;padding-bottom:0">
+      <nav class="j-locales" aria-label="Język"><a href="/artykuly/szybkosc-strony-a-seo/" aria-current="page" lang="pl" hreflang="pl">PL</a><a href="/en/articles/szybkosc-strony-a-seo/" lang="en" hreflang="en">EN</a><a href="/ua/statti/szybkosc-strony-a-seo/" lang="uk" hreflang="uk">UA</a></nav>
+    </div>
+    <footer class="j-footer">
+      <p>Marcin Bochenek</p>
+      <div>
+        <a href="mailto:kontakt@marcinbochenek.com">kontakt@marcinbochenek.com</a>
+        ·
+        <a href="/artykuly/">Artykuły</a>
+        ·
+        <a href="/">Strona główna</a>
+      </div>
+    </footer>
+  </body>
+</html>

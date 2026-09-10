@@ -1,0 +1,42 @@
+[
+  {
+    "file": "face-1.webp",
+    "light": null,
+    "id": "jarvis-home",
+    "label": { "pl": "Jarvis — pulpit główny", "en": "Jarvis home" },
+    "caption": {
+      "pl": "Głosowe centrum dowodzenia z porannym briefingiem generowanym lokalnie.",
+      "en": "Voice-driven command center with a morning briefing generated on-device."
+    }
+  },
+  {
+    "file": "face-2.webp",
+    "light": null,
+    "id": "operations-deck",
+    "label": { "pl": "Pulpit agentów", "en": "Live operations deck" },
+    "caption": {
+      "pl": "Podgląd agentów AI na żywo — status, historia runów i kolejka eskalacji.",
+      "en": "Live view of AI agents — status, run history and the escalation queue."
+    }
+  },
+  {
+    "file": "face-3.webp",
+    "light": null,
+    "id": "capture-inbox",
+    "label": { "pl": "Skrzynka przechwyceń", "en": "Capture inbox" },
+    "caption": {
+      "pl": "Kolejka notatek głosowych, tekstowych i zrzutów czekających na wzbogacenie.",
+      "en": "Queue of voice notes, text and screenshots waiting to be enriched."
+    }
+  },
+  {
+    "file": "face-4.webp",
+    "light": null,
+    "id": "memory-explorer",
+    "label": { "pl": "Eksplorator pamięci", "en": "Memory explorer" },
+    "caption": {
+      "pl": "Warstwa pamięci AI z rozkładem pewności i liczbą wpisów w każdym obszarze.",
+      "en": "The AI memory layer, showing confidence distribution and entries per scope."
+    }
+  }
+]

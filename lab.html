@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Archiwum wersji — Marcin Bochenek</title>
+    <meta
+      name="description"
+      content="Osiem edycji tego portfolio — od landingu z maja 2026 po bieżącą wersję chrome, plus gra kosmiczna. Każda była kiedyś wersją produkcyjną."
+    />
+    <link rel="canonical" href="https://marcinbochenek.com/lab.html" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#050506" />
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('mb-theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'light' ? '#eef0f3' : '#050506');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+    <meta property="og:site_name" content="Marcin Bochenek" />
+    <meta property="og:title" content="Archiwum wersji — Marcin Bochenek" />
+    <meta
+      property="og:description"
+      content="Osiem edycji tego portfolio, w tym gra kosmiczna. Każda była kiedyś wersją produkcyjną."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://marcinbochenek.com/lab.html" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content="https://marcinbochenek.com/brand/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Archiwum wersji portfolio Marcina Bochenka" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link
+      rel="preload"
+      href="/fonts/HankenGrotesk-latin-wght.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <script type="module" crossorigin src="/assets/lab-CNCmxFwD.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-QTnfLwEv.js">
+    <link rel="modulepreload" crossorigin href="/assets/react-spline-CLS9LA80.js">
+    <link rel="modulepreload" crossorigin href="/assets/client-B2U1kGz6.js">
+    <link rel="stylesheet" crossorigin href="/assets/chrome-B5jnuqxz.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
