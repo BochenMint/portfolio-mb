@@ -32,11 +32,11 @@
   {
     "file": "face-4.webp",
     "light": "face-4-light.webp",
-    "id": "settlements",
-    "label": { "pl": "Rozrachunki", "en": "Settlements" },
+    "id": "home",
+    "label": { "pl": "Strona główna", "en": "Homepage" },
     "caption": {
-      "pl": "Należności, zobowiązania i saldo netto liczone automatycznie z otwartych pozycji.",
-      "en": "Receivables, payables and net balance calculated automatically from open items."
+      "pl": "Strona główna plumm.pl: biuro rachunkowe online z własną aplikacją — księgowa prowadzi, AI przyspiesza.",
+      "en": "The plumm.pl homepage hero — an online accounting office with its own app, run by an accountant and sped up by AI."
     }
   }
 ]
