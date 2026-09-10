@@ -41,6 +41,8 @@ export type CarSceneHandle = {
       opts?: { dist?: number; target?: [number, number, number] },
     ): void
     render(): void
+    /** Derived inboard suspension pickups, for the screenshot harness. */
+    anchors(): { corner: number; link: number; x: number; y: number; z: number }[]
     metrics(): {
       az: number
       el: number
@@ -87,6 +89,26 @@ const SECTION_YAW = 6 * DEG
  * 2026-09: "rozmiar stały podczas obrotu, więcej miejsca").
  */
 const HERO_YAW = 22 * DEG
+/**
+ * How long the ray may miss before the hover is given up, in milliseconds.
+ *
+ * A cursor crossing a 20 mm wing or the gap between two suspension arms drops
+ * off the part and back onto it several times in a few frames, and every one
+ * of those round trips used to reach React and repaint the copy. Holding the
+ * last hit through a short miss turns that strobe into one steady answer;
+ * a real move off the part outlasts it easily.
+ */
+const HOVER_GRACE_MS = 160
+/**
+ * Time constant of the dim/brighten lerp, in milliseconds.
+ *
+ * The emphasis is exponentially smoothed, so a change is ~95% done after three
+ * of these — 270 ms, comfortably over the 180 ms floor below which a flick of
+ * the cursor reads as a flash rather than a transition. Being a time constant
+ * rather than a per-frame fraction also means a 30 fps machine gets the same
+ * 270 ms as a 120 fps one.
+ */
+const EMPHASIS_TAU_MS = 90
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 /** power2.inOut, matching the per-part easing. */
@@ -526,6 +548,10 @@ export async function createCarScene(
   let pointerNdcX = 0
   let pointerNdcY = 0
   let pickDirty = false
+  /** Raw result of the last raycast, before the grace period is applied. */
+  let rawPick: PartId | null = null
+  /** When the ray first started missing, or 0 while it is hitting. */
+  let missSince = 0
   let raycastHover: PartId | null = null
   let externalHover: PartId | null = null
   let activeId: PartId | null = null
@@ -598,6 +624,7 @@ export async function createCarScene(
   let raf = 0
   let disposed = false
   const start = performance.now()
+  let prevTs = start
 
   const io = new IntersectionObserver(
     ([entry]) => {
@@ -622,6 +649,8 @@ export async function createCarScene(
     // never show anything.
     if (idle && !dirty) return
 
+    const dt = Math.max(1, ts - prevTs)
+    prevTs = ts
     const time = (ts - start) / 1000
     const k = reduced || idle ? 1 : 0.12
 
@@ -637,18 +666,35 @@ export async function createCarScene(
     cam.tz += (want.tz - cam.tz) * k
     placeCamera()
 
-    if (interactive && pickDirty) {
-      pickDirty = false
-      const next = pointerInside ? pick() : null
+    // Re-run whenever the pointer moved, and keep running while a miss is
+    // still inside its grace period so the timer has frames to expire in.
+    if (interactive && (pickDirty || missSince !== 0)) {
+      if (pickDirty) {
+        pickDirty = false
+        rawPick = pointerInside ? pick() : null
+      }
+      let next = rawPick
+      if (next === null && raycastHover !== null) {
+        if (missSince === 0) missSince = ts
+        if (ts - missSince < HOVER_GRACE_MS) next = raycastHover
+        else missSince = 0
+      } else if (next !== null) {
+        missSince = 0
+      }
       if (next !== raycastHover) {
         raycastHover = next
         canvas.style.cursor = next ? 'pointer' : ''
+        // Only on a real change: a listener that repaints copy must not be
+        // told the same id twice a frame.
         hoverCb?.(next)
       }
     }
 
     const highlight = externalHover ?? raycastHover ?? activeId
-    car.applyEmphasis(highlight, reduced || idle ? 1 : 0.14)
+    car.applyEmphasis(
+      highlight,
+      reduced || idle ? 1 : 1 - Math.exp(-Math.min(50, dt) / EMPHASIS_TAU_MS),
+    )
 
     renderer.render(scene, camera)
     // Keep animating while anything is still easing; settle otherwise.
@@ -737,6 +783,17 @@ export async function createCarScene(
       render() {
         placeCamera()
         renderer.render(scene, camera)
+      },
+      anchors() {
+        return car.anchors.flatMap((links, corner) =>
+          links.map((v, link) => ({
+            corner,
+            link,
+            x: +v.x.toFixed(4),
+            y: +v.y.toFixed(4),
+            z: +v.z.toFixed(4),
+          })),
+        )
       },
       metrics() {
         const h = renderer.domElement.clientHeight || 1

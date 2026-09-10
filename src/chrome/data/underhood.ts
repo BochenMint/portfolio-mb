@@ -1,9 +1,15 @@
 /**
- * "Pod maška" / "Under the hood" section — an exploded-view F1 car where
+ * "Pod maską" / "Under the hood" section — an exploded-view F1 car where
  * every part stands for a layer of a website that actually works. Content
  * only; the 3D scene and React section live elsewhere. All proof points
  * are facts already present in `content.ts` / `facts.ts` — nothing here is
  * invented.
+ *
+ * The order of `layers` is the story order, and the story order is the order
+ * the car comes apart: bodywork first (the thing everyone means when they say
+ * "website"), then the cover comes off and everything that actually makes it
+ * work is underneath. `PART_WINDOWS` in `../underhood/carAssets.ts` is kept in
+ * step with this list — chapter n and explode step n are the same beat.
  */
 
 export type UnderhoodPartId =
@@ -56,6 +62,36 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
         tags: ['Astro', 'React', 'Tailwind', 'WCAG'],
       },
       {
+        id: 'engineCover',
+        part: 'Pokrywa silnika',
+        title: 'Technologia pod spodem',
+        thesis:
+          'Pokrywa idzie w górę i widać, z czego strona jest naprawdę zrobiona: architektura, kod, hosting w Unii, aktualizacje bez przestojów. To decyduje, czy strona jest narzędziem, czy broszurą.',
+        proof:
+          'Mint Apartments i Plumm: własny kod zamiast szablonu, hosting w UE, wdrożenia z jednego pusha.',
+        tags: ['TypeScript', 'Astro/Next.js', 'EU hosting', 'CI/CD'],
+      },
+      {
+        id: 'powerUnit',
+        part: 'Jednostka napędowa',
+        title: 'Integracje i dane',
+        thesis:
+          'Silnik, który napędza sprzedaż: rezerwacje, płatności, faktury, CRM, API. Dane płyną w jednym przepływie zamiast pięciu logowań.',
+        proof:
+          'Plumm: 118 modeli danych, 456 endpointów API, 16 silników deklaracji walidowanych XSD; Mint: Previo, zamki Tedee/Nuki, płatności.',
+        tags: ['API', 'Prisma', 'KSeF', 'Previo'],
+      },
+      {
+        id: 'rearWing',
+        part: 'Tylne skrzydło',
+        title: 'Widoczność: Google i modele AI',
+        thesis:
+          'Docisk, który trzyma bolid na torze. Dla strony to schema.org, hreflang, sitemap, llms.txt i treść, którą ChatGPT czy Perplexity potrafią zacytować. Bez tego najładniejsza strona jest niewidzialna.',
+        proof:
+          'Ta strona: JSON-LD, llms.txt, trzy języki z hreflang; Mint Apartments: 592 wpisy bloga w wielu językach.',
+        tags: ['schema.org', 'hreflang', 'llms.txt', 'GEO'],
+      },
+      {
         id: 'frontWing',
         part: 'Przednie skrzydło',
         title: 'Szybkość',
@@ -65,15 +101,6 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
         tags: ['Core Web Vitals', 'WebP', 'statyczny build', 'cache'],
       },
       {
-        id: 'rearWing',
-        part: 'Tylne skrzydło',
-        title: 'Widoczność: Google i modele AI',
-        thesis:
-          'Docisk, który trzyma bolid na torze. Dla strony to schema.org, hreflang, sitemap, llms.txt i treść, którą ChatGPT czy Perplexity potrafią zacytować. Bez tego najładniejsza strona jest niewidzialna.',
-        proof: 'Ta strona: JSON-LD, llms.txt, trzy języki z hreflang; Mint Apartments: 592 wpisy bloga w wielu językach.',
-        tags: ['schema.org', 'hreflang', 'llms.txt', 'GEO'],
-      },
-      {
         id: 'wheels',
         part: 'Opony',
         title: 'Konwersja',
@@ -81,23 +108,6 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
           'Jedyne miejsce, gdzie moc styka się z asfaltem. Na stronie: wezwanie do działania, formularz, kalendarz, rezerwacja na własnej domenie. Reszta istnieje po to, żeby ten kontakt zamienił się w zapytanie albo rezerwację.',
         proof: 'Mint Apartments: direct booking przez Previo zamiast prowizji dla portali.',
         tags: ['direct booking', 'formularz', 'Cal.com', 'kwalifikacja leadów'],
-      },
-      {
-        id: 'powerUnit',
-        part: 'Jednostka napędowa',
-        title: 'Technologia pod spodem',
-        thesis: 'Integracje, dane, API, bezpieczeństwo. To decyduje, czy strona jest narzędziem, czy broszurą.',
-        proof: 'Plumm: 118 modeli danych, 456 endpointów API, 16 silników deklaracji walidowanych XSD.',
-        tags: ['TypeScript', 'Prisma', 'API', 'KSeF'],
-      },
-      {
-        id: 'engineCover',
-        part: 'Pokrywa silnika',
-        title: 'Proces i wdrożenia',
-        thesis:
-          'Wyścig wygrywa się też w boksie. Testy, CI, wdrożenie z jednego pusha, iteracje co tydzień, nie raz na rok.',
-        proof: 'Plumm: 9 314 testów w CI; Mint Apartments i to portfolio: deploy przez push na branch production.',
-        tags: ['CI/CD', 'testy', 'GitHub Actions', 'staging'],
       },
       {
         id: 'halo',
@@ -111,10 +121,12 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
       {
         id: 'steering',
         part: 'Kierownica i telemetria',
-        title: 'Pomiar',
-        thesis: 'Bez telemetrii nie wiesz, czy jest szybciej. Zdarzenia, konwersje, porównanie przed i po. Raport zamiast wrażenia.',
-        proof: 'Każde wdrożenie kończy się pomiarem przed/po: GA4, zdarzenia, Search Console.',
-        tags: ['GA4', 'Search Console', 'zdarzenia', 'przed/po'],
+        title: 'Pomiar i iteracje',
+        thesis:
+          'Bez telemetrii nie wiesz, czy jest szybciej. Zdarzenia, konwersje, porównanie przed i po, i kolejna iteracja co tydzień, nie raz na rok.',
+        proof:
+          'Każde wdrożenie kończy się pomiarem przed/po (GA4, zdarzenia, Search Console); Plumm: 9 314 testów w CI.',
+        tags: ['GA4', 'Search Console', 'testy', 'iteracje'],
       },
     ],
   },
@@ -137,6 +149,36 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
         tags: ['Astro', 'React', 'Tailwind', 'WCAG'],
       },
       {
+        id: 'engineCover',
+        part: 'Engine cover',
+        title: 'The technology underneath',
+        thesis:
+          'The cover lifts and you can see what the site is really made of: architecture, code, hosting in the EU, updates with no downtime. This is what decides whether a website is a tool or a brochure.',
+        proof:
+          'Mint Apartments and Plumm: custom code instead of a template, EU hosting, deploys from a single push.',
+        tags: ['TypeScript', 'Astro/Next.js', 'EU hosting', 'CI/CD'],
+      },
+      {
+        id: 'powerUnit',
+        part: 'Power unit',
+        title: 'Integrations & data',
+        thesis:
+          'The engine that drives the selling: bookings, payments, invoices, CRM, APIs. Data moves through one flow instead of five separate logins.',
+        proof:
+          'Plumm: 118 data models, 456 API endpoints, 16 declaration engines validated against XSD; Mint: Previo, Tedee/Nuki locks, payments.',
+        tags: ['API', 'Prisma', 'KSeF', 'Previo'],
+      },
+      {
+        id: 'rearWing',
+        part: 'Rear wing',
+        title: 'Visibility: Google and AI models',
+        thesis:
+          'Downforce that keeps the car on the track. For a website, that’s schema.org, hreflang, a sitemap, llms.txt, and content that ChatGPT or Perplexity can actually cite. Without it, the best-looking site is invisible.',
+        proof:
+          'This site: JSON-LD, llms.txt, three languages with hreflang; Mint Apartments: 592 blog posts across multiple languages.',
+        tags: ['schema.org', 'hreflang', 'llms.txt', 'GEO'],
+      },
+      {
         id: 'frontWing',
         part: 'Front wing',
         title: 'Speed',
@@ -146,15 +188,6 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
         tags: ['Core Web Vitals', 'WebP', 'static build', 'caching'],
       },
       {
-        id: 'rearWing',
-        part: 'Rear wing',
-        title: 'Visibility: Google and AI models',
-        thesis:
-          'Downforce that keeps the car on the track. For a website, that’s schema.org, hreflang, a sitemap, llms.txt, and content that ChatGPT or Perplexity can actually cite. Without it, the best-looking site is invisible.',
-        proof: 'This site: JSON-LD, llms.txt, three languages with hreflang; Mint Apartments: 592 blog posts across multiple languages.',
-        tags: ['schema.org', 'hreflang', 'llms.txt', 'GEO'],
-      },
-      {
         id: 'wheels',
         part: 'Wheels',
         title: 'Conversion',
@@ -162,23 +195,6 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
           'The only place where power meets the tarmac. On a website: the call to action, the form, the calendar, a booking flow on your own domain. Everything else exists to turn that contact into an enquiry or a booking.',
         proof: 'Mint Apartments: direct booking through Previo instead of paying portal commissions.',
         tags: ['direct booking', 'form', 'Cal.com', 'lead qualification'],
-      },
-      {
-        id: 'powerUnit',
-        part: 'Power unit',
-        title: 'The technology underneath',
-        thesis: 'Integrations, data, APIs, security. This decides whether a website is a tool or a brochure.',
-        proof: 'Plumm: 118 data models, 456 API endpoints, 16 declaration engines validated against XSD.',
-        tags: ['TypeScript', 'Prisma', 'API', 'KSeF'],
-      },
-      {
-        id: 'engineCover',
-        part: 'Engine cover',
-        title: 'Process & deployment',
-        thesis:
-          'Races are also won in the pit lane. Tests, CI, a deploy from a single push, weekly iterations instead of once a year.',
-        proof: 'Plumm: 9,314 tests in CI; Mint Apartments and this portfolio: deploy on push to the production branch.',
-        tags: ['CI/CD', 'tests', 'GitHub Actions', 'staging'],
       },
       {
         id: 'halo',
@@ -192,10 +208,12 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
       {
         id: 'steering',
         part: 'Steering wheel & telemetry',
-        title: 'Measurement',
-        thesis: 'Without telemetry you don’t know if you’re faster. Events, conversions, a before/after comparison. A report instead of a hunch.',
-        proof: 'Every project ends with a before/after measurement: GA4, events, Search Console.',
-        tags: ['GA4', 'Search Console', 'events', 'before/after'],
+        title: 'Measurement & iteration',
+        thesis:
+          'Without telemetry you don’t know whether it got faster. Events, conversions, a before/after comparison, and the next iteration every week rather than once a year.',
+        proof:
+          'Every project ends with a before/after measurement (GA4, events, Search Console); Plumm: 9,314 tests in CI.',
+        tags: ['GA4', 'Search Console', 'tests', 'iterations'],
       },
     ],
   },
@@ -218,6 +236,36 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
         tags: ['Astro', 'React', 'Tailwind', 'WCAG'],
       },
       {
+        id: 'engineCover',
+        part: 'Кришка двигуна',
+        title: 'Технології під капотом',
+        thesis:
+          'Кришка піднімається — і видно, з чого сайт зроблений насправді: архітектура, код, хостинг у ЄС, оновлення без простоїв. Саме це вирішує, чи сайт — це інструмент, чи просто буклет.',
+        proof:
+          'Mint Apartments і Plumm: власний код замість шаблону, хостинг у ЄС, деплой з одного пуша.',
+        tags: ['TypeScript', 'Astro/Next.js', 'хостинг у ЄС', 'CI/CD'],
+      },
+      {
+        id: 'powerUnit',
+        part: 'Силова установка',
+        title: 'Інтеграції і дані',
+        thesis:
+          'Двигун, який рухає продажі: бронювання, платежі, рахунки, CRM, API. Дані течуть одним потоком замість п’яти окремих входів у системи.',
+        proof:
+          'Plumm: 118 моделей даних, 456 API-ендпоінтів, 16 рушіїв декларацій, валідованих проти XSD; Mint: Previo, замки Tedee/Nuki, платежі.',
+        tags: ['API', 'Prisma', 'KSeF', 'Previo'],
+      },
+      {
+        id: 'rearWing',
+        part: 'Заднє антикрило',
+        title: 'Видимість: Google і моделі ШІ',
+        thesis:
+          'Притискна сила, яка тримає болід на трасі. Для сайту це schema.org, hreflang, sitemap, llms.txt і контент, який ChatGPT чи Perplexity можуть процитувати. Без цього навіть найгарніший сайт лишається невидимим.',
+        proof:
+          'Цей сайт: JSON-LD, llms.txt, три мови з hreflang; Mint Apartments: 592 статті блогу кількома мовами.',
+        tags: ['schema.org', 'hreflang', 'llms.txt', 'GEO'],
+      },
+      {
         id: 'frontWing',
         part: 'Переднє антикрило',
         title: 'Швидкість',
@@ -227,15 +275,6 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
         tags: ['Core Web Vitals', 'WebP', 'статична збірка', 'кешування'],
       },
       {
-        id: 'rearWing',
-        part: 'Заднє антикрило',
-        title: 'Видимість: Google і моделі ШІ',
-        thesis:
-          'Притискна сила, яка тримає болід на трасі. Для сайту це schema.org, hreflang, sitemap, llms.txt і контент, який ChatGPT чи Perplexity можуть процитувати. Без цього навіть найгарніший сайт лишається невидимим.',
-        proof: 'Цей сайт: JSON-LD, llms.txt, три мови з hreflang; Mint Apartments: 592 статті блогу кількома мовами.',
-        tags: ['schema.org', 'hreflang', 'llms.txt', 'GEO'],
-      },
-      {
         id: 'wheels',
         part: 'Колеса',
         title: 'Конверсія',
@@ -243,23 +282,6 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
           'Єдине місце, де потужність стикається з асфальтом. На сайті це заклик до дії, форма, календар, бронювання на власному домені. Усе інше існує для того, щоб цей контакт став запитом чи бронюванням.',
         proof: 'Mint Apartments: пряме бронювання через Previo замість комісії для порталів.',
         tags: ['пряме бронювання', 'форма', 'Cal.com', 'кваліфікація лідів'],
-      },
-      {
-        id: 'powerUnit',
-        part: 'Силова установка',
-        title: 'Технології під капотом',
-        thesis: 'Інтеграції, дані, API, безпека. Саме це вирішує, чи сайт — це інструмент, чи просто буклет.',
-        proof: 'Plumm: 118 моделей даних, 456 API-ендпоінтів, 16 рушіїв декларацій, валідованих проти XSD.',
-        tags: ['TypeScript', 'Prisma', 'API', 'KSeF'],
-      },
-      {
-        id: 'engineCover',
-        part: 'Кришка двигуна',
-        title: 'Процес і впровадження',
-        thesis:
-          'Гонку виграють і в боксах. Тести, CI, деплой з одного пуша, тижневі ітерації замість одного разу на рік.',
-        proof: 'Plumm: 9 314 тестів у CI; Mint Apartments і це портфоліо: деплой через пуш у гілку production.',
-        tags: ['CI/CD', 'тести', 'GitHub Actions', 'staging'],
       },
       {
         id: 'halo',
@@ -273,10 +295,12 @@ export const underhoodByLocale: Record<'pl' | 'en' | 'uk', UnderhoodCopy> = {
       {
         id: 'steering',
         part: 'Кермо і телеметрія',
-        title: 'Вимірювання',
-        thesis: 'Без телеметрії не знаєш, чи стало швидше. Події, конверсії, порівняння до і після. Звіт замість враження.',
-        proof: 'Кожне впровадження завершується вимірюванням до/після: GA4, події, Search Console.',
-        tags: ['GA4', 'Search Console', 'події', 'до/після'],
+        title: 'Вимірювання та ітерації',
+        thesis:
+          'Без телеметрії не знаєш, чи стало швидше. Події, конверсії, порівняння до і після — і наступна ітерація щотижня, а не раз на рік.',
+        proof:
+          'Кожне впровадження завершується вимірюванням до/після (GA4, події, Search Console); Plumm: 9 314 тестів у CI.',
+        tags: ['GA4', 'Search Console', 'тести', 'ітерації'],
       },
     ],
   },

@@ -25,7 +25,7 @@
     "id": "capture-inbox",
     "label": { "pl": "Skrzynka przechwyceń", "en": "Capture inbox" },
     "caption": {
-      "pl": "Kolejka notatek głosowych, tekstowych i zrzutów czekających na wzbogacenie.",
+      "pl": "Kolejka notatek głosowych, tekstowych i zrzutów ekranu czekających na opracowanie.",
       "en": "Queue of voice notes, text and screenshots waiting to be enriched."
     }
   },

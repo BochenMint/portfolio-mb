@@ -1,17 +1,18 @@
 /* "Pod maską" — the exploded chrome F1 car.
    Only layout and hairlines here; every metal surface on this page is the
-   WebGL object, never CSS. */
+   WebGL object, never CSS.
+
+   The section is eight chapters read one at a time, so the two rules that
+   matter most in this file are about *not moving*: the chapter box is as tall
+   as the tallest chapter and never resizes, and the rail rows are a constant
+   size whose current row is a class, not a different box. Everything Marcin
+   saw flickering was one of those two things changing under the cursor. */
 
 .uh-stage {
   height: 100svh;
   min-height: 620px;
   display: flex;
   align-items: center;
-}
-
-.uh-canvas-wrap {
-  position: relative;
-  width: 100%;
 }
 
 .uh-canvas {
@@ -21,116 +22,136 @@
   touch-action: pan-y;
 }
 
-/* --- Layer card ---------------------------------------------------- */
-/* The eight theses are not the same length, and on a phone the longest one
-   would push the chip rail off a pinned viewport. */
-@media (max-width: 1023.98px) {
-  .uh-thesis {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
-    overflow: hidden;
+/* --- Left column ---------------------------------------------------- */
+.uh-col {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .uh-col {
+    height: 100%;
   }
 }
 
-.uh-card {
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: 18px 0;
+.uh-lead {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--fg-2);
 }
 
-/* Eight rows, one card, a header and a hint have to survive a single pinned
-   viewport. On a 900 px screen that budget is ~24 px per row tighter than the
-   copy wants, so the two blocks that can give it up do: the lead loses its
-   fourth line and the card loses a third of its padding. Below 1024 the list
-   is a chip rail instead and none of this applies. */
-@media (min-width: 1024px) and (max-height: 1000px) {
-  .uh-lead {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    overflow: hidden;
-  }
-
-  .uh-card {
-    padding: 12px 0;
-  }
+/* --- The chapter box ------------------------------------------------
+   One stacking context holding three things at the same origin: the section's
+   intro, the chapter crossfade, and the hidden measuring copy that decides how
+   tall all of it is. */
+.uh-slot {
+  position: relative;
+  min-width: 0;
 }
 
-/* Under ~820 px there is no third line to give: the rows win. At 1024 the
-   headline takes a third line and the thesis a fourth, which is the last 14 px
-   between eight rows and a scrollbar, so both get clamped too. */
-@media (min-width: 1024px) and (max-height: 820px) {
-  .uh-lead {
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-  }
-
-  .uh-card {
-    padding: 10px 0;
-  }
-
-  .uh-thesis {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    overflow: hidden;
-  }
-
-  /* Scoped through the list so it outranks the `.uh-item` shorthand further
-     down the file, which would otherwise win on source order alone. */
-  .uh-list .uh-item {
-    padding-top: 3px;
-    padding-bottom: 3px;
-  }
+.uh-intro,
+.uh-ch-stack {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
-/* A short *and* narrow desktop — a 1024×760 laptop — is the worst case: the
-   card's thesis, proof line and tags all take an extra wrapped line at that
-   measure, which is another 24 px the rows do not have. Squeeze the padding
-   rather than hide a row or a tag. */
-@media (min-width: 1024px) and (max-width: 1279.98px) and (max-height: 820px),
-  (min-width: 1024px) and (max-height: 764px) {
-  .uh-list .uh-item {
-    padding-top: 2px;
-    padding-bottom: 2px;
-  }
-
-  .uh-card {
-    padding: 8px 0;
-  }
-
-  .uh-hint {
-    margin-top: 6px;
-  }
+.uh-intro {
+  position: relative;
 }
 
-/* 1280×720 is the last size where all eight rows still fit, and it only does
-   with the leading pulled all the way in: at that width the card's thesis and
-   proof both wrap one line further than they do at 1440, which is the 20 px
-   the rows were short. Card padding goes back up to 10 px — the rows are the
-   thing that must not be cut, and they can pay for themselves. */
-@media (min-width: 1024px) and (max-height: 740px) {
-  .uh-lead {
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-  }
+.uh-intro[data-on='false'] {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
 
-  .uh-card {
-    padding: 10px 0;
-  }
+/* Both live at the same origin: the intro leaves and chapter 01 arrives in
+   the same box, so the eye has nothing to track sideways. */
+.uh-ch-stack {
+  position: absolute;
+  inset: 0;
+}
 
-  .uh-list .uh-item {
-    padding-top: 1px;
-    padding-bottom: 1px;
-  }
+.uh-ch-stack[data-on='false'] {
+  opacity: 0;
+  pointer-events: none;
+}
 
-  .uh-hint {
-    margin-top: 4px;
-  }
+/* All eight chapters sit here at the same origin. Only the current one is
+   opaque, and changing chapter is one attribute — no node enters or leaves the
+   document, so there is nothing for the layout engine to redo. */
+.uh-ch {
+  position: absolute;
+  inset: 0 0 auto 0;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.uh-ch[data-on='true'] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* --- Chapter typography ---------------------------------------------
+   Four steps and no more: the index, the part name, the chapter title, and
+   the body. The index is the only place a display size appears twice. */
+.uh-ch-index {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.uh-ch-total {
+  font-size: 0.55em;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.uh-ch-part {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.uh-ch-title {
+  margin-top: 10px;
+  font-size: clamp(1.5rem, 2.1vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.uh-ch-thesis {
+  margin-top: 14px;
+  max-width: 34ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--fg-2);
+}
+
+.uh-ch-proof {
+  margin-top: 16px;
+  max-width: 40ch;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.uh-ch-tags {
+  margin-top: 16px;
 }
 
 .uh-tags {
@@ -151,34 +172,52 @@
   white-space: nowrap;
 }
 
-/* --- Layer list ---------------------------------------------------- */
-.uh-item {
+/* --- Progress rail ---------------------------------------------------
+   Eight rows of one line each. A row is the same box in all three states —
+   only colour and the hairline change — so moving the cursor down the rail
+   cannot reflow anything, which is what `getBoundingClientRect` is checked
+   against in the harness. */
+.uh-rail {
+  margin-top: 28px;
+  min-width: 0;
+  display: none;
+  flex-direction: column;
+}
+
+/* Must come after the base rule above, not before it: both are one class deep,
+   so the file's own order decides which `margin-top` wins. The chapter takes
+   the top of the column and the rail and its hint sit together at the foot of
+   it, with all the slack in between. */
+@media (min-width: 1024px) {
+  .uh-rail {
+    display: flex;
+    margin-top: auto;
+  }
+}
+
+.uh-row {
   position: relative;
   display: grid;
-  grid-template-columns: 2.4rem 1fr;
-  /* `baseline` costs ~3 px a row: the 10 px index and the 13 px title have
-     different leading, and the grid pads the shorter one to line their
-     baselines up. Both boxes start at the row top instead, and the two mono
-     lines — index and part label — are set to the same line box so they read
-     as one rule across the row anyway. */
-  align-items: start;
-  gap: 0 0.7rem;
+  grid-template-columns: 2rem 1fr;
+  align-items: baseline;
+  gap: 0 0.75rem;
   width: 100%;
-  padding: 4px 0 4px 13px;
+  padding: 10px 0 10px 14px;
   text-align: left;
   color: var(--muted);
+  white-space: nowrap;
   transition:
     color 0.25s ease,
     opacity 0.25s ease;
 }
 
-/* The current layer is marked by a chrome hairline in the gutter rather than
-   a fill, so the list stays a list and the metal stays in the canvas. */
-.uh-item::before {
+/* The current row is marked by a chrome hairline in the gutter rather than a
+   fill, so the rail stays a rail and the metal stays in the canvas. */
+.uh-row::before {
   content: '';
   position: absolute;
-  top: 4px;
-  bottom: 4px;
+  top: 6px;
+  bottom: 6px;
   left: 0;
   width: 1px;
   background: var(--line);
@@ -187,98 +226,171 @@
     transform 0.25s ease;
 }
 
-.uh-item:hover,
-.uh-item:focus-visible {
-  color: var(--fg-2);
+.uh-row-n {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
 }
 
-.uh-item[data-current='true'] {
+.uh-row-label {
+  font-size: 13px;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.uh-row-part {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.uh-row-dot {
+  opacity: 0.5;
+}
+
+.uh-row[data-state='past'] {
+  opacity: 0.55;
+}
+
+.uh-row[data-state='current'] {
   color: var(--fg);
 }
 
-.uh-item[data-current='true']::before {
+.uh-row[data-state='current'] .uh-row-n {
+  color: var(--fg-2, var(--fg));
+}
+
+.uh-row[data-state='current']::before {
   background: linear-gradient(180deg, transparent, var(--hairline), transparent);
   transform: scaleX(2.5);
 }
 
-.uh-index {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1;
-  letter-spacing: 0.14em;
-  color: var(--muted);
+.uh-row:hover,
+.uh-row:focus-visible {
+  color: var(--fg-2);
+  opacity: 1;
 }
 
-/* 12/13 px with the leading pulled right in: eight of these plus their 8 px of
-   padding is what has to fit, and every 0.1 of line-height is a row. */
-.uh-title {
-  font-size: 13px;
-  line-height: 1.15;
-}
-
-.uh-part {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  line-height: 1;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-/* Eight rows plus the card and the header have to survive one viewport in the
-   pin, so the list gives up its own scroll rather than pushing rows off the
-   bottom on a short laptop screen. */
-.uh-list {
-  min-width: 0;
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-.uh-list::-webkit-scrollbar {
+/* --- Mobile stepper --------------------------------------------------
+   The same rail, collapsed: a counter and two steps. Eight rows do not belong
+   under a 46svh canvas and a chapter card. */
+.uh-stepper {
   display: none;
+  align-items: center;
+  gap: 14px;
+  margin-top: 22px;
 }
 
-/* --- Mobile chip rail ----------------------------------------------
-   Scoped to the small breakpoint on purpose: `.uh-rail` and Tailwind's
-   `.lg:hidden` are both single-class selectors, so the one that loads last
-   wins — and this file loads last. Inside a media query it simply stops
-   applying above the breakpoint instead. */
 @media (max-width: 1023.98px) {
-  .uh-rail {
+  .uh-stepper {
     display: flex;
   }
 }
 
-.uh-rail {
-  min-width: 0;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding-bottom: 2px;
-  scroll-snap-type: x proximity;
-}
-.uh-rail::-webkit-scrollbar {
-  display: none;
-}
-
-.uh-chip {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
+.uh-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 7px 13px;
-  font-size: 12px;
-  color: var(--muted);
-  white-space: nowrap;
+  color: var(--fg-2, var(--fg));
   transition:
-    color 0.25s ease,
-    border-color 0.25s ease;
+    color 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
 }
 
-.uh-chip[data-current='true'] {
+.uh-step:disabled {
+  opacity: 0.3;
+}
+
+.uh-step-count {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.08em;
   color: var(--fg);
-  border-color: var(--line-2);
+}
+
+.uh-hint {
+  margin-top: 18px;
+  flex-shrink: 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* On a phone the thesis is the one block that can give up a line: the canvas
+   above it is fixed and the stepper below it must stay on screen. */
+@media (max-width: 1023.98px) {
+  .uh-ch-thesis {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    overflow: hidden;
+  }
+
+  .uh-ch-index {
+    font-size: 22px;
+  }
+
+  .uh-stepper {
+    margin-top: 16px;
+  }
+
+  .uh-hint {
+    margin-top: 12px;
+  }
+}
+
+/* A short desktop still has to fit a chapter, eight rows and the hint under a
+   pinned viewport. Nothing is hidden and no row is dropped — the air between
+   the blocks pays for it, which is the only thing here that can. */
+@media (min-width: 1024px) and (max-height: 900px) {
+  .uh-ch-index {
+    font-size: 22px;
+  }
+
+  .uh-ch-part {
+    margin-top: 10px;
+  }
+
+  .uh-ch-thesis,
+  .uh-ch-proof,
+  .uh-ch-tags {
+    margin-top: 12px;
+  }
+
+  .uh-row {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .uh-hint {
+    margin-top: 12px;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 780px) {
+  .uh-ch-title {
+    font-size: 1.4rem;
+  }
+
+  .uh-ch-thesis {
+    font-size: 14px;
+  }
+
+  .uh-row {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
 }
 
 /* --- Fallback ------------------------------------------------------- */
@@ -291,10 +403,31 @@
   corner-shape: var(--corner);
 }
 
+.uh-index {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.uh-part {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .uh-item,
-  .uh-item::before,
-  .uh-chip {
+  .uh-row,
+  .uh-row::before,
+  .uh-step,
+  .uh-intro,
+  .uh-ch-stack,
+  .uh-ch {
     transition: none;
   }
 }
