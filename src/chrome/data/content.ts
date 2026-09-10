@@ -76,30 +76,30 @@ export const site = {
 
 export const services: Service[] = [
   {
-    title: 'Platforma & booking',
-    subtitle: 'Klienci rezerwują u Ciebie, nie u pośrednika',
+    title: 'Strona, która sprzedaje',
+    subtitle: 'Od wizytówki po stronę z lejkiem zapytań',
     points: [
-      'SEO wielojęzyczne, Core Web Vitals, schema.org',
-      'Widget rezerwacji, Previo/PMS, płatności',
-      'Panel operacyjny pod Twój zespół',
+      'Projekt pod Twoją markę, nie szablon z marketplace',
+      'Szybkość na telefonie, SEO i widoczność dla modeli AI',
+      'Formularz, kalendarz lub rezerwacja na własnej domenie',
     ],
   },
   {
-    title: 'Automatyzacja & FinTech',
-    subtitle: 'Koniec z arkuszami po godzinach',
+    title: 'Systemy i integracje',
+    subtitle: 'Jeden przepływ zamiast pięciu narzędzi i arkuszy',
     points: [
-      'Eksporty Plumm, JPK_FA, KSeF-ready flow',
-      'Synchronizacja kalendarzy, zamków, CRM',
-      'Raporty i alerty — deterministyczne dane',
+      'Panel operacyjny, CRM, rezerwacje, faktury, magazyn',
+      'Integracje z programami, których już używasz',
+      'Raporty i powiadomienia z jednego źródła prawdy',
     ],
   },
   {
-    title: 'AI z kontrolą',
-    subtitle: 'AI, które robi tylko to, na co się zgodziłeś',
+    title: 'Automatyzacja i AI',
+    subtitle: 'Powtarzalna praca robi się sama, z kontrolą człowieka',
     points: [
-      'Concierge z wiedzą o ofercie (nie halucynacje)',
-      'Agentic OS — workflow, pamięć, logi',
-      'RODO, koszty tokenów, fallback na człowieka',
+      'Asystent dla klientów 24/7 z wiedzą o Twojej ofercie',
+      'Automatyzacja maili, dokumentów i obsługi zgłoszeń',
+      'Lista dozwolonych akcji, zapis każdego kroku, RODO',
     ],
   },
 ]

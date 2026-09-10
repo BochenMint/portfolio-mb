@@ -5,7 +5,7 @@
     "id": "home",
     "label": { "pl": "Strona główna", "en": "Homepage" },
     "caption": {
-      "pl": "Hero strony głównej z wyszukiwarką terminów, opiniami gości i gwarancją najlepszej ceny.",
+      "pl": "Strona główna z wyszukiwarką terminów, opiniami gości i gwarancją najlepszej ceny.",
       "en": "Homepage hero pairing a live availability search with guest reviews and a best-price guarantee."
     }
   },
@@ -15,8 +15,8 @@
     "id": "apartment",
     "label": { "pl": "Strona apartamentu", "en": "Apartment page" },
     "caption": {
-      "pl": "Strona apartamentu łącząca galerię zdjęć, opis wnętrza i panel rezerwacji.",
-      "en": "Apartment detail page combining a photo gallery, full description and a booking panel."
+      "pl": "Strona apartamentu z galerią zdjęć na samej górze, opisem wnętrza i panelem rezerwacji.",
+      "en": "Apartment detail page led by a top-of-page photo gallery, with the full description and booking panel below."
     }
   },
   {

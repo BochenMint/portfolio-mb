@@ -21,30 +21,30 @@ export const siteEn = {
 
 export const servicesEn: Service[] = [
   {
-    title: 'Platform & booking',
-    subtitle: 'Customers book with you, not with a middleman',
+    title: 'A website that sells',
+    subtitle: 'From a business-card site to a page with an enquiry funnel',
     points: [
-      'Multilingual SEO, Core Web Vitals, schema.org',
-      'Booking widget, Previo/PMS, payments',
-      'Operations panel built for your team',
+      'Designed for your brand, not a marketplace template',
+      'Fast on mobile, SEO and visibility for AI models',
+      'Form, calendar or booking on your own domain',
     ],
   },
   {
-    title: 'Automation & FinTech',
-    subtitle: 'No more spreadsheets after hours',
+    title: 'Systems and integrations',
+    subtitle: 'One flow instead of five tools and spreadsheets',
     points: [
-      'Plumm exports, JPK_FA, KSeF-ready flow',
-      'Calendar, lock and CRM sync',
-      'Reports and alerts — deterministic data',
+      'Operations panel, CRM, bookings, invoices, inventory',
+      'Integrations with the software you already use',
+      'Reports and alerts from a single source of truth',
     ],
   },
   {
-    title: 'AI with oversight',
-    subtitle: 'AI that only does what you agreed to',
+    title: 'Automation and AI',
+    subtitle: 'Repetitive work runs itself, with a human in control',
     points: [
-      "Concierge grounded in your actual offer (no hallucinations)",
-      'Agentic OS — workflow, memory, logs',
-      'GDPR, token-cost tracking, human fallback',
+      'A 24/7 assistant for customers that knows your offer',
+      'Automated emails, documents and ticket handling',
+      'Allowed-action list, every step logged, GDPR',
     ],
   },
 ]

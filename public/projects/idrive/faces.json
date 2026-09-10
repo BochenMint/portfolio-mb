@@ -2,11 +2,11 @@
   {
     "file": "face-1.webp",
     "light": null,
-    "id": "home",
-    "label": { "pl": "Strona główna", "en": "Homepage" },
+    "id": "article-focus-rs",
+    "label": { "pl": "Test Forda Focus RS", "en": "Ford Focus RS test" },
     "caption": {
-      "pl": "Pełnoekranowe wideo z testu Mercedesa-AMG GT S otwiera stronę główną redakcji.",
-      "en": "Full-bleed video from the Mercedes-AMG GT S test drive opens the homepage."
+      "pl": "Test Forda Focus RS: pełnoekranowe zdjęcie na otwarcie i dane techniczne w panelu obok tekstu.",
+      "en": "The Ford Focus RS test article, led by a full-bleed hero photo with spec details in the side panel."
     }
   },
   {
@@ -15,7 +15,7 @@
     "id": "article",
     "label": { "pl": "Artykuł redakcyjny", "en": "News article" },
     "caption": {
-      "pl": "Artykuł o rekordzie BMW w produkcji aut elektrycznych, z okruszkami i metadanymi.",
+      "pl": "Artykuł o rekordzie BMW w produkcji aut elektrycznych: ścieżka nawigacji, data i czas czytania nad tekstem.",
       "en": "News article on BMW's two-million-EV milestone, with breadcrumbs and publish metadata."
     }
   },

@@ -53,7 +53,7 @@ export const copyUa = {
       { value: '100%', label: 'аудитованих кроків AI' },
     ],
   },
-  band: ['Mint Apartments', 'Plumm', 'iDrive Cars', 'Agentic OS', 'Astro', 'React', 'Previo', 'KSeF', 'GDPR', 'хостинг у ЄС'],
+  band: ['Сайти для бізнесу', 'Лендінги', 'Онлайн-бронювання', 'Панелі та CRM', 'Інтеграції', 'Автоматизація', 'AI-асистенти', 'SEO та AI-пошук', 'GDPR', 'Хостинг у ЄС'],
   work: {
     eyebrow: 'Роботи',
     title: 'Чотири системи, що працюють у продакшені.',

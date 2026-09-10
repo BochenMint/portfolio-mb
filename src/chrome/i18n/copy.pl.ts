@@ -54,7 +54,7 @@ export const copyPl = {
       { value: '100%', label: 'audytowalne kroki AI' },
     ],
   },
-  band: ['Mint Apartments', 'Plumm', 'iDrive Cars', 'Agentic OS', 'Astro', 'React', 'Previo', 'KSeF', 'RODO', 'EU hosting'],
+  band: ['Strony firmowe', 'Landingi', 'Rezerwacje online', 'Panele i CRM', 'Integracje', 'Automatyzacje', 'Asystenci AI', 'SEO i AI search', 'RODO', 'Hosting w EU'],
   work: {
     eyebrow: 'Realizacje',
     title: 'Cztery systemy, które działają na produkcji.',

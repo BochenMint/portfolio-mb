@@ -53,7 +53,7 @@ export const copyEn = {
       { value: '100%', label: 'auditable AI steps' },
     ],
   },
-  band: ['Mint Apartments', 'Plumm', 'iDrive Cars', 'Agentic OS', 'Astro', 'React', 'Previo', 'KSeF', 'GDPR', 'EU hosting'],
+  band: ['Business websites', 'Landing pages', 'Online booking', 'Panels and CRM', 'Integrations', 'Automation', 'AI assistants', 'SEO and AI search', 'GDPR', 'EU hosting'],
   work: {
     eyebrow: 'Work',
     title: 'Four systems running in production.',

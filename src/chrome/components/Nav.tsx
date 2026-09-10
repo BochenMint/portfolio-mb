@@ -3,6 +3,7 @@ import { useLocale } from '../i18n/context'
 import { localeHome } from '../i18n/routes'
 import type { Locale } from '../i18n/types'
 import { useTheme } from '../theme/context'
+import { BrandMark } from './BrandMark'
 import { LinkButton } from './primitives'
 
 function SunIcon() {
@@ -145,13 +146,8 @@ export function Nav() {
           scrolled ? 'lg:max-w-5xl' : ''
         }`}
       >
-        <a href={localeHome[locale]} className="flex shrink-0 items-center gap-3 pl-2 whitespace-nowrap" aria-label={c.brand}>
-          <span
-            aria-hidden
-            className="chrome-text font-display text-[15px] font-bold tracking-[-0.04em]"
-          >
-            {c.mark}
-          </span>
+        <a href={localeHome[locale]} className="flex shrink-0 items-center gap-2.5 pl-2 whitespace-nowrap" aria-label={c.brand}>
+          <BrandMark size={32} className="shrink-0 text-white" />
           <span className="hidden text-sm font-medium text-white sm:block">{c.brand}</span>
         </a>
 
