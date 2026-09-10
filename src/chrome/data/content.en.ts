@@ -14,7 +14,7 @@ export const siteEn = {
   ctaPrimary: 'Book a 20-min audit (free)',
   ctaSecondary: 'See case studies',
   ctaSticky: 'Process audit · 20 min',
-  location: 'Poland · remote and on-site',
+  location: 'Remote · Poland and abroad · EN / PL',
   responseTime: 'Response within 1 business day',
   minBudget: 'PLN 2,000',
 }

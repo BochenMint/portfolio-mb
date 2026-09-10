@@ -69,7 +69,7 @@ export const site = {
   email: import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@marcinbochenek.com',
   calendly: normalizeCalendlyUrl(import.meta.env.VITE_CALENDLY_URL),
   github: 'https://github.com/BochenMint',
-  location: 'Polska · zdalnie i u klienta',
+  location: 'Zdalnie · Polska i zagranica · PL / EN',
   responseTime: 'Odpowiedź w 1 dzień roboczy',
   minBudget: '2 000 PLN',
 }

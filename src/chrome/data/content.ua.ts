@@ -14,7 +14,7 @@ export const siteUa = {
   ctaPrimary: 'Замовити 20-хв аудит (безкоштовно)',
   ctaSecondary: 'Переглянути кейси',
   ctaSticky: 'Аудит процесу · 20 хв',
-  location: 'Польща · віддалено та на місці',
+  location: 'Віддалено · Польща та за кордоном · EN / PL',
   responseTime: 'Відповідь протягом 1 робочого дня',
   minBudget: '2 000 PLN',
 }
