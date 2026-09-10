@@ -25,7 +25,7 @@ export function ChromeCard({ tone = 'dark', as = 'div', className = '', children
 
 /* ---------- Buttons --------------------------------------------------- */
 type LinkBtnProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
-  variant?: 'chrome' | 'ghost'
+  variant?: 'chrome' | 'ghost' | 'accent'
   size?: 'sm' | 'md' | 'lg'
   external?: boolean
   /** Subtle magnetic drift (strength 0.12, max 5px). Marcin 2026-09: keep
@@ -33,6 +33,11 @@ type LinkBtnProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   magnetic?: boolean
   children: ReactNode
 }
+
+/* The single accent of the site: glossy racing red, reserved for the primary
+   action (book the audit / send). Everything else stays chrome. */
+const btnClass = (variant: 'chrome' | 'ghost' | 'accent') =>
+  variant === 'accent' ? 'accent-btn' : variant === 'chrome' ? 'chrome-btn' : 'ghost-btn'
 
 const sizes = {
   sm: 'px-4 py-2 text-[13px]',
@@ -53,7 +58,7 @@ export function LinkButton({
   return (
     <a
       ref={ref}
-      className={`${variant === 'chrome' ? 'chrome-btn' : 'ghost-btn'} ${sizes[size]} ${className}`}
+      className={`${btnClass(variant)} ${sizes[size]} ${className}`}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       {...rest}
     >
@@ -63,7 +68,7 @@ export function LinkButton({
 }
 
 type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'chrome' | 'ghost'
+  variant?: 'chrome' | 'ghost' | 'accent'
   size?: 'sm' | 'md' | 'lg'
   children: ReactNode
 }
@@ -71,7 +76,7 @@ type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 export function Button({ variant = 'chrome', size = 'md', className = '', children, ...rest }: BtnProps) {
   return (
     <button
-      className={`${variant === 'chrome' ? 'chrome-btn' : 'ghost-btn'} ${sizes[size]} disabled:cursor-wait disabled:opacity-70 ${className}`}
+      className={`${btnClass(variant)} ${sizes[size]} disabled:cursor-wait disabled:opacity-70 ${className}`}
       {...rest}
     >
       <span className="relative z-10 inline-flex items-center gap-2">{children}</span>

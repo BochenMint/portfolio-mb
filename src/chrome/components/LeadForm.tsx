@@ -148,7 +148,7 @@ export function LeadForm() {
           </p>
         )}
 
-        <Button type="submit" disabled={status === 'loading'} className="w-full md:w-auto">
+        <Button type="submit" variant="accent" disabled={status === 'loading'} className="w-full md:w-auto">
           {status === 'loading' ? c.form.submitLoading : c.form.submitIdle}
         </Button>
 
