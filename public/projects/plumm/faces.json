@@ -38,5 +38,15 @@
       "pl": "Strona główna plumm.pl: biuro rachunkowe online z własną aplikacją — księgowa prowadzi, AI przyspiesza.",
       "en": "The plumm.pl homepage hero — an online accounting office with its own app, run by an accountant and sped up by AI."
     }
+  },
+  {
+    "file": "face-5.webp",
+    "light": "face-5-light.webp",
+    "id": "pricing",
+    "label": { "pl": "Cennik", "en": "Pricing" },
+    "caption": {
+      "pl": "Sześć planów od 0 do 1099 zł/mies., z przełącznikami miesięcznie/rocznie i netto/brutto.",
+      "en": "Six plans from 0 to 1099 PLN a month, with monthly/annual and net/gross toggles."
+    }
   }
 ]

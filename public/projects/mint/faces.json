@@ -38,5 +38,15 @@
       "pl": "Panel administracyjny z podsumowaniem rezerwacji, apartamentów i właścicieli.",
       "en": "Admin dashboard summarizing bookings, apartments and owners at a glance."
     }
+  },
+  {
+    "file": "face-5.webp",
+    "light": null,
+    "id": "blog",
+    "label": { "pl": "Blog o Gdańsku", "en": "Gdańsk blog" },
+    "caption": {
+      "pl": "Blog Gdańsk pod ręką — przewodniki po mieście, chmura tagów tematycznych i wyróżniony artykuł.",
+      "en": "The Gdańsk pod ręką blog — city guides with a topic tag cloud and a featured article."
+    }
   }
 ]

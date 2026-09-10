@@ -17,11 +17,22 @@ export function Footer() {
             was written for developers. It now carries the positioning line. */}
         <div className="grid gap-8 py-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-16">
           <div>
-            <a href={localeHome[locale]} className="inline-flex items-center gap-2.5" aria-label={site.brand}>
-              <BrandMark size={26} className="shrink-0 text-white" />
-              <span className="text-sm font-medium text-white">{site.brand}</span>
+            {/* The page's one large statement of the mark. It replaces the old
+                26 px lockup rather than adding a second one — 44 px on mobile,
+                56 px from md up, wordmark set to match. Plain currentColor,
+                no glow: the footer is where the brand signs off, not where it
+                shouts. */}
+            <a
+              href={localeHome[locale]}
+              className="inline-flex items-center gap-3 md:gap-4"
+              aria-label={site.brand}
+            >
+              <BrandMark size={56} className="h-11 w-11 shrink-0 text-white md:h-14 md:w-14" />
+              <span className="text-lg font-semibold tracking-[-0.01em] text-white md:text-xl">
+                {site.brand}
+              </span>
             </a>
-            <p className="mt-4 max-w-[46ch] text-[13px] leading-relaxed text-silver-2">{c.footer.stack}</p>
+            <p className="mt-5 max-w-[46ch] text-[13px] leading-relaxed text-silver-2">{c.footer.stack}</p>
           </div>
 
           <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 md:justify-end">
