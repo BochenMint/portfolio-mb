@@ -11,8 +11,30 @@
    at the lg breakpoint (and the container caps out at 1152px). Below lg
    the cube's column is the full (single) content column, so a viewport
    fraction is safe there. */
-.cube-stage {
+/* --size lives on the wrapper (not .cube-stage) so it's a plain CSS
+   custom property inherited down to every descendant — including
+   .cube-dots and .cube-caption, which are .cube-stage's *siblings*, not
+   its children, and would otherwise see var(--size) as an unset/invalid
+   reference (custom properties only flow down the DOM tree). */
+.cube-wrapper {
   --size: clamp(280px, 78vw, 420px);
+}
+@media (min-width: 768px) {
+  .cube-wrapper {
+    --size: clamp(320px, 44vw, 480px);
+  }
+}
+@media (min-width: 1024px) {
+  .cube-wrapper {
+    --size: clamp(320px, 38vw, 520px);
+  }
+}
+@media (min-width: 1232px) {
+  .cube-wrapper {
+    --size: 520px;
+  }
+}
+.cube-stage {
   position: relative;
   width: var(--size);
   height: var(--size);
@@ -23,21 +45,6 @@
      pointer-events:none and no ancestor in Work.tsx clips overflow, so
      the oversized transparent margin never blocks neighbouring content. */
   overflow: visible;
-}
-@media (min-width: 768px) {
-  .cube-stage {
-    --size: clamp(320px, 44vw, 480px);
-  }
-}
-@media (min-width: 1024px) {
-  .cube-stage {
-    --size: clamp(320px, 38vw, 520px);
-  }
-}
-@media (min-width: 1232px) {
-  .cube-stage {
-    --size: 520px;
-  }
 }
 
 /* Oversized and centered on the (square) stage so the rotated cube's
@@ -120,12 +127,18 @@
 }
 
 /* --- Dots / segmented control ----------------------------------------- */
+/* The <canvas> is 125% of the stage height, centered — it overhangs the
+   stage's bottom edge by 12.5% of --size (see .cube-canvas), and the
+   contact shadow it paints fades out inside that overhang. Push the dots
+   row (and the caption below it) down past the overhang so the caption
+   block always sits on plain background, never mid-fade through the
+   shadow's gradient. */
 .cube-dots {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  margin-top: 1.75rem;
+  margin-top: calc(var(--size) * 0.125 + 0.75rem);
 }
 .cube-dot {
   position: relative;
@@ -183,12 +196,13 @@
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--color-silver-2, #9a9ea6);
-  max-width: 36ch;
+  max-width: 34ch;
   margin-inline: auto;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
+  /* No clamp: the full caption always shows. Reserve height for three
+     lines (the longest caption across all projects' faces.json files
+     wraps to at most 3 at this width) so switching faces never shifts
+     the layout, even while shorter captions leave blank space below. */
+  min-height: calc(1.5em * 3);
   animation: cube-caption-in 0.4s ease both;
 }
 

@@ -957,7 +957,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
   const fallbackBase = `/projects/${projectId}/${fallbackSrc}`
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center cube-wrapper">
       <div
         ref={stageRef}
         className="cube-stage"
