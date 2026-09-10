@@ -3,7 +3,7 @@
 > Source of truth: https://marcinbochenek.com/ (Polish), /en/, /ua/. Do not invent clients, metrics, or testimonials beyond what is listed here.
 
 ## Who
-Marcin Bochenek is a freelance software engineer based in Poland. He is a single accountable person: audit, design, implementation, and before/after measurement. He does not sell slide decks. Code and configuration belong to the client after invoices are paid. NDA is standard.
+Marcin Bochenek is a freelance software engineer based in Poland who works with clients in Poland and abroad, in English and Polish. He is a single accountable person: audit, design, implementation, and before/after measurement. He does not sell slide decks. Code and configuration belong to the client after invoices are paid. NDA is standard.
 
 ## What he sells
 1. Company websites and conversion funnels — from a brochure site with a form (from 2 000 PLN) to a site that sells or qualifies (from 8 000 PLN) to a platform that takes bookings (from 25 000 PLN).

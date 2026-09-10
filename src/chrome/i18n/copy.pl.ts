@@ -143,6 +143,6 @@ export const copyPl = {
     rights: (brand: string, year: number) => `© ${year} ${brand}. Wszystkie prawa zastrzeżone.`,
     classic: 'Laboratorium',
     classicHref: '/lab.html',
-    stack: 'Strony, systemy i automatyzacje dla firm w Polsce. Projekt, wdrożenie i opieka z jednej ręki.',
+    stack: 'Strony, systemy i automatyzacje dla firm w Polsce i za granicą. Pracuję po polsku i po angielsku.',
   },
 } satisfies ChromeCopy
