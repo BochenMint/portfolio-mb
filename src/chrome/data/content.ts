@@ -30,33 +30,49 @@ export type PricingTier = {
   highlight?: boolean
 }
 
+/** Ignoruje placeholdery z .env.example — puste, sam root cal.com/calendly.com i YOUR-USER nie są prawdziwym linkiem audytu. */
+function normalizeCalendlyUrl(raw: string | undefined): string {
+  const url = (raw || '').trim()
+  if (!url) return ''
+  if (/YOUR-USER/i.test(url)) return ''
+
+  try {
+    const { hostname, pathname } = new URL(url)
+    const isSchedulerHost =
+      hostname === 'cal.com' ||
+      hostname === 'www.cal.com' ||
+      hostname === 'calendly.com' ||
+      hostname === 'www.calendly.com'
+    if (!isSchedulerHost) return url
+
+    const bareRoot = pathname === '/' || pathname === ''
+    if (bareRoot) return ''
+
+    return url
+  } catch {
+    return ''
+  }
+}
+
 export const site = {
   name: 'Marcin B.',
   brand: 'Marcin Bochenek',
   role: 'PropTech · FinTech · AI ops',
-  icpBadge: 'Projekty od 25 000 PLN · decydent w firmie',
+  icpBadge: 'Strony od 2 000 PLN · systemy od 8 000 PLN',
   headline: ['4 produkcyjne systemy.', 'Jeden standard jakości.'],
   headlineAccent: 'Mint · Plumm · iDrive · Agentic OS',
   subhead:
     'Buduję strony, platformy rezerwacji i automatyzacje z AI — dla właścicieli firm, którzy chcą mniej ręcznej pracy i więcej marży. Astro, React, integracje API, audytowalne agenty.',
-  proofLine: '4 produkcyjne produkty · hospitality · księgowość · mobility · AI ops',
   ctaPrimary: 'Umów 20-min audyt (bezpłatnie)',
   ctaSecondary: 'Zobacz case studies',
   ctaSticky: 'Audyt procesu · 20 min',
-  email: 'kontakt@example.com',
-  calendly: import.meta.env.VITE_CALENDLY_URL || '',
+  email: import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@marcinbochenek.com',
+  calendly: normalizeCalendlyUrl(import.meta.env.VITE_CALENDLY_URL),
   github: 'https://github.com/BochenMint',
   location: 'Polska · zdalnie i on-site',
   responseTime: 'Odpowiedź w 1 dzień roboczy',
-  minBudget: '25 000 PLN',
+  minBudget: '2 000 PLN',
 }
-
-export const results = [
-  { value: '7', label: 'języków na Mint Apartments', suffix: '' },
-  { value: '4', label: 'produkcyjne ekosystemy', suffix: '' },
-  { value: '−12h', label: 'potencjał oszczędności / mies. przy fakturach', suffix: '*' },
-  { value: '24/7', label: 'rezerwacje & concierge AI', suffix: '' },
-]
 
 export const services: Service[] = [
   {
@@ -127,7 +143,7 @@ export const projects: Project[] = [
   {
     id: 'idrive',
     title: 'iDrive Cars',
-    domain: 'idrivecars',
+    domain: 'idrivecars.pl',
     url: '#',
     tagline: 'Dziennikarstwo motoryzacyjne · testy aut · galerie',
     description:
@@ -144,7 +160,7 @@ export const projects: Project[] = [
   {
     id: 'agentic',
     title: 'Agentic OS',
-    domain: 'agentic OS',
+    domain: 'agentic-os',
     url: '#',
     tagline: 'Orkiestracja agentów AI',
     description:
@@ -162,15 +178,26 @@ export const projects: Project[] = [
 
 export const pricing: PricingTier[] = [
   {
+    name: 'Start',
+    from: 'od 2 000 PLN',
+    description: 'Strona wizytówka lub landing, który zbiera zapytania',
+    includes: [
+      'Do 5 podstron pod Twoją markę',
+      'Formularz kontaktowy z powiadomieniami',
+      'Szybkość na telefonie + SEO on-page',
+      'Ścieżka rozbudowy do pakietu Launch',
+    ],
+  },
+  {
     name: 'Launch',
-    from: 'od 25 000 PLN',
-    description: 'Landing + integracje + podstawowa automatyzacja',
-    includes: ['UX/UI premium', 'SEO techniczne', 'Formularz + CRM', '2 iteracje'],
+    from: 'od 8 000 PLN',
+    description: 'Strona firmowa + lejek konwersji + integracje',
+    includes: ['Formularz → CRM', 'Kalendarz / booking', 'SEO techniczne', 'Pomiar konwersji'],
   },
   {
     name: 'Platforma',
-    from: 'od 55 000 PLN',
-    description: 'Booking, panel, wielojęzyczność, API',
+    from: 'od 25 000 PLN',
+    description: 'Booking, panel operacyjny, wielojęzyczność, API',
     includes: [
       'Wszystko z Launch',
       'Rezerwacje / PMS',
@@ -181,7 +208,7 @@ export const pricing: PricingTier[] = [
   },
   {
     name: 'AI Ops',
-    from: 'od 15 000 PLN / mies.',
+    from: 'od 3 000 PLN / mies.',
     description: 'Agenci, automatyzacje, utrzymanie i rozwój',
     includes: ['Agentic workflows', 'Concierge / support AI', 'SLA response', 'Raport kosztów AI'],
   },
@@ -189,12 +216,12 @@ export const pricing: PricingTier[] = [
 
 export const faq = [
   {
-    q: 'Dlaczego minimum 25 000 PLN?',
-    a: 'Bo robię produkty produkcyjne — z testami, SEO i utrzymaniem — nie „stronę na wczoraj”. To filtr, który chroni obie strony.',
+    q: 'Czy robisz też proste strony firmowe?',
+    a: 'Tak. Pakiet Start (od 2 000 PLN) to solidna strona wizytówka lub landing z formularzem, szybkością na telefonie i podstawowym SEO — bez systemów pod spodem, ale zaprojektowana tak, żeby dało się ją rozbudować. Strona firmowa z lejkiem konwersji i integracjami zaczyna się od pakietu Launch (od 8 000 PLN).',
   },
   {
     q: 'Czy robisz same strony wizytówki?',
-    a: 'Tak, jeśli są częścią większego celu (booking, automatyzacja). Sam landing bez biznesowego KPI — tylko w pakiecie Launch.',
+    a: 'Tak — w pakiecie Start. Jeśli od początku wiadomo, że celem są rezerwacje albo automatyzacja, projektuję wizytówkę jako pierwszy etap tej ścieżki, żeby nie budować jej dwa razy.',
   },
   {
     q: 'Jak wygląda współpraca z AI?',
@@ -232,7 +259,7 @@ export const qualificationFields = [
     label: 'Budżet orientacyjny',
     type: 'select',
     required: true,
-    options: ['25–50 tys.', '50–100 tys.', '100+ tys.', 'Retainer AI Ops'],
+    options: ['2–8 tys.', '8–25 tys.', '25+ tys.', 'Retainer AI Ops'],
   },
   {
     id: 'timeline',

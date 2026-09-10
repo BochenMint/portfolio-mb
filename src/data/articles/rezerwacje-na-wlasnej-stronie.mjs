@@ -20,7 +20,7 @@ export default {
     description:
       'Rezerwacje na własnej stronie ucinają prowizję OTA: w Mint gość płaci 10–15% mniej niż na Booking.com. Piszę, kiedy to się spina i dlaczego nie buduję własnego kalendarza od zera.',
     h1: 'Rezerwacje na własnej stronie: prowizja portalu wraca jako marża',
-    kicker: 'Mint Apartments · Conversion Build',
+    kicker: 'Mint Apartments · Platforma',
     lead:
       'Jeśli sprzedajesz noce przez Booking albo Airbnb, prowizja nie jest „kosztem marketingu”. Jest podatkiem od każdej rezerwacji, którą mógłbyś zamknąć sam. W [Mint Apartments](https://mintapartments.pl) gość rezerwuje na domenie operatora, płaci online i dostaje kod do zamka. Szacunek: 10–15% taniej dla gościa niż na portalu*. To jedyny publiczny, klikalny przykład rezerwacji, który pokazuję — bez zmyślonych occupancy rate.',
     sections: [
@@ -36,10 +36,10 @@ export default {
         ul([
           'Policz prowizję roczną, nie „2% tu czy tam”.',
           'Dodaj godziny recepcji / WhatsApp na „gdzie jest kod”.',
-          'Odejmij koszt wdrożenia Conversion Build (25 000–60 000 zł) i utrzymanie bramki.',
+          'Odejmij koszt wdrożenia Platformy (od 25 000 zł) i utrzymanie bramki.',
           'Jeśli zwrot wychodzi poza 18–24 miesiące przy Twoich liczbach — mówię to wprost.',
         ]),
-        p('Wizytówka za 6 500 zł tego nie udźwignie. Kalendarz, płatność, locki Tedee/Nuki i asystent w wielu językach to [lejek](/artykuly/lejek-konwersji-na-stronie/), nie pięć podstron z formularzem.'),
+        p('Wizytówka Start za 2 000 zł tego nie udźwignie. Kalendarz, płatność, locki Tedee/Nuki i asystent w wielu językach to [platforma](/artykuly/lejek-konwersji-na-stronie/), nie pięć podstron z formularzem.'),
       ),
       section(
         'Check-in bez recepcji nie jest gadżetem',
@@ -63,7 +63,7 @@ export default {
     ],
     faqs: [
       { q: 'Czy mogę zostawić Booking i mieć własną rezerwację?', a: 'Tak. Często tak robię: OTA jako kanał, własna strona jako tańsza kasa. Warunek: te same stany, zero podwójnych rezerwacji.' },
-      { q: 'Ile to kosztuje?', a: 'To Conversion Build: 25 000–60 000 zł, nie pakiet wizytówki. Widełki po audycie, gdy policzymy prowizję i godziny obsługi.' },
+      { q: 'Ile to kosztuje?', a: 'To Platforma: od 25 000 zł, nie pakiet Start. Dokładna kwota po audycie, gdy policzymy prowizję i godziny obsługi.' },
       { q: 'Czy napiszesz własny kalendarz od zera?', a: 'Rzadko. Jeśli PMS/channel manager istnieje, podpinam go. Własny kalendarz ma sens, gdy proces jest nietypowy i gotowiec kłamie.' },
       { q: 'Czy asystent AI jest obowiązkowy?', a: 'Nie. Najpierw rezerwacja i check-in. Asystent dokładam, gdy wolumen pytań to uzasadnia — z HITL, nie z czatem-ozdobą.' },
     ],
@@ -76,7 +76,7 @@ export default {
     description:
       'Direct booking on your site cuts OTA commission: at Mint the guest pays 10–15% less than on Booking.com. I write when the maths closes and why I do not build a calendar from scratch.',
     h1: 'Direct bookings on your own site: portal commission returns as margin',
-    kicker: 'Mint Apartments · Conversion Build',
+    kicker: 'Mint Apartments · Platforma',
     lead:
       'If you sell nights through Booking or Airbnb, commission is not “marketing cost”. It is a tax on every stay you could have closed yourself. At [Mint Apartments](https://mintapartments.pl) the guest books on the operator’s domain, pays online and gets a lock code. Estimate: 10–15% cheaper for the guest than the portal*. That is the only public, clickable booking example I show — no invented occupancy rates.',
     sections: [
@@ -92,10 +92,10 @@ export default {
         ul([
           'Count annual commission, not “2% here or there”.',
           'Add desk / WhatsApp hours on “where is the code”.',
-          'Subtract Conversion Build (PLN 25,000–60,000) and gateway upkeep.',
+          'Subtract the Platform build (from PLN 25,000) and gateway upkeep.',
           'If payback sits beyond 18–24 months on your numbers — I say so.',
         ]),
-        p('A PLN 6,500 brochure will not carry this. Calendar, payment, Tedee/Nuki locks and a multilingual assistant are a [funnel](/artykuly/lejek-konwersji-na-stronie/), not five pages with a form.'),
+        p('A PLN 2,000 Start brochure will not carry this. Calendar, payment, Tedee/Nuki locks and a multilingual assistant are a [platform](/artykuly/lejek-konwersji-na-stronie/), not five pages with a form.'),
       ),
       section(
         'Check-in without a desk is not a gadget',
@@ -119,7 +119,7 @@ export default {
     ],
     faqs: [
       { q: 'Can I keep Booking and still take direct bookings?', a: 'Yes. I often do: OTA as a channel, your site as the cheaper till. Condition: the same stock, no double bookings.' },
-      { q: 'What does it cost?', a: 'Conversion Build: PLN 25,000–60,000, not the brochure package. A range after the audit, once we count commission and handling hours.' },
+      { q: 'What does it cost?', a: 'Platform: from PLN 25,000, not the Start brochure package. A precise figure after the audit, once we count commission and handling hours.' },
       { q: 'Will you write a calendar from scratch?', a: 'Rarely. If a PMS/channel manager exists, I attach it. A custom calendar makes sense when the process is unusual and the off-the-shelf tool lies.' },
       { q: 'Is an AI assistant mandatory?', a: 'No. Booking and check-in first. I add an assistant when question volume justifies it — HITL, not a decorative chat.' },
     ],
@@ -132,7 +132,7 @@ export default {
     description:
       'Бронювання на власному сайті ріже комісію OTA: у Mint гість платить на 10–15% менше, ніж на Booking.com. Пишу, коли це сходиться і чому не будую календар з нуля.',
     h1: 'Бронювання на власному сайті: комісія порталу повертається як маржа',
-    kicker: 'Mint Apartments · Conversion Build',
+    kicker: 'Mint Apartments · Platforma',
     lead:
       'Якщо продаєте ночі через Booking або Airbnb, комісія — не «витрата на маркетинг». Це податок з кожного бронювання, яке могли б закрити самі. У [Mint Apartments](https://mintapartments.pl) гість бронює на домені оператора, платить онлайн і отримує код до замка. Оцінка: на 10–15% дешевше для гостя, ніж на порталі*. Це єдиний публічний, клікабельний приклад бронювання, який показую — без вигаданих occupancy.',
     sections: [
@@ -148,10 +148,10 @@ export default {
         ul([
           'Порахуйте річну комісію, не «2% тут чи там».',
           'Додайте години ресепшена / WhatsApp на «де код».',
-          'Відніміть вартість Conversion Build (25 000–60 000 злотих) і підтримку шлюзу.',
+          'Відніміть вартість Платформи (від 25 000 злотих) і підтримку шлюзу.',
           'Якщо повернення далі ніж 18–24 місяці на ваших цифрах — кажу це прямо.',
         ]),
-        p('Візитівка за 6 500 цього не потягне. Календар, оплата, замки Tedee/Nuki й асистент багатьма мовами — це [воронка](/artykuly/lejek-konwersji-na-stronie/), не п’ять сторінок із формою.'),
+        p('Візитівка Start за 2 000 цього не потягне. Календар, оплата, замки Tedee/Nuki й асистент багатьма мовами — це [платформа](/artykuly/lejek-konwersji-na-stronie/), не п’ять сторінок із формою.'),
       ),
       section(
         'Заселення без ресепшена — не гаджет',
@@ -175,7 +175,7 @@ export default {
     ],
     faqs: [
       { q: 'Чи можна лишити Booking і мати власне бронювання?', a: 'Так. Часто так і роблю: OTA як канал, власний сайт як дешевша каса. Умова: ті самі стани, нуль подвійних бронювань.' },
-      { q: 'Скільки це коштує?', a: 'Це Conversion Build: 25 000–60 000 злотих, не пакет візитівки. Вилка після аудиту, коли порахуємо комісію й години обслуговування.' },
+      { q: 'Скільки це коштує?', a: 'Це Платформа: від 25 000 злотих, не пакет Start. Точна сума після аудиту, коли порахуємо комісію й години обслуговування.' },
       { q: 'Чи напишете власний календар з нуля?', a: 'Рідко. Якщо PMS/channel manager є — підключаю. Власний календар має сенс, коли процес нетиповий і готове рішення бреше.' },
       { q: 'Чи асистент ШІ обов’язковий?', a: 'Ні. Спочатку бронювання і заселення. Асистента додаю, коли обсяг питань це обґрунтовує — HITL, не чат-прикраса.' },
     ],

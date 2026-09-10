@@ -15,7 +15,9 @@
     "compare:ripple": "node scripts/compare-ripple-reference.mjs",
     "test:full-bleed": "node scripts/test-full-bleed.mjs",
     "verify:fullscreen": "node scripts/verify-fullscreen-visual.mjs",
-    "capture:hero-variants": "node scripts/capture-hero-variants.mjs"
+    "capture:hero-variants": "node scripts/capture-hero-variants.mjs",
+    "deploy:push": "node scripts/deploy-push.mjs",
+    "deploy": "npm run build && node scripts/deploy-push.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

@@ -5,52 +5,52 @@ export const expandStrony = {
     pl: [
       section(
         'Jak wygląda pierwszy ekran, gdy nie kłamię w H1',
-        p('Strona firmowa B2B, którą wdrażam, nie obiecuje trzech biznesów naraz. Jedna obietnica, jeden odbiorca, jeden następny krok. Lokalizacja i model współpracy są na starcie, bo właściciel firmy nie chce zgadywać, czy ogarniam Trójmiasto on-site i resztę Polski zdalnie. Próg cenowy też. Ukrywanie „wycena indywidualna” bez rzędu wielkości obcina zapytania od ludzi, którzy i tak nie wejdą w 6 500 zł — i od tych, którzy wejdą w 60 tysięcy, ale nie chcą tracić calla na wizytówkę.'),
+        p('Strona firmowa B2B, którą wdrażam, nie obiecuje trzech biznesów naraz. Jedna obietnica, jeden odbiorca, jeden następny krok. Lokalizacja i model współpracy są na starcie, bo właściciel firmy nie chce zgadywać, czy ogarniam Trójmiasto on-site i resztę Polski zdalnie. Próg cenowy też. Ukrywanie „wycena indywidualna” bez rzędu wielkości obcina zapytania od ludzi, którzy i tak nie wejdą w pakiet Start (2 000 zł) — i od tych, którzy wejdą w Platformę (25 000 zł), ale nie chcą tracić calla na wizytówkę.'),
         p('Dowód zostawiam klikalny albo nie wstawiam teatru. Mint i Plumm są publiczne. iDrive nie jest live, Agentic jest wewnętrzne. Lepiej proces i zasady niż gwiazdki z generatora. Jeśli nie masz jeszcze nic do kliknięcia, piszemy jak pracuję i czego nie biorę — to też jest oferta. Fałszywy case w B2B wraca w pierwszym poważnym mailu.'),
       ),
       section(
         'Kiedy ta strona przestaje wystarczać i trzeba lejka',
-        p('Gdy płacicie za uwagę, gdy decyzja wymaga kwalifikacji (wolumen, budżet, liczba obiektów), gdy rezerwacja albo panel mają zamknąć się na domenie. Wtedy pakiet 6 500–12 000 zł jest złym zakupem, bo kupujecie wizytówkę do roboty lejka. [Wizytówka czy lejek](/artykuly/strona-wizytowka-czy-lejek/) i [Conversion Build](/artykuly/lejek-konwersji-na-stronie/) są po to, żeby tę granicę nazwać przed fakturą, nie w połowie sprintu. Bloga „na SEO” w wizytówce nie dokładam — to osobny kanał i osobne crawlable URL-e.'),
+        p('Gdy płacicie za uwagę, gdy decyzja wymaga kwalifikacji (wolumen, budżet, liczba obiektów) — to pakiet Launch (od 8 000 zł). Gdy rezerwacja albo panel mają zamknąć się na domenie — to Platforma (od 25 000 zł). Wtedy pakiet Start (od 2 000 zł) jest złym zakupem, bo kupujecie wizytówkę do roboty lejka. [Wizytówka czy lejek](/artykuly/strona-wizytowka-czy-lejek/) i [pakiet Launch](/artykuly/lejek-konwersji-na-stronie/) są po to, żeby tę granicę nazwać przed fakturą, nie w połowie sprintu. Bloga „na SEO” w wizytówce nie dokładam — to osobny kanał i osobne crawlable URL-e.'),
       ),
     ],
     en: [
       section(
         'What the first screen looks like when the H1 does not lie',
-        p('The B2B company website I ship does not promise three businesses at once. One promise, one reader, one next step. Location and working model sit up front, because a business owner should not guess whether I do on-site in the Tri-City and the rest of Poland remote. A price threshold too. Hiding “individual quote” with no order of magnitude cuts enquiries from people who will never enter PLN 6,500 — and from those who will enter 60k but refuse a call about a brochure.'),
+        p('The B2B company website I ship does not promise three businesses at once. One promise, one reader, one next step. Location and working model sit up front, because a business owner should not guess whether I do on-site in the Tri-City and the rest of Poland remote. A price threshold too. Hiding “individual quote” with no order of magnitude cuts enquiries from people who will never enter the Start package (PLN 2,000) — and from those who will enter Platform (PLN 25,000) but refuse a call about a brochure.'),
         p('Proof stays clickable or I skip the theatre. Mint and Plumm are public. iDrive is not live, Agentic is internal. Process and rules beat generated stars. If you have nothing to click yet, we write how I work and what I refuse — that is also an offer. A fake B2B case comes back in the first serious email.'),
       ),
       section(
         'When this site stops being enough and you need a funnel',
-        p('When you pay for attention, when the decision needs qualification (volume, budget, number of properties), when booking or a panel must close on your domain. Then PLN 6,500–12,000 is a bad purchase, because you bought a brochure to do a funnel’s job. [Brochure or funnel](/artykuly/strona-wizytowka-czy-lejek/) and [Conversion Build](/artykuly/lejek-konwersji-na-stronie/) exist so we name that line before the invoice, not mid-sprint. I do not bolt an “SEO blog” onto a brochure — that is a separate channel and separate crawlable URLs.'),
+        p('When you pay for attention, when the decision needs qualification (volume, budget, number of properties) — that is the Launch package (from PLN 8,000). When booking or a panel must close on your domain — that is Platform (from PLN 25,000). Then the Start package (from PLN 2,000) is a bad purchase, because you bought a brochure to do a funnel’s job. [Brochure or funnel](/artykuly/strona-wizytowka-czy-lejek/) and [the Launch package](/artykuly/lejek-konwersji-na-stronie/) exist so we name that line before the invoice, not mid-sprint. I do not bolt an “SEO blog” onto a brochure — that is a separate channel and separate crawlable URLs.'),
       ),
     ],
     uk: [
       section(
         'Як виглядає перший екран, коли H1 не бреше',
-        p('Корпоративний сайт B2B, який впроваджую, не обіцяє три бізнеси одразу. Одна обіцянка, один читач, один наступний крок. Локація і модель співпраці на старті, бо власник не хоче здогадуватися, чи я онсайт у Тримісті і решту Польщі віддалено. Поріг ціни теж. Ховання «індивідуальна оцінка» без порядку величини ріже запити від тих, хто не зайде в 6 500 — і від тих, хто зайде в 60 тисяч, але не хоче палити дзвінок на візитівку.'),
+        p('Корпоративний сайт B2B, який впроваджую, не обіцяє три бізнеси одразу. Одна обіцянка, один читач, один наступний крок. Локація і модель співпраці на старті, бо власник не хоче здогадуватися, чи я онсайт у Тримісті і решту Польщі віддалено. Поріг ціни теж. Ховання «індивідуальна оцінка» без порядку величини ріже запити від тих, хто не зайде в пакет Start (2 000) — і від тих, хто зайде в Платформу (25 000), але не хоче палити дзвінок на візитівку.'),
         p('Доказ лишаю клікабельним або не ставлю театру. Mint і Plumm публічні. iDrive не live, Agentic внутрішній. Процес і правила кращі за зірки з генератора. Якщо ще немає що клікнути, пишемо як працюю і чого не беру — це теж оферта. Фальшивий кейс у B2B повертається в першому серйозному листі.'),
       ),
       section(
         'Коли цього сайту вже мало і потрібна воронка',
-        p('Коли платите за увагу, коли рішення потребує кваліфікації (обсяг, бюджет, число об’єктів), коли бронювання або панель мають закритися на домені. Тоді пакет 6 500–12 000 — погана покупка, бо купуєте візитівку під роботу воронки. [Візитівка чи воронка](/artykuly/strona-wizytowka-czy-lejek/) і [Conversion Build](/artykuly/lejek-konwersji-na-stronie/) існують, щоб назвати цю межу до рахунку, не посеред спринту. Блог «для SEO» на візитівку не додаю — це окремий канал і окремі crawlable URL.'),
+        p('Коли платите за увагу, коли рішення потребує кваліфікації (обсяг, бюджет, число об’єктів) — це пакет Launch (від 8 000). Коли бронювання або панель мають закритися на домені — це Платформа (від 25 000). Тоді пакет Start (від 2 000) — погана покупка, бо купуєте візитівку під роботу воронки. [Візитівка чи воронка](/artykuly/strona-wizytowka-czy-lejek/) і [пакет Launch](/artykuly/lejek-konwersji-na-stronie/) існують, щоб назвати цю межу до рахунку, не посеред спринту. Блог «для SEO» на візитівку не додаю — це окремий канал і окремі crawlable URL.'),
       ),
     ],
   },
   'ile-kosztuje-strona-firmowa': {
     pl: [
       section(
-        'Co naprawdę kupujesz w 6 500–12 000 zł, a czego nie',
-        p('Ile kosztuje strona firmowa u mnie: custom do pięciu podstron, formularz, on-page, sitemap, pomiar zapytań, stack Astro/Next. Nie motyw z marketplace z wymienionym logo. Dolny próg: jasna oferta, Twoje teksty i zdjęcia w przyzwoitym stanie, jeden język. Górny: więcej redakcji, gorsza hierarchia oferty, mapa, dopieszczenie mobile. Nie przesuwam Cię w górę za paddingi. Przesuwam, gdy zakres kłamie w briefie — blog, CRM, drugi język, AI-czat.'),
-        p('Publiczne cenniki 2026 dla „wizytówki” często schodzą do 3–7 tys. Mediana „strony firmowej” w zestawieniach kręci się wokół 6 tys. Moja dolna granica jest wyżej świadomie: nie sprzedaję motywu. Jeśli ktoś obiecuje stronę firmową B2B z blogiem, sklepem i AI za 4 000 zł, porównujecie inne produkty. [Zakres B2B](/artykuly/strona-firmowa-b2b/) jest po to, żeby to było widać przed przelewem.'),
+        'Co naprawdę kupujesz w pakiecie Start (od 2 000 zł), a czego nie',
+        p('Ile kosztuje strona firmowa u mnie: pakiet Start (od 2 000 zł) to custom do pięciu podstron, formularz, on-page, sitemap, ścieżka rozbudowy, stack Astro/Next. Nie motyw z marketplace z wymienionym logo. Dolny próg: jasna oferta, Twoje teksty i zdjęcia w przyzwoitym stanie, jeden język. Wyżej: więcej redakcji, gorsza hierarchia oferty, mapa, dopieszczenie mobile, pomiar zapytań — to już pakiet Launch (od 8 000 zł). Nie przesuwam Cię w górę za paddingi. Przesuwam, gdy zakres kłamie w briefie — blog, CRM, drugi język, AI-czat.'),
+        p('Publiczne cenniki 2026 dla „wizytówki” często schodzą do 1–4 tys. Mediana „strony firmowej” w zestawieniach kręci się wokół 6 tys. Mój pakiet Start startuje świadomie od 2 000: to prosta wizytówka bez integracji, nie motyw. Jeśli ktoś obiecuje stronę firmową B2B z blogiem, sklepem i AI za tę samą cenę, porównujecie inne produkty. [Zakres B2B](/artykuly/strona-firmowa-b2b/) jest po to, żeby to było widać przed przelewem.'),
         ul([
-          'W cenie: do 5 URL-i, jeden język, formularz z powiadomieniem, podstawowe SEO, szybkość na telefonie.',
-          'Poza ceną: landingi kampanii, treści eksperckie, hreflang PL/EN/UA, kwalifikacja leadów.',
-          'Osobny produkt: lejek 25–60 tys., panel 60–180 tys.+, HITL, Audit Sprint 2 500–6 000.',
+          'W cenie Start: do 5 URL-i, jeden język, formularz z powiadomieniem, podstawowe SEO, szybkość na telefonie.',
+          'Poza ceną Start: landingi kampanii, treści eksperckie, hreflang PL/EN/UA, kwalifikacja leadów.',
+          'Osobny pakiet: Launch (lejek, integracje) od 8 000, Platforma (booking, panel, API) od 25 000, AI Ops od 3 000/mies., Audit Sprint od 1 500.',
         ]),
       ),
       section(
         'Gdzie kończy się strona, a zaczyna się lejek albo panel',
-        p('Gdy macie płatny ruch, rezerwacje, wiele ról albo proces, który Excel już psuje — 12 000 zł nie urośnie magicznie w system. Uczciwiej nazwać [Conversion Build](/artykuly/lejek-konwersji-na-stronie/) albo [Ops](/artykuly/panel-operacyjny-zamiast-excela/) na starcie. 20 minut audytu jest po to, żeby nie kupować wizytówki do roboty, której wizytówka nie zrobi. Jeśli po callu usłyszysz „nie wdrażaj jeszcze”, to też jest wycena: oszczędność.'),
+        p('Gdy macie płatny ruch, potrzebujecie kwalifikacji leadów — to pakiet Launch (od 8 000 zł). Gdy macie rezerwacje, wiele ról albo proces, który Excel już psuje — pakiet Start nie urośnie magicznie w system, potrzebna jest Platforma (od 25 000 zł). Uczciwiej nazwać [pakiet Launch](/artykuly/lejek-konwersji-na-stronie/) albo [Platformę](/artykuly/panel-operacyjny-zamiast-excela/) na starcie. 20 minut audytu jest po to, żeby nie kupować wizytówki do roboty, której wizytówka nie zrobi. Jeśli po callu usłyszysz „nie wdrażaj jeszcze”, to też jest wycena: oszczędność.'),
       ),
       section(
         'Jak czytać cudze widełki, żeby się nie dać nabrać',
@@ -59,18 +59,18 @@ export const expandStrony = {
     ],
     en: [
       section(
-        'What you actually buy at PLN 6,500–12,000, and what you do not',
-        p('What a company website costs with me: custom work up to five pages, a form, on-page SEO, a sitemap, enquiry measurement, Astro/Next. Not a marketplace theme with the logo swapped. Lower end: a clear offer, decent copy and photos from you, one language. Upper: more editing, a messier offer hierarchy, a map, tighter mobile. I do not push you up for padding. I do when the brief lies — a blog, CRM, a second language, an AI chat.'),
-        p('Public 2026 price lists for a “brochure” often drop to 3–7k. Medians for a “company site” hover around 6k. My floor sits higher on purpose: I do not sell a theme. If someone promises a B2B company site with a blog, a shop and AI for PLN 4,000, you are comparing different products. The [B2B scope](/artykuly/strona-firmowa-b2b/) exists so that is visible before the transfer.'),
+        'What you actually buy in the Start package (from PLN 2,000), and what you do not',
+        p('What a company website costs with me: the Start package (from PLN 2,000) is custom work up to five pages, a form, on-page SEO, a sitemap, an upgrade path, Astro/Next. Not a marketplace theme with the logo swapped. Lower end: a clear offer, decent copy and photos from you, one language. Higher: more editing, a messier offer hierarchy, a map, tighter mobile, enquiry measurement — that is already the Launch package (from PLN 8,000). I do not push you up for padding. I do when the brief lies — a blog, CRM, a second language, an AI chat.'),
+        p('Public 2026 price lists for a “brochure” often drop to 500–1,500. Medians for a “company site” hover around 6k. My Start package deliberately starts from PLN 2,000: it is a simple brochure with no integrations, not a theme. If someone promises a B2B company site with a blog, a shop and AI at the same price, you are comparing different products. The [B2B scope](/artykuly/strona-firmowa-b2b/) exists so that is visible before the transfer.'),
         ul([
-          'In price: up to 5 URLs, one language, a form with notification, basic SEO, phone speed.',
-          'Out of price: campaign landings, expert articles, PL/EN/UA hreflang, lead qualification.',
-          'Separate products: funnel PLN 25–60k, panel 60–180k+, HITL, Audit Sprint 2,500–6,000.',
+          'In the Start price: up to 5 URLs, one language, a form with notification, basic SEO, phone speed.',
+          'Out of the Start price: campaign landings, expert articles, PL/EN/UA hreflang, lead qualification.',
+          'Separate packages: Launch (funnel, integrations) from PLN 8,000, Platform (booking, panel, API) from PLN 25,000, AI Ops from PLN 3,000/month, Audit Sprint from PLN 1,500.',
         ]),
       ),
       section(
         'Where a site ends and a funnel or panel begins',
-        p('When you have paid traffic, bookings, several roles, or a process Excel already breaks — PLN 12,000 will not magically grow into a system. It is more honest to name [Conversion Build](/artykuly/lejek-konwersji-na-stronie/) or [Ops](/artykuly/panel-operacyjny-zamiast-excela/) at the start. The 20-minute audit exists so you do not buy a brochure for a job a brochure will not do. If after the call you hear “do not ship yet”, that is also a quote: a saving.'),
+        p('When you have paid traffic and need lead qualification — that is the Launch package (from PLN 8,000). When you have bookings, several roles, or a process Excel already breaks — the Start package will not magically grow into a system, you need Platform (from PLN 25,000). It is more honest to name [the Launch package](/artykuly/lejek-konwersji-na-stronie/) or [Platform](/artykuly/panel-operacyjny-zamiast-excela/) at the start. The 20-minute audit exists so you do not buy a brochure for a job a brochure will not do. If after the call you hear “do not ship yet”, that is also a quote: a saving.'),
       ),
       section(
         'How to read someone else’s ranges without being taken in',
@@ -79,18 +79,18 @@ export const expandStrony = {
     ],
     uk: [
       section(
-        'Що насправді купуєте за 6 500–12 000, а чого ні',
-        p('Скільки коштує корпоративний сайт у мене: custom до п’яти сторінок, форма, on-page, sitemap, вимір запитів, стек Astro/Next. Не тема з маркетплейсу зі зміненим лого. Нижній поріг: ясна оферта, ваші тексти й світлини в пристойному стані, одна мова. Верхній: більше редакції, гірша ієрархія оферти, мапа, доведення mobile. Не піднімаю за внутрішні відступи. Піднімаю, коли обсяг бреше в брифі — блог, CRM, друга мова, AI-чат.'),
-        p('Публічні прайси 2026 для «візитівки» часто сходять до 3–7 тис. Медіана «сайту компанії» крутиться біля 6 тис. Мій нижній поріг вищий свідомо: не продаю тему. Якщо хтось обіцяє корпоративний сайт B2B з блогом, магазином і ШІ за 4 000, ви порівнюєте інші продукти. [Обсяг B2B](/artykuly/strona-firmowa-b2b/) існує, щоб це було видно до переказу.'),
+        'Що насправді купуєте в пакеті Start (від 2 000), а чого ні',
+        p('Скільки коштує корпоративний сайт у мене: пакет Start (від 2 000) — це custom до п’яти сторінок, форма, on-page, sitemap, шлях розширення, стек Astro/Next. Не тема з маркетплейсу зі зміненим лого. Нижній поріг: ясна оферта, ваші тексти й світлини в пристойному стані, одна мова. Вище: більше редакції, гірша ієрархія оферти, мапа, доведення mobile, вимір запитів — це вже пакет Launch (від 8 000). Не піднімаю за внутрішні відступи. Піднімаю, коли обсяг бреше в брифі — блог, CRM, друга мова, AI-чат.'),
+        p('Публічні прайси 2026 для «візитівки» часто сходять до 500–1500. Медіана «сайту компанії» крутиться біля 6 тис. Мій пакет Start свідомо починається від 2 000: це проста візитівка без інтеграцій, не тема. Якщо хтось обіцяє корпоративний сайт B2B з блогом, магазином і ШІ за ту саму ціну, ви порівнюєте інші продукти. [Обсяг B2B](/artykuly/strona-firmowa-b2b/) існує, щоб це було видно до переказу.'),
         ul([
-          'У ціні: до 5 URL, одна мова, форма з повідомленням, базове SEO, швидкість на телефоні.',
-          'Поза ціною: лендінги кампаній, експертні тексти, hreflang PL/EN/UA, кваліфікація лідів.',
-          'Окремий продукт: воронка 25–60 тис., панель 60–180 тис.+, HITL, Audit Sprint 2 500–6 000.',
+          'У ціні Start: до 5 URL, одна мова, форма з повідомленням, базове SEO, швидкість на телефоні.',
+          'Поза ціною Start: лендінги кампаній, експертні тексти, hreflang PL/EN/UA, кваліфікація лідів.',
+          'Окремий пакет: Launch (воронка, інтеграції) від 8 000, Платформа (booking, панель, API) від 25 000, AI Ops від 3 000/міс., Audit Sprint від 1 500.',
         ]),
       ),
       section(
         'Де закінчується сайт і починається воронка або панель',
-        p('Коли є платний трафік, бронювання, кілька ролей або процес, який Excel уже псує — 12 000 не виросте магічно в систему. Чесніше назвати [Conversion Build](/artykuly/lejek-konwersji-na-stronie/) або [Ops](/artykuly/panel-operacyjny-zamiast-excela/) на старті. 20 хвилин аудиту — щоб не купувати візитівку під роботу, якої візитівка не зробить. Якщо після розмови почуєте «ще не впроваджуйте», це теж оцінка: економія.'),
+        p('Коли є платний трафік, потрібна кваліфікація лідів — це пакет Launch (від 8 000). Коли є бронювання, кілька ролей або процес, який Excel уже псує — пакет Start не виросте магічно в систему, потрібна Платформа (від 25 000). Чесніше назвати [пакет Launch](/artykuly/lejek-konwersji-na-stronie/) або [Платформу](/artykuly/panel-operacyjny-zamiast-excela/) на старті. 20 хвилин аудиту — щоб не купувати візитівку під роботу, якої візитівка не зробить. Якщо після розмови почуєте «ще не впроваджуйте», це теж оцінка: економія.'),
       ),
       section(
         'Як читати чужі вилки, щоб не дати себе провести',
@@ -102,8 +102,8 @@ export const expandStrony = {
     pl: [
       section(
         'Test na kartce: czy wizytówka ma prawo się spiąć',
-        p('Wizytówka ma sens, gdy ruch jest ciepły: polecenie, LinkedIn, rozmowa, którą i tak prowadzicie. Strona potwierdza ofertę, widełki, dowód i daje jeden sposób kontaktu. Nie musi kwalifikować wolumenu ani zamykać płatności. Jeśli jedyne, czego potrzebujecie, to „żeby było na czym stanąć w wyszukiwarce nazwy firmy” — 6 500–12 000 zł jest właściwym pudełkiem. Płatny ruch na taką stronę bez ścieżki to palenie budżetu. Wtedy nie „rozszerzamy wizytówkę”. Zmieniamy produkt na lejek.'),
-        p('Lejek zaczyna się, gdy płacicie za uwagę albo gdy decyzja wymaga więcej niż maila: ile apartamentów, jaki wolumen faktur, jaki budżet, rezerwacja na domenie, landing pod kampanię, pomiar od kliknięcia do zapytania. To 25–60 tysięcy i inny kalendarz. [Ile kosztuje strona](/artykuly/ile-kosztuje-strona-firmowa/) nie urośnie w lejek przez „dorzucenie sekcji”. To inna umowa.'),
+        p('Wizytówka ma sens, gdy ruch jest ciepły: polecenie, LinkedIn, rozmowa, którą i tak prowadzicie. Strona potwierdza ofertę, widełki, dowód i daje jeden sposób kontaktu. Nie musi kwalifikować wolumenu ani zamykać płatności. Jeśli jedyne, czego potrzebujecie, to „żeby było na czym stanąć w wyszukiwarce nazwy firmy” — pakiet Start (od 2 000 zł) jest właściwym pudełkiem. Płatny ruch na taką stronę bez ścieżki to palenie budżetu. Wtedy nie „rozszerzamy wizytówkę”. Zmieniamy produkt na lejek.'),
+        p('Lejek zaczyna się, gdy płacicie za uwagę albo gdy decyzja wymaga więcej niż maila: jaki wolumen faktur, jaki budżet, landing pod kampanię, pomiar od kliknięcia do zapytania — to pakiet Launch, od 8 000 zł. Rezerwacja na domenie to już Platforma, od 25 000 zł, i inny kalendarz. [Ile kosztuje strona](/artykuly/ile-kosztuje-strona-firmowa/) nie urośnie w lejek przez „dorzucenie sekcji”. To inna umowa.'),
         ul([
           'Wizytówka: jeden język, do 5 podstron, formularz, on-page, brak CRM w cenie.',
           'Lejek: kwalifikacja, ewentualnie płatność/rezerwacja, landingi, pomiar, często drugi język.',
@@ -112,7 +112,7 @@ export const expandStrony = {
       ),
       section(
         'Najczęstszy błąd zakupu: lejek w cenie wizytówki',
-        p('„Zróbmy stronę firmową, a przy okazji booking, AI i blog”. Przy okazji jest osobnym projektem. Jeśli brief miesza te rzeczy, 20 minut audytu ma prawo skończyć się stopem albo rozdzieleniem faktur. Wolę stracić deal niż udawać, że 8 tysięcy pokryje Conversion Build. Rynek pełen jest stron, które „nie sprzedają”, bo kupiono tapetę do pracy lejka. [Dlaczego strona nie sprzedaje](/artykuly/dlaczego-strona-nie-sprzedaje/) zaczyna się często od tej pomyłki, nie od koloru przycisku.'),
+        p('„Zróbmy stronę firmową, a przy okazji booking, AI i blog”. Przy okazji jest osobnym projektem. Jeśli brief miesza te rzeczy, 20 minut audytu ma prawo skończyć się stopem albo rozdzieleniem faktur. Wolę stracić deal niż udawać, że budżet Start (2 000 zł) albo Launch (8 000 zł) pokryje Platformę z bookingiem. Rynek pełen jest stron, które „nie sprzedają”, bo kupiono tapetę do pracy lejka. [Dlaczego strona nie sprzedaje](/artykuly/dlaczego-strona-nie-sprzedaje/) zaczyna się często od tej pomyłki, nie od koloru przycisku.'),
       ),
       section(
         'Jak decydujemy na callu, bez moodboardu',
@@ -123,8 +123,8 @@ export const expandStrony = {
     en: [
       section(
         'A paper test: whether a brochure has a right to pay back',
-        p('A brochure makes sense when traffic is warm: referral, LinkedIn, a conversation you already have. The site confirms the offer, a range, proof, and one way to get in touch. It does not need to qualify volume or close payment. If all you need is “somewhere to stand when someone searches the company name” — PLN 6,500–12,000 is the right box. Paid traffic onto that site with no path burns budget. Then we do not “extend the brochure”. We change product to a funnel.'),
-        p('A funnel starts when you pay for attention or the decision needs more than an email: how many apartments, what invoice volume, what budget, booking on your domain, a campaign landing, measurement from click to enquiry. That is PLN 25–60k and another calendar. [What a company site costs](/artykuly/ile-kosztuje-strona-firmowa/) will not grow into a funnel by “adding a section”. That is another contract.'),
+        p('A brochure makes sense when traffic is warm: referral, LinkedIn, a conversation you already have. The site confirms the offer, a range, proof, and one way to get in touch. It does not need to qualify volume or close payment. If all you need is “somewhere to stand when someone searches the company name” — the Start package (from PLN 2,000) is the right box. Paid traffic onto that site with no path burns budget. Then we do not “extend the brochure”. We change product to a funnel.'),
+        p('A funnel starts when you pay for attention or the decision needs more than an email: what invoice volume, what budget, a campaign landing, measurement from click to enquiry — that is the Launch package, from PLN 8,000. Booking on your domain is already Platform, from PLN 25,000, and another calendar. [What a company site costs](/artykuly/ile-kosztuje-strona-firmowa/) will not grow into a funnel by “adding a section”. That is another contract.'),
         ul([
           'Brochure: one language, up to 5 pages, a form, on-page, no CRM in price.',
           'Funnel: qualification, maybe payment/booking, landings, measurement, often a second language.',
@@ -133,7 +133,7 @@ export const expandStrony = {
       ),
       section(
         'The usual buying error: a funnel at brochure price',
-        p('“Let’s make a company site, and while we are at it booking, AI and a blog”. While-we-are-at-it is a separate project. If the brief mixes those, a 20-minute audit may end in a stop or split invoices. I would rather lose the deal than pretend 8k covers Conversion Build. The market is full of sites that “do not sell” because someone bought wallpaper for a funnel’s job. [Why a site does not sell](/artykuly/dlaczego-strona-nie-sprzedaje/) often starts with that mix-up, not the button colour.'),
+        p('“Let’s make a company site, and while we are at it booking, AI and a blog”. While-we-are-at-it is a separate project. If the brief mixes those, a 20-minute audit may end in a stop or split invoices. I would rather lose the deal than pretend a Start (PLN 2k) or Launch (PLN 8k) budget covers a Platform build with booking. The market is full of sites that “do not sell” because someone bought wallpaper for a funnel’s job. [Why a site does not sell](/artykuly/dlaczego-strona-nie-sprzedaje/) often starts with that mix-up, not the button colour.'),
       ),
       section(
         'How we decide on a call, without a moodboard',
@@ -144,8 +144,8 @@ export const expandStrony = {
     uk: [
       section(
         'Тест на картці: чи візитівка має право окупитися',
-        p('Візитівка має сенс, коли трафік теплий: рекомендація, LinkedIn, розмова, яку й так ведете. Сайт підтверджує оферту, вилку, доказ і дає один спосіб контакту. Йому не треба кваліфікувати обсяг чи закривати оплату. Якщо єдине, що потрібно — «на чому стояти в пошуку назви фірми» — 6 500–12 000 є правильною коробкою. Платний трафік на такий сайт без шляху палить бюджет. Тоді не «розширюємо візитівку». Змінюємо продукт на воронку.'),
-        p('Воронка починається, коли платите за увагу або рішення потребує більше ніж листа: скільки апартаментів, який обсяг рахунків, який бюджет, бронювання на домені, лендінг під кампанію, вимір від кліку до запиту. Це 25–60 тисяч і інший календар. [Скільки коштує сайт](/artykuly/ile-kosztuje-strona-firmowa/) не виросте у воронку через «додамо секцію». Це інша угода.'),
+        p('Візитівка має сенс, коли трафік теплий: рекомендація, LinkedIn, розмова, яку й так ведете. Сайт підтверджує оферту, вилку, доказ і дає один спосіб контакту. Йому не треба кваліфікувати обсяг чи закривати оплату. Якщо єдине, що потрібно — «на чому стояти в пошуку назви фірми» — пакет Start (від 2 000) є правильною коробкою. Платний трафік на такий сайт без шляху палить бюджет. Тоді не «розширюємо візитівку». Змінюємо продукт на воронку.'),
+        p('Воронка починається, коли платите за увагу або рішення потребує більше ніж листа: який обсяг рахунків, який бюджет, лендінг під кампанію, вимір від кліку до запиту — це пакет Launch, від 8 000. Бронювання на домені — це вже Платформа, від 25 000, і інший календар. [Скільки коштує сайт](/artykuly/ile-kosztuje-strona-firmowa/) не виросте у воронку через «додамо секцію». Це інша угода.'),
         ul([
           'Візитівка: одна мова, до 5 сторінок, форма, on-page, без CRM у ціні.',
           'Воронка: кваліфікація, можливо оплата/бронювання, лендінги, вимір, часто друга мова.',
@@ -154,7 +154,7 @@ export const expandStrony = {
       ),
       section(
         'Найчастіша помилка покупки: воронка в ціні візитівки',
-        p('«Зробімо сайт компанії, а заодно booking, ШІ і блог». Заодно є окремим проєктом. Якщо бриф мішає ці речі, 20 хвилин аудиту мають право закінчитися стопом або різними рахунками. Краще втратити deal, ніж удавати, що 8 тисяч покриє Conversion Build. Ринок повний сайтів, які «не продають», бо купили шпалери під роботу воронки. [Чому сайт не продає](/artykuly/dlaczego-strona-nie-sprzedaje/) часто починається з цієї плутанини, не з кольору кнопки.'),
+        p('«Зробімо сайт компанії, а заодно booking, ШІ і блог». Заодно є окремим проєктом. Якщо бриф мішає ці речі, 20 хвилин аудиту мають право закінчитися стопом або різними рахунками. Краще втратити deal, ніж удавати, що бюджет Start (2 000) або Launch (8 000) покриє Платформу з бронюванням. Ринок повний сайтів, які «не продають», бо купили шпалери під роботу воронки. [Чому сайт не продає](/artykuly/dlaczego-strona-nie-sprzedaje/) часто починається з цієї плутанини, не з кольору кнопки.'),
       ),
       section(
         'Як вирішуємо на дзвінку, без moodboard',
@@ -179,7 +179,7 @@ export const expandStrony = {
           'Czas do pierwszej odpowiedzi z ostatnich 20 zapytań, nie „zazwyczaj szybko”.',
           'Czy ktoś w ogóle wie, które zapytanie jest śmieciem, a które budżetem.',
         ]),
-        p('Bez tego zgadujemy. Z tym da się powiedzieć: nie przychodzą / przychodzą i uciekają / przychodzą, piszą, giną. Trzy różne faktury. Jeden „zróbcie ładniej” jest najdroższym zgadywaniem, jakie znam. Audit Sprint 2 500–6 000 zł istnieje, żeby to rozdzielić zanim ktoś kupi 40 tysięcy layoutu.'),
+        p('Bez tego zgadujemy. Z tym da się powiedzieć: nie przychodzą / przychodzą i uciekają / przychodzą, piszą, giną. Trzy różne faktury. Jeden „zróbcie ładniej” jest najdroższym zgadywaniem, jakie znam. Audit Sprint od 1 500 zł istnieje, żeby to rozdzielić zanim ktoś kupi 40 tysięcy layoutu.'),
       ),
     ],
     en: [
@@ -197,7 +197,7 @@ export const expandStrony = {
           'Time to first reply on the last 20 enquiries, not “usually fast”.',
           'Whether anyone knows which enquiry is junk and which is budget.',
         ]),
-        p('Without that we guess. With it we can say: they do not come / they come and leave / they come, write, and die. Three different invoices. One “make it prettier” is the most expensive guess I know. Audit Sprint at PLN 2,500–6,000 exists to split those before anyone buys 40k of layout.'),
+        p('Without that we guess. With it we can say: they do not come / they come and leave / they come, write, and die. Three different invoices. One “make it prettier” is the most expensive guess I know. Audit Sprint from PLN 1,500 exists to split those before anyone buys 40k of layout.'),
       ),
     ],
     uk: [
@@ -215,7 +215,7 @@ export const expandStrony = {
           'Час до першої відповіді з останніх 20 запитів, не «зазвичай швидко».',
           'Чи хтось узагалі знає, який запит сміття, а який бюджет.',
         ]),
-        p('Без цього здогадуємося. З цим можна сказати: не приходять / приходять і тікають / приходять, пишуть, гинуть. Три різні рахунки. Одне «зробіть гарніше» — найдорожче вгадування, яке знаю. Audit Sprint 2 500–6 000 існує, щоб це розділити, перш ніж хтось купить 40 тисяч макета.'),
+        p('Без цього здогадуємося. З цим можна сказати: не приходять / приходять і тікають / приходять, пишуть, гинуть. Три різні рахунки. Одне «зробіть гарніше» — найдорожче вгадування, яке знаю. Audit Sprint від 1 500 існує, щоб це розділити, перш ніж хтось купить 40 тисяч макета.'),
       ),
     ],
   },
@@ -223,7 +223,7 @@ export const expandStrony = {
     pl: [
       section(
         'Elementy lejka, bez których zostaje ładny landing',
-        p('Lejek konwersji na stronie to intencja (skąd przyszedł i po co), kwalifikacja (czy w ogóle wolno iść dalej), jedno główne CTA i pomiar od kliknięcia do zapytania albo rezerwacji. Bez kwalifikacji zbieracie śmieć. Bez pomiaru nie wiecie, czy landing działa, czy tylko „wygląda nowocześnie”. Conversion Build 25–60 tys. zł pokrywa tę ścieżkę, nie „więcej animacji na wizytówce”. Jeśli nie płacicie za uwagę i decyzja to jeden mail, [wizytówka](/artykuly/strona-wizytowka-czy-lejek/) jest tańszym, uczciwszym pudełkiem.'),
+        p('Lejek konwersji na stronie to intencja (skąd przyszedł i po co), kwalifikacja (czy w ogóle wolno iść dalej), jedno główne CTA i pomiar od kliknięcia do zapytania albo rezerwacji. Bez kwalifikacji zbieracie śmieć. Bez pomiaru nie wiecie, czy landing działa, czy tylko „wygląda nowocześnie”. Pakiet Launch (od 8 000 zł) pokrywa tę ścieżkę, nie „więcej animacji na wizytówce”. Jeśli nie płacicie za uwagę i decyzja to jeden mail, [wizytówka Start](/artykuly/strona-wizytowka-czy-lejek/) jest tańszym, uczciwszym pudełkiem.'),
         p('W Mint lejek jest żywy: gość kończy rezerwację na własnej domenie, nie na plakacie „book now” prowadzącym na OTA z prowizją. Nie zmyślam procentów konwersji „jak w branży”. Możesz wejść i przejść ścieżkę. iDrive nie jest live — nie używam go jako lejka-dowodu. Agentic nie jest produktem z URL-em dla Ciebie.'),
         ul([
           'Jedna konwersja wiodąca. Druga może istnieć, ale nie jako równe CTA.',
@@ -233,20 +233,20 @@ export const expandStrony = {
         ]),
       ),
       section(
-        'Czego nie wkładam do Conversion Build',
+        'Czego nie wkładam do pakietu Launch',
         ol([
           'Obietnicy pozycji w Google. Organiczny klaster jest osobnym ruchem.',
           'CRM „pełnego” z scoringiem, jeśli nie ma właściciela leadów.',
           'AI-czatu w hero, który udaje kwalifikację bez logu.',
           'Pięciu landingów „na wszelki wypadek”, gdy nie ma jeszcze jednej ścieżki, która działa.',
         ]),
-        p('Zaczynamy od jednej ścieżki, która domyka. Potem dokładamy. Odwrotna kolejność produkuje cmentarz URL-i i budżet spalony na testach, których nikt nie czyta. 20 minut audytu może powiedzieć „nie macie follow-upu, lejek poczeka”. To nie jest upselling w dół. To ochrona 40 tysięcy.'),
+        p('Zaczynamy od jednej ścieżki, która domyka. Potem dokładamy. Odwrotna kolejność produkuje cmentarz URL-i i budżet spalony na testach, których nikt nie czyta. 20 minut audytu może powiedzieć „nie macie follow-upu, lejek poczeka”. To nie jest upselling w dół. To ochrona budżetu Launch (8 tysięcy).'),
       ),
     ],
     en: [
       section(
         'Funnel pieces without which you just have a pretty landing',
-        p('A conversion funnel on a site is intent (where they came from and why), qualification (whether they may go on), one primary CTA, and measurement from click to enquiry or booking. Without qualification you collect junk. Without measurement you cannot tell if the landing works or only “looks modern”. Conversion Build at PLN 25–60k covers that path, not “more motion on a brochure”. If you do not pay for attention and the decision is one email, a [brochure](/artykuly/strona-wizytowka-czy-lejek/) is the cheaper, more honest box.'),
+        p('A conversion funnel on a site is intent (where they came from and why), qualification (whether they may go on), one primary CTA, and measurement from click to enquiry or booking. Without qualification you collect junk. Without measurement you cannot tell if the landing works or only “looks modern”. The Launch package (from PLN 8,000) covers that path, not “more motion on a brochure”. If you do not pay for attention and the decision is one email, a [Start brochure](/artykuly/strona-wizytowka-czy-lejek/) is the cheaper, more honest box.'),
         p('At Mint the funnel is live: the guest finishes booking on the domain, not a “book now” poster into an OTA with commission. I do not invent “industry conversion rates”. You can enter and walk the path. iDrive is not live — I do not use it as funnel proof. Agentic is not a product with a URL for you.'),
         ul([
           'One leading conversion. A second may exist, but not as an equal CTA.',
@@ -256,20 +256,20 @@ export const expandStrony = {
         ]),
       ),
       section(
-        'What I keep out of Conversion Build',
+        'What I keep out of the Launch package',
         ol([
           'A Google ranking promise. An organic cluster is a separate channel.',
           'A “full” CRM with scoring if nobody owns the leads.',
           'An AI chat in the hero that pretends to qualify with no log.',
           'Five landings “just in case” when you do not yet have one path that works.',
         ]),
-        p('We start with one path that closes. Then we add. The reverse order produces a graveyard of URLs and budget burned on tests nobody reads. A 20-minute audit may say “you have no follow-up, the funnel can wait”. That is not down-sell. That is protection of 40k.'),
+        p('We start with one path that closes. Then we add. The reverse order produces a graveyard of URLs and budget burned on tests nobody reads. A 20-minute audit may say “you have no follow-up, the funnel can wait”. That is not down-sell. That is protection of the Launch budget (PLN 8k).'),
       ),
     ],
     uk: [
       section(
         'Елементи воронки, без яких лишається гарний лендінг',
-        p('Воронка конверсії на сайті — це намір (звідки і навіщо), кваліфікація (чи взагалі можна далі), одне головне CTA і вимір від кліку до запиту або бронювання. Без кваліфікації збираєте сміття. Без виміру не знаєте, чи лендінг працює, чи лише «виглядає сучасно». Conversion Build 25–60 тис. покриває цей шлях, не «більше анімації на візитівці». Якщо не платите за увагу і рішення — один лист, [візитівка](/artykuly/strona-wizytowka-czy-lejek/) дешевша й чесніша коробка.'),
+        p('Воронка конверсії на сайті — це намір (звідки і навіщо), кваліфікація (чи взагалі можна далі), одне головне CTA і вимір від кліку до запиту або бронювання. Без кваліфікації збираєте сміття. Без виміру не знаєте, чи лендінг працює, чи лише «виглядає сучасно». Пакет Launch (від 8 000 злотих) покриває цей шлях, не «більше анімації на візитівці». Якщо не платите за увагу і рішення — один лист, [візитівка Start](/artykuly/strona-wizytowka-czy-lejek/) дешевша й чесніша коробка.'),
         p('У Mint воронка жива: гість закінчує бронювання на власному домені, не на плакаті «book now» в OTA з комісією. Не вигадую відсотків конверсії «як у галузі». Можете зайти і пройти шлях. iDrive не live — не використовую його як доказ воронки. Agentic не продукт з URL для вас.'),
         ul([
           'Одна провідна конверсія. Друга може бути, але не як рівне CTA.',
@@ -279,14 +279,14 @@ export const expandStrony = {
         ]),
       ),
       section(
-        'Чого не кладу в Conversion Build',
+        'Чого не кладу в пакет Launch',
         ol([
           'Обіцянки позиції в Google. Органічний кластер — окремий рух.',
           '«Повного» CRM зі скорингом, якщо немає власника лідів.',
           'AI-чату в hero, який удає кваліфікацію без логу.',
           'П’яти лендінгів «про всяк випадок», коли ще немає одного шляху, який працює.',
         ]),
-        p('Починаємо з одного шляху, який закриває. Потім додаємо. Зворотний порядок робить цвинтар URL і бюджет, спалений на тестах, яких ніхто не читає. 20 хвилин аудиту можуть сказати «немає follow-up, воронка почекає». Це не даунсейл. Це захист 40 тисяч.'),
+        p('Починаємо з одного шляху, який закриває. Потім додаємо. Зворотний порядок робить цвинтар URL і бюджет, спалений на тестах, яких ніхто не читає. 20 хвилин аудиту можуть сказати «немає follow-up, воронка почекає». Це не даунсейл. Це захист бюджету Launch (8 тисяч).'),
       ),
     ],
   },
@@ -295,7 +295,7 @@ export const expandStrony = {
       section(
         'Matematyka prowizji, której nie da się oszukać layoutem',
         p('Rezerwacje na własnej stronie ucinają prowizję OTA. W Mint gość płaci 10–15% mniej niż na Booking.com — to jest liczba, którą możesz sprawdzić na żywej ścieżce, nie slajd. Portal zostaje jako kanał. Strona przejmuje tych, którzy już Was znają albo przyszli z kampanii na domenę. Jeśli 90% obłożenia musimy kupić od OTA jutro rano, „własna strona zamiast Booking” jest hasłem, nie strategią. Najpierw kanał, potem zamykanie na domenie.'),
-        p('Nie buduję kalendarza od zera w budżecie strony. PMS (u Mint: Previo) trzyma stany, kanały, rozliczenie. Strona zbiera intencję i oddaje gościa w znany system. [SaaS czy panel](/artykuly/saas-czy-wlasny-panel/) opisuje, czemu szycie PMS w 12 tysiącach jest pychą. Conversion Build 25–60 tys. zaczyna się, gdy ta integracja i ścieżka płatności są prawdziwe, nie gdy ktoś chce „przycisk Book” na wizytówce.'),
+        p('Nie buduję kalendarza od zera w budżecie strony. PMS (u Mint: Previo) trzyma stany, kanały, rozliczenie. Strona zbiera intencję i oddaje gościa w znany system. [SaaS czy panel](/artykuly/saas-czy-wlasny-panel/) opisuje, czemu szycie PMS w 2 tysiącach jest pychą. Platforma (od 25 000 zł) zaczyna się, gdy ta integracja i ścieżka płatności są prawdziwe, nie gdy ktoś chce „przycisk Book” na wizytówce.'),
         ul([
           'Parść stawek: co gość widzi u Was, a co na portalu — bez niespodzianki przy locku.',
           'Anulacje i regulamin, które są te same w PMS i na stronie. Rozjazd zabija zaufanie.',
@@ -313,7 +313,7 @@ export const expandStrony = {
       section(
         'Commission maths a layout cannot cheat',
         p('Direct booking on your site cuts OTA commission. At Mint the guest pays 10–15% less than on Booking.com — a number you can check on a live path, not a slide. The portal stays as a channel. The site takes people who already know you or arrived from a campaign onto the domain. If 90% of occupancy must be bought from an OTA tomorrow morning, “your own site instead of Booking” is a slogan, not a strategy. Channel first, then close on the domain.'),
-        p('I do not build a calendar from scratch inside a website budget. A PMS (at Mint: Previo) holds stock, channels, settlement. The site captures intent and hands the guest to a known system. [SaaS or a panel](/artykuly/saas-czy-wlasny-panel/) explains why sewing a PMS at 12k is vanity. Conversion Build at PLN 25–60k starts when that integration and the payment path are real, not when someone wants a “Book” button on a brochure.'),
+        p('I do not build a calendar from scratch inside a website budget. A PMS (at Mint: Previo) holds stock, channels, settlement. The site captures intent and hands the guest to a known system. [SaaS or a panel](/artykuly/saas-czy-wlasny-panel/) explains why sewing a PMS at PLN 2k is vanity. The Platform package (from PLN 25,000) starts when that integration and the payment path are real, not when someone wants a “Book” button on a brochure.'),
         ul([
           'Rate parity: what the guest sees with you versus the portal — no surprise at lock.',
           'Cancellations and terms that match in the PMS and on the site. Drift kills trust.',
@@ -331,7 +331,7 @@ export const expandStrony = {
       section(
         'Математика комісії, яку не обдурити макетом',
         p('Бронювання на власному сайті ріже комісію OTA. У Mint гість платить на 10–15% менше, ніж на Booking.com — число, яке можна перевірити на живому шляху, не слайд. Портал лишається каналом. Сайт забирає тих, хто вже вас знає або прийшов з кампанії на домен. Якщо 90% завантаження треба купити в OTA завтра вранці, «власний сайт замість Booking» — гасло, не стратегія. Спочатку канал, потім закриття на домені.'),
-        p('Не будую календар з нуля в бюджеті сайту. PMS (у Mint: Previo) тримає стани, канали, розрахунки. Сайт збирає намір і віддає гостя відомій системі. [SaaS чи панель](/artykuly/saas-czy-wlasny-panel/) пояснює, чому шити PMS за 12 тисяч — пиха. Conversion Build 25–60 тис. починається, коли ця інтеграція і шлях оплати справжні, не коли хтось хоче кнопку Book на візитівці.'),
+        p('Не будую календар з нуля в бюджеті сайту. PMS (у Mint: Previo) тримає стани, канали, розрахунки. Сайт збирає намір і віддає гостя відомій системі. [SaaS чи панель](/artykuly/saas-czy-wlasny-panel/) пояснює, чому шити PMS за 2 тисячі — пиха. Платформа (від 25 000) починається, коли ця інтеграція і шлях оплати справжні, не коли хтось хоче кнопку Book на візитівці.'),
         ul([
           'Паритет ставок: що гість бачить у вас і на порталі — без сюрпризу на lock.',
           'Ануляції та правила однакові в PMS і на сайті. Роз’їзд вбиває довіру.',

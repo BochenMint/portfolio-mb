@@ -9,6 +9,7 @@ export type ChromeCopy = {
   skipLink: string
   nav: NavLink[]
   navCta: string
+  underhoodCta: string
   navAria: {
     main: string
     openMenu: string
@@ -72,6 +73,7 @@ export type ChromeCopy = {
     eyebrow: string
     title: string
     open: (domain: string) => string
+    notPublic: string
     note: string
   }
   faq: {
@@ -99,11 +101,7 @@ export type ChromeCopy = {
     successTitle: string
     successBody: (responseTime: string) => string
     successCalendarCta: string
-    unconfiguredTitle: string
-    unconfiguredBody: (needsAccessKey: boolean) => string
-    unconfiguredCalendarCta: string
-    unconfiguredCalendarHint: string
-    accessKeyError: string
+    successMailtoNote: (email: string) => string
   }
   footer: {
     rights: (brand: string, year: number) => string

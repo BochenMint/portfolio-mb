@@ -18,11 +18,11 @@ export default {
   pl: {
     title: 'Wizytówka czy lejek: która strona firmowa ma sens?',
     description:
-      'Wizytówka za 6 500–12 000 zł zbiera zapytania od ciepłego ruchu. Lejek 25 000–60 000 zł sprzedaje i kwalifikuje. Piszę, kiedy który pakiet ma prawo się spiąć.',
+      'Wizytówka Start (od 2 000 zł) zbiera zapytania od ciepłego ruchu. Lejek Launch (od 8 000 zł) sprzedaje i kwalifikuje. Piszę, kiedy który pakiet ma prawo się spiąć.',
     h1: 'Wizytówka czy lejek: która strona firmowa ma sens w Twoim budżecie',
     kicker: 'Decyzja pakietu',
     lead:
-      'Większość rozczarowań nie bierze się z „brzydkiego layoutu”. Bierze się z zakupu wizytówki, gdy potrzebny był lejek — albo lejka, gdy wystarczał formularz. Rozróżniam to twardo: strona firmowa 6 500–12 000 zł versus Conversion Build 25 000–60 000 zł. Poniżej kryteria, nie quiz osobowości.',
+      'Większość rozczarowań nie bierze się z „brzydkiego layoutu”. Bierze się z zakupu wizytówki, gdy potrzebny był lejek — albo lejka, gdy wystarczał formularz. Rozróżniam to twardo: pakiet Start od 2 000 zł versus pakiet Launch od 8 000 zł. Poniżej kryteria, nie quiz osobowości.',
     sections: [
       section(
         'Wizytówka: strona dla kogoś, kto już do Ciebie idzie',
@@ -37,7 +37,7 @@ export default {
       ),
       section(
         'Lejek: strona, która musi odzyskać koszt kliknięcia',
-        p('Lejek zaczyna się, gdy płacisz za uwagę albo gdy decyzja wymaga więcej niż „napisz maila”. Kwalifikacja (ile apartamentów, jaki wolumen faktur, jaki budżet), rezerwacja na własnej domenie, landing pod konkretną kampanię, pomiar od kliknięcia do zapytania. To pakiet Conversion Build, nie „rozszerzona wizytówka”.'),
+        p('Lejek zaczyna się, gdy płacisz za uwagę albo gdy decyzja wymaga więcej niż „napisz maila”. Kwalifikacja (ile apartamentów, jaki wolumen faktur, jaki budżet), landing pod konkretną kampanię, pomiar od kliknięcia do zapytania — to pakiet Launch (od 8 000 zł). Rezerwacja na własnej domenie to już Platforma (od 25 000 zł), nie „rozszerzona wizytówka”.'),
         p('Żywy przykład: [Mint Apartments](https://mintapartments.pl). Gość porównuje cenę z Booking.com. Jeśli strona tylko opowiada o apartamentach, rezerwacja i tak spadnie na portal. Lejek to kalendarz na żywo, tańsza noc na własnej domenie, kod do zamka. Tego nie wsadzisz w 8 tysięcy bez kłamstwa o zakresie.'),
         note('Nie mam publicznego case’u „+347% konwersji”. Mam działający serwis i mechanikę, którą klikniesz. Jeśli ktoś sprzedaje lejek samymi procentami bez URL-a — to slajd.'),
       ),
@@ -57,7 +57,7 @@ export default {
       ),
       section(
         'Najczęstszy błąd: kupić lejek oczami, zapłacić jak za wizytówkę',
-        p('Brief: „chcemy rezerwacje, AI, bloga, trzy języki i sklep, budżet 9 000”. To nie jest ambitny klient. To niespójny zakres. Albo tniemy do wizytówki i planujemy rozbudowę, albo idziemy w Conversion Build. Mieszanka kończy się stroną, która udaje wszystko i nie mierzy niczego.'),
+        p('Brief: „chcemy rezerwacje, AI, bloga, trzy języki i sklep, budżet 9 000”. To nie jest ambitny klient. To niespójny zakres. Albo tniemy do wizytówki Start i planujemy rozbudowę, albo idziemy w Platformę (od 25 000 zł). Mieszanka kończy się stroną, która udaje wszystko i nie mierzy niczego.'),
         ol([
           'Nazwij jedną konwersję: zapytanie / rezerwacja / call.',
           'Sprawdź, czy da się ją zmierzyć w tydzień po starcie.',
@@ -86,7 +86,7 @@ export default {
       },
       {
         q: 'Mam 15 tys. zł. Co wybieramy?',
-        a: 'Zwykle wizytówkę z zapasem na treść i pomiar — albo czekamy na budżet Conversion Build. 15 tys. „połowicznego lejka” jest najgorszym kompromisem.',
+        a: 'Zwykle wizytówkę Start z zapasem na treść i pomiar — albo czekamy na budżet Launch/Platforma. 15 tys. „połowicznego lejka” jest najgorszym kompromisem.',
       },
       {
         q: 'Czy Mint to wizytówka?',
@@ -95,17 +95,17 @@ export default {
     ],
     ctaTitle: 'Jedna rekomendacja pakietu, nie trzy oferty',
     ctaBody:
-      'Na audycie powiem: wizytówka, Conversion Build albo odłóż. Widełki są w [cenniku](/#cennik).',
+      'Na audycie powiem: Start, Launch, Platforma albo odłóż. Widełki są w [cenniku](/#cennik).',
     ctaLabel: 'Umów 20-min audyt',
   },
   en: {
     title: 'Brochure or funnel: which company site fits the budget',
     description:
-      'A brochure at PLN 6,500–12,000 collects warm enquiries. A funnel at PLN 25,000–60,000 sells and qualifies. I write when each package has a right to pay back.',
+      'A brochure at the Start price (from PLN 2,000) collects warm enquiries. A funnel at the Launch price (from PLN 8,000) sells and qualifies. I write when each package has a right to pay back.',
     h1: 'Brochure or funnel: which company website fits your budget',
     kicker: 'Package decision',
     lead:
-      'Most disappointment is not an ugly layout. It is buying a brochure when you needed a funnel — or a funnel when a form would do. I split it hard: a company site at PLN 6,500–12,000 versus Conversion Build at PLN 25,000–60,000. Criteria below, not a personality quiz.',
+      'Most disappointment is not an ugly layout. It is buying a brochure when you needed a funnel — or a funnel when a form would do. I split it hard: the Start package from PLN 2,000 versus the Launch package from PLN 8,000. Criteria below, not a personality quiz.',
     sections: [
       section(
         'A brochure: a site for people already walking toward you',
@@ -120,7 +120,7 @@ export default {
       ),
       section(
         'A funnel: a site that must earn back the cost of a click',
-        p('A funnel starts when you pay for attention or the decision needs more than “send an email”. Qualification (how many apartments, what invoice volume, what budget), booking on your domain, a landing for a specific campaign, measurement from click to enquiry. That is Conversion Build, not an “extended brochure”.'),
+        p('A funnel starts when you pay for attention or the decision needs more than “send an email”. Qualification (how many apartments, what invoice volume, what budget), a landing for a specific campaign, measurement from click to enquiry — that is the Launch package (from PLN 8,000). Booking on your domain is already Platform (from PLN 25,000), not an “extended brochure”.'),
         p('A live example: [Mint Apartments](https://mintapartments.pl). The guest compares the price with Booking.com. If the site only tells stories, the booking still lands on the portal. The funnel is a live calendar, a cheaper night on your domain, a lock code. You cannot stuff that into PLN 8,000 without lying about scope.'),
         note('I do not have a public “+347% conversion” case. I have a working site and a mechanic you can click. If someone sells a funnel with percentages and no URL, that is a slide.'),
       ),
@@ -140,7 +140,7 @@ export default {
       ),
       section(
         'The usual mistake: buy a funnel with your eyes, pay for a brochure',
-        p('Brief: “we want booking, AI, a blog, three languages and a shop, budget PLN 9,000”. That is not an ambitious client. That is an incoherent scope. Either we cut to a brochure and plan the expansion, or we go Conversion Build. The blend ends as a site that pretends everything and measures nothing.'),
+        p('Brief: “we want booking, AI, a blog, three languages and a shop, budget PLN 9,000”. That is not an ambitious client. That is an incoherent scope. Either we cut to a Start brochure and plan the expansion, or we go Platform (from PLN 25,000). The blend ends as a site that pretends everything and measures nothing.'),
         ol([
           'Name one conversion: enquiry / booking / call.',
           'Check whether you can measure it a week after launch.',
@@ -169,7 +169,7 @@ export default {
       },
       {
         q: 'I have PLN 15,000. What do we pick?',
-        a: 'Usually a brochure with room for copy and measurement — or we wait for a Conversion Build budget. 15k of a “half funnel” is the worst compromise.',
+        a: 'Usually a Start brochure with room for copy and measurement — or we wait for a Launch/Platform budget. 15k of a “half funnel” is the worst compromise.',
       },
       {
         q: 'Is Mint a brochure?',
@@ -178,17 +178,17 @@ export default {
     ],
     ctaTitle: 'One package recommendation, not three quotes',
     ctaBody:
-      'In the audit I will say: brochure, Conversion Build, or wait. Ranges are in [pricing](/#cennik).',
+      'In the audit I will say: Start, Launch, Platform, or wait. Ranges are in [pricing](/#cennik).',
     ctaLabel: 'Book a 20-min audit',
   },
   uk: {
     title: 'Візитівка чи воронка: який сайт компанії має сенс',
     description:
-      'Візитівка за 6 500–12 000 злотих збирає запити з теплого трафіку. Воронка 25 000–60 000 продає й кваліфікує. Пишу, коли який пакет має право окупитися.',
+      'Візитівка Start (від 2 000 злотих) збирає запити з теплого трафіку. Воронка Launch (від 8 000) продає й кваліфікує. Пишу, коли який пакет має право окупитися.',
     h1: 'Візитівка чи воронка: який корпоративний сайт пасує до бюджету',
     kicker: 'Рішення пакета',
     lead:
-      'Більшість розчарувань — не «поганий макет». Це купівля візитівки, коли потрібна була воронка — або воронки, коли вистачило б форми. Я розділяю це жорстко: корпоративний сайт 6 500–12 000 проти Conversion Build 25 000–60 000. Нижче критерії, не тест особистості.',
+      'Більшість розчарувань — не «поганий макет». Це купівля візитівки, коли потрібна була воронка — або воронки, коли вистачило б форми. Я розділяю це жорстко: пакет Start від 2 000 проти пакета Launch від 8 000. Нижче критерії, не тест особистості.',
     sections: [
       section(
         'Візитівка: сайт для тих, хто вже йде до вас',
@@ -203,7 +203,7 @@ export default {
       ),
       section(
         'Воронка: сайт, який має повернути вартість кліка',
-        p('Воронка починається, коли ви платите за увагу або коли рішення потребує більше, ніж «напишіть листа». Кваліфікація (скільки апартаментів, який обсяг рахунків, який бюджет), бронювання на власному домені, лендінг під кампанію, вимір від кліка до запиту. Це Conversion Build, не «розширена візитівка».'),
+        p('Воронка починається, коли ви платите за увагу або коли рішення потребує більше, ніж «напишіть листа». Кваліфікація (скільки апартаментів, який обсяг рахунків, який бюджет), лендінг під кампанію, вимір від кліка до запиту — це пакет Launch (від 8 000). Бронювання на власному домені — це вже Платформа (від 25 000), не «розширена візитівка».'),
         p('Живий приклад: [Mint Apartments](https://mintapartments.pl). Гість порівнює ціну з Booking.com. Якщо сайт лише розповідає про апартаменти, бронювання все одно впаде на портал. Воронка — календар наживо, дешевша ніч на вашому домені, код до замка. Цього не запихнете в 8 тисяч без брехні про обсяг.'),
         note('У мене немає публічного кейсу «+347% конверсії». Є робочий сервіс і механіка, яку можна клікнути. Якщо хтось продає воронку самими відсотками без URL — це слайд.'),
       ),
@@ -223,7 +223,7 @@ export default {
       ),
       section(
         'Найчастіша помилка: купити воронку очима, заплатити як за візитівку',
-        p('Бриф: «хочемо бронювання, ШІ, блоґ, три мови й магазин, бюджет 9 000». Це не амбітний клієнт. Це незв’язний обсяг. Або ріжемо до візитівки й плануємо розвиток, або йдемо в Conversion Build. Суміш закінчується сайтом, який удає все і не вимірює нічого.'),
+        p('Бриф: «хочемо бронювання, ШІ, блоґ, три мови й магазин, бюджет 9 000». Це не амбітний клієнт. Це незв’язний обсяг. Або ріжемо до візитівки Start і плануємо розвиток, або йдемо в Платформу (від 25 000). Суміш закінчується сайтом, який удає все і не вимірює нічого.'),
         ol([
           'Назвіть одну конверсію: запит / бронювання / дзвінок.',
           'Перевірте, чи її можна виміряти за тиждень після старту.',
@@ -252,7 +252,7 @@ export default {
       },
       {
         q: 'Маю 15 тис. злотих. Що обираємо?',
-        a: 'Зазвичай візитівку із запасом на текст і вимір — або чекаємо бюджет Conversion Build. 15 тис. «половинної воронки» — найгірший компроміс.',
+        a: 'Зазвичай візитівку Start із запасом на текст і вимір — або чекаємо бюджет Launch/Платформа. 15 тис. «половинної воронки» — найгірший компроміс.',
       },
       {
         q: 'Чи Mint — візитівка?',
@@ -261,7 +261,7 @@ export default {
     ],
     ctaTitle: 'Одна рекомендація пакета, не три оферти',
     ctaBody:
-      'На аудиті скажу: візитівка, Conversion Build або зачекати. Вилки — у [цінах](/#cennik).',
+      'На аудиті скажу: Start, Launch, Платформа або зачекати. Вилки — у [цінах](/#cennik).',
     ctaLabel: 'Записатися на 20-хв аудит',
   },
 }

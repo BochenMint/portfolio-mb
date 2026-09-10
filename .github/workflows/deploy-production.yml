@@ -1,0 +1,111 @@
+name: Deploy production
+
+# Builds the Vite MPA and publishes dist/ to the orphan `production` branch.
+# SEOhost's DirectAdmin Git deploy pulls `production` into public_html/ on
+# webhook push (see docs/DEPLOY-SEOHOST.md). Kept deliberately simple: no
+# external actions beyond checkout/setup-node, no workspace/pnpm tooling —
+# this repo is a plain single-package npm project.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  NODE_VERSION: '22'
+  PROD_BRANCH: production
+
+jobs:
+  deploy-production:
+    name: Build and push production branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          # VITE_* env vars are inlined into the bundle at build time.
+          # `vars.*` are plain repo/org Actions variables (Settings -> Secrets
+          # and variables -> Actions -> Variables); `secrets.*` for anything
+          # sensitive. All optional here — the app degrades gracefully
+          # (falls back to #kontakt / mailto:) when unset, but production
+          # should have them set. See docs/DEPLOY-SEOHOST.md for the full list.
+          VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+          VITE_CONTACT_EMAIL: ${{ vars.VITE_CONTACT_EMAIL }}
+          VITE_CALENDLY_URL: ${{ vars.VITE_CALENDLY_URL }}
+          VITE_FORM_ACCESS_KEY: ${{ secrets.VITE_FORM_ACCESS_KEY }}
+        run: npm run build
+
+      - name: Write deploy manifest
+        run: |
+          cat > dist/DEPLOY-MANIFEST.json <<EOF
+          {
+            "builtAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "gitSha": "${{ github.sha }}",
+            "gitBranch": "${{ github.ref_name }}"
+          }
+          EOF
+          cat dist/DEPLOY-MANIFEST.json
+
+      - name: Configure git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync local production branch with origin (repeatable orphan deploys)
+        run: |
+          git fetch origin "$PROD_BRANCH" 2>/dev/null || true
+          if git rev-parse --verify "origin/$PROD_BRANCH" >/dev/null 2>&1; then
+            git branch -f "$PROD_BRANCH" "origin/$PROD_BRANCH"
+          fi
+
+      - name: Push dist/ to production branch (orphan, force)
+        run: |
+          set -e
+          TMP_DIR="$(mktemp -d)"
+          echo "staging worktree: $TMP_DIR"
+
+          if git rev-parse --verify --quiet "refs/heads/$PROD_BRANCH" >/dev/null; then
+            git worktree add "$TMP_DIR" "$PROD_BRANCH"
+          else
+            git worktree add --orphan -B "$PROD_BRANCH" "$TMP_DIR"
+          fi
+
+          # Wipe worktree contents (keep .git pointer file), replace with the build payload.
+          git -C "$TMP_DIR" rm -rf . > /dev/null 2>&1 || true
+          find "$TMP_DIR" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+
+          cp -R dist/. "$TMP_DIR/"
+
+          git -C "$TMP_DIR" add -A
+
+          if git -C "$TMP_DIR" diff --cached --quiet; then
+            echo "no changes since last deploy — nothing to push"
+          else
+            git -C "$TMP_DIR" commit -m "deploy: ${{ github.sha }} ($GITHUB_REF_NAME) at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git -C "$TMP_DIR" push --force origin "$PROD_BRANCH"
+            echo "pushed $PROD_BRANCH to origin (force)"
+          fi
+
+          git worktree remove --force "$TMP_DIR" || true
+          rm -rf "$TMP_DIR" || true

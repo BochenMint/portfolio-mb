@@ -13,12 +13,14 @@ export const copyPl = {
   skipLink: 'Przejdź do treści',
   nav: [
     { href: '#realizacje', label: 'Realizacje' },
+    { href: '#pod-maska', label: 'Pod maską' },
     { href: '#uslugi', label: 'Usługi' },
     { href: '#proces', label: 'Proces' },
     { href: '#inwestycja', label: 'Inwestycja' },
     { href: '#kontakt', label: 'Kontakt' },
   ],
   navCta: 'Umów audyt',
+  underhoodCta: 'Tak buduję dla klientów',
   navAria: {
     main: 'Główna',
     openMenu: 'Otwórz menu',
@@ -44,7 +46,7 @@ export const copyPl = {
       'Rezerwacje online, panel zamiast arkuszy, automatyzacja powtarzalnej roboty. Pracuję z firmami, które chcą obsłużyć więcej klientów bez zatrudniania kolejnej osoby do klikania.',
     ctaPrimary: 'Umów 20-min audyt',
     ctaSecondary: 'Zobacz realizacje',
-    projectsFromLabel: (minBudget: string) => `Projekty ${minBudget}+`,
+    projectsFromLabel: (minBudget: string) => `Strony od ${minBudget}`,
     stats: [
       { value: '4', label: 'produkcyjne systemy' },
       { value: '7', label: 'języków · Mint Apartments' },
@@ -89,6 +91,7 @@ export const copyPl = {
     eyebrow: 'Dowód',
     title: 'Produkty, które możesz otworzyć teraz.',
     open: (domain: string) => `Otwórz ${domain}`,
+    notPublic: 'wkrótce',
     note: 'Nie publikuję cytatów od klientów bez ich zgody. Zamiast tego: cztery działające produkcyjnie systemy i liczby, które da się sprawdzić w kodzie.',
   },
   faq: {
@@ -117,14 +120,8 @@ export const copyPl = {
     successTitle: 'Dzięki — brief wysłany',
     successBody: (responseTime: string) => `${responseTime}. Sprawdź skrzynkę (także spam).`,
     successCalendarCta: 'Albo od razu wybierz termin w kalendarzu',
-    unconfiguredTitle: 'Brief kwalifikacyjny',
-    unconfiguredBody: (needsAccessKey: boolean) =>
-      `Formularz wymaga konfiguracji: skopiuj .env.example do .env i uzupełnij VITE_FORM_ENDPOINT${
-        needsAccessKey ? ' oraz VITE_FORM_ACCESS_KEY' : ''
-      }.`,
-    unconfiguredCalendarCta: 'Umów audyt w kalendarzu',
-    unconfiguredCalendarHint: 'Ustaw też VITE_CALENDLY_URL dla CTA kalendarza.',
-    accessKeyError: 'Brak VITE_FORM_ACCESS_KEY w .env (wymagane dla Web3Forms).',
+    successMailtoNote: (email: string) =>
+      `Twój klient poczty powinien się otworzyć z gotową wiadomością — wyślij ją, albo napisz bezpośrednio na ${email}.`,
   },
   footer: {
     rights: (brand: string, year: number) => `© ${year} ${brand}. Wszystkie prawa zastrzeżone.`,

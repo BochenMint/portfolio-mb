@@ -12,12 +12,14 @@ export const copyEn = {
   skipLink: 'Skip to content',
   nav: [
     { href: '#realizacje', label: 'Work' },
+    { href: '#pod-maska', label: 'Under the hood' },
     { href: '#uslugi', label: 'Services' },
     { href: '#proces', label: 'Process' },
     { href: '#inwestycja', label: 'Pricing' },
     { href: '#kontakt', label: 'Contact' },
   ],
   navCta: 'Book an audit',
+  underhoodCta: 'This is how I build for clients',
   navAria: {
     main: 'Main',
     openMenu: 'Open menu',
@@ -43,7 +45,7 @@ export const copyEn = {
       'Online booking, a dashboard instead of spreadsheets, automation for the repetitive work. I work with companies that want to serve more customers without hiring another person to do the clicking.',
     ctaPrimary: 'Book a 20-min audit',
     ctaSecondary: 'See the work',
-    projectsFromLabel: (minBudget: string) => `Projects from ${minBudget}`,
+    projectsFromLabel: (minBudget: string) => `Websites from ${minBudget}`,
     stats: [
       { value: '4', label: 'production systems' },
       { value: '7', label: 'locales · Mint Apartments' },
@@ -88,6 +90,7 @@ export const copyEn = {
     eyebrow: 'Proof',
     title: 'Products you can open right now.',
     open: (domain: string) => `Open ${domain}`,
+    notPublic: 'soon',
     note: 'I do not publish client quotes without their consent. Instead: four systems running in production, and numbers you can verify in the code.',
   },
   faq: {
@@ -116,14 +119,8 @@ export const copyEn = {
     successTitle: 'Thanks — brief sent',
     successBody: (responseTime: string) => `${responseTime}. Check your inbox (spam folder too).`,
     successCalendarCta: 'Or pick a slot on the calendar right away →',
-    unconfiguredTitle: 'Qualification brief',
-    unconfiguredBody: (needsAccessKey: boolean) =>
-      `The form needs configuration: copy .env.example to .env and set VITE_FORM_ENDPOINT${
-        needsAccessKey ? ' and VITE_FORM_ACCESS_KEY' : ''
-      }.`,
-    unconfiguredCalendarCta: 'Book an audit on the calendar →',
-    unconfiguredCalendarHint: 'Also set VITE_CALENDLY_URL for the calendar CTA.',
-    accessKeyError: 'Missing VITE_FORM_ACCESS_KEY in .env (required for Web3Forms).',
+    successMailtoNote: (email: string) =>
+      `Your mail client should have opened with a ready-made message — send it, or write directly to ${email}.`,
   },
   footer: {
     rights: (brand: string, year: number) => `© ${year} ${brand}. All rights reserved.`,

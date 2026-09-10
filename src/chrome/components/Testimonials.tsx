@@ -15,7 +15,7 @@ import { ChromeCard, SectionHeader } from './primitives'
  */
 export function Testimonials() {
   const { t: c, locale, content } = useLocale()
-  const shown = content.projects.filter((p) => p.url)
+  const shown = content.projects
 
   return (
     <section id="opinie" className="px-5 py-24 md:px-10 md:py-32">
@@ -64,14 +64,20 @@ export function Testimonials() {
                   </>
                 )}
 
-                <a
-                  href={project.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-8 font-mono text-[11px] tracking-[0.14em] text-white uppercase transition-colors hover:text-silver-2"
-                >
-                  {c.testimonials.open(project.domain)}
-                </a>
+                {project.url && project.url !== '#' ? (
+                  <a
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-8 font-mono text-[11px] tracking-[0.14em] text-white uppercase transition-colors hover:text-silver-2"
+                  >
+                    {c.testimonials.open(project.domain)}
+                  </a>
+                ) : (
+                  <p className="mt-8 font-mono text-[11px] tracking-[0.14em] text-muted uppercase">
+                    {c.testimonials.notPublic}
+                  </p>
+                )}
               </ChromeCard>
             )
           })}

@@ -6,7 +6,7 @@ export const expandOps = {
       section(
         'Objawy, że arkusz już zarządza Wami, a nie Wy arkuszem',
         p('Panel operacyjny zamiast Excela nie zaczyna się od „chcemy nowocześnie”. Zaczyna się od tego, że dwie osoby nadpisują ten sam wiersz, makro pada na jednym laptopie, a wersja „final_v7_naprawdę” leży w mailu. Gdy proces się powtarza co tydzień i dotyczy pieniędzy albo obłożenia, koszt błędu przestaje być „poprawimy ręcznie”. Wtedy rozmawiamy o systemie, nie o ładniejszej tabeli.'),
-        p('Zostawiam Excel, gdy jedna osoba ogarnia niski wolumen, nie ma równoległych edycji i nie ma audytu. Wstydliwa prawda: wiele firm nie potrzebuje panelu. Potrzebuje dyscypliny nazw plików i jednej osoby, która nie wyjeżdża bez zastępstwa. Ops 60 000–180 000+ zł ma sens, gdy ten koszt jest tańszy niż miesięczny chaos albo gdy Excel blokuje wzrost, którego już nie udawacie.'),
+        p('Zostawiam Excel, gdy jedna osoba ogarnia niski wolumen, nie ma równoległych edycji i nie ma audytu. Wstydliwa prawda: wiele firm nie potrzebuje panelu. Potrzebuje dyscypliny nazw plików i jednej osoby, która nie wyjeżdża bez zastępstwa. Platforma (od 25 000 zł) ma sens, gdy ten koszt jest tańszy niż miesięczny chaos albo gdy Excel blokuje wzrost, którego już nie udawacie.'),
         ul([
           'Kilka ról na jednym pliku: recepcja, księgowość, właściciel.',
           'Historia zmian, której nie da się odtworzyć z „ktoś skasował wiersz”.',
@@ -40,7 +40,7 @@ export const expandOps = {
       section(
         'Symptoms that the sheet already manages you',
         p('An operations panel instead of Excel does not start with “we want to look modern”. It starts when two people overwrite the same row, a macro dies on one laptop, and “final_v7_really” lives in email. When a process repeats every week and touches money or occupancy, the cost of a mistake stops being “we will fix it by hand”. Then we talk about a system, not a prettier table.'),
-        p('I leave Excel when one person handles low volume, there are no parallel edits, and there is no audit trail. An awkward truth: many firms do not need a panel. They need file-name discipline and one person who does not leave without a deputy. Ops at PLN 60,000–180,000+ makes sense when that cost is cheaper than monthly chaos, or when Excel blocks growth you no longer pretend not to have.'),
+        p('I leave Excel when one person handles low volume, there are no parallel edits, and there is no audit trail. An awkward truth: many firms do not need a panel. They need file-name discipline and one person who does not leave without a deputy. The Platform package at PLN 25,000+ makes sense when that cost is cheaper than monthly chaos, or when Excel blocks growth you no longer pretend not to have.'),
         ul([
           'Several roles on one file: front desk, accounting, owner.',
           'A change history you cannot reconstruct from “someone deleted a row”.',
@@ -74,7 +74,7 @@ export const expandOps = {
       section(
         'Ознаки, що аркуш уже керує вами',
         p('Операційна панель замість Excel не починається з «хочемо сучасно». Починається з того, що двоє людей перезаписують один рядок, макрос падає на одному ноутбуці, а «final_v7_really» лежить у пошті. Коли процес повторюється щотижня і стосується грошей або завантаження, ціна помилки перестає бути «виправимо вручну». Тоді говоримо про систему, не про гарнішу таблицю.'),
-        p('Лишаю Excel, коли одна людина тягне малий обсяг, немає паралельних правок і немає аудиту. Не зручна правда: багатьом фірмам панель не потрібна. Потрібна дисципліна назв файлів і людина, яка не їде без заступника. Ops 60 000–180 000+ злотих має сенс, коли ця ціна дешевша за місячний хаос, або коли Excel блокує зростання, яке ви вже не вдаєте.'),
+        p('Лишаю Excel, коли одна людина тягне малий обсяг, немає паралельних правок і немає аудиту. Не зручна правда: багатьом фірмам панель не потрібна. Потрібна дисципліна назв файлів і людина, яка не їде без заступника. Платформа (від 25 000 злотих) має сенс, коли ця ціна дешевша за місячний хаос, або коли Excel блокує зростання, яке ви вже не вдаєте.'),
         ul([
           'Кілька ролей на одному файлі: рецепція, бухгалтерія, власник.',
           'Історія змін, якої не відновити з «хтось видалив рядок».',

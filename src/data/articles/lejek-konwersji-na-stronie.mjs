@@ -18,11 +18,11 @@ export default {
   pl: {
     title: 'Lejek konwersji na stronie B2B: od ruchu do zapytania',
     description:
-      'Lejek konwersji na stronie to ścieżka: intencja, kwalifikacja, jedno CTA i pomiar. Opisuję Conversion Build 25–60 tys. zł oraz żywy przykład rezerwacji Mint, bez fikcyjnych procentów.',
+      'Lejek konwersji na stronie to ścieżka: intencja, kwalifikacja, jedno CTA i pomiar. Opisuję pakiet Launch (od 8 000 zł) oraz żywy przykład rezerwacji Mint, bez fikcyjnych procentów.',
     h1: 'Lejek konwersji na stronie: od kliknięcia do zapytania, które da się obsłużyć',
-    kicker: 'Conversion Build',
+    kicker: 'Launch',
     lead:
-      'Lejek konwersji to nie slajd TOFU/MOFU z agencji. To kolejność na stronie: kto wchodzi, co musi zrozumieć, jakie pole wypełnia i co dzieje się w ciągu pięciu minut po wysłaniu. Wdrażam to w pakiecie Conversion Build (25 000–60 000 zł), nie w wizytówce za 8 tysięcy. Poniżej mechanika, metryki i moment, w którym lejek jest overkill.',
+      'Lejek konwersji to nie slajd TOFU/MOFU z agencji. To kolejność na stronie: kto wchodzi, co musi zrozumieć, jakie pole wypełnia i co dzieje się w ciągu pięciu minut po wysłaniu. Wdrażam to w pakiecie Launch (od 8 000 zł), nie w wizytówce Start za 2 000 zł. Poniżej mechanika, metryki i moment, w którym lejek jest overkill.',
     sections: [
       section(
         'Jedna konwersja, nie pięć równoległych celów',
@@ -36,9 +36,9 @@ export default {
         ]),
       ),
       section(
-        'Co jest w Conversion Build, a czego nie udaję wizytówką',
+        'Co jest w pakiecie Launch, a czego nie udaję wizytówką',
         table(
-          ['Warstwa', 'Wizytówka 6,5–12 tys.', 'Lejek 25–60 tys.'],
+          ['Warstwa', 'Start (od 2 tys.)', 'Launch (od 8 tys.)'],
           [
             ['Cel', 'Potwierdzić, że istniejesz', 'Zamknąć zdarzenie mierzalne'],
             ['Strony', 'Do 5', 'Struktura + landingi pod intencję'],
@@ -47,7 +47,7 @@ export default {
             ['Pomiar', 'Liczba zapytań', 'Ścieżka od źródła do zdarzenia'],
           ],
         ),
-        p('Jeśli budżet jest 12 tysięcy, a celem rezerwacja online, nie „dociągam lejka”. Mówię, że pakiet się nie spina. [Wizytówka kontra lejek](/artykuly/strona-wizytowka-czy-lejek/) jest decyzją budżetową, nie gustem wizualnym.'),
+        p('Jeśli budżet to pakiet Start, a celem rezerwacja online, nie „dociągam lejka”. Mówię, że pakiet się nie spina — to już Platforma. [Wizytówka kontra lejek](/artykuly/strona-wizytowka-czy-lejek/) jest decyzją budżetową, nie gustem wizualnym.'),
       ),
       section(
         'Przykład, który da się kliknąć: rezerwacja zamiast teorii',
@@ -78,21 +78,21 @@ export default {
     faqs: [
       { q: 'Czy lejek konwersji wymaga Google Ads?', a: 'Nie. Ads są paliwem. Lejek to ścieżka na stronie i obsługa zdarzenia. Możesz mieć organiczny ruch i nadal potrzebować kwalifikacji.' },
       { q: 'Ile trwa wdrożenie lejka?', a: 'Typowo 6–12 tygodni, zależnie od integracji (płatności, kalendarz, CRM). Wizytówka to 2–4 tygodnie — inny produkt.' },
-      { q: 'Czy blog jest częścią lejka?', a: 'Może zasilać górę, ale nie jest w cenie Conversion Build automatycznie. Crawlable artykuły planujemy osobno, nie jako hash w SPA.' },
+      { q: 'Czy blog jest częścią lejka?', a: 'Może zasilać górę, ale nie jest w cenie pakietu Launch automatycznie. Crawlable artykuły planujemy osobno, nie jako hash w SPA.' },
       { q: 'Jak liczycie sukces?', a: 'Zdarzeniem nazwanym na audycie: zapytanie, rezerwacja albo call. Nie slajdem z procentem bez mianownika.' },
     ],
     ctaTitle: 'Nazwijmy zdarzenie, zanim narysujemy lejek',
-    ctaBody: '20 minut: czy Conversion Build ma prawo się spiąć, czy wystarczy wizytówka. Widełki w [cenniku](/#cennik).',
+    ctaBody: '20 minut: czy Launch ma prawo się spiąć, czy wystarczy wizytówka Start. Widełki w [cenniku](/#cennik).',
     ctaLabel: 'Umów 20-min audyt',
   },
   en: {
     title: 'A B2B conversion funnel: from visit to a real enquiry',
     description:
-      'A conversion funnel on a site is intent, qualification, one CTA and measurement. I describe Conversion Build at PLN 25–60k and Mint booking as live proof — no invented conversion rates.',
+      'A conversion funnel on a site is intent, qualification, one CTA and measurement. I describe the Launch package (from PLN 8,000) and Mint booking as live proof — no invented conversion rates.',
     h1: 'A conversion funnel on the site: from click to an enquiry you can handle',
-    kicker: 'Conversion Build',
+    kicker: 'Launch',
     lead:
-      'A conversion funnel is not a TOFU/MOFU slide. It is order on the page: who arrives, what they must understand, which field they complete, and what happens in the five minutes after submit. I ship that as Conversion Build (PLN 25,000–60,000), not inside an PLN 8k brochure. Below: mechanics, metrics, and when a funnel is overkill.',
+      'A conversion funnel is not a TOFU/MOFU slide. It is order on the page: who arrives, what they must understand, which field they complete, and what happens in the five minutes after submit. I ship that as the Launch package (from PLN 8,000), not inside a PLN 2k Start brochure. Below: mechanics, metrics, and when a funnel is overkill.',
     sections: [
       section(
         'One conversion, not five parallel goals',
@@ -106,9 +106,9 @@ export default {
         ]),
       ),
       section(
-        'What Conversion Build includes, and what a brochure cannot fake',
+        'What the Launch package includes, and what a brochure cannot fake',
         table(
-          ['Layer', 'Brochure 6.5–12k', 'Funnel 25–60k'],
+          ['Layer', 'Start (from 2k)', 'Launch (from 8k)'],
           [
             ['Goal', 'Prove you exist', 'Close a measurable event'],
             ['Pages', 'Up to 5', 'IA + landings per intent'],
@@ -117,7 +117,7 @@ export default {
             ['Measurement', 'Enquiry count', 'Path from source to event'],
           ],
         ),
-        p('If the budget is 12k and the goal is online booking, I do not “stretch a funnel”. I say the package does not close. [Brochure versus funnel](/artykuly/strona-wizytowka-czy-lejek/) is a budget decision, not a visual taste.'),
+        p('If the budget is the Start package and the goal is online booking, I do not “stretch a funnel”. I say the package does not close — that is already Platform. [Brochure versus funnel](/artykuly/strona-wizytowka-czy-lejek/) is a budget decision, not a visual taste.'),
       ),
       section(
         'A clickable example: booking instead of theory',
@@ -148,21 +148,21 @@ export default {
     faqs: [
       { q: 'Does a conversion funnel require Google Ads?', a: 'No. Ads are fuel. The funnel is the on-site path and how you handle the event. You can have organic traffic and still need qualification.' },
       { q: 'How long does a funnel take to ship?', a: 'Typically 6–12 weeks, depending on integrations (payments, calendar, CRM). A brochure is 2–4 weeks — a different product.' },
-      { q: 'Is a blog part of the funnel?', a: 'It can feed the top, but it is not automatic inside Conversion Build. Crawlable articles are planned separately, not as a hash in an SPA.' },
+      { q: 'Is a blog part of the funnel?', a: 'It can feed the top, but it is not automatic inside the Launch package. Crawlable articles are planned separately, not as a hash in an SPA.' },
       { q: 'How do you count success?', a: 'The event named in the audit: enquiry, booking or call. Not a slide with a percentage and no denominator.' },
     ],
     ctaTitle: 'Name the event before we draw the funnel',
-    ctaBody: 'Twenty minutes: whether Conversion Build can close, or a brochure is enough. Ranges in [pricing](/#cennik).',
+    ctaBody: 'Twenty minutes: whether Launch can close, or a Start brochure is enough. Ranges in [pricing](/#cennik).',
     ctaLabel: 'Book a 20-min audit',
   },
   uk: {
     title: 'Воронка конверсії на сайті B2B: від візиту до запиту',
     description:
-      'Воронка конверсії на сайті — це намір, кваліфікація, одне CTA і вимір. Описую Conversion Build 25–60 тис. злотих і живий приклад бронювання Mint, без вигаданих відсотків.',
+      'Воронка конверсії на сайті — це намір, кваліфікація, одне CTA і вимір. Описую пакет Launch (від 8 000 злотих) і живий приклад бронювання Mint, без вигаданих відсотків.',
     h1: 'Воронка конверсії на сайті: від кліка до запиту, який можна обслужити',
-    kicker: 'Conversion Build',
+    kicker: 'Launch',
     lead:
-      'Воронка конверсії — не слайд TOFU/MOFU. Це порядок на сторінці: хто заходить, що має зрозуміти, яке поле заповнює і що стається за п’ять хвилин після надсилання. Впроваджую це в пакеті Conversion Build (25 000–60 000 злотих), не у візитівці за 8 тисяч. Нижче механіка, метрики і момент, коли воронка — overkill.',
+      'Воронка конверсії — не слайд TOFU/MOFU. Це порядок на сторінці: хто заходить, що має зрозуміти, яке поле заповнює і що стається за п’ять хвилин після надсилання. Впроваджую це в пакеті Launch (від 8 000 злотих), не у візитівці Start за 2 000. Нижче механіка, метрики і момент, коли воронка — overkill.',
     sections: [
       section(
         'Одна конверсія, не п’ять паралельних цілей',
@@ -176,9 +176,9 @@ export default {
         ]),
       ),
       section(
-        'Що в Conversion Build, а чого не імітую візитівкою',
+        'Що в пакеті Launch, а чого не імітую візитівкою',
         table(
-          ['Шар', 'Візитівка 6,5–12 тис.', 'Воронка 25–60 тис.'],
+          ['Шар', 'Start (від 2 тис.)', 'Launch (від 8 тис.)'],
           [
             ['Ціль', 'Підтвердити, що ви існуєте', 'Закрити вимірювану подію'],
             ['Сторінки', 'До 5', 'Структура + лендінги під намір'],
@@ -187,7 +187,7 @@ export default {
             ['Вимір', 'Кількість запитів', 'Шлях від джерела до події'],
           ],
         ),
-        p('Якщо бюджет 12 тисяч, а ціль — онлайн-бронювання, я не «донатягую воронку». Кажу, що пакет не сходиться. [Візитівка проти воронки](/artykuly/strona-wizytowka-czy-lejek/) — бюджетне рішення, не смак до макета.'),
+        p('Якщо бюджет — пакет Start, а ціль — онлайн-бронювання, я не «донатягую воронку». Кажу, що пакет не сходиться — це вже Платформа. [Візитівка проти воронки](/artykuly/strona-wizytowka-czy-lejek/) — бюджетне рішення, не смак до макета.'),
       ),
       section(
         'Приклад, який можна клікнути: бронювання замість теорії',
@@ -218,11 +218,11 @@ export default {
     faqs: [
       { q: 'Чи воронка конверсії потребує Google Ads?', a: 'Ні. Ads — пальне. Воронка — шлях на сайті й обробка події. Можна мати органічний трафік і все одно потребувати кваліфікації.' },
       { q: 'Скільки триває впровадження воронки?', a: 'Типово 6–12 тижнів, залежно від інтеграцій (платежі, календар, CRM). Візитівка — 2–4 тижні: інший продукт.' },
-      { q: 'Чи блоґ є частиною воронки?', a: 'Може живити верх, але не входить в Conversion Build автоматично. Crawlable статті плануємо окремо, не як хеш у SPA.' },
+      { q: 'Чи блоґ є частиною воронки?', a: 'Може живити верх, але не входить в пакет Launch автоматично. Crawlable статті плануємо окремо, не як хеш у SPA.' },
       { q: 'Як рахуєте успіх?', a: 'Подією, названою на аудиті: запит, бронювання або дзвінок. Не слайдом із відсотком без знаменника.' },
     ],
     ctaTitle: 'Назвімо подію, перш ніж малювати воронку',
-    ctaBody: '20 хвилин: чи Conversion Build має право зійтися, чи досить візитівки. Вилки в [цінах](/#cennik).',
+    ctaBody: '20 хвилин: чи Launch має право зійтися, чи досить візитівки Start. Вилки в [цінах](/#cennik).',
     ctaLabel: 'Записатися на 20-хв аудит',
   },
 }

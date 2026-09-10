@@ -19,7 +19,7 @@ export const expandDelivery = {
       section(
         'Mapa lejka, którą dostajesz na końcu — nie moodboard',
         p('Wynik sprintu to jeden dokument: wąskie gardła, kolejność napraw, rząd wielkości pakietu i decyzja go/no-go. Nie dostajesz 40 slajdów z „best practices 2026”. Dostajesz: tu giną kliknięcia, tu giną maile, tu w ogóle nie ma oferty. Jeśli wąskim gardłem jest follow-up, nie sprzedaję Wam rebrandu. Jeśli wąskim gardłem jest brak ceny, nie sprzedaję Wam bloga.'),
-        p('Kwota 2 500–6 000 zł zależy od głębokości, nie od liczby godzin teatralnych. Dolny próg: jedna ścieżka, jeden język, brak integracji. Górny: kilka ścieżek, płatny ruch, panel albo rezerwacje w tle. 20 minut bezpłatnie zostaje bezpłatne — to filtr, czy w ogóle rozmawiamy. Nie zaliczam tych 20 minut na „jeszcze jeden brief”.'),
+        p('Kwota od 1 500 zł zależy od głębokości, nie od liczby godzin teatralnych. Dolny próg: jedna ścieżka, jeden język, brak integracji. Górny: kilka ścieżek, płatny ruch, panel albo rezerwacje w tle. 20 minut bezpłatnie zostaje bezpłatne — to filtr, czy w ogóle rozmawiamy. Nie zaliczam tych 20 minut na „jeszcze jeden brief”.'),
         p('Jeśli po sprincie idziemy we wdrożenie, kwota sprintu może zostać zaliczona. Jeśli nie idziemy — zostajesz z mapą i priorytetami. To jest produkt. Nie jest produktem PDF „wasza strona mogłaby być ładniejsza” bez decyzji.'),
       ),
       section(
@@ -53,7 +53,7 @@ export const expandDelivery = {
       section(
         'The funnel map you leave with — not a moodboard',
         p('The sprint output is one document: bottlenecks, repair order, package order of magnitude, go/no-go. You do not get 40 slides of “2026 best practices”. You get: clicks die here, mail dies here, there is no offer here. If follow-up is the bottleneck, I do not sell a rebrand. If price is missing, I do not sell a blog.'),
-        p('PLN 2,500–6,000 tracks depth, not theatrical hours. Lower end: one path, one language, no integrations. Upper: several paths, paid traffic, a panel or booking in the background. The free 20 minutes stay free — a filter on whether we talk at all. I do not credit those 20 minutes toward “yet another brief”.'),
+        p('A fee from PLN 1,500 tracks depth, not theatrical hours. Lower end: one path, one language, no integrations. Upper: several paths, paid traffic, a panel or booking in the background. The free 20 minutes stay free — a filter on whether we talk at all. I do not credit those 20 minutes toward “yet another brief”.'),
         p('If we proceed to a build, the sprint fee may be credited. If we do not, you keep the map and the priorities. That is the product. A PDF that says “your site could be prettier” without a decision is not.'),
       ),
       section(
@@ -87,7 +87,7 @@ export const expandDelivery = {
       section(
         'Мапа воронки, з якою виходите — не moodboard',
         p('Результат спринту — один документ: вузькі місця, порядок ремонту, порядок величини пакета і рішення go/no-go. Не 40 слайдів «best practices 2026». Отримуєте: тут гинуть кліки, тут гине пошта, тут немає оферти. Якщо вузьке місце — follow-up, не продаю редизайн. Якщо немає ціни, не продаю блог.'),
-        p('Сума 2 500–6 000 злотих залежить від глибини, не від театральних годин. Нижній поріг: один шлях, одна мова, без інтеграцій. Верхній: кілька шляхів, платний трафік, панель або бронювання в тлі. 20 хвилин лишаються безкоштовними — фільтр, чи взагалі розмовляємо. Не зараховую ці 20 хвилин на «ще один бриф».'),
+        p('Сума від 1 500 злотих залежить від глибини, не від театральних годин. Нижній поріг: один шлях, одна мова, без інтеграцій. Верхній: кілька шляхів, платний трафік, панель або бронювання в тлі. 20 хвилин лишаються безкоштовними — фільтр, чи взагалі розмовляємо. Не зараховую ці 20 хвилин на «ще один бриф».'),
         p('Якщо після спринту йдемо у впровадження, сума може бути зарахована. Якщо ні — лишаєтесь із мапою і пріоритетами. Це продукт. PDF «ваш сайт міг би бути гарнішим» без рішення — ні.'),
       ),
       section(

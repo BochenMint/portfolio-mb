@@ -69,7 +69,7 @@ export default {
       ),
       section(
         'Budżet: nie mieszaj pakietów',
-        p('Konfiguracja gotowca plus strona może zmieścić się w Conversion Build. Własny panel to Ops 60–180 tys.+. [Wycena strony](/artykuly/ile-kosztuje-strona-firmowa/) nie pokryje silnika statusów. Jeśli brief miesza „strona + ERP + ChatGPT za 15 tys.”, tniemy albo odmawiam.'),
+        p('Konfiguracja gotowca plus strona może zmieścić się w pakiecie Launch (od 8 000 zł). Własny panel to Platforma, od 25 000 zł. [Wycena strony](/artykuly/ile-kosztuje-strona-firmowa/) nie pokryje silnika statusów. Jeśli brief miesza „strona + ERP + ChatGPT za 15 tys.”, tniemy albo odmawiam.'),
       ),
     ],
     faqs: [
@@ -136,7 +136,7 @@ export default {
       ),
       section(
         'Budget: do not mix packages',
-        p('Configuring off-the-shelf plus a site can fit Conversion Build. A custom panel is Ops PLN 60–180k+. [Website pricing](/artykuly/ile-kosztuje-strona-firmowa/) will not cover a status engine. If the brief mixes “site + ERP + ChatGPT for 15k”, we cut or I refuse.'),
+        p('Configuring off-the-shelf plus a site can fit the Launch package (from PLN 8,000). A custom panel is Platform, from PLN 25,000. [Website pricing](/artykuly/ile-kosztuje-strona-firmowa/) will not cover a status engine. If the brief mixes “site + ERP + ChatGPT for 15k”, we cut or I refuse.'),
       ),
     ],
     faqs: [
@@ -203,7 +203,7 @@ export default {
       ),
       section(
         'Бюджет: не змішуйте пакети',
-        p('Конфігурація готового плюс сайт може вміститися в Conversion Build. Власна панель — Ops 60–180 тис.+. [Оцінка сайту](/artykuly/ile-kosztuje-strona-firmowa/) не покриє рушій статусів. Якщо бриф змішує «сайт + ERP + ChatGPT за 15 тис.» — ріжемо або відмовляю.'),
+        p('Конфігурація готового плюс сайт може вміститися в пакет Launch (від 8 000 злотих). Власна панель — Платформа, від 25 000 злотих. [Оцінка сайту](/artykuly/ile-kosztuje-strona-firmowa/) не покриє рушій статусів. Якщо бриф змішує «сайт + ERP + ChatGPT за 15 тис.» — ріжемо або відмовляю.'),
       ),
     ],
     faqs: [

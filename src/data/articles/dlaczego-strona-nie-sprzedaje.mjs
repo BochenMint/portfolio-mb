@@ -81,7 +81,7 @@ export default {
       },
       {
         q: 'Ile trwa taka diagnoza?',
-        a: '20 minut na start. Jeśli trzeba wejść w analitykę i proces — Audit Sprint 2 500–6 000 zł, z zaliczeniem na wdrożenie gdy ma to sens.',
+        a: '20 minut na start. Jeśli trzeba wejść w analitykę i proces — Audit Sprint od 1 500 zł, z zaliczeniem na wdrożenie gdy ma to sens.',
       },
     ],
     ctaTitle: 'Zanim kupisz redesign, nazwij wiadro',
@@ -155,7 +155,7 @@ export default {
       },
       {
         q: 'How long does this diagnosis take?',
-        a: 'Twenty minutes to start. If we must go into analytics and process — Audit Sprint PLN 2,500–6,000, creditable toward a build when it makes sense.',
+        a: 'Twenty minutes to start. If we must go into analytics and process — Audit Sprint from PLN 1,500, creditable toward a build when it makes sense.',
       },
     ],
     ctaTitle: 'Name the bucket before you buy a redesign',
@@ -229,7 +229,7 @@ export default {
       },
       {
         q: 'Скільки триває така діагностика?',
-        a: '20 хвилин на старт. Якщо треба зайти в аналітику й процес — Audit Sprint 2 500–6 000 злотих, із зарахуванням на впровадження, коли це має сенс.',
+        a: '20 хвилин на старт. Якщо треба зайти в аналітику й процес — Audit Sprint від 1 500 злотих, із зарахуванням на впровадження, коли це має сенс.',
       },
     ],
     ctaTitle: 'Перш ніж купити редизайн, назвіть відро',

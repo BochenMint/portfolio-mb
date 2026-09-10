@@ -19,12 +19,24 @@ Marcin Bochenek is a one-person studio. He designs and ships websites that colle
 iDrive Cars is built but not public yet. Agentic OS is an internal B2B tool, not a public URL.
 
 ## Packages (net, PLN)
-- Audit Sprint: 2 500–6 000
-- Company site (up to 5 pages, form, basic SEO, custom Astro/Next): 6 500–12 000
-- Conversion Build (sell / book / qualify): 25 000–60 000
-- Ops System (integrations, panels): 60 000–180 000+
+- Audit Sprint: from 1 500
+- Start (company site or landing, up to 5 pages, form, basic SEO): from 2 000
+- Launch (conversion funnel, integrations — form to CRM, calendar, technical SEO): from 8 000
+- Platforma (booking, admin panel, multilingual, API): from 25 000
+- AI Ops (agents, automation, maintenance): from 3 000 / month
 
 Primary CTA: 20-minute audit. Contact: kontakt@marcinbochenek.com (reply in 1 business day).
+
+## How Marcin defines a working website (the "under the hood" layers)
+The homepage demonstrates this with an interactive exploded F1 car: scroll to take it apart, layer by layer.
+- Bodywork — design & UX: what visitors see in the first three seconds; a shell over everything below it.
+- Front wing — speed: fast first render, optimized images, no bloated JavaScript; what Google measures first.
+- Rear wing — visibility to Google and AI models: schema.org, hreflang, sitemap, llms.txt, citable content.
+- Wheels — conversion: the call to action, form, calendar, booking on the client's own domain.
+- Power unit — the technology underneath: integrations, data, APIs, security.
+- Engine cover — process & deployment: tests, CI, deploy on push, weekly iterations.
+- Halo — security & control: GDPR, EU hosting, backups, AI with an allowed-action list and human escalation.
+- Steering wheel & telemetry — measurement: events, conversions, before/after reporting.
 
 ## Facts for citation
 - Legal form: freelance / JDG, Poland (`areaServed`: PL). On-site in Gdańsk / Gdynia / Sopot when a workshop is needed; otherwise remote across Poland.

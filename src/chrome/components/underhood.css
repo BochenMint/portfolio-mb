@@ -1,0 +1,300 @@
+/* "Pod maską" — the exploded chrome F1 car.
+   Only layout and hairlines here; every metal surface on this page is the
+   WebGL object, never CSS. */
+
+.uh-stage {
+  height: 100svh;
+  min-height: 620px;
+  display: flex;
+  align-items: center;
+}
+
+.uh-canvas-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.uh-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+}
+
+/* --- Layer card ---------------------------------------------------- */
+/* The eight theses are not the same length, and on a phone the longest one
+   would push the chip rail off a pinned viewport. */
+@media (max-width: 1023.98px) {
+  .uh-thesis {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    overflow: hidden;
+  }
+}
+
+.uh-card {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+}
+
+/* Eight rows, one card, a header and a hint have to survive a single pinned
+   viewport. On a 900 px screen that budget is ~24 px per row tighter than the
+   copy wants, so the two blocks that can give it up do: the lead loses its
+   fourth line and the card loses a third of its padding. Below 1024 the list
+   is a chip rail instead and none of this applies. */
+@media (min-width: 1024px) and (max-height: 1000px) {
+  .uh-lead {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .uh-card {
+    padding: 12px 0;
+  }
+}
+
+/* Under ~820 px there is no third line to give: the rows win. At 1024 the
+   headline takes a third line and the thesis a fourth, which is the last 14 px
+   between eight rows and a scrollbar, so both get clamped too. */
+@media (min-width: 1024px) and (max-height: 820px) {
+  .uh-lead {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .uh-card {
+    padding: 10px 0;
+  }
+
+  .uh-thesis {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+
+  /* Scoped through the list so it outranks the `.uh-item` shorthand further
+     down the file, which would otherwise win on source order alone. */
+  .uh-list .uh-item {
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+}
+
+/* A short *and* narrow desktop — a 1024×760 laptop — is the worst case: the
+   card's thesis, proof line and tags all take an extra wrapped line at that
+   measure, which is another 24 px the rows do not have. Squeeze the padding
+   rather than hide a row or a tag. */
+@media (min-width: 1024px) and (max-width: 1279.98px) and (max-height: 820px),
+  (min-width: 1024px) and (max-height: 764px) {
+  .uh-list .uh-item {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+
+  .uh-card {
+    padding: 8px 0;
+  }
+
+  .uh-hint {
+    margin-top: 6px;
+  }
+}
+
+/* 1280×720 is the last size where all eight rows still fit, and it only does
+   with the leading pulled all the way in: at that width the card's thesis and
+   proof both wrap one line further than they do at 1440, which is the 20 px
+   the rows were short. Card padding goes back up to 10 px — the rows are the
+   thing that must not be cut, and they can pay for themselves. */
+@media (min-width: 1024px) and (max-height: 740px) {
+  .uh-lead {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .uh-card {
+    padding: 10px 0;
+  }
+
+  .uh-list .uh-item {
+    padding-top: 1px;
+    padding-bottom: 1px;
+  }
+
+  .uh-hint {
+    margin-top: 4px;
+  }
+}
+
+.uh-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.uh-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+/* --- Layer list ---------------------------------------------------- */
+.uh-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  /* `baseline` costs ~3 px a row: the 10 px index and the 13 px title have
+     different leading, and the grid pads the shorter one to line their
+     baselines up. Both boxes start at the row top instead, and the two mono
+     lines — index and part label — are set to the same line box so they read
+     as one rule across the row anyway. */
+  align-items: start;
+  gap: 0 0.7rem;
+  width: 100%;
+  padding: 4px 0 4px 13px;
+  text-align: left;
+  color: var(--muted);
+  transition:
+    color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+/* The current layer is marked by a chrome hairline in the gutter rather than
+   a fill, so the list stays a list and the metal stays in the canvas. */
+.uh-item::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  width: 1px;
+  background: var(--line);
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.uh-item:hover,
+.uh-item:focus-visible {
+  color: var(--fg-2);
+}
+
+.uh-item[data-current='true'] {
+  color: var(--fg);
+}
+
+.uh-item[data-current='true']::before {
+  background: linear-gradient(180deg, transparent, var(--hairline), transparent);
+  transform: scaleX(2.5);
+}
+
+.uh-index {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+/* 12/13 px with the leading pulled right in: eight of these plus their 8 px of
+   padding is what has to fit, and every 0.1 of line-height is a row. */
+.uh-title {
+  font-size: 13px;
+  line-height: 1.15;
+}
+
+.uh-part {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Eight rows plus the card and the header have to survive one viewport in the
+   pin, so the list gives up its own scroll rather than pushing rows off the
+   bottom on a short laptop screen. */
+.uh-list {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.uh-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- Mobile chip rail ----------------------------------------------
+   Scoped to the small breakpoint on purpose: `.uh-rail` and Tailwind's
+   `.lg:hidden` are both single-class selectors, so the one that loads last
+   wins — and this file loads last. Inside a media query it simply stops
+   applying above the breakpoint instead. */
+@media (max-width: 1023.98px) {
+  .uh-rail {
+    display: flex;
+  }
+}
+
+.uh-rail {
+  min-width: 0;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+  scroll-snap-type: x proximity;
+}
+.uh-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.uh-chip {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  transition:
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.uh-chip[data-current='true'] {
+  color: var(--fg);
+  border-color: var(--line-2);
+}
+
+/* --- Fallback ------------------------------------------------------- */
+.uh-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card-sm);
+  corner-shape: var(--corner);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uh-item,
+  .uh-item::before,
+  .uh-chip {
+    transition: none;
+  }
+}

@@ -55,7 +55,7 @@ export default {
       ),
       section(
         'Sąsiedztwo ze stroną i lejkiem',
-        p('Strona plumm.pl zbiera plany i wyjaśnia produkt. To nie wizytówka za 6 500 zł w oderwaniu od panelu. Jeśli budujesz własny SaaS, strona i aplikacja to jeden system. Jeśli chcesz tylko stronę biura rachunkowego — inny pakiet, inny cel, bez udawania silnika e-faktur.'),
+        p('Strona plumm.pl zbiera plany i wyjaśnia produkt. To nie wizytówka za 2 000 zł w oderwaniu od panelu. Jeśli budujesz własny SaaS, strona i aplikacja to jeden system. Jeśli chcesz tylko stronę biura rachunkowego — inny pakiet, inny cel, bez udawania silnika e-faktur.'),
       ),
     ],
     faqs: [
@@ -108,7 +108,7 @@ export default {
       ),
       section(
         'Neighbourhood with the site and the funnel',
-        p('plumm.pl collects plans and explains the product. It is not a PLN 6,500 brochure detached from the panel. If you build your own SaaS, the site and the app are one system. If you only want an accountant’s brochure — another package, another goal, no fake e-invoice engine.'),
+        p('plumm.pl collects plans and explains the product. It is not a PLN 2,000 brochure detached from the panel. If you build your own SaaS, the site and the app are one system. If you only want an accountant’s brochure — another package, another goal, no fake e-invoice engine.'),
       ),
     ],
     faqs: [
@@ -161,7 +161,7 @@ export default {
       ),
       section(
         'Суседство з сайтом і воронкою',
-        p('Сайт plumm.pl збирає плани й пояснює продукт. Це не візитівка за 6 500 осторонь панелі. Якщо будуєте власний SaaS, сайт і застосунок — одна система. Якщо потрібна лише візитівка бюро — інший пакет, інша ціль, без удавання рушія e-фактур.'),
+        p('Сайт plumm.pl збирає плани й пояснює продукт. Це не візитівка за 2 000 осторонь панелі. Якщо будуєте власний SaaS, сайт і застосунок — одна система. Якщо потрібна лише візитівка бюро — інший пакет, інша ціль, без удавання рушія e-фактур.'),
       ),
     ],
     faqs: [

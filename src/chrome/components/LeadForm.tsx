@@ -3,7 +3,7 @@ import type { FormEvent } from 'react'
 import { useLocale } from '../i18n/context'
 import { Button, ChromeCard } from './primitives'
 
-type FormStatus = 'idle' | 'loading' | 'success' | 'error' | 'unconfigured'
+type FormStatus = 'idle' | 'loading' | 'success' | 'error'
 
 const formEndpoint = import.meta.env.VITE_FORM_ENDPOINT || ''
 const formAccessKey = import.meta.env.VITE_FORM_ACCESS_KEY || ''
@@ -12,25 +12,37 @@ function isWeb3Forms(endpoint: string) {
   return endpoint.includes('web3forms.com')
 }
 
+/** No usable AJAX endpoint — missing entirely, or Web3Forms without an access key. */
+function needsMailtoFallback(endpoint: string, accessKey: string) {
+  return !endpoint || (isWeb3Forms(endpoint) && !accessKey)
+}
+
 export function LeadForm() {
   const { t: c, content } = useLocale()
   const { qualificationFields, site } = content
-  const [status, setStatus] = useState<FormStatus>(formEndpoint ? 'idle' : 'unconfigured')
+  const [status, setStatus] = useState<FormStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const [usedMailto, setUsedMailto] = useState(false)
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    if (!formEndpoint) {
-      setStatus('unconfigured')
-      return
-    }
-
-    setStatus('loading')
     setErrorMessage('')
 
     const data = new FormData(e.currentTarget)
     const body = Object.fromEntries(data.entries()) as Record<string, string>
+
+    if (needsMailtoFallback(formEndpoint, formAccessKey)) {
+      const subject = `Audyt portfolio — ${body.company || body.name || 'zapytanie'}`
+      const lines = qualificationFields.map((field) => `${field.label}: ${body[field.id] || '-'}`)
+      const mailto = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`
+      window.location.href = mailto
+      setUsedMailto(true)
+      setStatus('success')
+      e.currentTarget.reset()
+      return
+    }
+
+    setStatus('loading')
 
     const payload: Record<string, string> = {
       subject: `Audyt portfolio — ${body.company ?? 'zapytanie'}`,
@@ -39,11 +51,6 @@ export function LeadForm() {
     }
 
     if (isWeb3Forms(formEndpoint)) {
-      if (!formAccessKey) {
-        setStatus('error')
-        setErrorMessage(c.form.accessKeyError)
-        return
-      }
       payload.access_key = formAccessKey
     }
 
@@ -62,6 +69,7 @@ export function LeadForm() {
         throw new Error((err as { message?: string }).message || `HTTP ${res.status}`)
       }
 
+      setUsedMailto(false)
       setStatus('success')
       e.currentTarget.reset()
     } catch (err) {
@@ -74,7 +82,9 @@ export function LeadForm() {
     return (
       <ChromeCard tone="light" className="p-8 text-center md:p-10">
         <p className="font-display text-xl font-semibold text-ink">{c.form.successTitle}</p>
-        <p className="mt-2 text-sm text-ink/70">{c.form.successBody(site.responseTime)}</p>
+        <p className="mt-2 text-sm text-ink/70">
+          {usedMailto ? c.form.successMailtoNote(site.email) : c.form.successBody(site.responseTime)}
+        </p>
         {site.calendly && (
           <a
             href={site.calendly}
@@ -84,23 +94,6 @@ export function LeadForm() {
           >
             {c.form.successCalendarCta}
           </a>
-        )}
-      </ChromeCard>
-    )
-  }
-
-  if (status === 'unconfigured') {
-    const needsAccessKey = isWeb3Forms(formEndpoint) || !formEndpoint
-    return (
-      <ChromeCard tone="dark" className="space-y-4 p-6 md:p-8">
-        <p className="font-display text-lg font-semibold text-white">{c.form.unconfiguredTitle}</p>
-        <p className="text-sm text-silver-2">{c.form.unconfiguredBody(needsAccessKey)}</p>
-        {site.calendly ? (
-          <a href={site.calendly} target="_blank" rel="noopener noreferrer" className="chrome-btn inline-flex px-6 py-3 text-sm">
-            {c.form.unconfiguredCalendarCta}
-          </a>
-        ) : (
-          <p className="text-xs text-muted">{c.form.unconfiguredCalendarHint}</p>
         )}
       </ChromeCard>
     )

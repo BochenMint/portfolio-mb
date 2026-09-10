@@ -1,4 +1,6 @@
-# Checklist go-live — Cloudflare Pages
+# Checklist go-live
+
+> **Aktualizacja 2026-09:** hosting docelowy to **SEOhost** (DirectAdmin, branch `production`, webhook) — pełna procedura w [`DEPLOY-SEOHOST.md`](DEPLOY-SEOHOST.md). Opis Cloudflare Pages poniżej jest historyczny; punkty o env, Cal.com, Web3Forms i smoke teście pozostają aktualne.
 
 Deploy docelowy: **Cloudflare Pages**, domena `marcinbochenek.com` (apex canonical, `www` przekierowuje na apex). Nameservery domeny są już na Cloudflare. `deploy/Caddyfile` i `docs/DEPLOY-MAC-MINI.md` to poprzednie podejście (Mac Mini + Caddy + Tunnel) — zostawione w repo jako referencja, ale **nieaktualne** dla tego wdrożenia. `mb-ai.pl` i `gra.marcinbochenek.com` jako osobne hosty nie są częścią tego checklisty — gra jest teraz dostępna jako `/gra.html` na głównej domenie (patrz smoke test niżej).
 

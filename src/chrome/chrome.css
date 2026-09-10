@@ -115,9 +115,6 @@
   --focus-ring: rgba(247, 248, 250, 0.06);
   --focus-border: rgba(247, 248, 250, 0.6);
 
-  --cursor-ring-strong: rgba(247, 248, 250, 0.7);
-  --cursor-ring-soft: rgba(247, 248, 250, 0.25);
-
   --selection-bg: rgba(247, 248, 250, 0.85);
   --selection-fg: #050506;
 }
@@ -156,9 +153,6 @@
   --focus-ring: rgba(11, 11, 13, 0.07);
   --focus-border: rgba(11, 11, 13, 0.45);
 
-  --cursor-ring-strong: rgba(11, 11, 13, 0.55);
-  --cursor-ring-soft: rgba(11, 11, 13, 0.28);
-
   --selection-bg: rgba(11, 11, 13, 0.85);
   --selection-fg: #eef0f3;
 }
@@ -178,14 +172,6 @@
     @apply overflow-x-hidden;
     background: var(--bg);
     transition: background-color 0.4s ease;
-  }
-
-  body.cursor-custom,
-  body.cursor-custom a,
-  body.cursor-custom button,
-  body.cursor-custom label,
-  body.cursor-custom summary {
-    cursor: none;
   }
 
   ::selection {
@@ -713,19 +699,13 @@
       radial-gradient(ellipse 45% 32% at 85% 18%, rgba(180, 190, 205, 0.3), transparent 60%),
       linear-gradient(180deg, #f3f4f6 0%, #e6e8ec 100%);
   }
-  :root[data-theme='light'] img[src='/chrome/hero-torus.webp'] {
+  :root[data-theme='light'] img[src='/chrome/f1-hero.webp'] {
     filter: drop-shadow(0 40px 80px rgba(20, 24, 30, 0.35));
   }
 
-  .grain::after {
-    content: '';
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9990;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
+  /* Film grain overlay removed 2026-09 (Marcin): read as pixelation on the
+     dark background. `.grain` wrapper div in App.tsx is now a harmless
+     no-op class kept for layout/animation-opacity hooks only. */
 
   /* --- Studio object (Contact sphere) --------------------------- */
   .studio-object-img {

@@ -62,6 +62,8 @@ function localeHtmlPlugin(): Plugin {
   }
 }
 
+// `npm run build` runs `node scripts/generate-articles.mjs` before `tsc -b && vite build`
+// (see the "build" script in package.json) — articles must exist before Vite bundles them.
 export default defineConfig({
   appType: 'mpa',
   plugins: [react(), tailwindcss(), localeHtmlPlugin()],
@@ -92,8 +94,13 @@ export default defineConfig({
         v6: 'v6.html',
       },
       output: {
+        // Tripwire: a stray import of these packages should land in its own
+        // named chunk, not silently inflate `main`/`vendor`. No rapier/cannon/ammo
+        // physics engine is used anywhere in this repo (v4's flight physics is
+        // hand-rolled in src/v4/ship, not a package) — nothing to chunk for that yet.
         manualChunks(id) {
           if (id.includes('node_modules/three')) return 'three'
+          if (id.includes('node_modules/@splinetool')) return 'react-spline'
         },
       },
     },

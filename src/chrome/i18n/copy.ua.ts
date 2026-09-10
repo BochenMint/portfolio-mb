@@ -12,12 +12,14 @@ export const copyUa = {
   skipLink: 'Перейти до змісту',
   nav: [
     { href: '#realizacje', label: 'Роботи' },
+    { href: '#pod-maska', label: 'Під капотом' },
     { href: '#uslugi', label: 'Послуги' },
     { href: '#proces', label: 'Процес' },
     { href: '#inwestycja', label: 'Бюджет' },
     { href: '#kontakt', label: 'Контакт' },
   ],
   navCta: 'Замовити аудит',
+  underhoodCta: 'Так я будую для клієнтів',
   navAria: {
     main: 'Головна',
     openMenu: 'Відкрити меню',
@@ -43,7 +45,7 @@ export const copyUa = {
       'Онлайн-бронювання, панель замість таблиць, автоматизація рутинної роботи. Працюю з компаніями, які хочуть обслуговувати більше клієнтів, не наймаючи ще одну людину для ручного введення даних.',
     ctaPrimary: 'Замовити 20-хв аудит',
     ctaSecondary: 'Переглянути роботи',
-    projectsFromLabel: (minBudget: string) => `Проєкти від ${minBudget}`,
+    projectsFromLabel: (minBudget: string) => `Сайти від ${minBudget}`,
     stats: [
       { value: '4', label: 'продакшен-системи' },
       { value: '7', label: 'мов · Mint Apartments' },
@@ -88,6 +90,7 @@ export const copyUa = {
     eyebrow: 'Доказ',
     title: 'Продукти, які можна відкрити просто зараз.',
     open: (domain: string) => `Відкрити ${domain}`,
+    notPublic: 'незабаром',
     note: 'Я не публікую цитати клієнтів без їхньої згоди. Замість цього — чотири системи, що працюють у продакшені, і числа, які можна перевірити в коді.',
   },
   faq: {
@@ -116,14 +119,8 @@ export const copyUa = {
     successTitle: 'Дякую — бриф надіслано',
     successBody: (responseTime: string) => `${responseTime}. Перевірте пошту (також спам).`,
     successCalendarCta: 'Або одразу оберіть час у календарі →',
-    unconfiguredTitle: 'Кваліфікаційний бриф',
-    unconfiguredBody: (needsAccessKey: boolean) =>
-      `Форма потребує налаштування: скопіюйте .env.example у .env і заповніть VITE_FORM_ENDPOINT${
-        needsAccessKey ? ' та VITE_FORM_ACCESS_KEY' : ''
-      }.`,
-    unconfiguredCalendarCta: 'Замовити аудит у календарі →',
-    unconfiguredCalendarHint: 'Також встановіть VITE_CALENDLY_URL для CTA календаря.',
-    accessKeyError: 'Відсутній VITE_FORM_ACCESS_KEY у .env (потрібен для Web3Forms).',
+    successMailtoNote: (email: string) =>
+      `Ваш поштовий клієнт мав відкритися з готовим листом — надішліть його, або напишіть напряму на ${email}.`,
   },
   footer: {
     rights: (brand: string, year: number) => `© ${year} ${brand}. Усі права захищені.`,

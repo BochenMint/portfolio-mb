@@ -52,7 +52,7 @@ export default {
       ),
       section(
         'Cena i pakiet: to nie jest strona za 8 tysięcy',
-        p('Asystent z HITL wchodzi w wycenę po audycie, zwykle przy Conversion Build albo Ops, nie w pakiecie wizytówki. 20 minut bezpłatnie mówi, czy w ogóle macie proces, który wolno automatyzować. Jeśli nie — kupujecie szkolenie i zakaz publicznego czatu, nie silnik. Wolę to powiedzieć niż wpiąć GPT w Excel i nazwać to transformacją.'),
+        p('Asystent z HITL wchodzi w wycenę po audycie, zwykle w pakiecie Launch albo AI Ops, nie w pakiecie Start. 20 minut bezpłatnie mówi, czy w ogóle macie proces, który wolno automatyzować. Jeśli nie — kupujecie szkolenie i zakaz publicznego czatu, nie silnik. Wolę to powiedzieć niż wpiąć GPT w Excel i nazwać to transformacją.'),
       ),
       section(
         'Czego nie obiecuję',
@@ -111,7 +111,7 @@ export default {
       ),
       section(
         'Price and package: this is not an PLN 8k website',
-        p('A HITL assistant is priced after the audit, usually inside Conversion Build or Ops, not the brochure package. Twenty free minutes says whether you even have a process that may be automated. If not — you buy training and a ban on public chat, not an engine. I would rather say that than wire GPT into Excel and call it transformation.'),
+        p('A HITL assistant is priced after the audit, usually inside the Launch package or AI Ops, not the Start brochure package. Twenty free minutes says whether you even have a process that may be automated. If not — you buy training and a ban on public chat, not an engine. I would rather say that than wire GPT into Excel and call it transformation.'),
       ),
       section(
         'What I will not promise',
@@ -170,7 +170,7 @@ export default {
       ),
       section(
         'Ціна і пакет: це не сайт за 8 тисяч',
-        p('Асистент з HITL входить в оцінку після аудиту, зазвичай у Conversion Build або Ops, не в пакет візитівки. 20 безкоштовних хвилин каже, чи взагалі є процес, який можна автоматизувати. Якщо ні — купуєте навчання і заборону публічного чату, не рушій. Краще сказати це, ніж встромити GPT в Excel і назвати трансформацією.'),
+        p('Асистент з HITL входить в оцінку після аудиту, зазвичай у пакеті Launch або AI Ops, не в пакеті Start. 20 безкоштовних хвилин каже, чи взагалі є процес, який можна автоматизувати. Якщо ні — купуєте навчання і заборону публічного чату, не рушій. Краще сказати це, ніж встромити GPT в Excel і назвати трансформацією.'),
       ),
       section(
         'Чого не обіцяю',

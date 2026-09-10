@@ -28,6 +28,8 @@ type LinkBtnProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   variant?: 'chrome' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
   external?: boolean
+  /** Subtle magnetic drift (strength 0.12, max 5px). Marcin 2026-09: keep
+      the effect, but the travel must feel physical, not slippery. */
   magnetic?: boolean
   children: ReactNode
 }
@@ -42,16 +44,15 @@ export function LinkButton({
   variant = 'chrome',
   size = 'md',
   external,
-  magnetic = true,
   className = '',
   children,
+  magnetic = true,
   ...rest
 }: LinkBtnProps) {
-  const ref = useMagnetic<HTMLAnchorElement>(magnetic ? 0.25 : 0)
+  const ref = useMagnetic<HTMLAnchorElement>(magnetic ? 0.12 : 0, 5)
   return (
     <a
       ref={ref}
-      data-magnetic
       className={`${variant === 'chrome' ? 'chrome-btn' : 'ghost-btn'} ${sizes[size]} ${className}`}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       {...rest}
@@ -70,7 +71,6 @@ type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 export function Button({ variant = 'chrome', size = 'md', className = '', children, ...rest }: BtnProps) {
   return (
     <button
-      data-magnetic
       className={`${variant === 'chrome' ? 'chrome-btn' : 'ghost-btn'} ${sizes[size]} disabled:cursor-wait disabled:opacity-70 ${className}`}
       {...rest}
     >
