@@ -171,7 +171,7 @@ export function Nav() {
           <div className="max-sm:hidden">
             <LangSwitch />
           </div>
-          <LinkButton href={ctaHref} external={!!site.calendly} size="sm" magnetic={false}>
+          <LinkButton href={ctaHref} external={!!site.calendly} size="sm" magnetic={false} variant="accent">
             {c.navCta}
           </LinkButton>
           <button

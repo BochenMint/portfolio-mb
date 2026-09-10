@@ -41,7 +41,7 @@ export function Hero() {
           </p>
 
           <div data-hero-fade className="mt-10 flex flex-wrap items-center gap-3">
-            <LinkButton href={ctaHref} external={!!site.calendly} size="lg">
+            <LinkButton href={ctaHref} external={!!site.calendly} size="lg" variant="accent">
               {c.hero.ctaPrimary}
               <Arrow />
             </LinkButton>

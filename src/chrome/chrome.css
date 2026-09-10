@@ -593,6 +593,74 @@
     transform: translateY(1px) scale(0.99);
   }
 
+  /* --- Accent button: glossy racing red -------------------------- */
+  /* The only colour on the page. Reserved for the primary action so it
+     reads as the one thing to click; keep it off everything else. */
+  .accent-btn {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    background:
+      linear-gradient(180deg, #ff4a3d 0%, #ee1a0e 42%, #c80000 52%, #d90a00 100%) padding-box,
+      linear-gradient(180deg, #ff8a80, #7a0000) border-box;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.45) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.35) inset,
+      0 10px 30px -10px rgba(225, 6, 0, 0.55),
+      0 20px 40px -20px rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.35s ease,
+      filter 0.35s ease;
+  }
+  .accent-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.55) 48%,
+      rgba(255, 255, 255, 0.6) 50%,
+      transparent 60%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+    mix-blend-mode: overlay;
+  }
+  .accent-btn:hover::after {
+    transform: translateX(120%);
+  }
+  .accent-btn:hover {
+    filter: brightness(1.06);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.45) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.35) inset,
+      0 12px 40px -8px rgba(225, 6, 0, 0.7),
+      0 20px 40px -20px rgba(0, 0, 0, 0.9);
+  }
+  .accent-btn:active {
+    transform: translateY(1px) scale(0.99);
+  }
+  .accent-btn:disabled {
+    filter: saturate(0.6) brightness(0.9);
+  }
+  .accent-btn:focus-visible {
+    outline-color: var(--fg);
+    border-radius: 999px;
+  }
+
   .ghost-btn {
     display: inline-flex;
     align-items: center;
