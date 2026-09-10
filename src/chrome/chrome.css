@@ -611,12 +611,12 @@
     color: #ffffff;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
     background:
-      linear-gradient(180deg, #ff6b60 0%, #ff3526 40%, #dc0800 50%, #c00000 60%, #e61708 100%) padding-box,
-      linear-gradient(180deg, #ffb0a8, #6a0000) border-box;
+      linear-gradient(180deg, #ff6b60 0%, #f22e1e 40%, #d40600 50%, #bd0000 60%, #de1608 100%) padding-box,
+      linear-gradient(180deg, #ffb0a8, #650000) border-box;
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.7) inset,
       0 -1px 0 rgba(0, 0, 0, 0.4) inset,
-      0 12px 32px -10px rgba(225, 6, 0, 0.7),
+      0 12px 32px -10px rgba(189, 0, 0, 0.7),
       0 20px 40px -20px rgba(0, 0, 0, 0.9);
     overflow: hidden;
     transition:
