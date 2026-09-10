@@ -1,6 +1,6 @@
 # Marcin Bochenek
 
-> Freelance software engineer in Poland. Company websites, online booking, conversion funnels, ops panels, and human-in-the-loop (HITL) automation. One accountable person for design, build and care. Formal Polish register on the primary site.
+> Freelance software engineer based in Poland, working with clients in Poland and abroad in English and Polish. Company websites, online booking, conversion funnels, ops panels, and human-in-the-loop (HITL) automation. One accountable person for design, build and care. Formal Polish register on the primary site.
 
 Marcin Bochenek is a one-person studio. He designs and ships websites that collect enquiries, booking on the client's own domain, operations panels instead of Excel, and AI assistants with an allowed-action list, an audit log, and escalation to a human. He does not invent testimonials or percentage lifts. Live public proof is Mint Apartments and Plumm only.
 
