@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import gsap from 'gsap'
-import { useLocale } from '../i18n/context'
+import { BrandMark } from './BrandMark'
 
 type Props = { onComplete: () => void }
 
@@ -9,7 +9,6 @@ const MAX_HOLD_MS = 1400
 
 /** Minimal chrome preloader: monogram + hairline that fills like a light sweep. */
 export function Preloader({ onComplete }: Props) {
-  const { t: c } = useLocale()
   const [done, setDone] = useState(false)
 
 
@@ -56,9 +55,12 @@ export function Preloader({ onComplete }: Props) {
       className="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-ink"
       aria-hidden
     >
-      <p data-pre-mark className="chrome-text font-display text-3xl font-bold tracking-[-0.05em]">
-        {c.mark}
-      </p>
+      {/* The brand mark itself, not the letters "MB" set in the body face —
+          the first thing a visitor sees should be the identity the rest of
+          the page carries in the nav and the footer. */}
+      <div data-pre-mark className="text-white">
+        <BrandMark size={44} />
+      </div>
       <div className="mt-6 h-px w-40 overflow-hidden bg-white/10">
         <div data-pre-line className="hairline h-full w-full origin-left" />
       </div>

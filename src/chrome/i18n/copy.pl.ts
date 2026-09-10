@@ -3,6 +3,10 @@
  * international IT brand. Data (projects, pricing, FAQ, form fields) is
  * shared with the classic edition via src/data/content.ts / i18n.ts; only
  * tone-of-voice strings live here.
+ *
+ * Polish copy contains literal U+00A0 (non-breaking space) after one-letter
+ * prepositions (i, w, z, o, a, u) so a heading never ends a line on a single
+ * letter. They look like ordinary spaces in an editor — do not retype them.
  */
 import type { ChromeCopy } from './types'
 
@@ -36,44 +40,56 @@ export const copyPl = {
   themeDark: 'Tryb ciemny',
   themeToggle: 'Tryb jasny/ciemny',
   hero: {
-    eyebrow: 'Strony · Aplikacje · Systemy · Automatyzacje',
+    eyebrow: 'Jedna osoba odpowiedzialna za całość',
     // Rendered as: line 1 + line 2, the serif word is emphasised.
     h1a: 'Tworzę strony, aplikacje',
-    h1b: 'i systemy,',
-    h1cPrefix: 'które wspierają',
-    h1cEm: 'rozwój Twojego biznesu.',
+    h1b: 'i systemy,',
+    // Split so the headline sets in four lines at every breakpoint. Moving
+    // "wzrost" into the prefix is what removes the one-word orphan line the
+    // 15ch headline box produced with "rozwój | Twojej firmy."
+    h1cPrefix: 'które wspierają wzrost',
+    h1cEm: 'Twojej firmy.',
     lead:
-      'Rezerwacje online, panel zamiast arkuszy, automatyzacja powtarzalnej roboty. Pracuję z firmami, które chcą obsłużyć więcej klientów bez zatrudniania kolejnej osoby do klikania.',
-    ctaPrimary: 'Umów 20-min audyt',
+      'Rezerwacje online, panel zamiast arkuszy, automatyzacja powtarzalnej roboty. Pracuję z firmami, które chcą obsłużyć więcej klientów bez zatrudniania kolejnej osoby do ręcznej pracy.',
+    ctaPrimary: 'Umów audyt (20 minut)',
     ctaSecondary: 'Zobacz realizacje',
+    objectLabel: 'Chromowany bolid Formuły 1 — przeciągnij, aby obrócić',
     projectsFromLabel: (minBudget: string) => `Strony od ${minBudget}`,
     stats: [
-      { value: '4', label: 'produkcyjne systemy' },
-      { value: '7', label: 'języków · Mint Apartments' },
-      { value: '24/7', label: 'booking & concierge AI' },
-      { value: '100%', label: 'audytowalne kroki AI' },
+      { value: '4', label: 'systemy, z których ktoś korzysta codziennie' },
+      { value: '8', label: 'języków na mintapartments.pl' },
+      { value: '9 314', label: 'testów automatycznych w Plumm' },
+      { value: '24/7', label: 'rezerwacje przyjmowane bez obsługi' },
     ],
   },
-  band: ['Strony firmowe', 'Landingi', 'Rezerwacje online', 'Panele i CRM', 'Integracje', 'Automatyzacje', 'Asystenci AI', 'SEO i AI search', 'RODO', 'Hosting w EU'],
+  band: [
+    'Strony firmowe',
+    'Landingi',
+    'Rezerwacje online',
+    'Panele i CRM',
+    'Integracje',
+    'Automatyzacje',
+    'Asystenci AI',
+  ],
   work: {
     eyebrow: 'Realizacje',
-    title: 'Cztery systemy, które działają na produkcji.',
-    lead: 'Każdy powstał pod konkretny sposób zarabiania, nie pod szablon. Wszystkie możesz otworzyć i sprawdzić sam.',
-    flagshipBadge: 'flagship',
+    title: 'Cztery systemy, z których ktoś korzysta codziennie.',
+    lead: 'Każdy powstał pod konkretny sposób zarabiania, nie pod szablon. Dwa są publiczne — możesz je otworzyć i sprawdzić teraz.',
+    flagshipBadge: 'projekt flagowy',
     openLabel: 'Otwórz',
     openDomainLabel: 'Otwórz',
     factEvidenceLabel: 'Źródło',
   },
   cases: {
     eyebrow: 'Case studies',
-    title: 'Problem, rozwiązanie, efekt.',
+    title: 'Problem, podejście, rezultat.',
     lead: 'Bez prezentacji sprzedażowej. Konkret, który da się sprawdzić na żywo.',
     labels: { pain: 'Problem', approach: 'Podejście', result: 'Rezultat' },
   },
   services: {
     eyebrow: 'Usługi',
-    title: 'Trzy rzeczy, które dla Ciebie zrobię.',
-    lead: 'Nie sprzedaję samej strony. Zostawiam system, który ma właściciela, mierzalny efekt i plan na dalszy rozwój.',
+    title: 'Trzy rzeczy, które dla Ciebie zbuduję.',
+    lead: 'Nie sprzedaję samej strony. Zostawiam system, który ma właściciela, mierzalny efekt i plan na dalszy rozwój.',
   },
   process: {
     eyebrow: 'Proces',
@@ -85,14 +101,14 @@ export const copyPl = {
     title: 'Jasne widełki. Bez niespodzianek.',
     lead: 'Widełki „od” — zakres precyzujemy po audycie. Minimalny próg chroni obie strony.',
     cta: 'Porozmawiajmy o zakresie',
-    note: 'Ceny netto. Retainer AI Ops rozliczany miesięcznie, bez okresu minimalnego po pierwszym kwartale.',
+    note: 'Ceny netto. Opieka AI Ops rozliczana miesięcznie — po pierwszym kwartale bez okresu minimalnego.',
   },
   testimonials: {
     eyebrow: 'Dowód',
-    title: 'Produkty, które możesz otworzyć teraz.',
+    title: 'Cztery produkty. Dwa otworzysz od razu.',
     open: (domain: string) => `Otwórz ${domain}`,
-    notPublic: 'wkrótce',
-    note: 'Nie publikuję cytatów od klientów bez ich zgody. Zamiast tego: cztery działające produkcyjnie systemy i liczby, które da się sprawdzić w kodzie.',
+    notPublic: 'projekt niepubliczny',
+    note: 'Nie publikuję cytatów bez zgody klienta. Wolę dowód, który sprawdzisz sam: działające produkty i liczby policzone wprost z kodu.',
   },
   faq: {
     eyebrow: 'FAQ',
@@ -101,32 +117,32 @@ export const copyPl = {
   contact: {
     eyebrow: 'Kontakt',
     title: 'Zacznijmy od 20 minut.',
-    lead: 'Rozmowa jest bezpłatna i bez zobowiązań. Jeśli Twój pomysł się nie spina finansowo, powiem to wprost.',
+    lead: 'Rozmowa jest bezpłatna i bez zobowiązań. Jeśli Twój pomysł się nie spina finansowo, powiem to wprost.',
     emailLabel: 'E-mail',
     calendarLabel: 'Kalendarz',
     calendarValue: 'Zarezerwuj termin',
     githubLabel: 'GitHub',
   },
   form: {
-    title: 'Brief kwalifikacyjny (3 min)',
-    subtitle: (responseTime: string) => `Wypełnij pola — dostanę wiadomość na skrzynkę. ${responseTime}. Bez spamu.`,
+    title: 'Opisz projekt (3 minuty)',
+    subtitle: (responseTime: string) => `Wypełnij pola — wiadomość trafia prosto na moją skrzynkę. ${responseTime}. Bez spamu.`,
     selectPlaceholder: 'Wybierz…',
     messagePlaceholder: 'Np. faktury w Excelu, rezerwacje z Booking…',
-    submitIdle: 'Wyślij brief',
+    submitIdle: 'Wyślij wiadomość',
     submitLoading: 'Wysyłanie…',
-    errorDefault: 'Błąd wysyłki. Spróbuj ponownie lub napisz bezpośrednio.',
+    errorDefault: 'Nie udało się wysłać. Spróbuj ponownie albo napisz bezpośrednio na mój adres.',
     consent:
-      'Wysyłając, zgadzasz się na kontakt w sprawie projektu. Dane trafiają wyłącznie do skonfigurowanego endpointu formularza (Web3Forms / Formspree).',
-    successTitle: 'Dzięki — brief wysłany',
-    successBody: (responseTime: string) => `${responseTime}. Sprawdź skrzynkę (także spam).`,
+      'Wysyłając formularz, zgadzasz się na kontakt w sprawie projektu. Formularz wysyła wiadomość na mój adres e-mail — dane nie trafiają nigdzie indziej.',
+    successTitle: 'Dzięki — wiadomość wysłana',
+    successBody: (responseTime: string) => `${responseTime}. Sprawdź skrzynkę, także folder ze spamem.`,
     successCalendarCta: 'Albo od razu wybierz termin w kalendarzu',
     successMailtoNote: (email: string) =>
-      `Twój klient poczty powinien się otworzyć z gotową wiadomością — wyślij ją, albo napisz bezpośrednio na ${email}.`,
+      `Twój klient poczty powinien się otworzyć z gotową wiadomością — wyślij ją albo napisz bezpośrednio na ${email}.`,
   },
   footer: {
     rights: (brand: string, year: number) => `© ${year} ${brand}. Wszystkie prawa zastrzeżone.`,
-    classic: 'Archiwum wersji — osiem edycji i gra',
+    classic: 'Laboratorium',
     classicHref: '/lab.html',
-    stack: 'React 19 · Vite · GSAP · Lenis · Tailwind v4',
+    stack: 'Strony, systemy i automatyzacje dla firm w Polsce. Projekt, wdrożenie i opieka z jednej ręki.',
   },
 } satisfies ChromeCopy

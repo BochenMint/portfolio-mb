@@ -22,9 +22,9 @@ import type { Locale } from './i18n/types'
 import { ThemeProvider } from './theme/ThemeProvider'
 
 const metaDescription: Record<Locale, string> = {
-  pl: 'Marcin Bochenek — inżynieria produktów cyfrowych. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Booking, FinTech, AI ops. Strony od 2 000 PLN, systemy od 8 000 PLN.',
-  en: 'Marcin Bochenek — digital product engineering. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Booking, FinTech, AI ops. Websites from PLN 2,000, systems from PLN 8,000.',
-  uk: 'Marcin Bochenek — інженерія цифрових продуктів. Mint Apartments, Plumm, iDrive Cars, Agentic OS. Booking, FinTech, AI ops. Сайти від 2 000 PLN, системи від 8 000 PLN.',
+  pl: 'Strony firmowe, rezerwacje online, panele operacyjne i automatyzacje z AI. Jedna osoba odpowiedzialna za projekt, wdrożenie i opiekę. Strony od 2 000 PLN, platformy od 25 000 PLN.',
+  en: 'Company websites, online booking, operations panels and AI automation. One person accountable for design, build and care. Websites from PLN 2,000, platforms from PLN 25,000.',
+  uk: 'Сайти для бізнесу, онлайн-бронювання, операційні панелі та автоматизації з AI. Одна людина, відповідальна за дизайн, впровадження й супровід. Сайти від 2 000 PLN, платформи від 25 000 PLN.',
 }
 
 /**

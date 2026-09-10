@@ -237,9 +237,9 @@ export const services = [
     from: 'od 2 000 PLN',
     deliverables: [
       'Do 5 podstron (np. start, oferta, o firmie, realizacje, kontakt) — projekt pod Twoją markę, nie szablon z marketplace',
-      'Formularz kontaktowy z powiadomieniami — kwalifikacja zapytań w pakiecie Conversion Build',
+      'Formularz kontaktowy z powiadomieniami — kwalifikacja zapytań w pakiecie Launch',
       'Szybkość na telefonie, podstawowe SEO on-page i pomiar zapytań po starcie',
-      'Ścieżka rozbudowy: landingi, rezerwacje na własnej stronie, pełny lejek — w Conversion Build',
+      'Ścieżka rozbudowy: landingi, rezerwacje na własnej stronie, pełny lejek — w pakiecie Launch',
     ],
   },
   {

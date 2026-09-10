@@ -80,14 +80,20 @@ function ProjectRow({ project, reverse }: { project: Project; reverse: boolean }
           </ul>
         </div>
 
-        {project.url !== '#' && (
-          <div data-reveal>
+        {/* A project with no public URL gets a stated reason, not a missing
+            button. Silence there reads as a broken link. */}
+        <div data-reveal>
+          {project.url !== '#' ? (
             <LinkButton href={project.url} target="_blank" rel="noopener noreferrer" size="sm">
               {c.work.openDomainLabel} {project.domain}
               <Arrow />
             </LinkButton>
-          </div>
-        )}
+          ) : (
+            <p className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase">
+              {c.testimonials.notPublic}
+            </p>
+          )}
+        </div>
       </div>
     </article>
   )

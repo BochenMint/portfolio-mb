@@ -113,9 +113,9 @@ export const enContent: ContentOverlay = {
       from: 'from PLN 2,000',
       deliverables: [
         'Up to 5 pages (e.g. home, offer, about, work, contact) — designed for your brand, not a marketplace template',
-        'Contact form with notifications — enquiry qualification in the Conversion Build package',
+        'Contact form with notifications — enquiry qualification in the Launch package',
         'Mobile speed, basic on-page SEO and enquiry measurement after launch',
-        'Expansion path: landings, booking on your own site, a full funnel — in Conversion Build',
+        'Expansion path: landings, booking on your own site, a full funnel — in the Launch package',
       ],
     },
     {

@@ -33,6 +33,8 @@ export type ChromeCopy = {
     lead: string
     ctaPrimary: string
     ctaSecondary: string
+    /** Accessible name for the draggable chrome car beside the headline. */
+    objectLabel: string
     projectsFromLabel: (minBudget: string) => string
     stats: { value: string; label: string }[]
   }

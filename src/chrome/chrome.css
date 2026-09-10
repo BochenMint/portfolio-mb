@@ -84,7 +84,11 @@
   --bg-2: #0c0c0f;
   --fg: #f7f8fa;
   --fg-2: #c9ccd1;
-  --muted: #75797f;
+  /* `--muted` carries real body copy (project descriptions, notes, the hero
+     stat labels), not just decoration. #75797f measured 4.35:1 against the
+     page — under the 4.5:1 floor for text this size. #8a8f96 clears it at
+     5.3:1 and reads as restraint rather than as a faded layer. */
+  --muted: #8a8f96;
   --line: rgba(247, 248, 250, 0.08);
   --line-2: rgba(247, 248, 250, 0.16);
   --hairline: rgba(255, 255, 255, 0.35);
@@ -126,7 +130,8 @@
   --bg-2: #f7f8fa;
   --fg: #0b0b0d;
   --fg-2: #4a4e55;
-  --muted: #7a7f87;
+  /* Same reason as the dark value: #7a7f87 was only 3.35:1 on #eef0f3. */
+  --muted: #61666e;
   --line: rgba(0, 0, 0, 0.12);
   --line-2: rgba(0, 0, 0, 0.18);
   --hairline: rgba(0, 0, 0, 0.16);
@@ -177,6 +182,30 @@
   ::selection {
     background: var(--selection-bg);
     color: var(--selection-fg);
+  }
+
+  /* One focus ring for the whole page. The chrome and ghost buttons set
+     `overflow: hidden` and paint their own gradients, so the UA outline was
+     either clipped or lost against the metal; a two-tone offset ring stays
+     visible on both the dark page and the bright button faces. */
+  :focus-visible {
+    outline: 2px solid var(--focus-border);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .chrome-btn:focus-visible,
+  .ghost-btn:focus-visible,
+  .glass-nav a:focus-visible,
+  .glass-nav button:focus-visible {
+    outline-color: var(--fg);
+    border-radius: 999px;
+  }
+  summary:focus-visible {
+    outline-offset: 6px;
+    border-radius: 12px;
+  }
+  .field:focus-visible {
+    outline: none;
   }
 
   summary::-webkit-details-marker {
@@ -269,16 +298,20 @@
   }
   :root[data-theme='light'] .chrome-text {
     /* Dark polished-chrome letters with a bright reflective band — legible
-       and premium on the bright studio background. */
+       and premium on the bright studio background.
+       The two lightest stops were #565962 and #7c8088: on a two-line heading
+       one whole line could land in that band at ~3.2:1, which is under the
+       3:1 floor once the page background lightens toward the top. Both are
+       darkened; the mirror band at 49.5% carries the chrome read. */
     background-image: linear-gradient(
       178deg,
       #16171a 0%,
       #2c2e33 22%,
-      #565962 40%,
+      #43464d 40%,
       #f7f8fa 49.5%,
       #101114 51%,
-      #4a4d54 66%,
-      #7c8088 84%,
+      #3c3f45 66%,
+      #5b5f67 84%,
       #16171a 100%
     );
   }
@@ -417,6 +450,9 @@
      read dark-on-light metal instead of light-on-dark. */
   :root[data-theme='light'] .brushed::after {
     filter: invert(0.92) contrast(1.05);
+    /* Held back so the scratch texture stays under the copy rather than
+       competing with it on the bright theme. */
+    opacity: 0.72;
     background-image:
       linear-gradient(
         180deg,
@@ -451,12 +487,15 @@
     mix-blend-mode: screen;
   }
   :root[data-theme='light'] .brushed::before {
+    /* Halved from 0.75/0.5. On the light theme the sheen washed the plate out
+       under the case-study copy, which is the one place on this page where
+       long body text sits directly on metal. */
     background: linear-gradient(
       100deg,
       transparent calc(var(--mx) - 40%),
-      rgba(255, 255, 255, 0.5) calc(var(--mx) - 6%),
-      rgba(255, 255, 255, 0.75) var(--mx),
-      rgba(255, 255, 255, 0.5) calc(var(--mx) + 6%),
+      rgba(255, 255, 255, 0.26) calc(var(--mx) - 6%),
+      rgba(255, 255, 255, 0.38) var(--mx),
+      rgba(255, 255, 255, 0.26) calc(var(--mx) + 6%),
       transparent calc(var(--mx) + 40%)
     );
     mix-blend-mode: overlay;
@@ -472,6 +511,16 @@
   }
   .brushed-band::after {
     background-size: auto, 1800px auto;
+    /* The band runs full bleed across the page, so its texture is the single
+       largest area of metal on the site. Held back so it reads as a seam
+       between two sections rather than as a second headline. */
+    opacity: 0.55;
+  }
+  .brushed-band::before {
+    opacity: 0.35;
+  }
+  :root[data-theme='light'] .brushed-band::after {
+    opacity: 0.45;
   }
 
   /* Engraved text on brushed steel. */
@@ -716,8 +765,17 @@
       transform: translateX(-50%);
     }
   }
+  /* Slower than a stock ticker on purpose. At 40s the band read as a widget;
+     at 90s it reads as a slow-turning plate and stops competing with the
+     headline above it. */
   .animate-marquee {
-    animation: marquee 40s linear infinite;
+    animation: marquee 90s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee {
+      animation: none;
+      transform: none;
+    }
   }
 
   .field {

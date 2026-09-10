@@ -72,7 +72,7 @@ export function Hero() {
             pixel of car at the broadside angles, and the width is the only
             lever left: the car uses barely a third of the host's height at any
             angle, so making the box taller would buy nothing. */}
-        <div className="relative mx-auto w-full max-w-[560px] lg:-mt-10 lg:mr-[-9%] lg:-ml-44 lg:w-auto lg:max-w-none">
+        <div className="relative mx-auto w-full max-w-[560px] lg:-mt-10 lg:mr-[-16%] lg:-ml-56 lg:w-auto lg:max-w-none">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-[-20%] rounded-full opacity-60 blur-3xl"

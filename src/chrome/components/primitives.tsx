@@ -100,8 +100,15 @@ export function SectionHeader({ eyebrow, title, lead, align = 'left', className 
       >
         {title}
       </h2>
+      {/* The lead is measured in `ch`, not `rem`: it steps up to 18px at md,
+          where a fixed 42rem box is ~78 characters — past a comfortable read. */}
       {lead && (
-        <p data-reveal className="mt-6 max-w-2xl text-base leading-relaxed text-silver-2 md:text-lg">
+        <p
+          data-reveal
+          className={`mt-6 max-w-[62ch] text-base leading-relaxed text-silver-2 md:text-lg ${
+            align === 'center' ? 'mx-auto' : ''
+          }`}
+        >
           {lead}
         </p>
       )}
