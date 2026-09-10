@@ -38,5 +38,15 @@
       "pl": "Warstwa pamięci AI z rozkładem pewności i liczbą wpisów w każdym obszarze.",
       "en": "The AI memory layer, showing confidence distribution and entries per scope."
     }
+  },
+  {
+    "file": "face-5.webp",
+    "light": null,
+    "id": "decision-center",
+    "label": { "pl": "Centrum decyzji", "en": "Decision centre" },
+    "caption": {
+      "pl": "Wszystko, co czeka na decyzję: pytania agentów, okazje od scouta i lejek sprzedaży.",
+      "en": "Everything awaiting a decision: agent questions, scout opportunities and the sales funnel."
+    }
   }
 ]
