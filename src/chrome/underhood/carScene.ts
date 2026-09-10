@@ -2,7 +2,12 @@
  * The chrome Formula 1 car — renderer, camera choreography and picking.
  *
  * Two modes share one scene builder:
- *   `hero`    — assembled, slow auto-yaw, pointer lean. No picking.
+ *   `hero`    — assembled and perfectly still at a front three-quarter view;
+ *               it only moves when the visitor grabs it, exactly like the
+ *               project cubes. No auto-yaw, no pointer lean, no picking, and
+ *               no animation frame at all unless a drag or its inertia is
+ *               running (Marcin 2026-09: "niech bolid sam z siebie się nie
+ *               rusza — ruch po chwyceniu kursorem, jak kubiki").
  *   `explode` — driven by scroll progress; parts separate along the axes they
  *               really come off on, and the visitor can hover or tap them.
  *
@@ -30,6 +35,11 @@ export type CarSceneHandle = {
   setTheme(t: 'light' | 'dark'): void
   /** Pause the RAF when the canvas is offscreen. */
   setVisible(v: boolean): void
+  /**
+   * Hero only: turn the car by a delta, in degrees. Arrow keys use this; the
+   * pointer drag runs inside the scene because it also needs inertia.
+   */
+  rotateBy(azDeg: number, elDeg: number): void
   resize(): void
   dispose(): void
   /** Only wired up behind `?debug=1`; used by the screenshot harness. */
@@ -41,6 +51,12 @@ export type CarSceneHandle = {
       opts?: { dist?: number; target?: [number, number, number] },
     ): void
     render(): void
+    /**
+     * Hero only: a PNG data URL of the default front view on a transparent
+     * background, used to bake `public/chrome/f1-hero.webp` from the scene
+     * itself so the poster and the first live frame are the same picture.
+     */
+    snapshot(w?: number, h?: number): string
     /** Derived inboard suspension pickups, for the screenshot harness. */
     anchors(): { corner: number; link: number; x: number; y: number; z: number }[]
     metrics(): {
@@ -67,9 +83,9 @@ const DEG = Math.PI / 180
  * however much that view is narrower than broadside. That is the whole point:
  * the distance is what stays put, so the car stops breathing as it turns.
  */
-const HERO_FILL: [number, number] = [0.99, 0.99]
+const HERO_FILL: [number, number] = [1.0, 0.98]
 const SECTION_FILL: [number, number] = [0.99, 0.98]
-/** ±3° of pointer lean, which the fit has to have already paid for. */
+/** ±3° of pointer lean in the section, which the fit has to have already paid for. */
 const LEAN = 3 * DEG
 /**
  * Amplitude of the section's parallax rock, in radians.
@@ -82,13 +98,75 @@ const LEAN = 3 * DEG
  */
 const SECTION_YAW = 6 * DEG
 /**
- * Amplitude of the hero's pendulum yaw, in radians. The hero used to spin a
- * full revolution, which forced the fixed-distance fit to pay for the
- * broadside view and shrank the three-quarter view by ~13%. A ±22° rock about
- * the three-quarter front keeps the car large at a constant distance (Marcin
- * 2026-09: "rozmiar stały podczas obrotu, więcej miejsca").
+ * The hero's resting view.
+ *
+ * Azimuth is measured off the car's right-hand side (+Z) and 90° is dead
+ * head-on, so 108° is 18° round toward the driver's left: the nose points at
+ * the visitor and drifts a little to the left of frame, which is what stops a
+ * true head-on shot from reading as a flat badge. Both front wing endplates,
+ * the halo and all four wheels stay in view; 9° of elevation is enough to see
+ * over the nose into the cockpit without turning it into a plan view.
  */
-const HERO_YAW = 22 * DEG
+const HERO_AZ = 108 * DEG
+const HERO_EL = 9 * DEG
+/**
+ * How far the drag may tilt. Below −4° the camera starts looking up at the
+ * floor pan, above 28° the car flattens into a top-down and the rear wing
+ * eats the cockpit.
+ */
+const HERO_EL_MIN = -4 * DEG
+const HERO_EL_MAX = 28 * DEG
+/**
+ * Width of the resistance band at each end of the tilt range, in radians.
+ *
+ * Inside `softClamp` this is an asymptote, not an overshoot: the last 5° take
+ * exponentially more travel to cross and the value never actually leaves
+ * [min, max]. That matters here in a way it would not in a cube — the camera
+ * distance is fitted once over the whole reachable range, so an elevation
+ * that escaped the range would also escape the frame it was fitted for.
+ */
+const HERO_EL_SOFT = 5 * DEG
+/**
+ * Yaw per pixel of horizontal drag, in degrees, at `DRAG_REF_WIDTH` of host.
+ *
+ * The reference is the hero host's own width at a 1440-wide viewport — 754 px,
+ * measured — not the viewport itself, because what has to stay constant is the
+ * rotation a drag across *the object* produces. Scaling by the host's real
+ * width gives that: the cube's `DRAG_SENSITIVITY` can be a bare constant
+ * because its stage is square and sized in ems, but this host runs from ~340 px
+ * on a phone to ~754 px at 1440.
+ */
+const DRAG_DEG_PER_PX = 0.6
+const DRAG_REF_WIDTH = 754
+/** Tilt is deliberately lazier than yaw: the useful range is only 32° wide. */
+const DRAG_EL_DEG_PER_PX = 0.3
+/**
+ * Time constant of the release decay, in milliseconds. The cube uses a
+ * per-frame friction factor (0.94), which ties its feel to the refresh rate;
+ * a time constant gives a 120 Hz screen the same 0.35 s glide as a 60 Hz one.
+ */
+const INERTIA_TAU_MS = 350
+/** Below this the glide is over, in degrees per second. */
+const INERTIA_FLOOR = 2
+/**
+ * Ceiling on the release velocity, in degrees per second.
+ *
+ * At τ = 0.35 s a fling coasts v × τ degrees, so an unbounded flick — and a
+ * trackpad can report a very fast one — would spin the car several times over
+ * and land it facing away. 720°/s buys at most about two thirds of a turn.
+ */
+const MAX_FLING_DEG_PER_S = 720
+/** Ignore a fling built from a sample older than this, in milliseconds. */
+const FLING_STALE_MS = 90
+/**
+ * Pixels of travel before a touch gesture commits to rotating.
+ *
+ * `touch-action: pan-y` on the host already hands vertical pans to the page,
+ * but it only decides once the browser sees a direction; until then both are
+ * live. Same threshold the cube's overlay leans on, made explicit here
+ * because this host also has to answer for a mostly-vertical swipe.
+ */
+const TOUCH_SLOP = 8
 /**
  * How long the ray may miss before the hover is given up, in milliseconds.
  *
@@ -113,6 +191,19 @@ const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 /** power2.inOut, matching the per-part easing. */
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
+/**
+ * Clamp that resists rather than stops.
+ *
+ * The last `soft` radians before each limit are compressed exponentially, so
+ * the drag goes stiff instead of hitting a wall and the value approaches the
+ * limit without ever crossing it. Slope is 1 where the band starts, so there
+ * is no crease at the hand-off.
+ */
+function softClamp(v: number, min: number, max: number, soft: number) {
+  if (v > max - soft) return max - soft * Math.exp(-(v - (max - soft)) / soft)
+  if (v < min + soft) return min + soft * Math.exp(-(min + soft - v) / soft)
+  return v
+}
 
 export async function createCarScene(
   canvas: HTMLCanvasElement,
@@ -226,6 +317,15 @@ export async function createCarScene(
   // ~50° is the three-quarter front the reference render uses.
   const cam = { az: 122 * DEG, el: 10 * DEG, dist: 14, tx: 0, ty: 0.5, tz: 0 }
   const want = { ...cam }
+  /**
+   * Where the hero's drag has put the car. `heroElRaw` is what the pointer has
+   * accumulated and `heroEl` is that run through `softClamp` — keeping the raw
+   * value means pushing past a limit and coming back retraces the same curve
+   * instead of jumping the moment the direction reverses.
+   */
+  let heroAz = HERO_AZ
+  let heroElRaw = HERO_EL
+  let heroEl = HERO_EL
   let leanAz = 0
   let leanEl = 0
   let leanAzTarget = 0
@@ -360,16 +460,17 @@ export async function createCarScene(
   /**
    * Every yaw the camera can reach in this mode, in radians.
    *
-   * The hero turns for ever, so its sweep is the whole circle and the fit is
-   * effectively a bounding cylinder. The section only rocks about its three-
-   * quarter front, so its sweep is that arc plus the pointer lean, and the fit
-   * is correspondingly tighter — a car that never shows its tail never has to
-   * pay for the view where it would.
+   * The hero can be dragged anywhere, so its sweep is the whole circle and the
+   * fit is effectively a bounding cylinder — that is the price of the promise
+   * that turning the car never changes its size. The section only rocks about
+   * its three-quarter front, so its sweep is that arc plus the pointer lean,
+   * and the fit is correspondingly tighter — a car that never shows its tail
+   * never has to pay for the view where it would.
    */
   const AZ_SWEEP: number[] = []
   if (mode === 'hero') {
-    const span = HERO_YAW + LEAN
-    for (let i = -8; i <= 8; i++) AZ_SWEEP.push(122 * DEG + (i / 8) * span)
+    const steps = 36
+    for (let i = 0; i < steps; i++) AZ_SWEEP.push((i / steps) * Math.PI * 2)
   } else {
     // Filled in per progress: the section's arc travels with the reveal, so
     // the fit at p = 0 must not pay for a yaw the camera only reaches later.
@@ -378,7 +479,7 @@ export async function createCarScene(
 
   /** Centre of the yaw arc for the current progress. */
   function baseAzimuth() {
-    if (mode === 'hero') return 122 * DEG
+    if (mode === 'hero') return heroAz
     return lerp(122 * DEG, 133 * DEG, easeInOut(clamp01(progress / 0.12)))
   }
 
@@ -408,11 +509,18 @@ export async function createCarScene(
     // sweep, or the screenshot harness could not measure what the page does.
     const pinned = overrideTarget !== null && overrideAz !== null
     const sweep = pinned ? [overrideAz as number] : sweepFor()
-    const leans = pinned ? [0] : [-LEAN, 0, LEAN]
+    // The hero has no pointer lean; what it has instead is a whole tilt range
+    // the drag can reach, and the fit has to pay for the extremes of it or the
+    // car would grow past the frame on the way up.
+    const elevations = pinned
+      ? [el]
+      : mode === 'hero'
+        ? [HERO_EL_MIN, HERO_EL, HERO_EL_MAX]
+        : [el - LEAN, el, el + LEAN]
     let worst = 0
     for (const az of sweep) {
-      for (const de of leans) {
-        const d = fitDistanceAt(az, el + de, fill[0], fill[1])
+      for (const e of elevations) {
+        const d = fitDistanceAt(az, e, fill[0], fill[1])
         if (d > worst) worst = d
       }
     }
@@ -422,7 +530,7 @@ export async function createCarScene(
   /** The elevation the camera is heading for; the fit is measured at it. */
   function baseElevation() {
     if (overrideEl !== null) return overrideEl
-    if (mode === 'hero') return 12 * DEG
+    if (mode === 'hero') return heroEl
     return lerp(6 * DEG, 20 * DEG, easeInOut(clamp01(progress / 0.12)))
   }
 
@@ -470,7 +578,9 @@ export async function createCarScene(
   function updateCameraTargets(time: number) {
     let az: number
     if (mode === 'hero') {
-      az = 122 * DEG + (reduced ? 0 : Math.sin(time * 0.22) * HERO_YAW)
+      // Wherever the drag left it, and nowhere else. No pendulum, no lean:
+      // the hero is a still object until someone picks it up.
+      az = heroAz
     } else {
       // Hold the car assembled for the first 12% while the camera lifts from a
       // low three-quarter front to a slightly higher one — the move that makes
@@ -517,6 +627,16 @@ export async function createCarScene(
   }
 
   /* ---- Sizing ------------------------------------------------------ */
+  /**
+   * False until the first frame has been drawn.
+   *
+   * The hero renders on demand, and both `resize` and `applyTheme` are among
+   * the things that demand one — but both also run during construction, before
+   * there is anything worth drawing. This keeps those first calls from
+   * rendering a half-built scene.
+   */
+  let booted = false
+
   function resize() {
     const r = host.getBoundingClientRect()
     const w = Math.max(1, Math.round(r.width))
@@ -527,13 +647,21 @@ export async function createCarScene(
     // The fit is per state, not per frame, and the frame just changed shape.
     refit()
     dirty = true
+    if (mode === 'hero' && booted) drawHero()
   }
 
   /* ---- Theme ------------------------------------------------------- */
   function applyTheme(theme: 'light' | 'dark') {
     car.setTheme(theme)
-    renderer.toneMappingExposure = theme === 'light' ? 0.95 : 1.05
+    // The hero used to be lit by a car that was always turning, so a highlight
+    // that blew out at one yaw was gone a second later. A still car keeps
+    // whatever it is given, and on the light page's near-white ground the
+    // top surfaces at 1.05 clipped into the background. 0.88 holds the
+    // silhouette; the dark page still wants the extra stop.
+    renderer.toneMappingExposure =
+      theme === 'light' ? (mode === 'hero' ? 0.88 : 0.95) : 1.05
     dirty = true
+    if (mode === 'hero' && booted) drawHero()
   }
   const readTheme = (): 'light' | 'dark' =>
     document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
@@ -568,8 +696,6 @@ export async function createCarScene(
     }
     return null
   }
-
-  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
   function toNdc(e: PointerEvent) {
     const r = canvas.getBoundingClientRect()
@@ -608,14 +734,14 @@ export async function createCarScene(
     if (id && selectCb) selectCb(id)
   }
 
+  // The hero deliberately gets none of this: no picking, and no pointer lean
+  // either — a car that leans toward the cursor is a car that moves on its
+  // own, which is exactly what the hero is not allowed to do any more.
   if (interactive) {
     canvas.addEventListener('pointermove', onPointerMove, { passive: true })
     canvas.addEventListener('pointerleave', onPointerLeave, { passive: true })
     canvas.addEventListener('pointerdown', onPointerDown, { passive: true })
     canvas.addEventListener('pointerup', onPointerUp, { passive: true })
-  } else if (fine) {
-    canvas.addEventListener('pointermove', onPointerMove, { passive: true })
-    canvas.addEventListener('pointerleave', onPointerLeave, { passive: true })
   }
 
   /* ---- Loop -------------------------------------------------------- */
@@ -630,6 +756,10 @@ export async function createCarScene(
     ([entry]) => {
       inView = entry?.isIntersecting ?? true
       dirty = true
+      // The hero has no loop to pick this up on the next frame, and a drawing
+      // buffer that has been off screen for a while is not guaranteed to still
+      // hold the last picture. One frame on the way back in is cheap.
+      if (mode === 'hero' && booted && inView) drawHero()
     },
     { threshold: 0 },
   )
@@ -637,6 +767,7 @@ export async function createCarScene(
 
   const onVisibility = () => {
     dirty = true
+    if (mode === 'hero' && booted && !document.hidden && inView) drawHero()
   }
   document.addEventListener('visibilitychange', onVisibility)
 
@@ -700,7 +831,201 @@ export async function createCarScene(
     // Keep animating while anything is still easing; settle otherwise.
     dirty = !idle
   }
-  raf = requestAnimationFrame(frame)
+  // The section scrubs with the scroll and needs a frame every frame. The hero
+  // is a still picture: it renders when the camera, the theme or the host size
+  // says it must, and only spins up a loop for the length of a drag.
+  if (mode === 'explode') raf = requestAnimationFrame(frame)
+
+  /* ---- Hero: still until grabbed ----------------------------------- */
+  /**
+   * Snap the camera onto the angles the drag has set and draw one frame.
+   *
+   * No easing anywhere: an eased hero would keep moving after the pointer
+   * stopped, and the inertia below is the only afterglow this object is
+   * allowed. `refit` is not called — the distance was fitted once, over every
+   * yaw and both tilt limits, so it is already right for wherever this lands.
+   */
+  function drawHero() {
+    if (disposed) return
+    updateCameraTargets(0)
+    cam.az = want.az
+    cam.el = want.el
+    cam.dist = want.dist
+    cam.tx = want.tx
+    cam.ty = want.ty
+    cam.tz = want.tz
+    placeCamera()
+    renderer.render(scene, camera)
+    dirty = false
+  }
+
+  /** Apply a yaw/tilt delta in radians and redraw. */
+  function heroTurn(dAz: number, dEl: number) {
+    heroAz += dAz
+    heroElRaw += dEl
+    // Cap the raw value a band beyond the limit: without this a long upward
+    // flick could bank 90° of slack that has to be dragged back down before
+    // anything moves again.
+    heroElRaw = Math.min(
+      HERO_EL_MAX + 2 * HERO_EL_SOFT,
+      Math.max(HERO_EL_MIN - 2 * HERO_EL_SOFT, heroElRaw),
+    )
+    heroEl = softClamp(heroElRaw, HERO_EL_MIN, HERO_EL_MAX, HERO_EL_SOFT)
+    drawHero()
+  }
+
+  let dragging = false
+  let dragCommitted = false
+  let dragPointer = -1
+  let dragStartX = 0
+  let dragStartY = 0
+  let lastX = 0
+  let lastY = 0
+  let lastMoveTs = 0
+  /** Release velocity, in radians per second. */
+  let velAz = 0
+  let velEl = 0
+  let inertiaRaf = 0
+  let inertiaTs = 0
+
+  /** Degrees of yaw per pixel for this host's real width. */
+  const degPerPx = () => {
+    const w = host.getBoundingClientRect().width || DRAG_REF_WIDTH
+    return (DRAG_REF_WIDTH / w) * DRAG_DEG_PER_PX
+  }
+
+  function stopInertia() {
+    if (inertiaRaf) cancelAnimationFrame(inertiaRaf)
+    inertiaRaf = 0
+    velAz = 0
+    velEl = 0
+  }
+
+  function inertiaFrame(ts: number) {
+    const dt = Math.min(64, Math.max(1, ts - inertiaTs))
+    inertiaTs = ts
+    const decay = Math.exp(-dt / INERTIA_TAU_MS)
+    heroTurn(velAz * (dt / 1000), velEl * (dt / 1000))
+    velAz *= decay
+    velEl *= decay
+    if (Math.abs(velAz) < INERTIA_FLOOR * DEG && Math.abs(velEl) < INERTIA_FLOOR * DEG) {
+      inertiaRaf = 0
+      velAz = 0
+      velEl = 0
+      return
+    }
+    inertiaRaf = requestAnimationFrame(inertiaFrame)
+  }
+
+  /**
+   * Capture is best-effort: a synthetic pointer (the screenshot harness, or a
+   * page script) has no id the browser knows about and throws here, which
+   * must not cost the drag.
+   */
+  function capture(id: number) {
+    try {
+      host.setPointerCapture(id)
+    } catch {
+      // Not a real pointer; the plain move/up listeners still see it.
+    }
+  }
+
+  function beginDrag() {
+    dragCommitted = true
+    host.style.cursor = 'grabbing'
+  }
+
+  const onHeroDown = (e: PointerEvent) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return
+    stopInertia()
+    dragging = true
+    dragPointer = e.pointerId
+    dragStartX = lastX = e.clientX
+    dragStartY = lastY = e.clientY
+    lastMoveTs = e.timeStamp
+    // A mouse or pen has nothing to negotiate with the page; a finger does,
+    // so it stays uncommitted until it has shown which way it is going.
+    dragCommitted = e.pointerType !== 'touch'
+    if (dragCommitted) {
+      capture(e.pointerId)
+      host.style.cursor = 'grabbing'
+    }
+  }
+
+  const onHeroMove = (e: PointerEvent) => {
+    if (!dragging || e.pointerId !== dragPointer) return
+    if (!dragCommitted) {
+      const dx = e.clientX - dragStartX
+      const dy = e.clientY - dragStartY
+      if (Math.abs(dx) < TOUCH_SLOP && Math.abs(dy) < TOUCH_SLOP) return
+      if (Math.abs(dy) > Math.abs(dx)) {
+        // Mostly vertical: this is the page's gesture, not ours. `touch-action:
+        // pan-y` lets the browser take it from here.
+        dragging = false
+        return
+      }
+      capture(e.pointerId)
+      beginDrag()
+      lastX = e.clientX
+      lastY = e.clientY
+      lastMoveTs = e.timeStamp
+      return
+    }
+    const dx = e.clientX - lastX
+    const dy = e.clientY - lastY
+    const dt = Math.max(1, e.timeStamp - lastMoveTs)
+    const k = degPerPx()
+    // Screen-right drags the near side of the car to the right, which reads as
+    // turning the car the way the hand went; the camera therefore goes the
+    // other way, hence the sign.
+    const dAz = -dx * k * DEG
+    // Dragging up brings the top of the car toward the viewer, which is the
+    // camera climbing — hence the sign here too.
+    const dEl = -dy * (k / DRAG_DEG_PER_PX) * DRAG_EL_DEG_PER_PX * DEG
+    lastX = e.clientX
+    lastY = e.clientY
+    lastMoveTs = e.timeStamp
+    velAz = (dAz / dt) * 1000
+    velEl = (dEl / dt) * 1000
+    heroTurn(dAz, dEl)
+  }
+
+  const onHeroUp = (e: PointerEvent) => {
+    if (!dragging || e.pointerId !== dragPointer) return
+    const wasCommitted = dragCommitted
+    dragging = false
+    dragCommitted = false
+    dragPointer = -1
+    host.style.cursor = ''
+    try {
+      host.releasePointerCapture(e.pointerId)
+    } catch {
+      // Already released, e.g. after a pointercancel.
+    }
+    // A fling only counts if the hand was still moving when it let go; a drag
+    // that paused before release should stop dead.
+    const stale = e.timeStamp - lastMoveTs > FLING_STALE_MS
+    if (!wasCommitted || reduced || stale || e.type === 'pointercancel') {
+      velAz = 0
+      velEl = 0
+      return
+    }
+    if (Math.abs(velAz) < INERTIA_FLOOR * DEG && Math.abs(velEl) < INERTIA_FLOOR * DEG) return
+    const cap = MAX_FLING_DEG_PER_S * DEG
+    velAz = Math.max(-cap, Math.min(cap, velAz))
+    velEl = Math.max(-cap, Math.min(cap, velEl))
+    inertiaTs = performance.now()
+    inertiaRaf = requestAnimationFrame(inertiaFrame)
+  }
+
+  if (mode === 'hero') {
+    host.style.touchAction = 'pan-y'
+    host.style.cursor = 'grab'
+    host.addEventListener('pointerdown', onHeroDown)
+    host.addEventListener('pointermove', onHeroMove)
+    host.addEventListener('pointerup', onHeroUp)
+    host.addEventListener('pointercancel', onHeroUp)
+  }
 
   /* ---- Context loss ------------------------------------------------ */
   let onContextLost: ((e: Event) => void) | null = null
@@ -738,12 +1063,23 @@ export async function createCarScene(
     setVisible(v) {
       visible = v
       dirty = true
+      if (mode === 'hero' && booted && v) drawHero()
+    },
+    rotateBy(azDeg, elDeg) {
+      if (mode !== 'hero') return
+      stopInertia()
+      heroTurn(azDeg * DEG, elDeg * DEG)
     },
     resize,
     dispose() {
       if (disposed) return
       disposed = true
       cancelAnimationFrame(raf)
+      if (inertiaRaf) cancelAnimationFrame(inertiaRaf)
+      host.removeEventListener('pointerdown', onHeroDown)
+      host.removeEventListener('pointermove', onHeroMove)
+      host.removeEventListener('pointerup', onHeroUp)
+      host.removeEventListener('pointercancel', onHeroUp)
       io.disconnect()
       themeMo.disconnect()
       document.removeEventListener('visibilitychange', onVisibility)
@@ -783,6 +1119,37 @@ export async function createCarScene(
       render() {
         placeCamera()
         renderer.render(scene, camera)
+      },
+      /**
+       * The renderer has no `preserveDrawingBuffer`, so the read has to happen
+       * in the same task as the draw, before the compositor gets a look in —
+       * which is why this renders and reads back inline instead of scheduling
+       * anything. Alpha is already premultiplied and the clear colour is
+       * transparent, so the PNG comes out cut out.
+       */
+      snapshot(w = 1920, h = 1200) {
+        const prevRatio = renderer.getPixelRatio()
+        const prevAz = heroAz
+        const prevElRaw = heroElRaw
+        const prevEl = heroEl
+        heroAz = HERO_AZ
+        heroElRaw = HERO_EL
+        heroEl = HERO_EL
+        renderer.setPixelRatio(1)
+        renderer.setSize(w, h, false)
+        camera.aspect = w / h
+        camera.updateProjectionMatrix()
+        refit()
+        drawHero()
+        const url = renderer.domElement.toDataURL('image/png')
+        heroAz = prevAz
+        heroElRaw = prevElRaw
+        heroEl = prevEl
+        renderer.setPixelRatio(prevRatio)
+        // Puts the renderer, the aspect and the fit back on the host's own
+        // size, and draws the frame the visitor is actually looking at.
+        resize()
+        return url
       },
       anchors() {
         return car.anchors.flatMap((links, corner) =>
@@ -836,6 +1203,7 @@ export async function createCarScene(
   cam.tz = want.tz
   placeCamera()
   renderer.render(scene, camera)
+  booted = true
 
   return handle
 }

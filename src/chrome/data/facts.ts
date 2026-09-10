@@ -66,18 +66,21 @@ export const headlineFactIds: Record<string, string[]> = {
  * the full `label` when a fact id has no entry here.
  */
 const shortLabelsById: Record<string, { pl: string; en: string }> = {
-  locales: { pl: 'języków', en: 'locales' },
+  locales: { pl: 'języków', en: 'languages' },
   'blog-posts': { pl: 'wpisów bloga', en: 'blog posts' },
   tests: { pl: 'plików testów', en: 'test files' },
-  'mdx-articles': { pl: 'artykułów MDX', en: 'MDX articles' },
+  // Labels a business owner reads, not the file format they happen to use:
+  // "MDX articles" and "XSD engines" were both implementation detail on a
+  // tile whose whole job is to be understood at a glance.
+  'mdx-articles': { pl: 'artykułów', en: 'articles' },
   brands: { pl: 'marek aut', en: 'car brands' },
   'published-tests': { pl: 'testów aut', en: 'car tests' },
-  agents: { pl: 'agentów', en: 'agents' },
+  agents: { pl: 'automatyzacji', en: 'automations' },
   'agent-tools': { pl: 'narzędzi', en: 'tools' },
-  'api-endpoints': { pl: 'endpointów API', en: 'API endpoints' },
-  'xsd-validated-formats': { pl: 'silników XSD', en: 'XSD engines' },
+  'api-endpoints': { pl: 'punktów integracji', en: 'integration points' },
+  'xsd-validated-formats': { pl: 'formatów deklaracji', en: 'filing formats' },
   'test-cases': { pl: 'scenariuszy testowych', en: 'test scenarios' },
-  'api-routes': { pl: 'endpointów API', en: 'API endpoints' },
+  'api-routes': { pl: 'punktów integracji', en: 'integration points' },
 }
 
 /** The curated headline facts for a project, in `headlineFactIds` order. */

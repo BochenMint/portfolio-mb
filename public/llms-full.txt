@@ -8,7 +8,9 @@ Marcin Bochenek is a freelance software engineer based in Poland. He is a single
 ## What he sells
 1. Company websites and conversion funnels — from a brochure site with a form (from 2 000 PLN) to a site that sells or qualifies (from 8 000 PLN) to a platform that takes bookings (from 25 000 PLN).
 2. Ops panels and integrations — one flow instead of Excel plus five logins (quoted after audit, typically 6–12 weeks).
-3. HITL AI — assistants that know the offer, with an allowed-action list, a full step audit, and escalation to a human (quoted after audit).
+3. HITL AI — assistants that know the offer, with an allowed-action list, a full step audit, and escalation to a human. Sold as ongoing care ("AI Ops") from 3 000 PLN / month; one-off build work is quoted after the audit.
+
+The 20-minute audit that opens every engagement is free; there is no separate paid audit tier. Scope and launch date are fixed at the end of it, before a contract is signed. Code, configuration and access transfer to the client once invoices are paid.
 
 ## Live proof only
 - Mint Apartments (https://mintapartments.pl): operator of 36 apartments in Gdańsk since 2017. Direct booking on the own site (Previo), guest assistant (WhatsApp, 7 languages), Tedee/Nuki locks, settlements into Plumm. Directional outcomes discussed on the audit: 8–15 hours/month less on guest mail/WhatsApp; guest pays 10–15% less than Booking/Airbnb.
