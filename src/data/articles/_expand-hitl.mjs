@@ -33,7 +33,7 @@ export const expandHitl = {
       section(
         'Minimalny kontrakt, zanim kupicie kolejny seat',
         p('Jedna osoba odpowiedzialna, nie „zespół innowacji”. Jeden proces, nie cała firma. Jeden tydzień pomiaru: ile draftów przyjęto, ile odrzucono, ile wyszło na zewnątrz. Jeśli nie umiecie tego spisać, zostańcie przy Team bez integracji. To tańsze niż pozory wdrożenia. 20-minutowy audyt może skończyć się „nie wpinajcie tego w formularz”. Wtedy nie sprzedaję Wam sprintu z poczucia winy.'),
-        p('Pakiet HITL w ofercie nie jest „ChatGPT w cenie strony”. Jest osobnym zakresem: limity, log, eskalacja, szkolenie. Wizytówka za 6 500–12 000 zł tego nie obejmuje. Jeśli ktoś wrzuca AI do strony firmowej w tej kwocie, ktoś kłamie na temat zakresu albo na temat odpowiedzialności. Wybierzcie, która wersja Was boli mniej — i nie wybierajcie mojej, jeśli chcecie widget za darmo.'),
+        p('Pakiet HITL w ofercie nie jest „ChatGPT w cenie strony”. Jest osobnym zakresem: limity, log, eskalacja, szkolenie — to pakiet AI Ops, od 3 000 zł/mies. Wizytówka Start (od 2 000 zł) tego nie obejmuje. Jeśli ktoś wrzuca AI do strony firmowej w tej kwocie, ktoś kłamie na temat zakresu albo na temat odpowiedzialności. Wybierzcie, która wersja Was boli mniej — i nie wybierajcie mojej, jeśli chcecie widget za darmo.'),
       ),
     ],
     en: [
@@ -67,7 +67,7 @@ export const expandHitl = {
       section(
         'A minimum contract before you buy another seat',
         p('One accountable person, not an “innovation team”. One process, not the whole firm. One week of measurement: how many drafts accepted, rejected, sent outside. If you cannot write that down, keep Team with no integrations. It is cheaper than the appearance of a rollout. A 20-minute audit may end as “do not wire this into the form”. I will not sell you a guilt sprint after that.'),
-        p('The HITL package in the offer is not “ChatGPT included with the website”. It is a separate scope: limits, log, escalation, training. A brochure at PLN 6,500–12,000 does not include it. If someone stuffs AI into a company site at that price, someone is lying about scope or about accountability. Pick which version hurts less — and do not pick mine if you want a free widget.'),
+        p('The HITL package in the offer is not “ChatGPT included with the website”. It is a separate scope: limits, log, escalation, training — that is the AI Ops package, from PLN 3,000/month. The Start brochure (from PLN 2,000) does not include it. If someone stuffs AI into a company site at that price, someone is lying about scope or about accountability. Pick which version hurts less — and do not pick mine if you want a free widget.'),
       ),
     ],
     uk: [
@@ -101,7 +101,7 @@ export const expandHitl = {
       section(
         'Мінімальний контракт, перш ніж купувати ще одне місце',
         p('Одна відповідальна людина, не «команда інновацій». Один процес, не вся фірма. Один тиждень виміру: скільки чернеток прийнято, відхилено, вийшло назовні. Якщо цього не вмієте списати, лишіться з Team без інтеграцій. Це дешевше за видимість впровадження. 20-хвилинний аудит може закінчитися «не врізайте це у форму». Тоді не продаю вам спринт із почуття провини.'),
-        p('Пакет HITL в оферті — не «ChatGPT у ціні сайту». Це окремий обсяг: ліміти, лог, ескалація, навчання. Візитівка за 6 500–12 000 злотих цього не покриває. Якщо хтось пхає ШІ в корпоративний сайт за цю суму, хтось бреше про обсяг або про відповідальність. Оберіть, яка версія болить менше — і не обирайте мою, якщо хочете віджет безкоштовно.'),
+        p('Пакет HITL в оферті — не «ChatGPT у ціні сайту». Це окремий обсяг: ліміти, лог, ескалація, навчання — це пакет AI Ops, від 3 000 злотих/міс. Візитівка Start (від 2 000 злотих) цього не покриває. Якщо хтось пхає ШІ в корпоративний сайт за цю суму, хтось бреше про обсяг або про відповідальність. Оберіть, яка версія болить менше — і не обирайте мою, якщо хочете віджет безкоштовно.'),
       ),
     ],
   },
@@ -136,7 +136,7 @@ export const expandHitl = {
       ),
       section(
         'Jak zaczynam, gdy automatyzacja ma prawo wejść na produkcję',
-        p('Jedna akcja. Jeden tydzień. Jeden log. Potem decyzja: rozszerzyć allow-listę, zostawić, wyłączyć. Pakiet HITL w cenniku nie jest „AI w tle strony”. Jest pracą inżynierską: integracja, limity, szkolenie, pomiar. Jeśli budżet to wizytówka 6 500–12 000 zł, najpierw strona i formularz, które działają. Automatyzacja na zepsutym follow-upie tylko przyspiesza wstyd.'),
+        p('Jedna akcja. Jeden tydzień. Jeden log. Potem decyzja: rozszerzyć allow-listę, zostawić, wyłączyć. Pakiet HITL w cenniku nie jest „AI w tle strony”. Jest pracą inżynierską: integracja, limity, szkolenie, pomiar — pakiet AI Ops, od 3 000 zł/mies. Jeśli budżet to wizytówka Start (od 2 000 zł), najpierw strona i formularz, które działają. Automatyzacja na zepsutym follow-upie tylko przyspiesza wstyd.'),
         p('20 minut audytu może skończyć się „nie automatyzujcie jeszcze”. To jest sukces, jeśli stop oszczędza wyciek. Jeśli idziemy dalej, spisujemy, która osoba klika w niedzielę, gdy model się zatnie. Bez tej osoby zostajecie z Excelami i czatem. Wtedy uczciwiej nie zaczynać.'),
       ),
     ],
@@ -170,7 +170,7 @@ export const expandHitl = {
       ),
       section(
         'How I start when automation may enter production',
-        p('One action. One week. One log. Then a decision: extend the allow-list, keep it, switch it off. The HITL package in the price list is not “AI behind the website”. It is engineering: integration, limits, training, measurement. If the budget is a brochure at PLN 6,500–12,000, first a site and a form that work. Automation on a broken follow-up only accelerates embarrassment.'),
+        p('One action. One week. One log. Then a decision: extend the allow-list, keep it, switch it off. The HITL package in the price list is not “AI behind the website”. It is engineering: integration, limits, training, measurement — the AI Ops package, from PLN 3,000/month. If the budget is a Start brochure (from PLN 2,000), first a site and a form that work. Automation on a broken follow-up only accelerates embarrassment.'),
         p('A 20-minute audit may end as “do not automate yet”. That is a win if the stop prevents a leak. If we go on, we write down who clicks on Sunday when the model stalls. Without that person you are left with Excel and chat. Then it is more honest not to start.'),
       ),
     ],
@@ -204,7 +204,7 @@ export const expandHitl = {
       ),
       section(
         'Як починаю, коли автоматизація має право вийти в продакшен',
-        p('Одна дія. Один тиждень. Один лог. Потім рішення: розширити allow-list, лишити, вимкнути. Пакет HITL у прайсі — не «ШІ в тлі сайту». Це інженерна робота: інтеграція, ліміти, навчання, вимір. Якщо бюджет — візитівка 6 500–12 000, спочатку сайт і форма, які працюють. Автоматизація на зламаному follow-up лише прискорює сором.'),
+        p('Одна дія. Один тиждень. Один лог. Потім рішення: розширити allow-list, лишити, вимкнути. Пакет HITL у прайсі — не «ШІ в тлі сайту». Це інженерна робота: інтеграція, ліміти, навчання, вимір — пакет AI Ops, від 3 000 злотих/міс. Якщо бюджет — візитівка Start (від 2 000), спочатку сайт і форма, які працюють. Автоматизація на зламаному follow-up лише прискорює сором.'),
         p('20 хвилин аудиту можуть закінчитися «ще не автоматизуйте». Це успіх, якщо стоп рятує витік. Якщо йдемо далі, записуємо, хто клікає в неділю, коли модель застрягне. Без цієї людини лишаєтесь з Excel і чатом. Тоді чесніше не починати.'),
       ),
     ],

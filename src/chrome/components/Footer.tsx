@@ -1,7 +1,8 @@
 import { useLocale } from '../i18n/context'
+import { localeHome } from '../i18n/routes'
 
 export function Footer() {
-  const { t: c, content } = useLocale()
+  const { t: c, content, locale } = useLocale()
   const site = content.site
 
   return (
@@ -10,7 +11,7 @@ export function Footer() {
         <div className="hairline" />
 
         <div className="flex flex-col gap-8 py-10 md:flex-row md:items-center md:justify-between">
-          <a href="#" className="flex items-center gap-3" aria-label={site.brand}>
+          <a href={localeHome[locale]} className="flex items-center gap-3" aria-label={site.brand}>
             <span aria-hidden className="chrome-text font-display text-lg font-bold tracking-[-0.04em]">
               {c.mark}
             </span>

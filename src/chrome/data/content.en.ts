@@ -7,17 +7,16 @@ import type { PricingTier, Project, Service } from './content'
 
 export const siteEn = {
   role: 'PropTech · FinTech · AI ops',
-  icpBadge: 'Projects from PLN 25,000 · decision-maker in the company',
+  icpBadge: 'Websites from PLN 2,000 · systems from PLN 8,000',
   headline: ['4 production systems.', 'One standard of quality.'],
   subhead:
     'I build websites, booking platforms and AI-driven automation — for business owners who want less manual work and more margin. Astro, React, API integrations, auditable agents.',
-  proofLine: '4 production products · hospitality · accounting · mobility · AI ops',
   ctaPrimary: 'Book a 20-min audit (free)',
   ctaSecondary: 'See case studies',
   ctaSticky: 'Process audit · 20 min',
   location: 'Poland · remote and on-site',
   responseTime: 'Response within 1 business day',
-  minBudget: 'PLN 25,000',
+  minBudget: 'PLN 2,000',
 }
 
 export const servicesEn: Service[] = [
@@ -89,7 +88,7 @@ export const projectsEn: Project[] = [
   {
     id: 'idrive',
     title: 'iDrive Cars',
-    domain: 'idrivecars',
+    domain: 'idrivecars.pl',
     url: '#',
     tagline: 'Automotive journalism · car tests · photo galleries',
     description:
@@ -106,7 +105,7 @@ export const projectsEn: Project[] = [
   {
     id: 'agentic',
     title: 'Agentic OS',
-    domain: 'agentic OS',
+    domain: 'agentic-os',
     url: '#',
     tagline: 'AI agent orchestration',
     description:
@@ -124,14 +123,25 @@ export const projectsEn: Project[] = [
 
 export const pricingEn: PricingTier[] = [
   {
+    name: 'Start',
+    from: 'from PLN 2,000',
+    description: 'A brochure website or landing page that collects enquiries',
+    includes: [
+      'Up to 5 pages built around your brand',
+      'Contact form with notifications',
+      'Mobile speed + on-page SEO',
+      'A clear upgrade path to the Launch package',
+    ],
+  },
+  {
     name: 'Launch',
-    from: 'from PLN 25,000',
-    description: 'Landing page + integrations + basic automation',
-    includes: ['Premium UX/UI', 'Technical SEO', 'Form + CRM', '2 iterations'],
+    from: 'from PLN 8,000',
+    description: 'Company website + conversion funnel + integrations',
+    includes: ['Form → CRM', 'Calendar / booking', 'Technical SEO', 'Conversion measurement'],
   },
   {
     name: 'Platform',
-    from: 'from PLN 55,000',
+    from: 'from PLN 25,000',
     description: 'Booking, admin panel, multilingual, API',
     includes: [
       'Everything in Launch',
@@ -143,7 +153,7 @@ export const pricingEn: PricingTier[] = [
   },
   {
     name: 'AI Ops',
-    from: 'from PLN 15,000 / mo',
+    from: 'from PLN 3,000 / mo',
     description: 'Agents, automation, maintenance and iteration',
     includes: ['Agentic workflows', 'Concierge / support AI', 'SLA response', 'AI cost report'],
   },
@@ -151,12 +161,12 @@ export const pricingEn: PricingTier[] = [
 
 export const faqEn = [
   {
-    q: 'Why a PLN 25,000 minimum?',
-    a: "Because I build production products — with tests, SEO and maintenance — not a \"site by tomorrow\". It's a filter that protects both sides.",
+    q: 'Do you also build simple company websites?',
+    a: "Yes. The Start package (from PLN 2,000) is a solid website or landing page with a form, mobile speed and basic SEO — no systems underneath, but built so it can be extended. A company site with a conversion funnel and integrations starts at the Launch package (from PLN 8,000).",
   },
   {
     q: 'Do you build plain brochure sites?',
-    a: 'Yes, if they serve a larger goal (booking, automation). A landing page with no business KPI is only available in the Launch package.',
+    a: "Yes — as the Start package. If the goal from day one is bookings or automation, I design the brochure site as the first stage of that path, so it never has to be rebuilt.",
   },
   {
     q: 'How does working with AI look in practice?',
@@ -194,7 +204,7 @@ export const qualificationFieldsEn = [
     label: 'Approximate budget',
     type: 'select',
     required: true,
-    options: ['PLN 25–50k', 'PLN 50–100k', 'PLN 100k+', 'AI Ops retainer'],
+    options: ['PLN 2–8k', 'PLN 8–25k', 'PLN 25k+', 'AI Ops retainer'],
   },
   {
     id: 'timeline',

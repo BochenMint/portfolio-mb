@@ -52,7 +52,7 @@ export default {
           'Nie obiecuję Core Web Vitals w polu, gdy nie ma jeszcze ruchu — lab to hipoteza.',
           'Nie sprzedaję comiesięcznego „optymalizujemy wtyczki” na stacku, którego nie stawiam.',
         ]),
-        p('W [stronie firmowej B2B](/artykuly/strona-firmowa-b2b/) szybkość jest w zakresie, bo telefon jest miejscem decyzji. W Conversion Build dochodzi pomiar ścieżki: wolny krok płatności zabija lejek mocniej niż trzy punkty Lighthouse.'),
+        p('W [stronie firmowej B2B](/artykuly/strona-firmowa-b2b/) szybkość jest w zakresie, bo telefon jest miejscem decyzji. W pakiecie Launch dochodzi pomiar ścieżki: wolny krok płatności zabija lejek mocniej niż trzy punkty Lighthouse.'),
       ),
     ],
     faqs: [
@@ -102,7 +102,7 @@ export default {
           'I do not promise field CWV when there is no traffic yet — lab is a hypothesis.',
           'I do not sell a monthly “we optimise plugins” on a stack I do not ship.',
         ]),
-        p('On a [B2B company website](/artykuly/strona-firmowa-b2b/) speed is in scope because the phone is where the decision happens. In Conversion Build, path measurement joins: a slow payment step kills the funnel harder than three Lighthouse points.'),
+        p('On a [B2B company website](/artykuly/strona-firmowa-b2b/) speed is in scope because the phone is where the decision happens. In the Launch package, path measurement joins: a slow payment step kills the funnel harder than three Lighthouse points.'),
       ),
     ],
     faqs: [
@@ -152,7 +152,7 @@ export default {
           'Не обіцяю Core Web Vitals у полі, коли ще немає трафіку — лабораторія це гіпотеза.',
           'Не продаю щомісячне «оптимізуємо плагіни» на стеку, якого не ставлю.',
         ]),
-        p('У [корпоративному сайті B2B](/artykuly/strona-firmowa-b2b/) швидкість в обсязі, бо телефон — місце рішення. У Conversion Build додається вимір шляху: повільний крок оплати вбиває воронку сильніше, ніж три пункти Lighthouse.'),
+        p('У [корпоративному сайті B2B](/artykuly/strona-firmowa-b2b/) швидкість в обсязі, бо телефон — місце рішення. У пакеті Launch додається вимір шляху: повільний крок оплати вбиває воронку сильніше, ніж три пункти Lighthouse.'),
       ),
     ],
     faqs: [

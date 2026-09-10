@@ -53,7 +53,7 @@ export default {
       ),
       section(
         'Koszt i uczciwość oferty',
-        p('To wycena po audycie, zwykle przy Ops albo module Conversion Build (np. asystent gości). Nie ma pozycji „AI 1999 zł”. Jeśli proces nie jest powtarzalny, mówię nie. Jeśli jest — 20 minut wystarczy, żeby powiedzieć, czy allow-list da się w ogóle napisać.'),
+        p('To wycena po audycie, zwykle w pakiecie AI Ops (od 3 000 zł/mies.) albo jako moduł Launch (np. asystent gości). Nie ma pozycji „AI 1999 zł”. Jeśli proces nie jest powtarzalny, mówię nie. Jeśli jest — 20 minut wystarczy, żeby powiedzieć, czy allow-list da się w ogóle napisać.'),
       ),
     ],
     faqs: [
@@ -104,7 +104,7 @@ export default {
       ),
       section(
         'Cost and honesty of the offer',
-        p('Priced after the audit, usually inside Ops or a Conversion Build module (e.g. a guest assistant). There is no “AI for PLN 1,999” line. If the process is not repetitive, I say no. If it is — twenty minutes is enough to say whether an allow-list can even be written.'),
+        p('Priced after the audit, usually inside the AI Ops package (from PLN 3,000/month) or as a Launch module (e.g. a guest assistant). There is no “AI for PLN 1,999” line. If the process is not repetitive, I say no. If it is — twenty minutes is enough to say whether an allow-list can even be written.'),
       ),
     ],
     faqs: [
@@ -155,7 +155,7 @@ export default {
       ),
       section(
         'Вартість і чесність оферти',
-        p('Оцінка після аудиту, зазвичай у Ops або модулі Conversion Build (наприклад асистент гостей). Немає позиції «ШІ 1999 злотих». Якщо процес не повторюваний — кажу ні. Якщо так — 20 хвилин досить, щоб сказати, чи allow-list узагалі можна написати.'),
+        p('Оцінка після аудиту, зазвичай у пакеті AI Ops (від 3 000 злотих/міс.) або як модуль Launch (наприклад асистент гостей). Немає позиції «ШІ 1999 злотих». Якщо процес не повторюваний — кажу ні. Якщо так — 20 хвилин досить, щоб сказати, чи allow-list узагалі можна написати.'),
       ),
     ],
     faqs: [

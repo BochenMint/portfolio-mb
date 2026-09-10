@@ -108,7 +108,7 @@ export const site = {
   aboutLead:
     'Jestem builderem: najpierw liczę godziny i PLN, potem kod. Strony, panele i automatyzacje — mierzalne efekty po wdrożeniu, nie obietnice z prezentacji.',
   aboutAside:
-    'Polska, zdalnie i on-site w Trójmieście. Odpowiadam w jeden dzień roboczy. Mała firma dostaje sensowną stronę firmową od 6 500 PLN (do 5 podstron, bez szablonu z marketplace); lejki konwersji i systemy operacyjne — od 25 000 PLN, gdy ROI ma sens po obu stronach.',
+    'Polska, zdalnie i on-site w Trójmieście. Odpowiadam w jeden dzień roboczy. Mała firma dostaje sensowną stronę wizytówkę od 2 000 PLN (do 5 podstron, bez szablonu z marketplace); strona firmowa z lejkiem konwersji i integracjami — od 8 000 PLN; platformy rezerwacyjne, panele i API — od 25 000 PLN, gdy ROI ma sens po obu stronach.',
   ctaPrimary: 'Umów 20-min audyt',
   ctaSecondary: 'Zobacz realizacje',
   ctaCalendly: 'Umów 20-min audyt',
@@ -125,8 +125,9 @@ export const site = {
   gameUrl: import.meta.env.VITE_GAME_URL || 'https://gra.marcinbochenek.com',
   location: 'Polska · zdalnie',
   responseTime: 'Odpowiedź w 1 dzień roboczy',
-  icpBadge: 'Strony firmowe od 6 500 PLN · lejki konwersji od 25 000 PLN',
-  icpBadgeShort: 'Od 6 500 PLN · strona firmowa',
+  icpBadge: 'Strony od 2 000 PLN · systemy od 8 000 PLN',
+  icpBadgeShort: 'Strony od 2 000 PLN · systemy od 8 000 PLN',
+  minBudget: '2 000 PLN',
 }
 
 export const navLinks = [
@@ -233,7 +234,7 @@ export const services = [
     tags: ['Konwersja', 'Szybka strona', 'Widoczność w Google'],
     outcome: 'Od wizytówki po stronę, która sprzedaje',
     timeline: '2–6 tygodni',
-    from: 'od 6 500 PLN',
+    from: 'od 2 000 PLN',
     deliverables: [
       'Do 5 podstron (np. start, oferta, o firmie, realizacje, kontakt) — projekt pod Twoją markę, nie szablon z marketplace',
       'Formularz kontaktowy z powiadomieniami — kwalifikacja zapytań w pakiecie Conversion Build',
@@ -278,7 +279,7 @@ export const services = [
 export const pricingPackages: PricingPackage[] = [
   {
     name: 'Audit Sprint',
-    range: '2 500–6 000 PLN',
+    range: 'od 1 500 PLN',
     qualifier: 'Gdy potrzebujesz decyzji, nie jeszcze jednego briefu.',
     bestFor:
       'Właściciel firmy ma stronę, proces lub pomysł na AI, ale nie wie, gdzie realnie uciekają pieniądze i czas.',
@@ -291,49 +292,63 @@ export const pricingPackages: PricingPackage[] = [
     proof: 'Kwota sprintu może zostać zaliczona na wdrożenie, jeśli obie strony widzą sens po audycie.',
   },
   {
-    name: 'Strona firmowa',
-    range: '6 500–12 000 PLN',
+    name: 'Start',
+    range: 'od 2 000 PLN',
     qualifier:
-      'Do 5 podstron, formularz, podstawowe SEO — custom pod Twoją markę (Astro/Next), nie szablon za 2–4 tys. z AI ani WordPressa z ThemeForest.',
+      'Strona wizytówka lub landing do 5 podstron — custom pod Twoją markę, nie szablon z marketplace.',
     bestFor:
-      'Mała firma, freelancer lub lokalny biznes: potrzebujesz profesjonalnej strony, formularza kontaktowego i jasnego CTA — bez budżetu na pełny lejek konwersji ani rezerwacji na własnej domenie.',
+      'Mała firma, freelancer lub lokalny biznes: potrzebujesz profesjonalnej strony, formularza kontaktowego i jasnego CTA — na start, bez integracji ani lejka konwersji.',
     deliverables: [
       'do 5 podstron: start, oferta, o firmie, realizacje/kontakt (zakres ustalamy na audycie)',
       'formularz kontaktowy z powiadomieniami i podstawową ochroną przed spamem',
-      'projekt pod markę, responsywność, mapa i godziny — to, co klient musi zobaczyć',
-      'szybkość na telefonie (Core Web Vitals), SEO on-page i pomiar zapytań po starcie',
+      'szybkość na telefonie (Core Web Vitals) i SEO on-page',
+      'projekt tak, żeby dało się go rozbudować bez przepisywania od zera',
     ],
     proof:
-      'Poza zakresem: copywriting od zera, blog, wielojęzyczność, integracje CRM, landingi kampanii — to dopłaty lub pakiet Conversion Build. Gdy zapytań przybywa, rozszerzamy o kwalifikację i rezerwacje na własnej stronie.',
+      'Poza zakresem: copywriting od zera, blog, integracje z CRM, kalendarzem czy rezerwacjami — to pakiet Launch. Gdy zapytań przybywa, rozszerzamy o lejek i integracje.',
   },
   {
-    name: 'Conversion Build',
-    range: '25 000–60 000 PLN',
-    qualifier: 'Gdy strona ma sprzedawać lub rezerwować — nie tylko informować.',
+    name: 'Launch',
+    range: 'od 8 000 PLN',
+    qualifier: 'Gdy strona ma sprzedawać i mierzyć wynik — nie tylko informować.',
     bestFor:
-      'Firma premium potrzebuje nowej strony, rezerwacji na własnej domenie, formularzy kwalifikujących lub ścieżki sprzedaży z pomiarem wyników.',
+      'Firma potrzebuje strony firmowej z lejkiem konwersji: formularz spływający do CRM, kalendarz, techniczne SEO i pomiar zapytań od kliknięcia do leada.',
     deliverables: [
-      'strategia komunikacji i struktura strony',
-      'projekt i wdrożenie strony pod sprzedaż',
-      'formularz zapytań, wezwania do działania, widoczność w Google',
+      'strategia komunikacji i struktura strony pod sprzedaż',
+      'integracje: formularz → CRM, kalendarz/booking, techniczne SEO',
+      'wezwania do działania i ścieżka kwalifikacji zapytań',
       'pomiar konwersji i poprawki po starcie',
     ],
     proof: 'Zakres zamykamy na mierzalnym celu: lead, rezerwacja, zapytanie albo krótsza obsługa.',
-    featured: true,
   },
   {
-    name: 'Ops System',
-    range: '60 000–180 000+ PLN',
+    name: 'Platforma',
+    range: 'od 25 000 PLN',
     qualifier: 'Dla firm, w których problemem jest operacja, nie tylko marketing.',
     bestFor:
-      'Masz sprzedaż, zespół i powtarzalny proces: faktury, rezerwacje, raporty, obsługa klienta, wewnętrzne zadania.',
+      'Masz sprzedaż, zespół i powtarzalny proces: rezerwacje, panel operacyjny, API, wielojęzyczność, testy automatyczne.',
     deliverables: [
-      'panel operacyjny lub aplikacja dla zespołu',
-      'połączenia z płatnościami, kalendarzami, e-fakturami i systemami rezerwacji',
-      'automatyzacja z ograniczeniami, zapisem kroków i eskalacją do człowieka',
+      'booking / panel operacyjny lub aplikacja dla zespołu',
+      'API i połączenia z płatnościami, kalendarzami, e-fakturami i systemami rezerwacji',
+      'wielojęzyczność (PL/EN/UA i więcej) oraz testy automatyczne przed startem',
       'wersja testowa, szkolenie zespołu i pomiar po wdrożeniu',
     ],
     proof: 'Przed kodem ustalamy metryki „przed/po”, bo przy tym budżecie ładny interfejs bez wyniku to za mało.',
+    featured: true,
+  },
+  {
+    name: 'AI Ops',
+    range: 'od 3 000 PLN / mies.',
+    qualifier: 'Agenci, automatyzacje, utrzymanie i rozwój — z kontrolą człowieka.',
+    bestFor:
+      'Masz już stronę lub system i chcesz agentów/automatyzacje działające na produkcji, plus kogoś, kto to utrzymuje i rozwija miesiąc po miesiącu.',
+    deliverables: [
+      'asystent/agent AI z jasno określonym zakresem dozwolonych akcji',
+      'zapis każdego kroku i eskalacja do człowieka przy niskiej pewności',
+      'utrzymanie, monitoring i poprawki po starcie',
+      'rozwój funkcji w kolejnych miesiącach na podstawie danych z produkcji',
+    ],
+    proof: 'Rozliczenie miesięczne — wypowiedzenie w dowolnym momencie, bez umowy na czas określony.',
   },
 ]
 
@@ -488,7 +503,7 @@ export const faq: FaqItem[] = [
   {
     question: 'Ile to kosztuje i od czego zależy cena?',
     answer:
-      'Strona firmowa (do 5 podstron, formularz, podstawowe SEO): 6 500–12 000 PLN netto. Na rynku szablon WordPress/AI to często 2–5 tys. — tu dostajesz custom pod markę i szybki stack. Lejek sprzedaży, rezerwacje na własnej stronie lub panel: zwykle 25 000–60 000 PLN — gdy zwrot ma sens (odzysk 8+ h/mies., prowizje portali, koszt ręcznej obsługi). Systemy operacyjne od 60 000 PLN. Po audycie dostajesz widełki i jedną rekomendację, nie trzy wyceny „na wyczucie”.',
+      'Strona wizytówka lub landing (do 5 podstron, formularz, podstawowe SEO): od 2 000 PLN — pakiet Start. Strona firmowa z lejkiem konwersji i integracjami (formularz → CRM, kalendarz, techniczne SEO, pomiar): od 8 000 PLN — pakiet Launch. Platforma: rezerwacje na własnej stronie, panel operacyjny, API, wielojęzyczność: od 25 000 PLN — gdy zwrot ma sens (odzysk godzin obsługi, prowizje portali, koszt ręcznej pracy). AI Ops — agenci i automatyzacje z utrzymaniem: od 3 000 PLN/mies. Po audycie dostajesz widełki i jedną rekomendację, nie trzy wyceny „na wyczucie”.',
   },
   {
     question: 'Czy podpisujemy NDA i kto jest właścicielem kodu?',
@@ -604,10 +619,11 @@ export const contactFields: ContactField[] = [
     type: 'select',
     required: true,
     options: [
-      '2 500–6 000 PLN — audyt',
-      '6 500–12 000 PLN — strona firmowa',
-      '25 000–60 000 PLN — konwersja / rezerwacje własne',
-      '60 000–180 000+ PLN — system / integracje',
+      'od 1 500 PLN — audyt',
+      'od 2 000 PLN — strona / landing (Start)',
+      'od 8 000 PLN — strona + lejek (Launch)',
+      'od 25 000 PLN — platforma / panel / API',
+      'od 3 000 PLN / mies. — AI Ops',
       'Nie wiem — chcę policzyć ROI',
     ],
   },
@@ -734,10 +750,11 @@ export const intakeSteps: { id: string; title: string; hint?: string; fields: In
         type: 'select',
         required: true,
         options: [
-          '2 500–6 000 PLN — audyt',
-          '6 500–12 000 PLN — strona firmowa',
-          '25 000–60 000 PLN — konwersja / rezerwacje własne',
-          '60 000–180 000+ PLN — system / integracje',
+          'od 1 500 PLN — audyt',
+          'od 2 000 PLN — strona / landing (Start)',
+          'od 8 000 PLN — strona + lejek (Launch)',
+          'od 25 000 PLN — platforma / panel / API',
+          'od 3 000 PLN / mies. — AI Ops',
           'Nie wiem — chcę policzyć ROI',
         ],
       },

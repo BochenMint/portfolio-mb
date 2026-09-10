@@ -7,17 +7,16 @@ import type { PricingTier, Project, Service } from './content'
 
 export const siteUa = {
   role: 'PropTech · FinTech · AI ops',
-  icpBadge: 'Проєкти від 25 000 PLN · особа, яка ухвалює рішення в компанії',
+  icpBadge: 'Сайти від 2 000 PLN · системи від 8 000 PLN',
   headline: ['4 продакшен-системи.', 'Один стандарт якості.'],
   subhead:
     'Будую сайти, платформи бронювання та автоматизації з AI — для власників компаній, які хочуть менше ручної праці і більше маржі. Astro, React, інтеграції API, агенти з повним аудитом кроків.',
-  proofLine: '4 продакшен-продукти · hospitality · бухгалтерія · mobility · AI ops',
   ctaPrimary: 'Замовити 20-хв аудит (безкоштовно)',
   ctaSecondary: 'Переглянути кейси',
   ctaSticky: 'Аудит процесу · 20 хв',
   location: 'Польща · віддалено та на місці',
   responseTime: 'Відповідь протягом 1 робочого дня',
-  minBudget: '25 000 PLN',
+  minBudget: '2 000 PLN',
 }
 
 export const servicesUa: Service[] = [
@@ -89,7 +88,7 @@ export const projectsUa: Project[] = [
   {
     id: 'idrive',
     title: 'iDrive Cars',
-    domain: 'idrivecars',
+    domain: 'idrivecars.pl',
     url: '#',
     tagline: 'Автомобільна журналістика · тести авто · галереї',
     description:
@@ -106,7 +105,7 @@ export const projectsUa: Project[] = [
   {
     id: 'agentic',
     title: 'Agentic OS',
-    domain: 'agentic OS',
+    domain: 'agentic-os',
     url: '#',
     tagline: 'Оркестрація AI-агентів',
     description:
@@ -124,14 +123,25 @@ export const projectsUa: Project[] = [
 
 export const pricingUa: PricingTier[] = [
   {
+    name: 'Start',
+    from: 'від 2 000 PLN',
+    description: 'Сайт-візитівка або лендінг, який збирає заявки',
+    includes: [
+      'До 5 сторінок під вашим брендом',
+      'Форма зворотного зв’язку зі сповіщеннями',
+      'Швидкість на телефоні + базове SEO',
+      'Шлях до розширення в пакет Launch',
+    ],
+  },
+  {
     name: 'Launch',
-    from: 'від 25 000 PLN',
-    description: 'Лендінг + інтеграції + базова автоматизація',
-    includes: ['Преміум UX/UI', 'Технічне SEO', 'Форма + CRM', '2 ітерації'],
+    from: 'від 8 000 PLN',
+    description: 'Корпоративний сайт + воронка конверсії + інтеграції',
+    includes: ['Форма → CRM', 'Календар / бронювання', 'Технічне SEO', 'Вимір конверсії'],
   },
   {
     name: 'Платформа',
-    from: 'від 55 000 PLN',
+    from: 'від 25 000 PLN',
     description: 'Бронювання, панель, багатомовність, API',
     includes: [
       'Усе з Launch',
@@ -143,7 +153,7 @@ export const pricingUa: PricingTier[] = [
   },
   {
     name: 'AI Ops',
-    from: 'від 15 000 PLN / міс.',
+    from: 'від 3 000 PLN / міс.',
     description: 'Агенти, автоматизації, підтримка і розвиток',
     includes: ['Agentic workflows', 'Консьєрж / AI-підтримка', 'SLA response', 'Звіт витрат на AI'],
   },
@@ -151,12 +161,12 @@ export const pricingUa: PricingTier[] = [
 
 export const faqUa = [
   {
-    q: 'Чому мінімум 25 000 PLN?',
-    a: 'Бо я роблю продакшен-продукти — з тестами, SEO і підтримкою — а не «сайт на вчора». Це фільтр, який захищає обидві сторони.',
+    q: 'Чи робите ви також прості сайти компаній?',
+    a: 'Так. Пакет Start (від 2 000 PLN) — це якісний сайт або лендінг з формою, швидкістю на телефоні та базовим SEO — без систем під капотом, але спроєктований так, щоб його можна було розширити. Корпоративний сайт з воронкою конверсії та інтеграціями починається з пакета Launch (від 8 000 PLN).',
   },
   {
     q: 'Чи робите ви прості сайти-візитки?',
-    a: 'Так, якщо вони є частиною більшої мети (бронювання, автоматизація). Сам лендінг без бізнес-KPI — лише в пакеті Launch.',
+    a: 'Так — у пакеті Start. Якщо з самого початку відомо, що метою є бронювання або автоматизація, я проєктую сайт-візитку як перший етап цього шляху, щоб не будувати його двічі.',
   },
   {
     q: 'Як виглядає співпраця з AI?',
@@ -194,7 +204,7 @@ export const qualificationFieldsUa = [
     label: 'Орієнтовний бюджет',
     type: 'select',
     required: true,
-    options: ['25–50 тис.', '50–100 тис.', '100+ тис.', 'Retainer AI Ops'],
+    options: ['2–8 тис.', '8–25 тис.', '25+ тис.', 'Retainer AI Ops'],
   },
   {
     id: 'timeline',

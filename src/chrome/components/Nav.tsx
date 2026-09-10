@@ -74,7 +74,7 @@ function LangSwitch({ className = '' }: { className?: string }) {
 }
 
 export function Nav() {
-  const { t: c, content } = useLocale()
+  const { t: c, content, locale } = useLocale()
   const site = content.site
   const ctaHref = site.calendly || '#kontakt'
   const [open, setOpen] = useState(false)
@@ -142,10 +142,10 @@ export function Nav() {
       <nav
         aria-label={c.navAria.main}
         className={`glass-nav r-card-sm mx-auto flex max-w-6xl items-center justify-between px-3 py-2 transition-[max-width] duration-500 md:px-4 ${
-          scrolled ? 'md:max-w-4xl' : ''
+          scrolled ? 'lg:max-w-5xl' : ''
         }`}
       >
-        <a href="#" className="flex items-center gap-3 pl-2" aria-label={c.brand}>
+        <a href={localeHome[locale]} className="flex shrink-0 items-center gap-3 pl-2 whitespace-nowrap" aria-label={c.brand}>
           <span
             aria-hidden
             className="chrome-text font-display text-[15px] font-bold tracking-[-0.04em]"
@@ -160,7 +160,7 @@ export function Nav() {
             <li key={l.href}>
               <a
                 href={l.href}
-                className="rounded-full px-3.5 py-2 text-[13px] text-silver-2 transition-colors hover:bg-white/[0.04] hover:text-white"
+                className="rounded-full px-3 py-2 text-[13px] whitespace-nowrap text-silver-2 transition-colors hover:bg-white/[0.04] hover:text-white"
               >
                 {l.label}
               </a>
@@ -168,7 +168,7 @@ export function Nav() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
           <div className="max-sm:hidden">
             <ThemeToggle />
           </div>

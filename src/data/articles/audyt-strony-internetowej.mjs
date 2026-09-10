@@ -16,19 +16,19 @@ export default {
   ],
   offer: [offerCennik()],
   pl: {
-    title: 'Audyt strony internetowej: 2 500–6 000 zł i decyzja',
+    title: 'Audyt strony internetowej: od 1 500 zł i decyzja',
     description:
-      'Audyt strony internetowej u mnie to Audit Sprint 2 500–6 000 zł: mapa lejka, priorytety 30/60/90 i decyzja wdrażać albo nie. 20 min bezpłatnie. Kwota sprintu może iść na wdrożenie.',
+      'Audyt strony internetowej u mnie to Audit Sprint od 1 500 zł: mapa lejka, priorytety 30/60/90 i decyzja wdrażać albo nie. 20 min bezpłatnie. Kwota sprintu może iść na wdrożenie.',
     h1: 'Audyt strony internetowej: płacisz za decyzję, nie za PDF na 80 stron',
     kicker: 'Audit Sprint',
     lead:
-      'Rynek 2026 pełen jest „audytów SEO” od 500 zł, które są skanem wtyczki, i „audytów kompletnych” za kilkanaście tysięcy z checklistą 200 punktów, której nikt nie wdroży. Mój Audit Sprint kosztuje 2 500–6 000 zł, bo produktem jest decyzja: wdrażać, odłożyć albo ciąć zakres. 20 minut na start jest bezpłatne i często wystarcza, żeby powiedzieć „nie spinaj się”. Sprint zaczyna się, gdy trzeba wejść w analitykę, proces i liczby, a nie w opinię o kolorze przycisku.',
+      'Rynek 2026 pełen jest „audytów SEO” od 500 zł, które są skanem wtyczki, i „audytów kompletnych” za kilkanaście tysięcy z checklistą 200 punktów, której nikt nie wdroży. Mój Audit Sprint kosztuje od 1 500 zł, bo produktem jest decyzja: wdrażać, odłożyć albo ciąć zakres. 20 minut na start jest bezpłatne i często wystarcza, żeby powiedzieć „nie spinaj się”. Sprint zaczyna się, gdy trzeba wejść w analitykę, proces i liczby, a nie w opinię o kolorze przycisku.',
     sections: [
       section(
         '20 minut versus sprint — nie mieszaj tych produktów',
         p('Bezpłatne 20 minut: mapa na kartce, rząd wielkości pakietu, czy w ogóle rozmawiamy. Sprint: wąskie gardła lejka albo procesu, priorytety 30/60/90 dni, szacunek ROI i ryzyk integracji, jedna rekomendacja. Kwota sprintu może zostać zaliczona na wdrożenie, jeśli obie strony widzą sens. Nie zaliczam jej na „jeszcze jeden brief”.'),
         table(
-          ['', '20 min', 'Audit Sprint 2,5–6 tys.'],
+          ['', '20 min', 'Audit Sprint od 1,5 tys.'],
           [
             ['Cel', 'Czy w ogóle wdrażać', 'Co wdrażać w jakiej kolejności'],
             ['Wejście', 'Rozmowa', 'Dostęp do analityki / procesu / stawek'],
@@ -49,7 +49,7 @@ export default {
       ),
       section(
         'Jak liczę, czy sprint ma prawo się spiąć',
-        p('Jeśli po 20 minutach widać, że wizytówka za 6 500 zł załatwi sprawę, nie wciskam sprintu. Jeśli widać Ops za 80 tysięcy bez nazwanych metryk — najpierw sprint albo stop. [Wycena strony](/artykuly/ile-kosztuje-strona-firmowa/) i pakiety są publiczne, żebyś nie zgadywał rzędu wielkości przed call’em.'),
+        p('Jeśli po 20 minutach widać, że wizytówka za 2 000 zł (Start) załatwi sprawę, nie wciskam sprintu. Jeśli widać platformę za 80 tysięcy bez nazwanych metryk — najpierw sprint albo stop. [Wycena strony](/artykuly/ile-kosztuje-strona-firmowa/) i pakiety są publiczne, żebyś nie zgadywał rzędu wielkości przed call’em.'),
         note('Na polskim rynku agencje publikują audyty SEO 1–8 tys. i UX-komplety drożej. To kontekst. Mój produkt jest decyzją wdrożeniową, nie raportem dla działu marketingu, którego nie macie.'),
       ),
       section(
@@ -74,19 +74,19 @@ export default {
     ctaLabel: 'Umów 20-min audyt',
   },
   en: {
-    title: 'Website audit pricing: 2,500–6,000 PLN and a decision',
+    title: 'Website audit pricing: from PLN 1,500 and a decision',
     description:
-      'A website audit with me is Audit Sprint at PLN 2,500–6,000: a funnel map, 30/60/90 priorities and a ship-or-not decision. 20 minutes free. Sprint fee can credit a build.',
+      'A website audit with me is Audit Sprint from PLN 1,500: a funnel map, 30/60/90 priorities and a ship-or-not decision. 20 minutes free. Sprint fee can credit a build.',
     h1: 'A website audit: you pay for a decision, not an 80-page PDF',
     kicker: 'Audit Sprint',
     lead:
-      'The 2026 market is full of “SEO audits” from PLN 500 that are a plugin scan, and “complete audits” at five figures with a 200-point checklist nobody will ship. My Audit Sprint costs PLN 2,500–6,000 because the product is a decision: implement, wait, or cut scope. Twenty minutes up front is free and often enough to say “do not close this”. The sprint starts when we must enter analytics, process and numbers — not an opinion on button colour.',
+      'The 2026 market is full of “SEO audits” from PLN 500 that are a plugin scan, and “complete audits” at five figures with a 200-point checklist nobody will ship. My Audit Sprint costs from PLN 1,500 because the product is a decision: implement, wait, or cut scope. Twenty minutes up front is free and often enough to say “do not close this”. The sprint starts when we must enter analytics, process and numbers — not an opinion on button colour.',
     sections: [
       section(
         'Twenty minutes versus a sprint — do not mix the products',
         p('Free 20 minutes: a map on paper, a package order of magnitude, whether we even talk. Sprint: funnel or process bottlenecks, 30/60/90-day priorities, ROI and integration-risk estimates, one recommendation. Sprint fee may credit a build if both sides see a point. I do not credit it toward “yet another brief”.'),
         table(
-          ['', '20 min', 'Audit Sprint 2.5–6k'],
+          ['', '20 min', 'Audit Sprint from PLN 1.5k'],
           [
             ['Goal', 'Whether to implement at all', 'What to implement in which order'],
             ['Input', 'A conversation', 'Access to analytics / process / rates'],
@@ -107,7 +107,7 @@ export default {
       ),
       section(
         'How I judge whether a sprint has a right to close',
-        p('If after 20 minutes a PLN 6,500 brochure will do, I do not push a sprint. If Ops at 80k shows up without named metrics — sprint first or stop. [Website pricing](/artykuly/ile-kosztuje-strona-firmowa/) and packages are public so you do not guess the order of magnitude before the call.'),
+        p('If after 20 minutes a PLN 2,000 brochure (Start) will do, I do not push a sprint. If a PLN 80k platform shows up without named metrics — sprint first or stop. [Website pricing](/artykuly/ile-kosztuje-strona-firmowa/) and packages are public so you do not guess the order of magnitude before the call.'),
         note('Polish agencies publish SEO audits at 1–8k and heavier UX kits above that. Context. My product is an implementation decision, not a report for a marketing department you do not have.'),
       ),
       section(
@@ -132,19 +132,19 @@ export default {
     ctaLabel: 'Book a 20-min audit',
   },
   uk: {
-    title: 'Аудит сайту: 2 500–6 000 злотих і рішення',
+    title: 'Аудит сайту: від 1 500 злотих і рішення',
     description:
-      'Аудит сайту в мене — Audit Sprint 2 500–6 000 злотих: мапа воронки, пріоритети 30/60/90 і рішення впроваджувати чи ні. 20 хв безкоштовно. Сума спринту може піти на впровадження.',
+      'Аудит сайту в мене — Audit Sprint від 1 500 злотих: мапа воронки, пріоритети 30/60/90 і рішення впроваджувати чи ні. 20 хв безкоштовно. Сума спринту може піти на впровадження.',
     h1: 'Аудит сайту: платите за рішення, не за PDF на 80 сторінок',
     kicker: 'Audit Sprint',
     lead:
-      'Ринок 2026 повний «аудитів SEO» від 500 злотих, які є сканом плагіна, і «повних аудитів» за десятки тисяч із чеклістом на 200 пунктів, якого ніхто не впровадить. Мій Audit Sprint коштує 2 500–6 000, бо продукт — рішення: впроваджувати, відкласти або різати обсяг. 20 хвилин на старт безкоштовні і часто досить, щоб сказати «не сходиться». Спринт починається, коли треба зайти в аналітику, процес і цифри, а не в думку про колір кнопки.',
+      'Ринок 2026 повний «аудитів SEO» від 500 злотих, які є сканом плагіна, і «повних аудитів» за десятки тисяч із чеклістом на 200 пунктів, якого ніхто не впровадить. Мій Audit Sprint коштує від 1 500, бо продукт — рішення: впроваджувати, відкласти або різати обсяг. 20 хвилин на старт безкоштовні і часто досить, щоб сказати «не сходиться». Спринт починається, коли треба зайти в аналітику, процес і цифри, а не в думку про колір кнопки.',
     sections: [
       section(
         '20 хвилин проти спринту — не змішуйте ці продукти',
         p('Безкоштовні 20 хвилин: мапа на папері, порядок величини пакета, чи взагалі розмовляємо. Спринт: вузькі місця воронки або процесу, пріоритети 30/60/90 днів, оцінка ROI і ризиків інтеграцій, одна рекомендація. Сума спринту може бути зарахована на впровадження, якщо обидві сторони бачать сенс. Не зараховую її на «ще один бриф».'),
         table(
-          ['', '20 хв', 'Audit Sprint 2,5–6 тис.'],
+          ['', '20 хв', 'Audit Sprint від 1,5 тис.'],
           [
             ['Ціль', 'Чи взагалі впроваджувати', 'Що впроваджувати в якому порядку'],
             ['Вхід', 'Розмова', 'Доступ до аналітики / процесу / ставок'],
@@ -165,7 +165,7 @@ export default {
       ),
       section(
         'Як рахую, чи спринт має право зійтися',
-        p('Якщо після 20 хвилин візитівка за 6 500 закриває справу, не впихаю спринт. Якщо видно Ops за 80 тисяч без названих метрик — спочатку спринт або стоп. [Оцінка сайту](/artykuly/ile-kosztuje-strona-firmowa/) і пакети публічні, щоб ви не вгадували порядок величини до дзвінка.'),
+        p('Якщо після 20 хвилин візитівка за 2 000 (Start) закриває справу, не впихаю спринт. Якщо видно платформу за 80 тисяч без названих метрик — спочатку спринт або стоп. [Оцінка сайту](/artykuly/ile-kosztuje-strona-firmowa/) і пакети публічні, щоб ви не вгадували порядок величини до дзвінка.'),
         note('На польському ринку агенції публікують аудити SEO 1–8 тис. і важчі UX-комплекти дорожче. Це контекст. Мій продукт — рішення про впровадження, не звіт для відділу маркетингу, якого у вас немає.'),
       ),
       section(

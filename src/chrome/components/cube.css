@@ -81,8 +81,8 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 78%;
-  height: 78%;
+  width: 90%;
+  height: 90%;
   border-radius: calc(var(--size) * 0.17);
   corner-shape: var(--corner, superellipse(1.7));
   overflow: hidden;

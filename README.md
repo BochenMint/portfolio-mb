@@ -2,9 +2,9 @@
 
 Portfolio (React + Vite + GSAP + Lenis + three.js): case studies, cennik, intake, artykuły PL/EN/UA.
 
-**Produkcja:** [marcinbochenek.com](https://marcinbochenek.com), hostowane na Cloudflare Pages —
-procedura wdrożenia w [docs/GO-LIVE.md](docs/GO-LIVE.md). Kontakt:
-`kontakt@marcinbochenek.com` (Cloudflare Email Routing).
+**Produkcja:** [marcinbochenek.com](https://marcinbochenek.com), hostowane na **SEOhost**
+(shared hosting, DirectAdmin) — procedura wdrożenia w
+[docs/DEPLOY-SEOHOST.md](docs/DEPLOY-SEOHOST.md). Kontakt: `kontakt@marcinbochenek.com`.
 
 ## Edycje
 
@@ -43,7 +43,7 @@ npm run dev
 
 Build: `npm run build` → `dist/`
 
-Deploy Mac Mini + Cloudflare Tunnel: patrz [`docs/DEPLOY-MAC-MINI.md`](docs/DEPLOY-MAC-MINI.md).
+Deploy (SEOhost, DirectAdmin): patrz [`docs/DEPLOY-SEOHOST.md`](docs/DEPLOY-SEOHOST.md).
 
 ## Konfiguracja sprzedaży
 

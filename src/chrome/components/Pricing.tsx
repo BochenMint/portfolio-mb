@@ -11,7 +11,7 @@ export function Pricing() {
       <div className="mx-auto max-w-7xl">
         <SectionHeader eyebrow={c.pricing.eyebrow} title={c.pricing.title} lead={c.pricing.lead} />
 
-        <div className="mt-16 grid gap-6 lg:grid-cols-3 lg:items-start">
+        <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {pricing.map((tier) => {
             const isLight = !!tier.highlight
             return (

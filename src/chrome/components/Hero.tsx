@@ -59,8 +59,20 @@ export function Hero() {
           </ul>
         </div>
 
-        {/* Chrome object */}
-        <div className="relative mx-auto w-full max-w-[560px] lg:max-w-none">
+        {/* Chrome object. It reaches back over the gap and out past the grid
+            on the right, so the car spans the whole column rather than the
+            0.85fr the text layout wants: at 1440 that is ~760px of host
+            instead of 530, which is the difference between an object beside
+            the headline and a decoration under it. The overhang lands on the
+            headline's own right margin and on the horizon hairline, both of
+            which are empty there.
+
+            The camera no longer dollies as the car turns — it is fitted once
+            to the whole yaw sweep — so every pixel of host width is now a
+            pixel of car at the broadside angles, and the width is the only
+            lever left: the car uses barely a third of the host's height at any
+            angle, so making the box taller would buy nothing. */}
+        <div className="relative mx-auto w-full max-w-[560px] lg:-mt-10 lg:mr-[-9%] lg:-ml-44 lg:w-auto lg:max-w-none">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-[-20%] rounded-full opacity-60 blur-3xl"

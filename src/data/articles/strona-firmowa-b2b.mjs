@@ -41,20 +41,20 @@ export default {
   pl: {
     title: 'Strona firmowa B2B — zakres, który zbiera zapytania',
     description:
-      'Strona firmowa B2B zbiera zapytania, gdy ma jasną ofertę, dowód i jeden CTA. Opisuję zakres do 5 podstron (6 500–12 000 zł) i moment, w którym potrzebny jest lejek.',
+      'Strona firmowa B2B zbiera zapytania, gdy ma jasną ofertę, dowód i jeden CTA. Opisuję zakres do 5 podstron (pakiet Start, od 2 000 zł) i moment, w którym potrzebny jest lejek.',
     h1: 'Strona firmowa B2B, która zbiera zapytania, a nie tylko „jest”',
     kicker: 'Zakres · do 5 podstron',
     lead:
-      'Strona firmowa B2B nie jest katalogiem slajdów z konferencji. Ma jeden obowiązek: właściciel firmy albo osoba decydująca o zakupie ma w kilka minut zrozumieć, co robisz, dla kogo, ile to mniej więcej kosztuje i jak się odezwać. Poniżej opisuję zakres, który wdrażam w pakiecie 6 500–12 000 zł — i uczciwie mówię, kiedy ta strona jeszcze nie sprzedaje, bo problemem jest lejek, a nie wizytówka.',
+      'Strona firmowa B2B nie jest katalogiem slajdów z konferencji. Ma jeden obowiązek: właściciel firmy albo osoba decydująca o zakupie ma w kilka minut zrozumieć, co robisz, dla kogo, ile to mniej więcej kosztuje i jak się odezwać. Poniżej opisuję zakres, który wdrażam w pakiecie Start (od 2 000 zł) — i uczciwie mówię, kiedy ta strona jeszcze nie sprzedaje, bo problemem jest lejek, a nie wizytówka.',
     sections: [
       section(
         'Co w praktyce oznacza strona firmowa B2B',
-        p('W B2B nikt nie kupuje z hero. Kupuje po tym, że rozumie zakres, ryzyko i następny krok. Dlatego strona firmowa B2B, którą buduję, ma pięć podstron albo mniej: start, oferta, o firmie, realizacje albo dowód, kontakt. Nie dokładam bloga „na SEO”, wielojęzyczności ani CRM-u w tej cenie — to są dopłaty albo [pakiet Conversion Build](/#cennik).'),
+        p('W B2B nikt nie kupuje z hero. Kupuje po tym, że rozumie zakres, ryzyko i następny krok. Dlatego strona firmowa B2B, którą buduję, ma pięć podstron albo mniej: start, oferta, o firmie, realizacje albo dowód, kontakt. Nie dokładam bloga „na SEO”, wielojęzyczności ani CRM-u w tej cenie — to są dopłaty albo [pakiet Launch](/#cennik).'),
         p('Start musi odpowiadać na trzy pytania bez scrollowania w ciemno: czy to dla mnie, co dostanę, co mam kliknąć. Oferta nie może być listą fraz typu „kompleksowe rozwiązania”. Podaję, co wchodzi w pracę, czego nie robię i w jakim horyzoncie czasowym. Kontakt to formularz z powiadomieniem, nie sam mailto, bo mailto ginie na telefonie i nie zostawia śladu.'),
         p('Dowód na stronie B2B jest najtrudniejszy, gdy nie chcesz kłamać. Ja nie wklejam fikcyjnych opinii. Jeśli masz żywe wdrożenie — linkuję. Publicznie pokazuję [Mint Apartments](https://mintapartments.pl) i [Plumm](https://plumm.pl). iDrive nie jest live, Agentic OS jest narzędziem wewnętrznym. Lepiej mniej dowodu niż teatr z gwiazdkami.'),
       ),
       section(
-        'Zakres, który mieści się w 6 500–12 000 zł',
+        'Zakres, który mieści się w pakiecie Start (od 2 000 zł)',
         p('W tej kwocie dostajesz projekt pod markę, nie szablon z marketplace, do pięciu podstron, formularz z ochroną przed spamem, podstawowe SEO on-page (title, description, nagłówki, sitemap, szybkość na telefonie) i pomiar zapytań po starcie. Stack, którego używam przy takich stronach, to zwykle Astro albo Next — nie WordPress z ThemeForest i wtyczką „SEO w jednym kliknięciu”.'),
         table(
           ['Element', 'W pakiecie strony firmowej', 'Poza pakietem'],
@@ -82,7 +82,7 @@ export default {
       section(
         'Kiedy strona firmowa B2B przestaje wystarczać',
         p('Wizytówka zbiera zapytania, jeśli ruch jest ciepły: polecenie, LinkedIn, lokalne Google, osoba, która już wie, że Cię potrzebuje. Przestaje wystarczać, gdy płacisz za kliknięcia, gdy klient porównuje Cię z trzema ofertami albo gdy decyzja wymaga kalkulacji (rezerwacja, konfigurator, kwalifikacja). Wtedy nie „dokręcamy kolorów”. Przechodzimy do [lejka konwersji](/artykuly/lejek-konwersji-na-stronie/).'),
-        p('Przykład z mojej pracy, nie z prezentacji: [Mint Apartments](https://mintapartments.pl) nie jest wizytówką. Gość ma kalendarz i cenę na żywo, płatność na własnej domenie i check-in bez recepcji. To jest Conversion Build, nie pakiet 6 500 zł. Gdybyśmy zostawili „ładną stronę noclegową” bez rezerwacji, prowizja portalu dalej zjadałaby marżę.'),
+        p('Przykład z mojej pracy, nie z prezentacji: [Mint Apartments](https://mintapartments.pl) nie jest wizytówką. Gość ma kalendarz i cenę na żywo, płatność na własnej domenie i check-in bez recepcji. To jest Platforma (od 25 000 zł), nie pakiet Start za 2 000 zł. Gdybyśmy zostawili „ładną stronę noclegową” bez rezerwacji, prowizja portalu dalej zjadałaby marżę.'),
         note('Szacunki godzin i oszczędności przy Mint i Plumm są orientacyjne — zależą od wolumenu. Na audycie liczę Twój przypadek, nie średnią z internetu.'),
       ),
       section(
@@ -95,7 +95,7 @@ export default {
         p('Nie zaczynam od moodboardu. Pytam: skąd dziś przychodzą zapytania, ile ich jest, co się z nimi dzieje po mailu i czy strona ma w ogóle prawo się spiąć. Jeśli masz 2 zapytania w kwartale i zero poleceń, najpierw kanał, nie redesign. Jeśli masz ruch i ciszę w skrzynce, diagnozuję [dlaczego strona nie sprzedaje](/artykuly/dlaczego-strona-nie-sprzedaje/).'),
         ol([
           '20 minut: mapa lejka na kartce, nie w Miro na trzy tygodnie.',
-          'Rekomendacja pakietu: strona firmowa, Conversion Build, panel albo „nie wdrażaj”.',
+          'Rekomendacja pakietu: Start, Launch, Platforma albo „nie wdrażaj”.',
           'Jeśli się spina — plan na 90 dni z pierwszym mierzalnym efektem.',
         ]),
         p('Kod po opłaceniu faktur należy do Ciebie. NDA jest standardem. Nie uzależniam Cię od panelu, którego nie możesz wyeksportować.'),
@@ -104,7 +104,7 @@ export default {
     faqs: [
       {
         q: 'Czy strona firmowa B2B musi mieć bloga?',
-        a: 'Nie. Blog ma sens, gdy masz eksperta, który będzie pisał regularnie i gdy URL-e są indeksowalne. W pakiecie 6 500–12 000 zł bloga nie ma — to osobna decyzja, nie ozdoba.',
+        a: 'Nie. Blog ma sens, gdy masz eksperta, który będzie pisał regularnie i gdy URL-e są indeksowalne. W pakiecie Start bloga nie ma — to osobna decyzja, nie ozdoba.',
       },
       {
         q: 'Ile podstron naprawdę potrzebuję?',
@@ -116,7 +116,7 @@ export default {
       },
       {
         q: 'Kiedy przejść z wizytówki na lejek?',
-        a: 'Gdy płacisz za ruch, gdy potrzebujesz kwalifikacji albo rezerwacji na własnej domenie, albo gdy obsługa zapytań zjada godziny. Szczegóły w artykule o wizytówce i lejku — i w cenniku Conversion Build (25 000–60 000 zł).',
+        a: 'Gdy płacisz za ruch, gdy potrzebujesz kwalifikacji — to pakiet Launch (od 8 000 zł) — albo rezerwacji na własnej domenie, to Platforma (od 25 000 zł), albo gdy obsługa zapytań zjada godziny. Szczegóły w artykule o wizytówce i lejku.',
       },
     ],
     ctaTitle: 'Sprawdźmy, czy wizytówka wystarczy',
@@ -127,20 +127,20 @@ export default {
   en: {
     title: 'B2B company website: a scope that collects enquiries',
     description:
-      'A B2B company website collects enquiries when the offer, proof and CTA are clear. I describe a five-page scope (PLN 6,500–12,000) and when you actually need a funnel instead.',
+      'A B2B company website collects enquiries when the offer, proof and CTA are clear. I describe a five-page scope (Start package, from PLN 2,000) and when you actually need a funnel instead.',
     h1: 'A B2B company website that collects enquiries, not just “exists”',
     kicker: 'Scope · up to 5 pages',
     lead:
-      'A B2B company website is not a conference slide deck. It has one job: a buyer should understand in a few minutes what you do, for whom, roughly what it costs, and how to reply. Below is the scope I ship for PLN 6,500–12,000 — and an honest line for when that site still will not sell, because the problem is the funnel, not the brochure.',
+      'A B2B company website is not a conference slide deck. It has one job: a buyer should understand in a few minutes what you do, for whom, roughly what it costs, and how to reply. Below is the scope I ship in the Start package (from PLN 2,000) — and an honest line for when that site still will not sell, because the problem is the funnel, not the brochure.',
     sections: [
       section(
         'What a B2B company website means in practice',
-        p('In B2B nobody buys from the hero. They buy once they understand scope, risk and the next step. The B2B company website I build has five pages or fewer: home, offer, about, proof, contact. I do not add a “SEO blog”, extra languages or a CRM at this price — those are extras or a [Conversion Build](/#cennik).'),
+        p('In B2B nobody buys from the hero. They buy once they understand scope, risk and the next step. The B2B company website I build has five pages or fewer: home, offer, about, proof, contact. I do not add a “SEO blog”, extra languages or a CRM at this price — those are extras or a [the Launch package](/#cennik).'),
         p('Home must answer three questions without a treasure hunt: is this for me, what do I get, what do I click. The offer cannot be a list of “comprehensive solutions”. I state what is in, what is out, and the time horizon. Contact is a form with a notification, not a lone mailto that dies on mobile and leaves no trace.'),
         p('Proof is the hard part if you refuse to lie. I do not paste fake reviews. If you have a live deployment, I link it. Publicly I show [Mint Apartments](https://mintapartments.pl) and [Plumm](https://plumm.pl). iDrive is not live. Agentic OS is an internal tool. Less proof beats a theatre of stars.'),
       ),
       section(
-        'What PLN 6,500–12,000 actually covers',
+        'What the Start package (from PLN 2,000) actually covers',
         p('In that range you get a brand-specific build, not a marketplace theme, up to five pages, a spam-protected form, on-page SEO (title, description, headings, sitemap, mobile speed) and enquiry measurement after launch. The stack is usually Astro or Next — not WordPress from ThemeForest plus a “SEO in one click” plugin.'),
         table(
           ['Element', 'In the company-site package', 'Out of package'],
@@ -168,7 +168,7 @@ export default {
       section(
         'When a B2B company website stops being enough',
         p('A brochure collects enquiries when traffic is already warm: referral, LinkedIn, local Google, someone who already knows they need you. It fails when you pay for clicks, when the buyer compares three proposals, or when the decision needs calculation (booking, configurator, qualification). Then we do not “tweak colours”. We move to a [conversion funnel](/artykuly/lejek-konwersji-na-stronie/).'),
-        p('A real example from my work, not a slide: [Mint Apartments](https://mintapartments.pl) is not a brochure. The guest gets a live calendar and price, pays on the operator’s domain, and checks in without a desk. That is Conversion Build, not the PLN 6,500 package. A pretty lodging site without booking would still leak margin to the portal.'),
+        p('A real example from my work, not a slide: [Mint Apartments](https://mintapartments.pl) is not a brochure. The guest gets a live calendar and price, pays on the operator’s domain, and checks in without a desk. That is the Platform package (from PLN 25,000), not the PLN 2,000 Start package. A pretty lodging site without booking would still leak margin to the portal.'),
         note('Hour and saving figures for Mint and Plumm are directional — they depend on volume. In the audit I count your case, not an internet average.'),
       ),
       section(
@@ -181,7 +181,7 @@ export default {
         p('I do not start with a moodboard. I ask where enquiries come from, how many there are, what happens after the email, and whether a site has any right to pay for itself. Two enquiries a quarter and no referrals: fix the channel before a redesign. Traffic and a silent inbox: we diagnose [why the site does not sell](/artykuly/dlaczego-strona-nie-sprzedaje/).'),
         ol([
           'Twenty minutes: a funnel map on paper, not three weeks in a whiteboard tool.',
-          'A package recommendation: company site, Conversion Build, operations panel — or do not implement.',
+          'A package recommendation: Start, Launch, Platform — or do not implement.',
           'If the numbers work — a 90-day plan with a first measurable effect.',
         ]),
         p('After invoices are paid, the code is yours. NDA is standard. I will not lock you into a panel you cannot export.'),
@@ -190,7 +190,7 @@ export default {
     faqs: [
       {
         q: 'Does a B2B company website need a blog?',
-        a: 'No. A blog makes sense when someone will write regularly and URLs are indexable. The PLN 6,500–12,000 package does not include a blog — that is a separate decision, not decoration.',
+        a: 'No. A blog makes sense when someone will write regularly and URLs are indexable. The Start package does not include a blog — that is a separate decision, not decoration.',
       },
       {
         q: 'How many pages do I actually need?',
@@ -202,7 +202,7 @@ export default {
       },
       {
         q: 'When should I move from a brochure to a funnel?',
-        a: 'When you pay for traffic, when you need qualification or on-domain booking, or when enquiry handling eats hours. Details are in the brochure-versus-funnel article — and in Conversion Build pricing (PLN 25,000–60,000).',
+        a: 'When you pay for traffic, when you need qualification — that is the Launch package (from PLN 8,000) — or on-domain booking, that is Platform (from PLN 25,000), or when enquiry handling eats hours. Details are in the brochure-versus-funnel article.',
       },
     ],
     ctaTitle: 'Let us check whether a brochure is enough',
@@ -213,20 +213,20 @@ export default {
   uk: {
     title: 'Корпоративний сайт B2B: обсяг, який збирає запити',
     description:
-      'Корпоративний сайт B2B збирає запити, коли оферта, доказ і CTA зрозумілі. Описую обсяг до 5 сторінок (6 500–12 000 злотих) і момент, коли потрібна воронка, а не візитівка.',
+      'Корпоративний сайт B2B збирає запити, коли оферта, доказ і CTA зрозумілі. Описую обсяг до 5 сторінок (пакет Start, від 2 000 злотих) і момент, коли потрібна воронка, а не візитівка.',
     h1: 'Корпоративний сайт B2B, який збирає запити, а не просто «є»',
     kicker: 'Обсяг · до 5 сторінок',
     lead:
-      'Корпоративний сайт B2B — це не колода слайдів із конференції. В нього один обов’язок: власник або людина, яка вирішує про купівлю, за кілька хвилин розуміє, що ви робите, для кого, який порядок цін і як відповісти. Нижче — обсяг, який впроваджую за 6 500–12 000 злотих, і чесна межа, коли такий сайт усе ще не продає, бо проблема у воронці, а не у візитівці.',
+      'Корпоративний сайт B2B — це не колода слайдів із конференції. В нього один обов’язок: власник або людина, яка вирішує про купівлю, за кілька хвилин розуміє, що ви робите, для кого, який порядок цін і як відповісти. Нижче — обсяг, який впроваджую в пакеті Start (від 2 000 злотих), і чесна межа, коли такий сайт усе ще не продає, бо проблема у воронці, а не у візитівці.',
     sections: [
       section(
         'Що на практиці означає корпоративний сайт B2B',
-        p('У B2B ніхто не купує з героя. Купують, коли зрозумілі обсяг, ризик і наступний крок. Тому корпоративний сайт B2B, який я будую, має п’ять сторінок або менше: головна, оферта, про компанію, доказ, контакт. Я не додаю блог «для SEO», багатомовність чи CRM у цій ціні — це доплати або [пакет Conversion Build](/#cennik).'),
+        p('У B2B ніхто не купує з героя. Купують, коли зрозумілі обсяг, ризик і наступний крок. Тому корпоративний сайт B2B, який я будую, має п’ять сторінок або менше: головна, оферта, про компанію, доказ, контакт. Я не додаю блог «для SEO», багатомовність чи CRM у цій ціні — це доплати або [пакет Launch](/#cennik).'),
         p('Головна має відповісти на три питання без полювання: чи це для мене, що я отримаю, що натиснути. Оферта не може бути списком фраз на кшталт «комплексні рішення». Я вказую, що входить у роботу, чого не роблю і в якому горизонті. Контакт — форма з повідомленням, не сам mailto, який помирає на телефоні й не лишає сліду.'),
         p('Доказ на сайті B2B найважчий, якщо ви не хочете брехати. Я не вставляю вигадані відгуки. Якщо є живе впровадження — ставлю посилання. Публічно показую [Mint Apartments](https://mintapartments.pl) і [Plumm](https://plumm.pl). iDrive не в продакшені, Agentic OS — внутрішній інструмент. Краще менше доказу, ніж театр із зірками.'),
       ),
       section(
-        'Що реально входить у 6 500–12 000 злотих',
+        'Що реально входить у пакет Start (від 2 000 злотих)',
         p('У цій сумі ви отримуєте проєкт під бренд, не шаблон із маркетплейсу, до п’яти сторінок, форму із захистом від спаму, базове on-page SEO (title, description, заголовки, sitemap, швидкість на телефоні) і вимір запитів після старту. Стек зазвичай Astro або Next — не WordPress із ThemeForest і плагіном «SEO в один клік».'),
         table(
           ['Елемент', 'У пакеті корпоративного сайту', 'Поза пакетом'],
@@ -254,7 +254,7 @@ export default {
       section(
         'Коли корпоративного сайту B2B уже замало',
         p('Візитівка збирає запити, коли трафік теплий: рекомендація, LinkedIn, локальний Google, людина, яка вже знає, що ви потрібні. Вона перестає вистачати, коли ви платите за кліки, коли клієнт порівнює три пропозиції або коли рішення потребує розрахунку (бронювання, конфігуратор, кваліфікація). Тоді ми не «підкручуємо кольори». Переходимо до [воронки конверсії](/artykuly/lejek-konwersji-na-stronie/).'),
-        p('Приклад із моєї роботи, не з презентації: [Mint Apartments](https://mintapartments.pl) — не візитівка. Гість бачить календар і ціну наживо, платить на вашому домені й заселяється без ресепшена. Це Conversion Build, не пакет 6 500 злотих. Якби лишили «гарний сайт ночівлі» без бронювання, комісія порталу далі з’їдала б маржу.'),
+        p('Приклад із моєї роботи, не з презентації: [Mint Apartments](https://mintapartments.pl) — не візитівка. Гість бачить календар і ціну наживо, платить на вашому домені й заселяється без ресепшена. Це пакет Платформа (від 25 000 злотих), не пакет Start за 2 000. Якби лишили «гарний сайт ночівлі» без бронювання, комісія порталу далі з’їдала б маржу.'),
         note('Оцінки годин і економії для Mint і Plumm орієнтовні — залежать від обсягу. На аудиті рахую ваш випадок, не середнє з інтернету.'),
       ),
       section(
@@ -267,7 +267,7 @@ export default {
         p('Я не починаю з мудборду. Питаю: звідки сьогодні приходять запити, скільки їх, що з ними стається після листа і чи сайт має право окупитися. Якщо запитів два на квартал і нуль рекомендацій — спочатку канал, не редизайн. Якщо є трафік і тиша в скриньці — діагностую, [чому сайт не продає](/artykuly/dlaczego-strona-nie-sprzedaje/).'),
         ol([
           '20 хвилин: мапа воронки на папері, не три тижні в Miro.',
-          'Рекомендація пакета: корпоративний сайт, Conversion Build, панель — або «не впроваджувати».',
+          'Рекомендація пакета: Start, Launch, Платформа — або «не впроваджувати».',
           'Якщо сходиться — план на 90 днів із першим вимірюваним ефектом.',
         ]),
         p('Код після оплати рахунків належить вам. NDA — стандарт. Я не прив’язую вас до панелі, яку не можна експортувати.'),
@@ -276,7 +276,7 @@ export default {
     faqs: [
       {
         q: 'Чи потрібен блоґ на корпоративному сайті B2B?',
-        a: 'Ні. Блоґ має сенс, коли є експерт, який писатиме регулярно, і URL індексуються. У пакеті 6 500–12 000 злотих блогу немає — це окреме рішення, не прикраса.',
+        a: 'Ні. Блоґ має сенс, коли є експерт, який писатиме регулярно, і URL індексуються. У пакеті Start блогу немає — це окреме рішення, не прикраса.',
       },
       {
         q: 'Скільки сторінок мені справді потрібно?',
@@ -288,7 +288,7 @@ export default {
       },
       {
         q: 'Коли переходити з візитівки на воронку?',
-        a: 'Коли платите за трафік, коли потрібна кваліфікація або бронювання на власному домені, або коли обробка запитів з’їдає години. Деталі — у статті про візитівку й воронку та в цінах Conversion Build (25 000–60 000 злотих).',
+        a: 'Коли платите за трафік, коли потрібна кваліфікація — це пакет Launch (від 8 000 злотих) — або бронювання на власному домені, це Платформа (від 25 000 злотих), або коли обробка запитів з’їдає години. Деталі — у статті про візитівку й воронку.',
       },
     ],
     ctaTitle: 'Перевіримо, чи вистачить візитівки',

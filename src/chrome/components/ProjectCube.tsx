@@ -89,8 +89,8 @@ type SceneHandle = {
 // texture space and reused for every face; only the emissive screenshot
 // layer differs per face/theme.
 const FACE_TEX_SIZE = 2048
-const SCREEN_MARGIN_FRAC = 0.1 // -> 80% of the face width/height
-const SCREEN_CORNER_FRAC = 0.06
+const SCREEN_MARGIN_FRAC = 0.04 // -> 92% of the face width/height (was 0.1 -> 80%)
+const SCREEN_CORNER_FRAC = 0.069 // keeps the same corner-radius:screen-size ratio as the old 0.06/80%
 const SCREEN_RECT = {
   x: FACE_TEX_SIZE * SCREEN_MARGIN_FRAC,
   y: FACE_TEX_SIZE * SCREEN_MARGIN_FRAC,
@@ -304,10 +304,14 @@ async function buildScene(
     depthWrite: false,
     opacity: 0.55,
   })
-  const shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 1.7), shadowMat)
+  const SHADOW_GEO_SIZE = 1.7
+  const shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(SHADOW_GEO_SIZE, SHADOW_GEO_SIZE), shadowMat)
   shadowPlane.rotation.x = -Math.PI / 2
   shadowPlane.position.y = -0.56
   tiltGroup.add(shadowPlane)
+  // Theme-driven scale multiplier (see applyTheme), clamped against the
+  // frustum below so it can never exceed shadowMaxScale.
+  let shadowThemeScale = 1
 
   // Backdrop halo: a soft dark radial fade behind the cube. On a light
   // page a uniformly bright environment leaves the chrome silhouette
@@ -338,6 +342,32 @@ async function buildScene(
     const visibleW = visibleH * camera.aspect
     const target = Math.min(visibleW, visibleH) * 0.9
     haloPlane.scale.setScalar(target / HALO_GEO_SIZE)
+  }
+
+  /**
+   * Root cause of the "light rectangle behind the cube" bug: the ground
+   * contact-shadow plane (1.7 units, 2.04 in light theme's 1.2x scale) is
+   * wider than the camera frustum at its depth (~1.63 units at the tuned
+   * camDist/fov) — the exact same failure mode fitHalo() above exists to
+   * fix, just never applied to this plane. Its radial gradient only reaches
+   * zero alpha at the plane's own edge, so once that edge sits outside the
+   * frustum the visible portion never fades out — it gets hard-clipped by
+   * the canvas bounds instead, reading as a flat grey rectangle the size of
+   * the canvas (worst in light theme, where the page is light enough for
+   * the leftover grey to read clearly, and where the 1.2x scale pushes the
+   * plane furthest past the frustum edge).
+   *
+   * Fix: cap the shadow's world-space size to a safe fraction of the
+   * visible frustum at its depth, same as the halo, so the gradient always
+   * finishes fading before it reaches the canvas edge.
+   */
+  let shadowMaxScale = 1
+  function fitShadow() {
+    const dist = camDist + Math.abs(shadowPlane.position.y)
+    const visibleH = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * dist
+    const visibleW = visibleH * camera.aspect
+    shadowMaxScale = (Math.min(visibleW, visibleH) * 0.9) / SHADOW_GEO_SIZE
+    shadowPlane.scale.setScalar(Math.min(shadowThemeScale, shadowMaxScale))
   }
 
   // Screens are baked into the RoundedBoxGeometry's own per-face material
@@ -451,13 +481,17 @@ async function buildScene(
     rimLight.intensity = isLight ? 3.4 : 3
     ambient.intensity = isLight ? 0.22 : 0.16
     shadowMat.opacity = isLight ? 0.7 : 0.55
-    shadowPlane.scale.setScalar(isLight ? 1.2 : 1)
-    haloMat.opacity = isLight ? 0.4 : 0
+    shadowThemeScale = isLight ? 1.2 : 1
+    fitShadow()
+    // Halo disabled (Marcin 2026-09): on the light theme it rendered as a
+    // hard-edged grey square behind the cube. The contact shadow is enough.
+    haloMat.opacity = 0
     void applyFaceTextures(theme)
   }
 
   applyTheme(opts.theme)
   fitHalo()
+  fitShadow()
 
   function setSize(w: number, h: number) {
     if (w <= 0 || h <= 0) return
@@ -465,6 +499,7 @@ async function buildScene(
     camera.aspect = w / h
     camera.updateProjectionMatrix()
     fitHalo()
+    fitShadow()
   }
 
   function setRotationDeg(rot: number) {

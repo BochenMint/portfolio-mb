@@ -6,7 +6,7 @@
 Marcin Bochenek is a freelance software engineer based in Poland. He is a single accountable person: audit, design, implementation, and before/after measurement. He does not sell slide decks. Code and configuration belong to the client after invoices are paid. NDA is standard.
 
 ## What he sells
-1. Company websites and conversion funnels — from a brochure site with a form (from 6 500 PLN) to a site that sells, qualifies, or takes bookings (from 25 000 PLN).
+1. Company websites and conversion funnels — from a brochure site with a form (from 2 000 PLN) to a site that sells or qualifies (from 8 000 PLN) to a platform that takes bookings (from 25 000 PLN).
 2. Ops panels and integrations — one flow instead of Excel plus five logins (quoted after audit, typically 6–12 weeks).
 3. HITL AI — assistants that know the offer, with an allowed-action list, a full step audit, and escalation to a human (quoted after audit).
 
@@ -24,6 +24,17 @@ Polish is the canonical locale. English lives at /en/. Ukrainian lives at /ua/ w
 
 ## Articles
 Fourteen SSG articles (PL / EN / UK) under /artykuly/, /en/articles/, /ua/statti/. Topics: website audit, HITL automation, why a site does not sell, company-site pricing, online bookkeeping vs Excel, conversion funnel, ops panel vs Excel, direct bookings, SaaS vs custom panel, B2B company site, brochure vs funnel, page speed and SEO (INP/LCP), implementation process, ChatGPT at work vs a real deployment.
+
+## How Marcin defines a working website (the "under the hood" layers)
+The homepage demonstrates this directly: an interactive exploded F1 car that visitors take apart by scrolling, where each part stands for one layer of a website that actually works.
+- Bodywork — design & UX: what visitors see in the first three seconds (hierarchy, typography, mobile version); a shell over everything below it.
+- Front wing — speed: fast first render, optimized images, no bloated JavaScript; the layer Google measures before it reads a word of content.
+- Rear wing — visibility to Google and AI models: schema.org, hreflang, sitemap, llms.txt, and content that AI tools like ChatGPT or Perplexity can actually cite.
+- Wheels — conversion: the call to action, the form, the calendar, a booking flow on the client's own domain; the point where everything else turns into an enquiry or a booking.
+- Power unit — the technology underneath: integrations, data, APIs, security; what decides whether a site is a tool or a brochure.
+- Engine cover — process & deployment: tests, CI, a deploy from a single push, weekly iterations instead of once a year.
+- Halo — security & control: GDPR, EU hosting, backups, AI with an allowed-action list and escalation to a human.
+- Steering wheel & telemetry — measurement: events, conversions, a before/after comparison instead of a hunch.
 
 ## Contact
 Email: kontakt@marcinbochenek.com. Response: 1 business day. 20-minute audit is the default entry. GitHub: https://github.com/BochenMint. Related: https://mb-ai.pl (HITL product landing), https://gra.marcinbochenek.com (3D hangar piece).

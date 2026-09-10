@@ -2,7 +2,7 @@
 
 export const articleMeta = {
   'audyt-strony-internetowej': {
-    uk: { title: 'Аудит сайту: 2 500–6 000 злотих і рішення go/no-go' },
+    uk: { title: 'Аудит сайту: від 1 500 злотих і рішення go/no-go' },
   },
   'automatyzacja-z-kontrola-czlowieka': {
     uk: { title: 'Автоматизація HITL: ліміти, журнал аудиту й ескалація' },

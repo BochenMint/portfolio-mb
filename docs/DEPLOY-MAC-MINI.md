@@ -1,3 +1,7 @@
+> **Nieaktualne — zastąpione przez SEOhost.** Ten dokument opisuje poprzednie podejście
+> (Mac Mini + Caddy + Cloudflare Tunnel) i zostaje w repo tylko jako referencja. Aktualna
+> procedura wdrożenia: [`docs/DEPLOY-SEOHOST.md`](DEPLOY-SEOHOST.md).
+
 # Wdrożenie produkcyjne — Mac Mini + Cloudflare Tunnel
 
 Przewodnik go-live dla statycznego buildu Vite (`dist/`) serwowanego przez **Caddy** na Mac Mini, z publicznym dostępem wyłącznie przez **Cloudflare Tunnel** (bez otwierania portów 80/443 na routerze).

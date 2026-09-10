@@ -64,7 +64,7 @@ export const enContent: ContentOverlay = {
     aboutLead:
       'I’m a builder: I count hours and PLN first, then write code. Websites, panels and automations — measurable results after go-live, not promises from a pitch.',
     aboutAside:
-      'Poland, remote and on-site in the Tri-City. I reply within one business day. A small company gets a proper branded site from 6,500 PLN (up to 5 pages, no marketplace template); conversion funnels and ops systems — from 25,000 PLN, when ROI makes sense on both sides.',
+      'Poland, remote and on-site in the Tri-City. I reply within one business day. A small company gets a proper branded site from PLN 2,000 (up to 5 pages, no marketplace template); a company site with a conversion funnel and integrations — from PLN 8,000; booking platforms, panels and APIs — from PLN 25,000, when ROI makes sense on both sides.',
     ctaPrimary: 'Book a 20-min audit',
     ctaSecondary: 'See work',
     ctaCalendly: 'Book a 20-min audit',
@@ -74,8 +74,9 @@ export const enContent: ContentOverlay = {
     },
     location: 'Poland · remote',
     responseTime: 'Reply within 1 business day',
-    icpBadge: 'Company websites from 6,500 PLN · conversion funnels from 25,000 PLN',
-    icpBadgeShort: 'From 6,500 PLN · company website',
+    icpBadge: 'Websites from PLN 2,000 · systems from PLN 8,000',
+    icpBadgeShort: 'Websites from PLN 2,000 · systems from PLN 8,000',
+    minBudget: 'PLN 2,000',
   },
   resultsDisclaimer:
     '* Directional estimates — they depend on volume, number of channels and what you already have live. On the 20-min audit I will scope your case.',
@@ -109,7 +110,7 @@ export const enContent: ContentOverlay = {
       tags: ['Conversion', 'Fast site', 'Google visibility'],
       outcome: 'From a brochure site to a site that sells',
       timeline: '2–6 weeks',
-      from: 'from 6,500 PLN',
+      from: 'from PLN 2,000',
       deliverables: [
         'Up to 5 pages (e.g. home, offer, about, work, contact) — designed for your brand, not a marketplace template',
         'Contact form with notifications — enquiry qualification in the Conversion Build package',
@@ -151,7 +152,7 @@ export const enContent: ContentOverlay = {
   pricingPackages: [
     {
       name: 'Audit Sprint',
-      range: '2,500–6,000 PLN',
+      range: 'from PLN 1,500',
       qualifier: 'When you need a decision, not another brief.',
       bestFor:
         'The owner has a site, a process or an AI idea, but does not know where money and time actually leak.',
@@ -164,49 +165,62 @@ export const enContent: ContentOverlay = {
       proof: 'The sprint fee can be credited toward delivery if both sides see a case after the audit.',
     },
     {
-      name: 'Company website',
-      range: '6,500–12,000 PLN',
-      qualifier:
-        'Up to 5 pages, a form, basic SEO — custom for your brand (Astro/Next), not a 2–4k AI template or a ThemeForest WordPress.',
+      name: 'Start',
+      range: 'from PLN 2,000',
+      qualifier: 'A brochure site or landing page up to 5 pages — custom for your brand, not a marketplace template.',
       bestFor:
-        'A small company, freelancer or local business: you need a professional site, a contact form and a clear CTA — without the budget for a full conversion funnel or booking on your own domain.',
+        'A small company, freelancer or local business: you need a professional site, a contact form and a clear CTA to start — no integrations or funnel yet.',
       deliverables: [
         'up to 5 pages: home, offer, about, work/contact (scope locked on the audit)',
         'contact form with notifications and basic spam protection',
-        'brand-led design, responsive layout, map and hours — what a client must see',
-        'mobile speed (Core Web Vitals), on-page SEO and enquiry measurement after launch',
+        'mobile speed (Core Web Vitals) and on-page SEO',
+        'built so it can be extended without a rebuild from scratch',
       ],
       proof:
-        'Out of scope: copy from scratch, a blog, multilingual, CRM integrations, campaign landings — extras or Conversion Build. When enquiries grow, we add qualification and booking on your own site.',
+        'Out of scope: copy from scratch, a blog, CRM, calendar or booking integrations — that is the Launch package. When enquiries grow, we add the funnel and integrations.',
     },
     {
-      name: 'Conversion Build',
-      range: '25,000–60,000 PLN',
-      qualifier: 'When the site should sell or take bookings — not just inform.',
+      name: 'Launch',
+      range: 'from PLN 8,000',
+      qualifier: 'When the site should sell and measure the result — not just inform.',
       bestFor:
-        'A premium company needs a new site, booking on its own domain, qualifying forms or a sales path with measurement.',
+        'A company needs a site with a conversion funnel: a form feeding your CRM, a calendar, technical SEO and measurement from click to lead.',
       deliverables: [
-        'messaging strategy and site structure',
-        'design and build of a sales-led site',
-        'enquiry form, calls to action, Google visibility',
+        'messaging strategy and site structure built to sell',
+        'integrations: form → CRM, calendar/booking, technical SEO',
+        'calls to action and an enquiry-qualification path',
         'conversion measurement and post-launch fixes',
       ],
       proof: 'We close scope on a measurable goal: lead, booking, enquiry, or shorter handling time.',
-      featured: true,
     },
     {
-      name: 'Ops System',
-      range: '60,000–180,000+ PLN',
+      name: 'Platforma',
+      range: 'from PLN 25,000',
       qualifier: 'For companies whose problem is operations, not only marketing.',
       bestFor:
-        'You have sales, a team and a repeatable process: invoices, bookings, reports, support, internal tasks.',
+        'You have sales, a team and a repeatable process: booking, an ops panel, an API, multiple languages, automated tests.',
       deliverables: [
-        'ops panel or a team application',
-        'connections to payments, calendars, e-invoices and booking systems',
-        'automation with limits, step logging and human escalation',
+        'booking / ops panel or a team application',
+        'API and connections to payments, calendars, e-invoices and booking systems',
+        'multilingual (PL/EN/UA and more) plus automated tests before launch',
         'staging, team training and measurement after go-live',
       ],
       proof: 'Before code we lock before/after metrics — at this budget a pretty UI with no result is not enough.',
+      featured: true,
+    },
+    {
+      name: 'AI Ops',
+      range: 'from PLN 3,000 / month',
+      qualifier: 'Agents, automations, maintenance and ongoing development — human in the loop.',
+      bestFor:
+        'You already have a site or a system and want agents/automations running in production, plus someone maintaining and growing it month to month.',
+      deliverables: [
+        'AI assistant/agent with a hard scope of allowed actions',
+        'a record of every step and human escalation when confidence is low',
+        'maintenance, monitoring and post-launch fixes',
+        'feature development in following months based on production data',
+      ],
+      proof: 'Monthly billing — cancel any time, no fixed-term contract.',
     },
   ],
   projects: {
@@ -322,7 +336,7 @@ export const enContent: ContentOverlay = {
     {
       question: 'How much does it cost and what drives the price?',
       answer:
-        'Company website (up to 5 pages, form, basic SEO): 6,500–12,000 PLN net. On the market a WordPress/AI template is often 2–5k — here you get a custom brand build and a fast stack. A sales funnel, booking on your own site or a panel: usually 25,000–60,000 PLN — when the return is real (8+ h/month recovered, portal commissions, cost of manual handling). Ops systems from 60,000 PLN. After the audit you get a range and one recommendation, not three “gut feel” quotes.',
+        'Brochure site or landing (up to 5 pages, form, basic SEO): from PLN 2,000 — the Start package. A company site with a conversion funnel and integrations (form → CRM, calendar, technical SEO, measurement): from PLN 8,000 — Launch. A platform: booking on your own site, an ops panel, an API, multilingual: from PLN 25,000 — when the return is real (hours of handling recovered, portal commissions, cost of manual work). AI Ops — agents and automations with maintenance: from PLN 3,000/month. After the audit you get a range and one recommendation, not three “gut feel” quotes.',
     },
     {
       question: 'Do we sign an NDA and who owns the code?',
@@ -418,10 +432,11 @@ export const enContent: ContentOverlay = {
       type: 'select',
       required: true,
       options: [
-        '2,500–6,000 PLN — audit',
-        '6,500–12,000 PLN — company website',
-        '25,000–60,000 PLN — conversion / direct booking',
-        '60,000–180,000+ PLN — system / integrations',
+        'from PLN 1,500 — audit',
+        'from PLN 2,000 — website / landing (Start)',
+        'from PLN 8,000 — website + funnel (Launch)',
+        'from PLN 25,000 — platform / panel / API',
+        'from PLN 3,000 / month — AI Ops',
         'I don’t know — I want to calculate ROI',
       ],
     },
