@@ -2,7 +2,11 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { site } from '../../chrome/data/content'
 
-type FormStatus = 'idle' | 'loading' | 'success' | 'error'
+/** `mailto`: the visitor's mail client was asked to open — nothing confirms it did. */
+type FormStatus = 'idle' | 'loading' | 'success' | 'mailto' | 'error'
+
+/** A form service that has not answered by now is not going to. */
+const REQUEST_TIMEOUT_MS = 15000
 
 type Field = {
   id: string
@@ -40,30 +44,34 @@ function needsMailtoFallback(endpoint: string, accessKey: string) {
 export function InquiryForm() {
   const [status, setStatus] = useState<FormStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
-  const [usedMailto, setUsedMailto] = useState(false)
+  const [mailtoHref, setMailtoHref] = useState('')
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    // React clears `currentTarget` once the handler yields to an await, so
+    // the form is held on to here — reading it after the fetch threw, and a
+    // delivered inquiry was reported as a failure.
+    const form = e.currentTarget
     setErrorMessage('')
 
-    const data = new FormData(e.currentTarget)
-    const body = Object.fromEntries(data.entries()) as Record<string, string>
+    const body = Object.fromEntries(new FormData(form).entries()) as Record<string, string>
+    const subject = `Strona dla pracowni krajobrazu — ${body.company || body.name || 'zapytanie'}`
 
     if (needsMailtoFallback(formEndpoint, formAccessKey)) {
-      const subject = `Strona dla pracowni krajobrazu — ${body.company || body.name || 'zapytanie'}`
       const lines = fields.map((field) => `${field.label}: ${body[field.id] || '-'}`)
-      const mailto = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`
-      window.location.href = mailto
-      setUsedMailto(true)
-      setStatus('success')
-      e.currentTarget.reset()
+      const href = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`
+      // The form stays filled in and on screen: if no mail client opens,
+      // the visitor still has what they wrote and a link to try again.
+      setMailtoHref(href)
+      setStatus('mailto')
+      window.location.href = href
       return
     }
 
     setStatus('loading')
 
     const payload: Record<string, string> = {
-      subject: `Strona dla pracowni krajobrazu — ${body.company || body.name || 'zapytanie'}`,
+      subject,
       from_name: body.name || 'Zapytanie z /krajobraz',
       ...body,
     }
@@ -72,6 +80,8 @@ export function InquiryForm() {
       payload.access_key = formAccessKey
     }
 
+    const controller = new AbortController()
+    const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
     try {
       const res = await fetch(formEndpoint, {
         method: 'POST',
@@ -80,6 +90,7 @@ export function InquiryForm() {
           Accept: 'application/json',
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       })
 
       if (!res.ok) {
@@ -87,14 +98,17 @@ export function InquiryForm() {
         throw new Error((err as { message?: string }).message || `HTTP ${res.status}`)
       }
 
-      setUsedMailto(false)
+      form.reset()
       setStatus('success')
-      e.currentTarget.reset()
     } catch (err) {
       setStatus('error')
       setErrorMessage(
-        err instanceof Error ? err.message : `Nie udało się wysłać. Napisz proszę bezpośrednio na ${site.email}.`,
+        err instanceof DOMException && err.name === 'AbortError'
+          ? `Formularz nie odpowiada. Napisz proszę bezpośrednio na ${site.email}.`
+          : `Nie udało się wysłać. Napisz proszę bezpośrednio na ${site.email}.`,
       )
+    } finally {
+      window.clearTimeout(timer)
     }
   }
 
@@ -106,11 +120,7 @@ export function InquiryForm() {
         className="rounded-2xl border p-8 text-center md:p-10"
       >
         <p className="font-display text-xl font-semibold text-[var(--cream)]">Dziękuję!</p>
-        <p className="mt-2 text-sm text-[var(--cream-dim)]">
-          {usedMailto
-            ? `Otworzyłem Twój program pocztowy — wyślij wiadomość na ${site.email}.`
-            : `Odezwę się — ${site.responseTime.toLowerCase()}.`}
-        </p>
+        <p className="mt-2 text-sm text-[var(--cream-dim)]">{`Odezwę się — ${site.responseTime.toLowerCase()}.`}</p>
         {site.calendly && (
           <a
             href={site.calendly}
@@ -166,6 +176,23 @@ export function InquiryForm() {
         </div>
 
         <div aria-live="polite">
+          {status === 'mailto' && (
+            <p
+              style={{ borderColor: 'rgba(143, 191, 74, 0.35)', background: 'rgba(143, 191, 74, 0.08)' }}
+              className="rounded-2xl border px-4 py-3 text-sm leading-relaxed text-[var(--cream)]"
+            >
+              Otworzyłem Twój program pocztowy z&nbsp;gotową wiadomością — wystarczy ją wysłać. Jeśli się nie
+              otworzył,{' '}
+              <a href={mailtoHref} className="underline underline-offset-4">
+                spróbuj ponownie
+              </a>{' '}
+              albo napisz na{' '}
+              <a href={`mailto:${site.email}`} className="underline underline-offset-4">
+                {site.email}
+              </a>
+              .
+            </p>
+          )}
           {status === 'error' && (
             <p
               style={{ borderColor: 'rgba(244, 237, 220, 0.2)', background: 'rgba(244, 237, 220, 0.05)' }}

@@ -22,6 +22,7 @@ export function GardenStage() {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const outroRef = useRef<HTMLDivElement>(null)
   const [reduced] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
@@ -32,10 +33,14 @@ export function GardenStage() {
     const section = sectionRef.current
     const stage = stageRef.current
     const canvas = canvasRef.current
-    if (!section || !stage || !canvas) return
+    const outro = outroRef.current
+    if (!section || !stage || !canvas || !outro) return
     let disposed = false
     let handle: GardenHandle | null = null
     let phase = ''
+    // The observer can report before the scene exists; the scene is told
+    // the latest answer once it does.
+    let onScreen = true
 
     const progress = () => {
       if (reduced) return 1
@@ -46,16 +51,17 @@ export function GardenStage() {
     const onScroll = () => {
       const p = progress()
       const intro = clamp01((T.introOut - p) / (T.introOut - T.introHold))
-      const outro = clamp01((p - T.outro[0]) / (T.outro[1] - T.outro[0]))
+      const outroA = clamp01((p - T.outro[0]) / (T.outro[1] - T.outro[0]))
       stage.style.setProperty('--p', p.toFixed(4))
       stage.style.setProperty('--intro', intro.toFixed(3))
-      stage.style.setProperty('--outro', outro.toFixed(3))
+      stage.style.setProperty('--outro', outroA.toFixed(3))
       // Only what can be clicked needs a discrete state: a faded-out button
-      // must not keep catching taps.
-      const next = outro > 0.6 ? 'outro' : intro > 0.4 ? 'intro' : 'mid'
+      // must neither catch taps nor take keyboard focus.
+      const next = outroA > 0.6 ? 'outro' : intro > 0.4 ? 'intro' : 'mid'
       if (next !== phase) {
         phase = next
         stage.dataset.phase = next
+        outro.inert = next !== 'outro'
       }
       handle?.setProgress(p)
     }
@@ -63,15 +69,27 @@ export function GardenStage() {
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
 
-    const io = new IntersectionObserver(([entry]) => handle?.setVisible(entry.isIntersecting), {
-      rootMargin: '10% 0px',
-    })
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting
+        handle?.setVisible(onScreen)
+      },
+      { rootMargin: '10% 0px' },
+    )
     io.observe(section)
-    const ro = new ResizeObserver(() => handle?.resize())
+    // The section changes height when it drops to the still version, which
+    // moves progress to 1 without any scroll event to say so.
+    const ro = new ResizeObserver(() => {
+      onScroll()
+      handle?.resize()
+    })
     ro.observe(stage)
+    ro.observe(section)
 
     const onLost = (e: Event) => {
       e.preventDefault()
+      handle?.dispose()
+      handle = null
       setStatus('fallback')
     }
     canvas.addEventListener('webglcontextlost', onLost)
@@ -87,6 +105,7 @@ export function GardenStage() {
         }
         handle = h
         h.setProgress(progress())
+        h.setVisible(onScreen)
         setStatus('live')
         if (DEBUG) (window as unknown as { __garden?: unknown }).__garden = h.debug
       } catch (err) {
@@ -142,7 +161,7 @@ export function GardenStage() {
           </p>
         </div>
 
-        <div className="garden-outro">
+        <div ref={outroRef} className="garden-outro">
           <p className="garden-outro-line">
             Strona dla Twojej pracowni: realizacje, oferta i&nbsp;zapytania od klientów w&nbsp;jednym miejscu.
           </p>

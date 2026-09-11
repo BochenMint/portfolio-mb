@@ -185,11 +185,9 @@ export function plantHeadline(opts: {
   // budget, thin the bed evenly rather than dropping whatever was planted
   // last — which would be the whole bottom line.
   const cap = Math.round(opts.maxCount * 1.2)
-  if (out.length > cap) {
-    const keep = cap / out.length
-    for (let i = out.length - 1; i >= 0; i--) if (rand() > keep) out.splice(i, 1)
-  }
-  const n = Math.min(out.length, cap)
+  const keep = cap / out.length
+  const planted = out.length > cap ? out.filter(() => rand() <= keep) : out
+  const n = Math.min(planted.length, cap)
   const field: FlowerField = {
     count: n,
     pos: new Float32Array(n * 3),
@@ -205,7 +203,7 @@ export function plantHeadline(opts: {
   }
   const lineCount = Math.max(1, lines.length - 1)
   for (let i = 0; i < n; i++) {
-    const f = out[i]
+    const f = planted[i]
     const r = rand()
     const species = f.edge
       ? r < 0.72
