@@ -8,6 +8,12 @@
       "port": 5190
     },
     {
+      "name": "portfolio-mb-lan",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--host"],
+      "port": 5190
+    },
+    {
       "name": "portfolio-mb-v4-dev",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["vite", "--port", "5197", "--strictPort"],
