@@ -13,6 +13,7 @@ function localeHtmlPlugin(): Plugin {
     const q = qIndex === -1 ? '' : url.slice(qIndex)
     if (path === '/en' || path === '/en/') return `/en/index.html${q}`
     if (path === '/ua' || path === '/ua/') return `/ua/index.html${q}`
+    if (path === '/krajobraz' || path === '/krajobraz/') return `/krajobraz.html${q}`
     const archive = path.match(/^\/(en|ua)\/(v[1-6]\.html)$/)
     if (archive) return `/${archive[2]}${q}`
     for (const prefix of journalPrefixes) {
@@ -92,6 +93,7 @@ export default defineConfig({
         notFound: '404.html',
         v5: 'v5.html',
         v6: 'v6.html',
+        krajobraz: 'krajobraz.html',
       },
       output: {
         // Tripwire: a stray import of these packages should land in its own
