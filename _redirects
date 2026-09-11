@@ -43,5 +43,9 @@ https://www.marcinbochenek.com/* https://marcinbochenek.com/:splat 301
 /v4 /v4.html 200
 /v4/ /v4.html 200
 
+# --- Unlisted landing for landscape-architecture studios (no site link) ----
+/krajobraz /krajobraz.html 200
+/krajobraz/ /krajobraz.html 200
+
 # Note: /artykuly/<slug>/, /en/articles/<slug>/ and /ua/statti/<slug>/ need no rule —
 # Cloudflare Pages serves public/.../index.html at the pretty directory URL natively.

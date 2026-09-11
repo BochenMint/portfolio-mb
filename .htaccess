@@ -124,6 +124,11 @@ RewriteRule ^uk/statti/(.*)$ /ua/statti/$1 [R=301,L]
 # Vanity shortcut: /v4, /v4/ -> v4.html (URL stays, internal rewrite).
 RewriteRule ^v4/?$ /v4.html [L]
 
+# Unlisted landing for landscape-architecture studios (pracownie architektury
+# krajobrazu): reachable only by direct link, noindex in its own <head>, and
+# deliberately absent from sitemap.xml — nothing on the main site links here.
+RewriteRule ^krajobraz/?$ /krajobraz.html [L]
+
 # Archive pages under a locale prefix: /(en|ua)/v[1-6].html serves the SAME
 # root-level file without changing the browser URL (used by the language
 # switcher on archive pages — see src/i18n/path.ts switchPath/archivePath).
