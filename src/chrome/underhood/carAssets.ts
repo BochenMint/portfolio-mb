@@ -177,8 +177,10 @@ export const PIECES: PieceSpec[] = [
   /* Rear wing with its swan-neck pylons. Source box 1.8988 × 1.2000 × 1.4137,
      span down local X, so the same quarter turn about +Y. Uniform 0.50 gives
      a 0.95 m span, 0.60 m height and 0.71 m of depth including the pylons:
-     x −2.80…−2.10, y 0.48…1.08, its pylons landing on the back of the floor,
-     which ends at −2.30. */
+     x −2.80…−2.10, y 0.48…1.08. The twin pylons end in flat feet at y 0.48,
+     x −2.68…−2.45, z ±0.06 — behind the body, which stops at −2.21…−2.30,
+     so on their own they stand on nothing. `REAR_MOUNT` below is what they
+     bolt to. */
   {
     part: 'rearWing',
     file: 'rearWing',
@@ -258,12 +260,53 @@ export const PIECES: PieceSpec[] = [
 export const HOVER_PROXIES: Partial<Record<PartId, { size: Vec3; offset?: Vec3 }>> = {
   // 0.59 m chord × 0.28 tall × 2.00 span, at [2.55, 0.20, 0].
   frontWing: { size: [0.78, 0.4, 2.14] },
-  // 0.71 deep × 0.60 tall × 0.95 span, at [−2.45, 0.78, 0].
-  rearWing: { size: [0.84, 0.72, 1.08] },
+  // 0.71 deep × 0.60 tall × 0.95 span, at [−2.45, 0.78, 0]. The box starts at
+  // the pylon feet (y 0.48) and takes all its margin upward: below the feet is
+  // the impact structure, which is body, and must answer as body.
+  rearWing: { size: [0.84, 0.66, 1.08], offset: [0, 0.03, 0] },
   // 0.78 long × 0.35 tall × 0.80 across, at [0.18, 0.775, 0]. Kept tight in Y:
   // the hoop sits directly over the cockpit rim and a taller box would answer
   // for the body every time the cursor crossed the tub.
   halo: { size: [0.88, 0.42, 0.9] },
+}
+
+/* ------------------------------------------------------------------ *
+ * Rear impact structure
+ *
+ * The crash box that runs back from the gearbox under the rear wing, with
+ * the rain light on its end — and, on a real car, the thing the wing's
+ * pylons bolt to. The reference render never had one, so the GLB wing was
+ * left standing on air 0.15–0.40 m behind the tail (Marcin 2026-09: "tylne
+ * skrzydło wisi w powietrzu"). `carParts.ts` builds it from primitives and
+ * reads the two numbers that matter off the wing mesh itself: its top is the
+ * height of the pylon feet, and its end is just past the rearmost of them.
+ * Everything else is the shape of the box, in metres.
+ *
+ * It is body, not wing. When the wing comes off, the structure stays behind
+ * with the pads it was bolted to, the way the halo leaves its pads.
+ * ------------------------------------------------------------------ */
+export const REAR_MOUNT = {
+  /**
+   * World x where the box starts: inside the gearbox bay, 0.15 m ahead of the
+   * rear axle. The body's tail is hollow here — layered shells with a centre
+   * fin, back faces anywhere between −1.87 and −2.30 depending on height — so
+   * the box is started deep enough that every one of them closes round it.
+   */
+  front: REAR_AXLE_X + 0.15,
+  /** How far the box runs past the rearmost pylon foot. */
+  overhang: 0.05,
+  /** How deep the feet sit in its top, so they read as bolted, not balanced. */
+  sink: 0.008,
+  /** Depth under the top, at the gearbox and at the tail: it sweeps up. */
+  depth: [0.14, 0.1] as [number, number],
+  /** Half width at the gearbox and at the tail. */
+  halfWidth: [0.095, 0.075] as [number, number],
+  /** Clearance kept either side of the feet, whatever the taper says. */
+  footMargin: 0.016,
+  /** Corner radius of the section. */
+  corner: 0.028,
+  /** Rain light lens on the end face: width × height, in metres. */
+  lamp: [0.07, 0.032] as [number, number],
 }
 
 /** The steering wheel is drawn from primitives, so it only needs a transform. */

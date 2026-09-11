@@ -17,6 +17,7 @@ import {
   PART_IDS,
   PART_WINDOWS,
   PIECES,
+  REAR_MOUNT,
   REAR_TYRE_HALF_WIDTH,
   STEERING,
   windowProgress,
@@ -107,6 +108,15 @@ const PAD_RADIUS = 0.03
 const PAD_HEIGHT = 0.02
 /** Where the wheel probe rays start, in |z| off the wheel centre. */
 const WHEEL_RAY_Z = 1.2
+
+/**
+ * Half width of the strip down the middle of the rear wing where the pylons
+ * are. Outside it are the endplates, which reach down to the same height and
+ * would otherwise be taken for feet.
+ */
+const PYLON_ZONE = 0.15
+/** A vertex this close to the pylons' lowest point is part of a foot. */
+const PYLON_FOOT_BAND = 0.03
 
 export type BuiltGeometries = Map<string, THREE_NS.BufferGeometry[]>
 
@@ -470,6 +480,70 @@ export function buildCar(
       }
     } else if (import.meta.env.DEV) {
       console.warn('[underhood] halo feet not found; the hoop is where the manifest put it')
+    }
+  }
+
+  /* ---- Rear wing: the structure its pylons stand on -----------------
+   *
+   * Find the pylon feet in the wing mesh, then run the impact structure from
+   * inside the gearbox bay back to just past them, its top at the height of
+   * the feet plus the sink — so the feet end *in* it. See `REAR_MOUNT`.
+   * ------------------------------------------------------------------ */
+  {
+    const piece = parts.get('rearWing')!.movers[0]?.object
+    root.updateMatrixWorld(true)
+    const feet = piece ? findPylonFeet(THREE, piece) : null
+    if (feet) {
+      const top = feet.y + REAR_MOUNT.sink
+      const tail = feet.x0 - REAR_MOUNT.overhang
+      // The taper may narrow the box, but never to less than the feet need.
+      const need = feet.halfZ + REAR_MOUNT.footMargin
+      const halfWidth: [number, number] = [
+        Math.max(REAR_MOUNT.halfWidth[0], need),
+        Math.max(REAR_MOUNT.halfWidth[1], need),
+      ]
+      const geo = impactStructureGeometry(THREE, {
+        front: REAR_MOUNT.front,
+        tail,
+        top,
+        depth: REAR_MOUNT.depth,
+        halfWidth,
+        corner: REAR_MOUNT.corner,
+      })
+      disposables.push(geo)
+      // Body material, so it recedes and lights with the chassis it is part
+      // of, and a body hover target for the same reason.
+      const box = new THREE.Mesh(geo, parts.get('body')!.material)
+      box.userData.partId = 'body'
+      root.add(box)
+      raycastTargets.push(box)
+
+      // The rain light: a dark lens on the end face, centred on it. It is the
+      // one detail that says "back of a racing car" from behind, and like the
+      // steering display it must not be a mirror or it would vanish into the
+      // chrome around it.
+      const lensMat = new THREE.MeshPhysicalMaterial({
+        color: 0x16080a,
+        metalness: 0.3,
+        roughness: 0.25,
+        envMapIntensity: 0.4,
+      })
+      const lensGeo = new THREE.BoxGeometry(0.006, REAR_MOUNT.lamp[1], REAR_MOUNT.lamp[0])
+      disposables.push(lensMat, lensGeo)
+      const lens = new THREE.Mesh(lensGeo, lensMat)
+      lens.position.set(tail - 0.001, top - REAR_MOUNT.depth[1] / 2, 0)
+      lens.raycast = noHit
+      root.add(lens)
+
+      if (import.meta.env.DEV) {
+        console.info(
+          `[underhood] rear wing mounted: pylon feet x ${feet.x1.toFixed(3)}…${feet.x0.toFixed(3)}, ` +
+            `y ${feet.y.toFixed(3)}, |z| ≤ ${feet.halfZ.toFixed(3)}; impact structure ` +
+            `x ${REAR_MOUNT.front.toFixed(2)}…${tail.toFixed(3)}, top ${top.toFixed(3)}`,
+        )
+      }
+    } else if (import.meta.env.DEV) {
+      console.warn('[underhood] rear wing pylon feet not found; no impact structure built')
     }
   }
 
@@ -1088,6 +1162,156 @@ function seatHalo(
     )
   }
   return { drop, tilt, contacts, surfaceY, residuals }
+}
+
+/**
+ * Where the rear wing's pylons end, in world space.
+ *
+ * Only the strip down the middle of the wing is looked at: the endplates come
+ * down to the same height out at the sides and are not feet. Inside the
+ * strip, the lowest vertices are the bottoms of the two pylons — flat cuts,
+ * so everything within 30 mm of the lowest point is foot. Returns the foot's
+ * x extent (`x0` the rearmost, which is the most negative), its height, and
+ * how far off the centreline its outer face is.
+ */
+function findPylonFeet(
+  THREE: THREE,
+  piece: THREE_NS.Object3D,
+): { x0: number; x1: number; y: number; halfZ: number } | null {
+  piece.updateMatrixWorld(true)
+  const meshes: THREE_NS.Mesh[] = []
+  piece.traverse((o) => {
+    const m = o as THREE_NS.Mesh
+    if (m.isMesh) meshes.push(m)
+  })
+
+  const v = new THREE.Vector3()
+  const each = (fn: (p: THREE_NS.Vector3) => void) => {
+    for (const m of meshes) {
+      const pos = m.geometry.getAttribute('position') as THREE_NS.BufferAttribute
+      for (let i = 0; i < pos.count; i++) {
+        v.fromBufferAttribute(pos, i).applyMatrix4(m.matrixWorld)
+        if (Math.abs(v.z) <= PYLON_ZONE) fn(v)
+      }
+    }
+  }
+
+  let y = Infinity
+  each((p) => {
+    if (p.y < y) y = p.y
+  })
+  if (!Number.isFinite(y)) return null
+
+  let x0 = Infinity
+  let x1 = -Infinity
+  let halfZ = 0
+  each((p) => {
+    if (p.y > y + PYLON_FOOT_BAND) return
+    x0 = Math.min(x0, p.x)
+    x1 = Math.max(x1, p.x)
+    halfZ = Math.max(halfZ, Math.abs(p.z))
+  })
+  return { x0, x1, y, halfZ }
+}
+
+/**
+ * The rear impact structure: a round-cornered box lofted down the car's axis.
+ *
+ * Built in world space, from `front` (inside the gearbox bay) back to `tail`.
+ * The top is dead flat for the whole length — it is the face the pylon feet
+ * sit on — while the underside sweeps up toward the tail and the plan tapers,
+ * which is what makes it read as a crash structure rather than a beam. The
+ * section is a rounded rectangle rather than a superellipse on purpose: a
+ * superellipse is already falling away at the pylons' |z| and would have left
+ * the outer edge of each foot hanging a few millimetres over nothing.
+ *
+ * Both ends are capped with their own vertices, so the recomputed normals stay
+ * flat across the end faces instead of smearing round the corners.
+ */
+function impactStructureGeometry(
+  THREE: THREE,
+  spec: {
+    front: number
+    tail: number
+    top: number
+    depth: [number, number]
+    halfWidth: [number, number]
+    corner: number
+  },
+): THREE_NS.BufferGeometry {
+  const STATIONS = 16
+  /** Segments per quarter-circle corner. */
+  const ARC = 6
+  const perRing = 4 * (ARC + 1)
+  const positions: number[] = []
+  const index: number[] = []
+  const rings: { x: number; mid: number; start: number }[] = []
+
+  for (let i = 0; i < STATIONS; i++) {
+    const t = i / (STATIONS - 1)
+    const x = spec.front + (spec.tail - spec.front) * t
+    // Smoothstep, so the underside leaves the gearbox level and arrives at
+    // the tail level, with the sweep in between.
+    const e = t * t * (3 - 2 * t)
+    const bottom = spec.top - (spec.depth[0] + (spec.depth[1] - spec.depth[0]) * e)
+    const w = spec.halfWidth[0] + (spec.halfWidth[1] - spec.halfWidth[0]) * t
+    const h = (spec.top - bottom) / 2
+    const mid = (spec.top + bottom) / 2
+    const r = Math.min(spec.corner, h * 0.9, w * 0.9)
+    // Corner centres, walked from +z/+y round through −z to −y: the section
+    // runs anticlockwise seen from behind the car.
+    const corners: [number, number, number][] = [
+      [w - r, h - r, 0],
+      [-(w - r), h - r, 90],
+      [-(w - r), -(h - r), 180],
+      [w - r, -(h - r), 270],
+    ]
+    rings.push({ x, mid, start: positions.length / 3 })
+    for (const [cz, cy, a0] of corners) {
+      for (let k = 0; k <= ARC; k++) {
+        const a = ((a0 + (90 * k) / ARC) * Math.PI) / 180
+        positions.push(x, mid + cy + r * Math.sin(a), cz + r * Math.cos(a))
+      }
+    }
+  }
+
+  // Side wall. Stations run toward −x, so (a, b, c) with b the next point
+  // round the ring and c the same point one station back faces outward.
+  for (let i = 0; i < STATIONS - 1; i++) {
+    for (let j = 0; j < perRing; j++) {
+      const a = i * perRing + j
+      const b = i * perRing + ((j + 1) % perRing)
+      const c = (i + 1) * perRing + j
+      const d = (i + 1) * perRing + ((j + 1) % perRing)
+      index.push(a, b, c, b, d, c)
+    }
+  }
+
+  // End caps, each a fan round a centre vertex of its own.
+  const cap = (ring: { x: number; mid: number; start: number }, facingTail: boolean) => {
+    const centre = positions.length / 3
+    positions.push(ring.x, ring.mid, 0)
+    for (let j = 0; j < perRing; j++) {
+      const p = ring.start + j
+      positions.push(positions[p * 3], positions[p * 3 + 1], positions[p * 3 + 2])
+    }
+    for (let j = 0; j < perRing; j++) {
+      const p = centre + 1 + j
+      const q = centre + 1 + ((j + 1) % perRing)
+      if (facingTail) index.push(centre, p, q)
+      else index.push(centre, q, p)
+    }
+  }
+  cap(rings[STATIONS - 1], true)
+  cap(rings[0], false)
+
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+  geo.setIndex(index)
+  geo.computeVertexNormals()
+  geo.computeBoundingBox()
+  geo.computeBoundingSphere()
+  return geo
 }
 
 /**
