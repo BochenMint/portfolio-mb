@@ -114,5 +114,7 @@ export type ChromeCopy = {
     mbAiHref: string
     krajobraz: string
     krajobrazHref: string
+    brukarstwo: string
+    brukarstwoHref: string
   }
 }

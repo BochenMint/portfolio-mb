@@ -142,5 +142,7 @@ export const copyEn = {
     stack: 'Websites, systems and automation for companies in Poland and abroad. I work in English and Polish.',
     krajobraz: 'For landscape-architecture studios',
     krajobrazHref: '/krajobraz',
+    brukarstwo: 'For paving contractors',
+    brukarstwoHref: '/brukarstwo',
   },
 } satisfies ChromeCopy

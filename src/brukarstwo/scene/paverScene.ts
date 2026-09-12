@@ -1,0 +1,245 @@
+/**
+ * The paving contractor's landing: a screeded aggregate bed, laid over by
+ * courses of concrete block paving in herringbone, with the headline set
+ * into the field as basalt accent stones and the joints finished with a
+ * sand sweep — the paver-trade twin of `krajobraz/scene/gardenScene.ts` on
+ * the same engine, extracted to `src/stage/` the day after that one shipped.
+ *
+ * Same camera as the garden (24° tilt, 36° vertical FOV, the same
+ * `groundWidth`), so the two landings read as one studio's work rather than
+ * two different demos. Everything else — the render loop, resize handling,
+ * visibility, disposal — lives in `stage/sceneHost.ts`; this file only
+ * builds the world that sits inside it and drives it from one `update`.
+ *
+ * Conventions match the garden's: 1 unit ≈ 0.25 m, +x right, +z toward the
+ * camera. `three` is never imported here at module scope — it arrives
+ * through `ctx.THREE`, itself behind the dynamic import in `sceneHost.ts`.
+ */
+
+import type * as THREE_NS from 'three'
+import { GROUND_FRAG, GROUND_VERT, groundUniforms, type GroundPalette, type RakeConfig } from '../../stage/ground'
+import { setHeadline } from '../../stage/lettering'
+import { createSceneHost, type SceneCtx, type SceneHandle } from '../../stage/sceneHost'
+import { createPaverField, EDGE_SHORT, type PaverField } from './pavers'
+import { T } from './timeline'
+
+export type PaverSceneHandle = SceneHandle
+
+const DEG = Math.PI / 180
+const TILT_DEG = 24
+/** Only the camera's own framing needs the tilt in degrees (handed to the
+ *  host); the headline's z-stretch needs it in radians right here — same
+ *  split `gardenScene.ts` makes. */
+const TILT = TILT_DEG * DEG
+const VFOV = 36
+const FONT = `"Hanken Grotesk", system-ui, sans-serif`
+
+/* Aggregate ground: crushed stone under screeded sand — grey-brown, not the
+ * garden's loam. `stage/ground.ts` already takes a palette as a plain
+ * argument (`groundUniforms(THREE, palette, rake)`), so a second trade never
+ * needs to edit that file to get its own colours: this palette lives here,
+ * next to the scene that uses it, rather than beside `GARDEN_PALETTE`. */
+const AGGREGATE_PALETTE: GroundPalette = {
+  wet: [0.018, 0.017, 0.016],
+  loam: [0.05, 0.046, 0.04],
+  dry: [0.096, 0.088, 0.077],
+  stoneLo: [0.07, 0.068, 0.064],
+  stoneHi: [0.2, 0.196, 0.185],
+  straw: [0.12, 0.108, 0.086],
+}
+
+/* A screed board, unlike a rake, runs along a straight guide rail — no drift
+ * in the direction the garden's `GARDEN_RAKE` deliberately has ([0.96, 0.28]
+ * — dragged almost along x, but not quite). The one thing `ground.ts`'s
+ * shared shader does NOT expose as a uniform is the furrow's own meander
+ * (`wobble`, baked into `GROUND_FRAG` as an absolute world-space offset,
+ * independent of `uRakeFreq`) — tried first at a much higher frequency than
+ * the garden's 21, on the theory that tighter lines would read as finer,
+ * straighter scoring. Wrong on both counts: the wobble's own amplitude
+ * doesn't shrink with frequency, so tighter spacing only made the *relative*
+ * wander worse, and at that frequency the furrow's `sin(phase)` aliases
+ * against the screen with no distance fade of its own (unlike the fine
+ * crumb/grit terms) — the render came out as a moiré wash, confirmed by eye
+ * against the harness screenshots, not just guessed at. A LOWER frequency
+ * than the garden's own is what actually reads as calm and flat: few, wide,
+ * barely-there bands rather than a rake's obvious wandering furrows, on an
+ * exactly axis-aligned direction (no drift added on top). */
+const SCREED: RakeConfig = { dir: [1, 0], freq: 9 }
+
+const SUN: [number, number, number] = normalize([-0.5, 0.74, -0.45])
+const SUN_COL: [number, number, number] = [1.45, 1.12, 0.78]
+const SKY: [number, number, number] = [0.36, 0.42, 0.55]
+const CLEAR_COLOR = 0x18140f
+
+/** Candidate line breaks for the headline, widest first — the sentence the
+ *  garden plants (`krajobraz/scene/letters.ts`'s `LAYOUTS`), kept here as its
+ *  own copy: this scene reads `stage/lettering.ts` directly rather than
+ *  reaching into the garden's own planting file for it. */
+const LAYOUTS: string[][] = [
+  ['Zbuduję dla Ciebie', 'nową stronę'],
+  ['Zbuduję dla', 'Ciebie nową', 'stronę'],
+  ['Zbuduję', 'dla Ciebie', 'nową', 'stronę'],
+  ['Zbuduję', 'dla', 'Ciebie', 'nową', 'stronę'],
+]
+
+type World = {
+  group: THREE_NS.Group
+  groundGeo: THREE_NS.PlaneGeometry
+  groundMat: THREE_NS.ShaderMaterial
+  pavers: PaverField
+  dispose(): void
+}
+
+export async function createPaverScene(
+  canvas: HTMLCanvasElement,
+  opts: { reduced: boolean; coarse: boolean },
+): Promise<PaverSceneHandle> {
+  // The headline is set in the page's own face, same wait-but-not-forever
+  // the garden uses: a font that never arrives must not leave the stage
+  // empty.
+  await Promise.race([
+    document.fonts?.load(`900 64px "Hanken Grotesk"`, 'Zbudujęąó').catch(() => undefined),
+    new Promise((r) => setTimeout(r, 2500)),
+  ])
+
+  return createSceneHost<World>(canvas, {
+    reduced: opts.reduced,
+    coarse: opts.coarse,
+    tilt: TILT_DEG,
+    vfov: VFOV,
+    // Same formula as the garden, so a resize picks the same ground width at
+    // the same aspect ratio and the two landings feel like one camera rig.
+    groundWidth: (aspect) => Math.max(5.6, Math.min(14.5, 7.8 * aspect)),
+    sun: SUN,
+    sunColor: SUN_COL,
+    sky: SKY,
+    clearColor: CLEAR_COLOR,
+    pixelRatioCap: 1.5,
+    build: (ctx) => build(ctx, opts),
+    update: (world, p, ctx) => update(world, p, ctx),
+    debugInfo: (world) => {
+      const info = world?.pavers.info()
+      return {
+        pavers: info?.stones,
+        courses: info?.courses,
+        accents: info?.accents,
+      }
+    },
+  })
+}
+
+/* ---- World (rebuilt when the shape of the screen changes) -------- */
+function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): World {
+  const { THREE, light } = ctx
+  const fp = ctx.frame
+  const group = new THREE.Group()
+
+  const depth = fp.zNear - fp.zFar
+  const halfW = Math.max(fp.halfFar, fp.halfNear)
+  // The field's own rectangle stops short of the frame's outer edge by
+  // exactly the edging kerb's width, so the kerb (laid just outside it, see
+  // `pavers.ts`) lands right at the visible edge instead of floating in a
+  // gap or hanging off it.
+  const x0 = -(halfW - EDGE_SHORT)
+  const x1 = halfW - EDGE_SHORT
+
+  /* Ground: the same screeded-aggregate bed under the whole visible plane,
+   * oversized the same way the garden's soil plane is (`+6`/`+8`) so a
+   * resize's rebuild threshold never exposes a bare edge mid-scroll. */
+  const groundGeo = new THREE.PlaneGeometry(2 * halfW + 6, depth + 8).rotateX(-Math.PI / 2)
+  groundGeo.translate(0, 0, (fp.zFar + fp.zNear) / 2)
+  const groundMat = new THREE.ShaderMaterial({
+    vertexShader: GROUND_VERT,
+    fragmentShader: (opts.coarse ? '#define COARSE 1\n' : '') + GROUND_FRAG,
+    uniforms: { ...light, ...groundUniforms(THREE, AGGREGATE_PALETTE, SCREED) },
+  })
+  const groundMesh = new THREE.Mesh(groundGeo, groundMat)
+  // Drawn first: the field and edging cover almost all of it, but whatever
+  // shows at the frame's outer edge (and behind the far horizon) is bed.
+  groundMesh.renderOrder = 0
+  group.add(groundMesh)
+
+  /* Headline: the same sentence the garden plants, read here as ink points
+   * to swap pavers under rather than as flowers to grow — `plantHeadline`'s
+   * carpet-bedding logic (species, colour, stems) has nothing to do here, so
+   * this scene calls `stage/lettering.ts` directly instead of going through
+   * the garden's own `letters.ts`. */
+  const textDepth = depth * 0.6
+  const centreZ = fp.zFar + depth * 0.46
+  const rand = mulberry32(20260912)
+  const { points, lines } = setHeadline({
+    layouts: LAYOUTS,
+    width: 2 * fp.halfAt(centreZ + textDepth / 2) * 0.86,
+    depth: textDepth,
+    centreZ,
+    stretch: 1 / Math.cos(TILT),
+    // As fine as the flower field's own grid, and for the same reason a
+    // dense grid buys nothing on its own: `pavers.ts` only accents a paver
+    // whose CENTRE lands in ink (see its `containsPoint`), and that small a
+    // target needs a point landing right on it, not just somewhere in the
+    // paver's much bigger body. Tried a pitch scaled to the paver instead
+    // (one sample per paver, ~0.4em): most letter ink went undetected or
+    // caught the wrong neighbour, and read as scattered noise, not words.
+    pitchPerEm: 0.05,
+    maxCount: opts.coarse ? 4200 : 6500,
+    fontFamily: FONT,
+    rand,
+  })
+  const lineCount = Math.max(1, lines.length - 1)
+  // Left-to-right across the whole block, every line at once with a small
+  // per-line lag — the same sweep order `letters.ts` plants the flower
+  // outline in, continued here for the accent swap instead.
+  const accents = points.map((pt) => ({
+    x: pt.x,
+    z: pt.z,
+    order: pt.nx * 0.82 + (pt.line / lineCount) * 0.12 + rand() * 0.06,
+  }))
+
+  const pavers = createPaverField(THREE, {
+    x0,
+    x1,
+    zFar: fp.zFar,
+    zNear: fp.zNear,
+    accents,
+    light,
+    coarse: opts.coarse,
+    layWindow: [T.layStart, T.layEnd],
+    accentWindow: [T.accentStart, T.accentEnd],
+    sandWindow: [T.sandStart, T.sandEnd],
+  })
+  group.add(pavers.group)
+
+  return {
+    group,
+    groundGeo,
+    groundMat,
+    pavers,
+    dispose() {
+      groundGeo.dispose()
+      groundMat.dispose()
+      pavers.dispose()
+    },
+  }
+}
+
+/* ---- Per frame ----------------------------------------------------- */
+function update(w: World, p: number, ctx: SceneCtx) {
+  w.pavers.setProgress(p, ctx.clock.time)
+}
+
+function normalize(v: [number, number, number]): [number, number, number] {
+  const l = Math.hypot(v[0], v[1], v[2])
+  return [v[0] / l, v[1] / l, v[2] / l]
+}
+
+/** Small, fast, seeded — same generator every scene file here uses. */
+function mulberry32(seed: number) {
+  let a = seed >>> 0
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0
+    let t = a
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}

@@ -148,5 +148,7 @@ export const copyPl = {
     stack: 'Strony, systemy i automatyzacje dla firm w Polsce i za granicą. Pracuję po polsku i po angielsku.',
     krajobraz: 'Dla pracowni architektury krajobrazu',
     krajobrazHref: '/krajobraz',
+    brukarstwo: 'Dla firm brukarskich',
+    brukarstwoHref: '/brukarstwo',
   },
 } satisfies ChromeCopy

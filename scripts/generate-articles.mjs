@@ -706,6 +706,8 @@ function patchSitemap(docs) {
   // section + schema) on this date — it needs its own lastmod, not the
   // shared landingMod every other static landing keeps.
   const krajobrazMod = '2026-09-12'
+  // Same for /brukarstwo, which shipped indexed on the same day.
+  const brukarstwoMod = '2026-09-12'
   const blocks = []
   for (const loc of kept) {
     const links = xhtmlForKeptLoc(loc)
@@ -714,7 +716,9 @@ function patchSitemap(docs) {
       ? lastmod
       : loc === `${SITE}/krajobraz`
         ? krajobrazMod
-        : landingMod
+        : loc === `${SITE}/brukarstwo`
+          ? brukarstwoMod
+          : landingMod
     blocks.push(`  <url>\n    <loc>${loc}</loc>\n    <lastmod>${mod}</lastmod>${extra}\n  </url>`)
   }
 

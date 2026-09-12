@@ -142,5 +142,7 @@ export const copyUa = {
     stack: 'Сайти, системи та автоматизації для компаній у Польщі та за кордоном. Працюю англійською та польською.',
     krajobraz: 'Для студій ландшафтної архітектури',
     krajobrazHref: '/krajobraz',
+    brukarstwo: 'Для укладальників бруківки',
+    brukarstwoHref: '/brukarstwo',
   },
 } satisfies ChromeCopy

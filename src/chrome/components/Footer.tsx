@@ -69,13 +69,20 @@ export function Footer() {
             >
               {c.footer.classic}
             </a>
-            {/* The niche landing for landscape-architecture studios — indexed
-                but unlinked from any nav, so this is its only internal link. */}
+            {/* The niche landings — indexed but unlinked from any nav, so
+                these are their only internal links. When there are four of
+                them they want a hub page instead of four footer links. */}
             <a
               href={c.footer.krajobrazHref}
               className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
             >
               {c.footer.krajobraz}
+            </a>
+            <a
+              href={c.footer.brukarstwoHref}
+              className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
+            >
+              {c.footer.brukarstwo}
             </a>
           </div>
         </div>
