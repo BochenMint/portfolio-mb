@@ -6,8 +6,8 @@
  * flowers go wherever that canvas has ink — on a jittered hex grid, so the
  * bed reads as planted rather than printed. It is carpet bedding, the way a
  * park writes a town's name into a slope: the outline of every letter is red
- * begonias, the fill is white, butter and blush, so the words stay legible
- * even where individual blooms are only a few pixels across.
+ * begonias and the fill is every light warm thing — daisies, pompoms, cups —
+ * so the words stay legible even where a bloom is only a few pixels across.
  *
  * Everything returned is in world units on the ground plane (x across, z
  * toward the camera), centred on the point the camera looks at.
@@ -21,7 +21,7 @@ export type FlowerField = {
   /** Linear RGB. */
   petal: Float32Array
   centre: Float32Array
-  /** Petal count, then how round each petal is. */
+  /** Petal count, how round each petal is, and which bloom form it takes. */
   shape: Float32Array
   /** Progress at which the flower breaks the lawn. */
   birth: Float32Array
@@ -34,16 +34,74 @@ export type FlowerField = {
   pitch: number
 }
 
-type Species = { petal: string; centre: string; petals: number; round: number }
+/**
+ * Bloom forms. The shape of a flower is carried into the shader as a number
+ * because all of them are drawn by one instanced quad: `BLOOM_FRAG` switches
+ * on it to decide where the petal edge is and how the face is shaded.
+ */
+export const FORM = {
+  /** Ray florets with deep notches between them — daisy, marguerite. */
+  DAISY: 0,
+  /** A dense head of tiny florets, no gaps — pompom aster, santolina. */
+  POMPOM: 1,
+  /** Few broad petals closing into a cup, dark inside — tulip, ranunculus. */
+  CUP: 2,
+  /** Four wide petals round a big dark eye — poppy, anemone. */
+  POPPY: 3,
+} as const
+
+type Species = {
+  petal: string
+  centre: string
+  petals: number
+  round: number
+  form: number
+  /** Bloom size and stem height, relative to the bed's own scale. */
+  size: number
+  height: number
+}
 
 /* Carpet-bedding palette. Fill: light and warm so it separates from the lawn
    at any size; outline: saturated red, the one strong colour on the page,
-   which is also the colour of the call to action under the bed. */
-const WHITE: Species = { petal: '#fbf6ea', centre: '#f0b429', petals: 13, round: 0.35 }
-const BUTTER: Species = { petal: '#ffe27e', centre: '#d9822b', petals: 9, round: 0.6 }
-const BLUSH: Species = { petal: '#ffc4d2', centre: '#f5c93b', petals: 6, round: 1.4 }
-const BEGONIA: Species = { petal: '#ee2e1c', centre: '#ffd23f', petals: 5, round: 1.6 }
-const CORAL: Species = { petal: '#ff5b3d', centre: '#ffd65a', petals: 5, round: 1.3 }
+   which is also the colour of the call to action under the bed.
+
+   The colours do the reading and the forms do the looking: five kinds of
+   bloom in two colour families, so the bed has the variety of real planting
+   without ever putting a mid-tone next to the lawn, where the words would
+   start to dissolve. Heights differ too — a bed of one height is a printed
+   halftone, not a planting. */
+const WHITE: Species = {
+  petal: '#fbf6ea', centre: '#f0b429', petals: 13, round: 0.35,
+  form: FORM.DAISY, size: 1, height: 1,
+}
+const BUTTER: Species = {
+  petal: '#ffe27e', centre: '#d9822b', petals: 9, round: 0.6,
+  form: FORM.DAISY, size: 0.94, height: 0.92,
+}
+const BLUSH: Species = {
+  petal: '#ffc4d2', centre: '#f5c93b', petals: 6, round: 1.4,
+  form: FORM.CUP, size: 1.02, height: 1.1,
+}
+const CREAM: Species = {
+  petal: '#fdeccd', centre: '#e8c15a', petals: 20, round: 0.2,
+  form: FORM.POMPOM, size: 0.82, height: 0.84,
+}
+const PEACH: Species = {
+  petal: '#ffcf9b', centre: '#e0913a', petals: 6, round: 1.1,
+  form: FORM.CUP, size: 1.06, height: 1.28,
+}
+const BEGONIA: Species = {
+  petal: '#ee2e1c', centre: '#ffd23f', petals: 5, round: 1.6,
+  form: FORM.POMPOM, size: 1, height: 0.95,
+}
+const CORAL: Species = {
+  petal: '#ff5b3d', centre: '#ffd65a', petals: 5, round: 1.3,
+  form: FORM.DAISY, size: 1, height: 1,
+}
+const POPPY: Species = {
+  petal: '#e01f12', centre: '#2a0d06', petals: 4, round: 0.85,
+  form: FORM.POPPY, size: 1.22, height: 1.2,
+}
 
 /** Candidate line breaks, widest first. The one that sets the biggest wins. */
 const LAYOUTS: string[][] = [
@@ -207,7 +265,7 @@ export function plantHeadline(opts: {
     size: new Float32Array(n),
     petal: new Float32Array(n * 3),
     centre: new Float32Array(n * 3),
-    shape: new Float32Array(n * 2),
+    shape: new Float32Array(n * 3),
     birth: new Float32Array(n),
     seed: new Float32Array(n),
     lines,
@@ -218,26 +276,37 @@ export function plantHeadline(opts: {
   for (let i = 0; i < n; i++) {
     const f = planted[i]
     const r = rand()
+    // The outline is mostly begonia, with coral and the odd poppy standing
+    // up out of it; the fill is mostly daisies with pompoms and cups mixed
+    // through. Both lists are weighted, not uniform — an even split of five
+    // species reads as a test card.
     const species = f.edge
-      ? r < 0.72
+      ? r < 0.6
         ? BEGONIA
-        : CORAL
-      : r < 0.58
+        : r < 0.88
+          ? CORAL
+          : POPPY
+      : r < 0.42
         ? WHITE
-        : r < 0.85
+        : r < 0.66
           ? BUTTER
-          : BLUSH
+          : r < 0.83
+            ? CREAM
+            : r < 0.94
+              ? BLUSH
+              : PEACH
     const tint = 0.94 + rand() * 0.1
     const petal = hexToLinear(species.petal)
     const centre = hexToLinear(species.centre)
     field.pos[i * 3] = f.x
     field.pos[i * 3 + 1] = f.z
-    field.pos[i * 3 + 2] = pitch * (0.9 + rand() * 0.7)
-    field.size[i] = pitch * (f.edge ? 1.6 : 1.85) * (0.9 + rand() * 0.22)
+    field.pos[i * 3 + 2] = pitch * (0.9 + rand() * 0.7) * species.height
+    field.size[i] = pitch * (f.edge ? 1.6 : 1.85) * species.size * (0.9 + rand() * 0.22)
     field.petal.set([petal[0] * tint, petal[1] * tint, petal[2] * tint], i * 3)
     field.centre.set(centre, i * 3)
-    field.shape[i * 2] = species.petals
-    field.shape[i * 2 + 1] = species.round
+    field.shape[i * 3] = species.petals
+    field.shape[i * 3 + 1] = species.round
+    field.shape[i * 3 + 2] = species.form
     // Planting runs across the words from left to right, every line at once
     // with a small lag per line; the outline of a letter goes in first and
     // the fill follows it.

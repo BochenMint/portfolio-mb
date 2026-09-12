@@ -17,6 +17,7 @@ import type * as THREE_NS from 'three'
 import { plantHeadline, type FlowerField } from './letters'
 import * as S from './shaders'
 import { T, easeInOut } from './timeline'
+import { createTrees, type Trees } from './trees'
 
 export type GardenHandle = {
   /** Where the visitor is in the pinned section, 0…1. Eased toward, not jumped to. */
@@ -70,6 +71,7 @@ type World = {
   grass: THREE_NS.ShaderMaterial
   flowerMats: THREE_NS.ShaderMaterial[]
   field: FlowerField
+  trees: Trees
   disposables: { dispose(): void }[]
 }
 
@@ -181,8 +183,10 @@ export async function createGardenScene(
         total,
         tau: (Math.PI * (r0 * r0 - core * core)) / total,
         startAt: T.rollStart + T.rollStagger * order[i],
-        // Mowing stripes: alternate strips a shade apart.
-        shade: (i % 2 ? 0.8 : 1.0) * (0.97 + rand() * 0.06),
+        // Mowing stripes are mostly which way the blades lie (the grass shader
+        // combs alternate strips opposite ways); this is only the tint that
+        // rides along with that, plus a shade of per-roll variation.
+        shade: (i % 2 ? 0.92 : 1.0) * (0.97 + rand() * 0.06),
       }
     })
 
@@ -192,7 +196,10 @@ export async function createGardenScene(
       geo.translate(0, 0, (fp.zFar + fp.zNear) / 2)
       const mat = new THREE.ShaderMaterial({
         vertexShader: S.SOIL_VERT,
-        fragmentShader: S.SOIL_FRAG,
+        // The finest grade of crumb is a whole extra voronoi per pixel over
+        // the full screen, which is the one thing on this page a phone
+        // cannot afford — and at a phone's size it is under a pixel anyway.
+        fragmentShader: (opts.coarse ? '#define COARSE 1\n' : '') + S.SOIL_FRAG,
         uniforms: { ...light },
       })
       const mesh = new THREE.Mesh(geo, mat)
@@ -311,7 +318,7 @@ export async function createGardenScene(
     fgeo.setAttribute('aSize', new THREE.InstancedBufferAttribute(field.size, 1))
     fgeo.setAttribute('aPetal', new THREE.InstancedBufferAttribute(field.petal, 3))
     fgeo.setAttribute('aCentre', new THREE.InstancedBufferAttribute(field.centre, 3))
-    fgeo.setAttribute('aShape', new THREE.InstancedBufferAttribute(field.shape, 2))
+    fgeo.setAttribute('aShape', new THREE.InstancedBufferAttribute(field.shape, 3))
     fgeo.setAttribute('aBirth', new THREE.InstancedBufferAttribute(field.birth, 1))
     fgeo.setAttribute('aSeed', new THREE.InstancedBufferAttribute(field.seed, 1))
     fgeo.instanceCount = field.count
@@ -358,9 +365,37 @@ export async function createGardenScene(
       disposables.push(m)
     })
 
+    /* Trees ------------------------------------------------------------
+     *
+     * The boundary of the garden, and the only thing in the scene that was
+     * already here before the visitor arrived: the soil is being prepared,
+     * the turf is being laid, the flowers are being planted — the trees
+     * just stand there. They are placed outside the bed and their shadows
+     * are kept off it, so they frame the words without ever touching them.
+     */
+    const trees = createTrees(THREE, {
+      halfFar: fp.halfFar,
+      halfNear: fp.halfNear,
+      zFar: fp.zFar,
+      zNear: fp.zNear,
+      // The bed the words are planted in, so the grove can keep itself and
+      // its shadows off it. Handed over rather than re-derived: these are the
+      // very numbers `plantHeadline` was called with.
+      bed: {
+        centreZ,
+        halfDepth: textDepth / 2,
+        halfWidth: fp.halfAt(centreZ + textDepth / 2) * 0.86,
+      },
+      light,
+      coarse: opts.coarse,
+    })
+    group.add(trees.group)
+    disposables.push(trees)
+
     scene.add(group)
     return {
       group,
+      trees,
       strips,
       r0,
       core,
@@ -406,6 +441,7 @@ export async function createGardenScene(
     })
     w.grass.uniforms.uKnit.value = smoothstep(T.knit[0], T.knit[1], p)
     w.grass.uniforms.uTime.value = clock.time
+    w.trees.update(clock.time, p)
     for (const m of w.flowerMats) {
       m.uniforms.uP.value = p
       m.uniforms.uTime.value = clock.time
@@ -523,6 +559,7 @@ export async function createGardenScene(
           em: world?.field.em,
           pitch: world?.field.pitch,
           shells,
+          trees: world?.trees.info(),
           pixelRatio: renderer.getPixelRatio(),
           progress: shown,
         }
