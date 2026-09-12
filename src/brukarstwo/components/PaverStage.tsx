@@ -43,6 +43,13 @@ export function PaverStage() {
         hint: 'Przewiń — ułożę kostkę',
       }}
       outro={{
+        title: (
+          <>
+            Zbuduję dla Ciebie
+            <br />
+            nową stronę
+          </>
+        ),
         line: (
           <>
             Strona dla Twojej firmy: realizacje, wyceny i&nbsp;zapytania od klientów w&nbsp;jednym miejscu.
