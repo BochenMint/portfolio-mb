@@ -342,6 +342,30 @@ function articleJsonLd(doc, locale, loc, canonical, wordCount) {
   ]
 }
 
+/**
+ * Which font file the headline needs before it can paint.
+ *
+ * Newsreader is the journal's display face (`--j-display` in blog.css), so
+ * the h1 is the one thing above the fold waiting on a font. Which file that
+ * is depends on the language: a Polish headline reaches into latin-ext for
+ * its ą/ę/ż on nearly every article, so both subsets are on the critical
+ * path there, while an English one only ever needs latin. Ukrainian gets
+ * nothing — Newsreader has no Cyrillic upstream, so those headlines render
+ * in the Georgia fallback and a preload would be a request for a file the
+ * page never draws a glyph from.
+ *
+ * The two families themselves come from /fonts/studio-404.css, the same
+ * self-hosted sheet studio.html and 404.html use.
+ */
+function displayPreloads(lang) {
+  if (lang === 'uk') return ''
+  const files =
+    lang === 'pl' ? ['Newsreader-latin.woff2', 'Newsreader-latin-ext.woff2'] : ['Newsreader-latin.woff2']
+  return files
+    .map((file) => `    <link rel="preload" href="/fonts/${file}" as="font" type="font/woff2" crossorigin />`)
+    .join('\n')
+}
+
 function shell({ lang, ogLocale, title, description, canonical, hreflang, extraHead, body, ogType = 'article' }) {
   return `<!doctype html>
 <html lang="${lang}">
@@ -375,9 +399,8 @@ ${['pl_PL', 'en_GB', 'uk_UA']
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+${displayPreloads(lang)}
+    <link rel="stylesheet" href="/fonts/studio-404.css" />
     <link rel="stylesheet" href="/journal.css" />
     ${extraHead}
   </head>
