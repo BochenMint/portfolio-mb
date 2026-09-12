@@ -125,11 +125,14 @@ function fitHeadline(
  * needs to edit that file to get its own colours: this palette lives here,
  * next to the scene that uses it, rather than beside `GARDEN_PALETTE`. */
 const AGGREGATE_PALETTE: GroundPalette = {
-  wet: [0.018, 0.017, 0.016],
-  loam: [0.05, 0.046, 0.04],
-  dry: [0.096, 0.088, 0.077],
-  stoneLo: [0.07, 0.068, 0.064],
-  stoneHi: [0.2, 0.196, 0.185],
+  // Neutral to faintly cool: crushed granite and dolomite are grey, and the
+  // low warm sun is what puts the brown back. Mixing warm into the albedo as
+  // well was half of why the bed read as mud.
+  wet: [0.016, 0.016, 0.017],
+  loam: [0.044, 0.044, 0.046],
+  dry: [0.085, 0.085, 0.088],
+  stoneLo: [0.062, 0.063, 0.066],
+  stoneHi: [0.185, 0.187, 0.192],
   straw: [0.12, 0.108, 0.086],
 }
 
@@ -252,7 +255,12 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
   const groundMat = new THREE.ShaderMaterial({
     vertexShader: GROUND_VERT,
     fragmentShader: (opts.coarse ? '#define COARSE 1\n' : '') + GROUND_FRAG,
-    uniforms: { ...light, ...groundUniforms(THREE, AGGREGATE_PALETTE, SCREED) },
+    uniforms: {
+      ...light,
+      // Crushed, not dug: 0/31 aggregate is flat-faced chips with sharp
+      // seams, and nothing organic is lying on a compacted sub-base.
+      ...groundUniforms(THREE, AGGREGATE_PALETTE, SCREED, { angular: 1, organic: 0 }),
+    },
   })
   const groundMesh = new THREE.Mesh(groundGeo, groundMat)
   // Drawn first: the field and edging cover most of it, but the corners
