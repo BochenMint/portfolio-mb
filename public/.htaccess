@@ -143,6 +143,14 @@ RewriteRule ^v4/?$ /v4.html [L]
 # normal indexed page — in sitemap.xml, in llms.txt, linked from the footer.
 RewriteRule ^krajobraz/?$ /krajobraz.html [L]
 
+# Niche landing for paving contractors (firmy brukarskie). Indexed from
+# the day it shipped — in sitemap.xml, in llms.txt, linked from the footer.
+RewriteRule ^brukarstwo/?$ /brukarstwo.html [L]
+
+# The hub the niche landings hang off, and the only internal link the site
+# footer spends on them now that there is more than one.
+RewriteRule ^branze/?$ /branze.html [L]
+
 # Archive pages under a locale prefix: /(en|ua)/v[1-6].html serves the SAME
 # root-level file without changing the browser URL (used by the language
 # switcher on archive pages — see src/i18n/path.ts switchPath/archivePath).

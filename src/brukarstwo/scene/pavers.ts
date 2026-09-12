@@ -3,11 +3,11 @@
  * herringbone (jodełka) as the visitor scrolls, seen from almost directly
  * above — the centrepiece for a paving-contractor landing page.
  *
- * Shares the garden's shader conventions for now (`import * as S from
- * '../../krajobraz/scene/shaders'` — hand-lit in linear space, one shared
- * `finish()` ACES grade). The shared engine is being extracted in parallel;
- * this file only touches that one import, so repointing it is a one-line
- * change once the extraction lands.
+ * Built on `stage/shaders` (`NOISE` + `LIGHT` — hand-lit in linear space, one
+ * shared `finish()` ACES grade), same as every other surface on this stage.
+ * This file used to point at the garden's own `krajobraz/scene/shaders.ts`,
+ * back when that was the only place `NOISE`/`finish()` lived; now that they
+ * live in the shared engine, this is the only shader import the field needs.
  *
  * ---------------------------------------------------------------------------
  * The herringbone lattice
@@ -65,9 +65,6 @@
  */
 
 import type * as THREE_NS from 'three'
-// TEMP-FOR-VERIFICATION-ONLY: the parallel refactor has mid-flight moved
-// NOISE/finish() out of krajobraz/scene/shaders.ts into stage/shaders.ts, so
-// the specified import 404s on NOISE right now. Swapped back before done.
 import * as S from '../../stage/shaders'
 
 export type PaverField = {
@@ -83,12 +80,30 @@ const INV_SQRT2 = Math.SQRT1_2
 
 /* Paver body: 20 x 10 cm, 3 mm joint, at 1 unit = 0.25 m. The long body
  * dimension is stretched from the nominal 0.8 to keep the joint uniform on
- * both axes of the herringbone lattice — see the header comment. */
+ * both axes of the herringbone lattice — see the header comment.
+ *
+ * Only the lattice module (`w`, i.e. the short body) scales with `coarse`:
+ * the brief asks the phone path to cut the paver count, not the frame rate,
+ * and every fragment already costs the same regardless of how many
+ * instances draw it — the `#define COARSE` below only trims per-fragment
+ * work, it doesn't touch instance count. Fewer, larger pavers over the same
+ * ground rectangle does that instead, with nothing else in the shader any
+ * the wiser: `uPitch`/`uBodyHalf` carry the size into the vertex/fragment
+ * stage as uniforms rather than baked constants, so there is exactly one
+ * shader (not a desktop copy and a phone copy) either way. The joint width,
+ * chamfer, corner radius and bevel depth stay absolute — a 3 mm joint is a
+ * 3 mm joint whatever the paver size — so only this function needs to know
+ * `coarse` exists. */
 const SHORT_BODY = 0.4
+const SHORT_BODY_COARSE = 0.56
 const JOINT = 0.012
-const WP = SHORT_BODY + JOINT // short pitch (lattice module w)
-const LP = 2 * WP // long pitch
-const LONG_BODY = LP - JOINT // ~0.812, not the nominal 0.8
+function paverMetrics(coarse: boolean) {
+  const shortBody = coarse ? SHORT_BODY_COARSE : SHORT_BODY
+  const wp = shortBody + JOINT // short pitch (lattice module w)
+  const lp = 2 * wp // long pitch
+  const longBody = lp - JOINT // ~0.812 at desktop scale, not the nominal 0.8
+  return { shortBody, wp, lp, longBody }
+}
 
 const CORNER_R = 0.026 // worn/rounded corner radius
 const CHAMFER = 0.02 // bevel width at the top edge
@@ -102,21 +117,19 @@ const YAW_JITTER_DEG = 1.5
 const ACCENT_LIFT = 0.05 // how far an accent stone rises during its swap
 
 /* Edging (obrzeża): plain rectangular kerb units, no herringbone, laid end
- * to end along z on both long sides of the field. */
+ * to end along z on both long sides of the field. Exported so a page's own
+ * scene file can size its field rectangle to leave exactly enough room for
+ * the kerb without a second copy of this number. */
 const EDGE_LONG = 1.2
-const EDGE_SHORT = 0.24
+export const EDGE_SHORT = 0.24
 const EDGE_JOINT = 0.012
 
-/* ------------------------------------------------------------------ *
- * GLSL. `LIGHT` mirrors shaders.ts's own private template (uSun/uSunCol/
- * uSky) — it isn't exported there, so it's redeclared here, same as
- * trees.ts does for the same reason.
- * ------------------------------------------------------------------ */
-const LIGHT = /* glsl */ `
-uniform vec3 uSun;
-uniform vec3 uSunCol;
-uniform vec3 uSky;
-`
+/* The joint-sand sweep (brief: "fills the joints with sand across the
+ * frame"): a band `SAND_BAND` world units wide, moving in +x, transitions
+ * every joint pixel from the raw dark gap to a sanded, sand-coloured one as
+ * it passes — see `CONCRETE_SHADE`'s `sandT` and `createPaverField`'s
+ * `sandWindow`. */
+const SAND_BAND = 0.5
 
 const EASE = /* glsl */ `
 float easeOutBack(float t) {
@@ -142,7 +155,7 @@ float roundedBoxSDF(vec2 p, vec2 halfSize, float r) {
  * screen-space derivatives, same technique `SOIL_FRAG` uses, because a flat
  * instanced quad has no real geometry to bevel. */
 const CONCRETE_SHADE = /* glsl */ `
-vec3 concreteShade(float d, vec2 localP, float seed, vec3 world, float accentT, float uTime) {
+vec3 concreteShade(float d, vec2 localP, float seed, vec3 world, float accentT, float uTime, float sandT) {
 #ifndef COARSE
   float speck = voronoi((localP + seed * 71.0) * 14.0).x;
 #else
@@ -173,7 +186,13 @@ vec3 concreteShade(float d, vec2 localP, float seed, vec3 world, float accentT, 
   base *= mix(0.9, 1.12, fract(seed * 13.0));
   base *= mix(0.92, 1.08, speck);
 
-  vec3 jointC = mix(vec3(0.02, 0.019, 0.02), vec3(0.012, 0.011, 0.014), accentT * 0.4);
+  vec3 jointRaw = mix(vec3(0.02, 0.019, 0.02), vec3(0.012, 0.011, 0.014), accentT * 0.4);
+  // Kiln-dried jointing sand, brushed in after the field is down: warmer and
+  // much lighter than the raw gap, and — unlike the paver above it — the
+  // same colour whether it sits under a grey field stone or a basalt accent,
+  // which is true of the real material.
+  vec3 jointSand = vec3(0.15, 0.135, 0.105) * mix(0.92, 1.08, fract(seed * 23.0));
+  vec3 jointC = mix(jointRaw, jointSand, sandT);
   vec3 c = d < 0.0 ? base : jointC;
 
   float ndl = max(dot(n, uSun), 0.0);
@@ -184,6 +203,12 @@ vec3 concreteShade(float d, vec2 localP, float seed, vec3 world, float accentT, 
   float rim = (1.0 - smoothstep(0.0, ${CHAMFER.toFixed(4)}, abs(d))) * step(d, 0.0);
   float glint = 0.97 + 0.03 * sin(uTime * 2.0 + seed * 40.0);
   lit += uSunCol * rim * max(uSun.y, 0.0) * 0.35 * glint;
+  // The sweep itself: loose sand catches the sun for the moment the pass is
+  // actually over a joint (never over the paver body), brighter than the
+  // settled fill on either side of it — this, not the colour swap alone, is
+  // what makes the pass read as something moving rather than a hard cut.
+  float sweep = (1.0 - smoothstep(0.0, 1.0, abs(sandT - 0.5) * 4.0)) * step(0.0, d);
+  lit += uSunCol * sweep * 0.5;
   return lit;
 }
 `
@@ -205,6 +230,10 @@ uniform float uP;
 uniform float uLayGrow;
 uniform float uAccentGrow;
 uniform float uRestY;
+// (long pitch, short pitch) — the one thing 'coarse' changes about the
+// lattice, so it travels as a uniform rather than a baked constant; see
+// paverMetrics() on the JS side.
+uniform vec2 uPitch;
 varying vec2 vLocal;
 varying vec3 vWorld;
 varying float vAccentT;
@@ -217,7 +246,7 @@ vec2 rot(vec2 p, float a) {
 }
 
 void main() {
-  vec2 local = position.xy * vec2(${LP.toFixed(6)}, ${WP.toFixed(6)});
+  vec2 local = position.xy * uPitch;
   vLocal = local;
   vSeed = aSeed;
 
@@ -242,7 +271,7 @@ void main() {
 
 const FIELD_FRAG = /* glsl */ `
 ${S.NOISE}
-${LIGHT}
+${S.LIGHT}
 ${SDF}
 ${CONCRETE_SHADE}
 uniform float uX0;
@@ -250,6 +279,8 @@ uniform float uX1;
 uniform float uZFar;
 uniform float uZNear;
 uniform float uTime;
+uniform float uSandX;
+uniform vec2 uBodyHalf;
 varying vec2 vLocal;
 varying vec3 vWorld;
 varying float vAccentT;
@@ -261,9 +292,11 @@ void main() {
   // triangular cut piece a real herringbone border shows — no extra geometry.
   if (vWorld.x < uX0 || vWorld.x > uX1 || vWorld.z < uZFar || vWorld.z > uZNear) discard;
 
-  vec2 bodyHalf = vec2(${(LONG_BODY / 2).toFixed(6)}, ${(SHORT_BODY / 2).toFixed(6)});
-  float d = roundedBoxSDF(vLocal, bodyHalf - vec2(${CORNER_R.toFixed(4)}), ${CORNER_R.toFixed(4)});
-  vec3 lit = concreteShade(d, vLocal, vSeed, vWorld, vAccentT, uTime);
+  float d = roundedBoxSDF(vLocal, uBodyHalf - vec2(${CORNER_R.toFixed(4)}), ${CORNER_R.toFixed(4)});
+  // 0 before the sand-sweep has reached this fragment's world x, 1 after —
+  // see createPaverField's sandWindow (JS side) for how uSandX moves over time.
+  float sandT = clamp((uSandX - vWorld.x) / ${SAND_BAND.toFixed(3)} + 0.5, 0.0, 1.0);
+  vec3 lit = concreteShade(d, vLocal, vSeed, vWorld, vAccentT, uTime, sandT);
   gl_FragColor = vec4(finish(lit), 1.0);
 }
 `
@@ -299,12 +332,13 @@ void main() {
 
 const EDGE_FRAG = /* glsl */ `
 ${S.NOISE}
-${LIGHT}
+${S.LIGHT}
 ${SDF}
 ${CONCRETE_SHADE}
 uniform float uZFar;
 uniform float uZNear;
 uniform float uTime;
+uniform float uSandX;
 varying vec2 vLocal;
 varying vec3 vWorld;
 varying float vSeed;
@@ -313,7 +347,8 @@ void main() {
   if (vWorld.z < uZFar || vWorld.z > uZNear) discard;
   vec2 bodyHalf = vec2(${(EDGE_SHORT / 2).toFixed(6)}, ${(EDGE_LONG / 2).toFixed(6)});
   float d = roundedBoxSDF(vLocal, bodyHalf - vec2(${CORNER_R.toFixed(4)}), ${CORNER_R.toFixed(4)});
-  vec3 lit = concreteShade(d, vLocal, vSeed, vWorld, 0.0, uTime);
+  float sandT = clamp((uSandX - vWorld.x) / ${SAND_BAND.toFixed(3)} + 0.5, 0.0, 1.0);
+  vec3 lit = concreteShade(d, vLocal, vSeed, vWorld, 0.0, uTime, sandT);
   gl_FragColor = vec4(finish(lit), 1.0);
 }
 `
@@ -341,12 +376,14 @@ export function createPaverField(
     seed?: number
     layWindow: [number, number]
     accentWindow: [number, number]
+    sandWindow: [number, number]
   },
 ): PaverField {
   const rand = mulberry32(opts.seed ?? 20260912)
   const disposables: { dispose(): void }[] = []
   const group = new THREE.Group()
   const { x0, x1, zFar, zNear, light } = opts
+  const { wp, lp, longBody, shortBody } = paverMetrics(opts.coarse)
 
   const toWorld = (u: number, v: number) => ({ x: (u - v) * INV_SQRT2, z: (u + v) * INV_SQRT2 })
 
@@ -356,10 +393,10 @@ export function createPaverField(
   // read straight off the field's x/z extent, with a generous pad for
   // stones that only partly overlap the rectangle (the fragment shader cuts
   // them properly; this is just about not missing any).
-  const pad = LP * 1.5
-  const originOffsetH = toWorld(LP / 2, WP / 2) // centre offset from an H-corner
-  const slopeX = Math.SQRT2 * WP // world x per step of m (negative direction)
-  const slopeZ = Math.SQRT2 * LP // world z per step of n
+  const pad = lp * 1.5
+  const originOffsetH = toWorld(lp / 2, wp / 2) // centre offset from an H-corner
+  const slopeX = Math.SQRT2 * wp // world x per step of m (negative direction)
+  const slopeZ = Math.SQRT2 * lp // world z per step of n
   const mAt = (x: number) => (originOffsetH.x - x) / slopeX
   const nAt = (z: number) => (z - originOffsetH.z) / slopeZ
   const mLo = Math.floor(Math.min(mAt(x0 - pad), mAt(x1 + pad))) - 2
@@ -373,8 +410,8 @@ export function createPaverField(
     for (let n = nLo; n <= nHi; n++) {
       // Horizontal-family corner, centre, world position.
       {
-        const cu = -WP * m + LP * n + LP / 2
-        const cv = WP * m + LP * n + WP / 2
+        const cu = -wp * m + lp * n + lp / 2
+        const cv = wp * m + lp * n + wp / 2
         const w = toWorld(cu, cv)
         if (w.x > x0 - pad && w.x < x1 + pad && w.z > zFar - pad && w.z < zNear + pad) {
           stones.push({ cx: w.x, cz: w.z, sign: 1, seed: rand(), courseN: n, isAccent: false, accentOrder: 0 })
@@ -383,8 +420,8 @@ export function createPaverField(
       }
       // Vertical-family corner, offset by (2Wp,0) in local (u,v) from H's.
       {
-        const cu = LP - WP * m + LP * n + WP / 2
-        const cv = WP * m + LP * n + LP / 2
+        const cu = lp - wp * m + lp * n + wp / 2
+        const cv = wp * m + lp * n + lp / 2
         const w = toWorld(cu, cv)
         if (w.x > x0 - pad && w.x < x1 + pad && w.z > zFar - pad && w.z < zNear + pad) {
           stones.push({ cx: w.x, cz: w.z, sign: -1, seed: rand(), courseN: n, isAccent: false, accentOrder: 0 })
@@ -394,10 +431,10 @@ export function createPaverField(
     }
   }
 
-  // Match ink points to the stone whose footprint contains them. Bucketed by
+  // Match ink points to the stone whose CENTRE they land near. Bucketed by
   // rounded centre so a headline's worth of accent points doesn't mean an
   // O(points × stones) scan.
-  const bucketSize = LP
+  const bucketSize = lp
   const buckets = new Map<string, number[]>()
   stones.forEach((s, i) => {
     const key = `${Math.round(s.cx / bucketSize)},${Math.round(s.cz / bucketSize)}`
@@ -405,8 +442,18 @@ export function createPaverField(
     if (list) list.push(i)
     else buckets.set(key, [i])
   })
-  const halfLong = LONG_BODY / 2
-  const halfShort = SHORT_BODY / 2
+  // Matched against a small zone around the paver's own CENTRE, not its full
+  // body — literally "the pavers whose centres land on ink" (brief). Tried
+  // the full footprint first (any ink sample anywhere inside the paver's
+  // body claims it): a paver's own body is comparable in size to a letter's
+  // stroke width at the em this headline actually sets at, so that matched
+  // almost every paver touching a letter ANYWHERE, filling in every counter
+  // and inter-letter gap and fusing whole words into one solid bar. A tight
+  // centre zone means a paver only lights up when ink genuinely sits under
+  // its middle, which is what keeps the gaps between strokes as field stone.
+  const halfLong = longBody / 2
+  const halfShort = shortBody / 2
+  const CENTRE_TOL = 0.4
   function containsPoint(s: Stone, px: number, pz: number) {
     const angle = s.sign * 45 * DEG
     const dx = px - s.cx
@@ -415,7 +462,7 @@ export function createPaverField(
     const sn = Math.sin(-angle)
     const lx = dx * c - dz * sn
     const lz = dx * sn + dz * c
-    return Math.abs(lx) <= halfLong && Math.abs(lz) <= halfShort
+    return Math.abs(lx) <= halfLong * CENTRE_TOL && Math.abs(lz) <= halfShort * CENTRE_TOL
   }
   for (const pt of opts.accents) {
     const bx = Math.round(pt.x / bucketSize)
@@ -443,8 +490,14 @@ export function createPaverField(
   // behind the visible far edge, and the visible lay reads as delayed.
   const [layStart, layEnd] = opts.layWindow
   const [accentStart, accentEnd] = opts.accentWindow
+  const [sandStart, sandEnd] = opts.sandWindow
   const layGrow = Math.max(0.015, (layEnd - layStart) * 0.12)
   const accentGrow = Math.max(0.012, (accentEnd - accentStart) * 0.22)
+  // The sweep runs from just left of the field to just right of it, so a
+  // fragment right at x0/x1 still gets the same soft transition as one in
+  // the middle instead of starting/ending already half-sanded.
+  const sandX0 = x0 - SAND_BAND
+  const sandX1 = x1 + SAND_BAND
 
   const n = stones.length
   const aCenter = new Float32Array(n * 2)
@@ -494,6 +547,9 @@ export function createPaverField(
       uX1: { value: x1 },
       uZFar: { value: zFar },
       uZNear: { value: zNear },
+      uSandX: { value: sandX0 },
+      uPitch: { value: new THREE.Vector2(lp, wp) },
+      uBodyHalf: { value: new THREE.Vector2(longBody / 2, shortBody / 2) },
     },
     // The vertex stage rebuilds world position from the local footprint by
     // hand (it isn't a plain transform of the source plane), so the source
@@ -548,6 +604,7 @@ export function createPaverField(
       uRestY: { value: REST_BASE },
       uZFar: { value: zFar },
       uZNear: { value: zNear },
+      uSandX: { value: sandX0 },
     },
     side: THREE.DoubleSide,
   })
@@ -563,6 +620,10 @@ export function createPaverField(
       fieldMat.uniforms.uTime.value = time
       edgeMat.uniforms.uP.value = p
       edgeMat.uniforms.uTime.value = time
+      const sandT = Math.min(1, Math.max(0, (p - sandStart) / Math.max(1e-4, sandEnd - sandStart)))
+      const sandX = sandX0 + (sandX1 - sandX0) * sandT
+      fieldMat.uniforms.uSandX.value = sandX
+      edgeMat.uniforms.uSandX.value = sandX
     },
     dispose() {
       for (const d of disposables) d.dispose()

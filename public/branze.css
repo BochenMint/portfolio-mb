@@ -1,0 +1,249 @@
+/* ------------------------------------------------------------------
+   /branze — the hub the niche landings hang off.
+
+   Hand-written rather than built: the page is a heading, a paragraph and
+   a card per trade, and putting a bundler and a framework behind that
+   would cost more than the page weighs. Same face and the same graphite
+   ground as the landings it points at, so arriving here from one of them
+   does not feel like leaving the site.
+------------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('/fonts/HankenGrotesk-latin-ext-wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('/fonts/HankenGrotesk-latin-wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/GeistMono-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #0e1012;
+  --bg-2: #171a1d;
+  --cream: #f1eee8;
+  --cream-dim: #bdb9b0;
+  --line: rgba(241, 238, 232, 0.14);
+  --accent: #b3200f;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Hanken Grotesk', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.wrap {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 5rem;
+}
+
+@media (min-width: 48rem) {
+  .wrap {
+    padding: 3rem 2.5rem 7rem;
+  }
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 3rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.brand img {
+  width: 26px;
+  height: 26px;
+}
+
+.bar-link {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+}
+
+.bar-link:hover {
+  color: var(--cream);
+}
+
+.eyebrow {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 1.2rem + 3vw, 3rem);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  margin: 1rem 0 0;
+}
+
+.lead {
+  max-width: 52ch;
+  margin: 1.5rem 0 0;
+  color: var(--cream-dim);
+}
+
+.cards {
+  display: grid;
+  gap: 1rem;
+  margin: 3rem 0 0;
+}
+
+@media (min-width: 48rem) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+}
+
+.card {
+  display: block;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 1.75rem;
+  text-decoration: none;
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+
+.card:hover {
+  border-color: rgba(241, 238, 232, 0.32);
+  transform: translateY(-2px);
+}
+
+.card h2 {
+  margin: 0.75rem 0 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.card p {
+  margin: 0.6rem 0 0;
+  font-size: 0.9rem;
+  color: var(--cream-dim);
+}
+
+.card .go {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+
+.note {
+  margin: 3rem 0 0;
+  max-width: 60ch;
+  font-size: 0.95rem;
+  color: var(--cream-dim);
+}
+
+.note a {
+  color: var(--cream);
+}
+
+.cta {
+  display: inline-block;
+  margin-top: 2rem;
+  background: linear-gradient(180deg, #d8321d, var(--accent));
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.85rem 1.75rem;
+}
+
+footer {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  justify-content: space-between;
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--cream-dim);
+}
+
+footer a {
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: var(--cream);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .card {
+    transition: none;
+  }
+}

@@ -24,7 +24,21 @@ export type ScrollStageProps = {
   brand: { href: string; content: ReactNode }
   contact: { href: string; label: string }
   intro: { eyebrow: string; title: string; hint: string }
-  outro: { line: ReactNode; ctaLabel: string; ctaHref: string; mailHref: string; mailLabel: string }
+  /**
+   * The closing block. `title` is optional and exists because not every
+   * trade can spell a sentence in its own material: the garden plants the
+   * headline in flowers, but a paver is twenty centimetres of concrete and
+   * letters built from those never resolved into words — so paving says it
+   * in type over the finished job instead.
+   */
+  outro: {
+    title?: ReactNode
+    line: ReactNode
+    ctaLabel: string
+    ctaHref: string
+    mailHref: string
+    mailLabel: string
+  }
   /** The same beats the scene's own timeline uses, so the overlay copy fades
    *  in and out on the scene's schedule rather than one of its own. */
   timeline: { introHold: number; introOut: number; outro: Window }
@@ -196,6 +210,7 @@ export function ScrollStage({
         </div>
 
         <div ref={outroRef} className="stage-outro">
+          {outro.title && <p className="stage-outro-title">{outro.title}</p>}
           <p className="stage-outro-line">{outro.line}</p>
           <div className="stage-outro-actions">
             <a href={outro.ctaHref} className="cta-red stage-outro-cta">

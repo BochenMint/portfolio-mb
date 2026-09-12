@@ -46,6 +46,10 @@ https://www.marcinbochenek.com/* https://marcinbochenek.com/:splat 301
 # --- Unlisted landing for landscape-architecture studios (no site link) ----
 /krajobraz /krajobraz.html 200
 /krajobraz/ /krajobraz.html 200
+/brukarstwo /brukarstwo.html 200
+/brukarstwo/ /brukarstwo.html 200
+/branze /branze.html 200
+/branze/ /branze.html 200
 
 # --- mb-ai.pl's own sitemap + robots.txt (host-specific, ported to .htaccess
 # and the Caddyfile too) -----------------------------------------------------

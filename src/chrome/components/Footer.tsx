@@ -69,13 +69,14 @@ export function Footer() {
             >
               {c.footer.classic}
             </a>
-            {/* The niche landing for landscape-architecture studios — indexed
-                but unlinked from any nav, so this is its only internal link. */}
+            {/* One link for every trade landing: /branze lists them, and the
+                landings link back to it. Two footer links became four the
+                moment a third trade showed up, which is what a hub is for. */}
             <a
-              href={c.footer.krajobrazHref}
+              href={c.footer.branzeHref}
               className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
             >
-              {c.footer.krajobraz}
+              {c.footer.branze}
             </a>
           </div>
         </div>
