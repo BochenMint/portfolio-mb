@@ -54,6 +54,55 @@ export type RakeConfig = {
 /** The garden's own rake: dragged almost along x, with a slight drift. */
 export const GARDEN_RAKE: RakeConfig = { dir: [0.96, 0.28], freq: 21.0 }
 
+/**
+ * Crushed stone, for a trade whose ground is a sub-base rather than a bed.
+ *
+ * A clod is a dome — rounded, because a rake broke it off something bigger
+ * and then rolled it. A piece of 0/31 aggregate is the opposite: it was
+ * crushed, so it is a flat-faced chip with sharp edges, and the reason a
+ * bed of it does not look like a bed of soil is that every face catches the
+ * light at its own angle instead of shading smoothly round a curve.
+ *
+ * So this keeps the offset to the winning cell (the standard `voronoi`
+ * above throws it away) and uses it to tilt a flat face per cell. Returns
+ * the face height, how far the fragment is from the seam between two
+ * chips, and the cell id.
+ */
+const CHIPS = /* glsl */ `
+vec3 chips(vec2 p) {
+  vec2 n = floor(p);
+  vec2 f = fract(p);
+  float f1 = 8.0;
+  float f2 = 8.0;
+  vec2 best = vec2(0.0);
+  float id = 0.0;
+  for (int j = -1; j <= 1; j++) {
+    for (int i = -1; i <= 1; i++) {
+      vec2 g = vec2(float(i), float(j));
+      vec2 o = hash22(n + g);
+      vec2 r = g + o - f;
+      float d = dot(r, r);
+      if (d < f1) {
+        f2 = f1;
+        f1 = d;
+        best = r;
+        id = hash12(n + g);
+      } else if (d < f2) {
+        f2 = d;
+      }
+    }
+  }
+  f1 = sqrt(f1);
+  f2 = sqrt(f2);
+  // A flat face, tilted a different way on every chip.
+  vec2 grad = (hash22(vec2(id * 53.0, 11.0)) - 0.5) * 2.0;
+  float face = 0.5 + dot(-best, grad) * 0.6;
+  // The seam: sharp, because two crushed faces meet at an edge, not a
+  // fillet. This is what the eye reads as "angular".
+  float edge = smoothstep(0.0, 0.055, f2 - f1);
+  return vec3(face * edge, edge, id);
+}
+`
 export const GROUND_VERT = /* glsl */ `
 varying vec3 vWorld;
 varying float vDist;
@@ -67,6 +116,7 @@ void main() {
 
 export const GROUND_FRAG = /* glsl */ `
 ${NOISE}
+${CHIPS}
 ${LIGHT}
 uniform vec3 uWet;
 uniform vec3 uLoam;
@@ -74,6 +124,11 @@ uniform vec3 uDry;
 uniform vec3 uStoneLo;
 uniform vec3 uStoneHi;
 uniform vec3 uStraw;
+// 0 = clods and crumbs (a dug bed), 1 = crushed chips (a sub-base).
+uniform float uAngular;
+// How much of what is lying about is organic: straw belongs on a garden
+// bed and has no business on a compacted sub-base.
+uniform float uOrganic;
 uniform vec2 uRakeDir;
 uniform float uRakeFreq;
 varying vec3 vWorld;
@@ -123,12 +178,18 @@ void main() {
   // Only some cells carry a clod. An even field of them was the single
   // thing that made the first version read as texture instead of ground.
   float clodMask = smoothstep(0.4, 0.72, v1.z);
-  float clod = (1.0 - smoothstep(0.0, 0.44, v1.x)) * clodMask;
+  float dome = (1.0 - smoothstep(0.0, 0.44, v1.x)) * clodMask;
+  // The same lump, crushed: a flat tilted face with a hard seam round it.
+  vec3 chip = chips(warp * 4.6);
+  float clod = mix(dome, chip.x, uAngular);
   vec3 v2 = voronoi(warp * 13.0 + 3.1);
   // Not every cell, and not one size: an even field of round domes reads as
   // sand sprinkled on chocolate, which is exactly what it looked like.
   float crumbR = 0.18 + 0.3 * fract(v2.z * 5.0);
-  float crumb = (1.0 - smoothstep(0.0, crumbR, v2.x)) * step(0.35, fract(v2.z * 11.0)) * mix(0.45, 1.0, fine);
+  vec3 chipFine = chips(warp * 13.0 + 3.1);
+  float crumb =
+    mix((1.0 - smoothstep(0.0, crumbR, v2.x)) * step(0.35, fract(v2.z * 11.0)), chipFine.x, uAngular) *
+    mix(0.45, 1.0, fine);
   // The roughness between the lumps: no shape of its own, which is the
   // point — it is what stops the ground reading as a poured surface.
   float tooth = (fbm3(warp * 24.0) - 0.5) * fine;
@@ -158,7 +219,7 @@ void main() {
     step(0.955, sk) *
     step(abs(dot(sf, sd)), strawLen) *
     (1.0 - smoothstep(0.006, 0.016, abs(dot(sf, vec2(-sd.y, sd.x))))) *
-    fine;
+    fine * uOrganic;
 
   // Two height fields, not one. The big one — the dig and the rake — is what
   // shades the bed: hollows see less sky than crests do. The small one only
@@ -178,7 +239,7 @@ void main() {
   vec2 g = abs(det) > 1e-9 ? vec2(dhx * dpy.z - dhy * dpx.z, dpx.x * dhy - dpy.x * dhx) / det : vec2(0.0);
   // Strong near, flat far: the same slope at the far edge is a pixel wide
   // and only produces sparkle.
-  float relief = mix(0.045, 0.19, near);
+  float relief = mix(0.045, 0.19, near) * mix(1.0, 1.45, uAngular);
   vec3 n = normalize(vec3(-g.x * relief, 1.0, -g.y * relief));
 
   /* --- colour ---------------------------------------------------------
@@ -199,6 +260,9 @@ void main() {
   // Every clod its own shade — a lump of soil that came up whole is not the
   // same colour as the tilth around it, and nothing else separates them.
   c *= mix(0.86, 1.14, fract(v1.z * 7.3) * clod + 0.5 * (1.0 - clod));
+  // Crushed stone comes out of the pit in a dozen shades at once, far more
+  // spread than one bed of loam ever shows.
+  c *= mix(1.0, mix(0.72, 1.3, fract(chip.z * 19.0)), uAngular);
   // …and the tilth between them varies too, but only just: this is the
   // difference between a material and a surface, not a pattern.
   c *= mix(0.94, 1.07, fract(v2.z * 19.0));
@@ -233,7 +297,19 @@ void main() {
 
 /** Build the ground shader's uniform set from a palette + rake, given the
  *  landing's own `THREE` (dynamically imported, never at module scope here). */
-export function groundUniforms(THREE: typeof import('three'), palette: GroundPalette, rake: RakeConfig) {
+export type GroundExtras = {
+  /** 0 = a dug bed of clods, 1 = crushed stone. */
+  angular?: number
+  /** 0 = nothing organic lying about (a sub-base), 1 = a garden bed. */
+  organic?: number
+}
+
+export function groundUniforms(
+  THREE: typeof import('three'),
+  palette: GroundPalette,
+  rake: RakeConfig,
+  extra?: GroundExtras,
+) {
   return {
     uWet: { value: new THREE.Vector3(...palette.wet) },
     uLoam: { value: new THREE.Vector3(...palette.loam) },
@@ -243,5 +319,7 @@ export function groundUniforms(THREE: typeof import('three'), palette: GroundPal
     uStraw: { value: new THREE.Vector3(...palette.straw) },
     uRakeDir: { value: new THREE.Vector2(...rake.dir) },
     uRakeFreq: { value: rake.freq },
+    uAngular: { value: extra?.angular ?? 0 },
+    uOrganic: { value: extra?.organic ?? 1 },
   }
 }
