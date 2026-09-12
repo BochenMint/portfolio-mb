@@ -431,7 +431,7 @@ export function createPaverField(
     }
   }
 
-  // Match ink points to the stone whose footprint contains them. Bucketed by
+  // Match ink points to the stone whose CENTRE they land near. Bucketed by
   // rounded centre so a headline's worth of accent points doesn't mean an
   // O(points × stones) scan.
   const bucketSize = lp

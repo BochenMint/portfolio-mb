@@ -135,18 +135,27 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
   const group = new THREE.Group()
 
   const depth = fp.zNear - fp.zFar
-  const halfW = Math.max(fp.halfFar, fp.halfNear)
-  // The field's own rectangle stops short of the frame's outer edge by
-  // exactly the edging kerb's width, so the kerb (laid just outside it, see
-  // `pavers.ts`) lands right at the visible edge instead of floating in a
-  // gap or hanging off it.
-  const x0 = -(halfW - EDGE_SHORT)
-  const x1 = halfW - EDGE_SHORT
+  // Two different "widths" on purpose. The GROUND plane is a background: it
+  // must never show a gap, so it's sized to the WIDER of the near/far
+  // half-widths (same as the garden's soil plane) and allowed to run off
+  // the edge of the frustum wherever the trapezoid is actually narrower.
+  // The FIELD's own rectangle is the opposite case — it has to be something
+  // the visitor can actually see the edge of, so it's sized to the
+  // NARROWER half-width instead. Using the wider one here first (a
+  // copy-paste from the ground sizing) put the edging kerb outside the
+  // visible frustum for all but the top few rows of the screen — confirmed
+  // by a harness render that showed no kerb anywhere in frame — because a
+  // fixed world-x boundary that's correct at the wide (far) end of the
+  // trapezoid sits beyond the narrow (near) end's actual edge.
+  const groundHalfW = Math.max(fp.halfFar, fp.halfNear)
+  const fieldHalfW = Math.min(fp.halfFar, fp.halfNear)
+  const x0 = -(fieldHalfW - EDGE_SHORT)
+  const x1 = fieldHalfW - EDGE_SHORT
 
   /* Ground: the same screeded-aggregate bed under the whole visible plane,
    * oversized the same way the garden's soil plane is (`+6`/`+8`) so a
    * resize's rebuild threshold never exposes a bare edge mid-scroll. */
-  const groundGeo = new THREE.PlaneGeometry(2 * halfW + 6, depth + 8).rotateX(-Math.PI / 2)
+  const groundGeo = new THREE.PlaneGeometry(2 * groundHalfW + 6, depth + 8).rotateX(-Math.PI / 2)
   groundGeo.translate(0, 0, (fp.zFar + fp.zNear) / 2)
   const groundMat = new THREE.ShaderMaterial({
     vertexShader: GROUND_VERT,
@@ -154,8 +163,9 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
     uniforms: { ...light, ...groundUniforms(THREE, AGGREGATE_PALETTE, SCREED) },
   })
   const groundMesh = new THREE.Mesh(groundGeo, groundMat)
-  // Drawn first: the field and edging cover almost all of it, but whatever
-  // shows at the frame's outer edge (and behind the far horizon) is bed.
+  // Drawn first: the field and edging cover most of it, but the corners
+  // where the visible trapezoid is wider than the field rectangle — and
+  // whatever is behind the far horizon — are bed.
   groundMesh.renderOrder = 0
   group.add(groundMesh)
 
