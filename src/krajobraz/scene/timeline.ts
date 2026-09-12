@@ -6,8 +6,9 @@
  * flower headline is fully open by ~0.93, which leaves the last stretch of the
  * pin for the finished bed to be read with the call to action under it.
  *
- * The overlays in `GardenStage.tsx` read the same table, so the copy fades in
- * and out on the same beats as the scene rather than on numbers of its own.
+ * `GardenStage.tsx` hands the intro/outro fractions of this same table to
+ * `stage/ScrollStage.tsx` as its `timeline` prop, so the copy fades in and
+ * out on the same beats as the scene rather than on numbers of its own.
  */
 export const T = {
   /** Intro copy is fully visible until here, gone by `introOut`. */
@@ -32,9 +33,3 @@ export const T = {
   /** Closing line and CTA. */
   outro: [0.88, 0.94] as [number, number],
 } as const
-
-/** Sine in-out: a roll leaves standing still and arrives standing still. */
-export function easeInOut(t: number): number {
-  const c = Math.min(1, Math.max(0, t))
-  return 0.5 - 0.5 * Math.cos(Math.PI * c)
-}

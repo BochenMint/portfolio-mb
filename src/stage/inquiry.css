@@ -1,0 +1,32 @@
+/* Inquiry form fields — see Inquiry.tsx. */
+.field {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(244, 237, 220, 0.18);
+  background: rgba(244, 237, 220, 0.05);
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
+  color: var(--cream);
+  outline: none;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+.field::placeholder {
+  color: var(--cream-dim);
+  opacity: 0.7;
+}
+.field:focus {
+  border-color: var(--leaf);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.03) inset,
+    0 0 0 4px rgba(143, 191, 74, 0.22);
+}
+.field:focus-visible {
+  outline: none;
+}
+.field:disabled {
+  opacity: 0.6;
+}

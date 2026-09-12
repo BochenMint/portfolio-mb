@@ -1,5 +1,5 @@
 import { site } from '../../chrome/data/content'
-import { InquiryForm } from './InquiryForm'
+import { Inquiry, type InquiryField } from '../../stage/Inquiry'
 
 const heading = 'Porozmawiajmy o stronie Twojej pracowni.'
 
@@ -18,6 +18,22 @@ const bullets = [
 ]
 
 const priceLine = 'Strony od 2 000 PLN. Wycenę podam po krótkiej rozmowie.'
+
+const inquiryFields: InquiryField[] = [
+  { id: 'name', label: 'Imię', type: 'text', required: true },
+  { id: 'email', label: 'E-mail', type: 'email', required: true },
+  { id: 'company', label: 'Pracownia / firma', type: 'text' },
+  { id: 'website', label: 'Obecna strona (jeśli jest)', type: 'text', placeholder: 'np. twojapracownia.pl' },
+  {
+    id: 'message',
+    label: 'Czego potrzebujesz?',
+    type: 'textarea',
+    placeholder: 'Kilka zdań: czym się zajmujecie i co ma robić nowa strona.',
+  },
+]
+
+const buildInquirySubject = (body: Record<string, string>) =>
+  `Strona dla pracowni krajobrazu — ${body.company || body.name || 'zapytanie'}`
 
 function LeafMarker() {
   return (
@@ -88,7 +104,12 @@ export function Contact() {
           </div>
         </div>
 
-        <InquiryForm />
+        <Inquiry
+          source="krajobraz"
+          fields={inquiryFields}
+          heading="Opowiedz o swojej pracowni"
+          buildSubject={buildInquirySubject}
+        />
       </div>
     </section>
   )
