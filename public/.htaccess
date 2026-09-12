@@ -96,6 +96,20 @@ RewriteRule ^en/?$ /mb-ai-en.html [L]
 RewriteCond %{HTTP_HOST} ^mb-ai\.pl$ [NC]
 RewriteRule ^ua/?$ /mb-ai-ua.html [L]
 
+# /robots.txt and /sitemap.xml -> host-specific files (URL stays the same,
+# internal rewrite). A sitemap's <loc> entries must be same-origin as the
+# sitemap's own URL, so the shared marcinbochenek.com sitemap.xml/robots.txt
+# are invalid on this host: mb-ai.pl needs its own 3-URL sitemap and a
+# robots.txt whose Sitemap: line points back at it. Also NOT guarded with
+# !-f/!-d — sitemap.xml and robots.txt are REAL files in the shared docroot
+# (the marcinbochenek.com versions), so this has to fire unconditionally for
+# this host, same reasoning as the /en//ua rewrites above.
+RewriteCond %{HTTP_HOST} ^mb-ai\.pl$ [NC]
+RewriteRule ^robots\.txt$ /robots-mb-ai.txt [L]
+
+RewriteCond %{HTTP_HOST} ^mb-ai\.pl$ [NC]
+RewriteRule ^sitemap\.xml$ /sitemap-mb-ai.xml [L]
+
 # Root ("/") needs its own rule: the shared docroot's "/" resolves to a real
 # directory (DOCUMENT_ROOT itself, -d true) whose DirectoryIndex is the MAIN
 # portfolio's index.html — without this, the generic !-f/!-d fallback below

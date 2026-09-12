@@ -137,6 +137,8 @@ export const copyUa = {
     rights: (brand: string, year: number) => `© ${year} ${brand}. Усі права захищені.`,
     classic: 'Лабораторія',
     classicHref: '/lab.html',
+    mbAi: 'MB AI — автоматизації з контролем людини',
+    mbAiHref: 'https://mb-ai.pl',
     stack: 'Сайти, системи та автоматизації для компаній у Польщі та за кордоном. Працюю англійською та польською.',
   },
 } satisfies ChromeCopy

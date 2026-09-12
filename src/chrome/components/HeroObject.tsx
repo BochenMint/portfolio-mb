@@ -53,6 +53,7 @@ export function HeroObject() {
 
     let disposed = false
     let handle: CarSceneHandle | null = null
+    let idleHandle: number | null = null
 
     const ro = new ResizeObserver(() => handle?.resize())
     const onLost = () => {
@@ -61,7 +62,7 @@ export function HeroObject() {
       setPosterOnly(true)
     }
 
-    void (async () => {
+    const boot = async () => {
       const { createCarScene } = await import('../underhood/carScene')
       if (disposed) return
       handle = await createCarScene(canvas, host, { mode: 'hero', reduced })
@@ -90,10 +91,34 @@ export function HeroObject() {
           snapshot: (w?: number, h?: number) => handle?.debug.snapshot(w, h),
         }
       }
-    })()
+    }
+
+    // The hero renders behind a poster (see below) until this resolves, so
+    // deferring it costs nothing visually — but the model + Draco fetches it
+    // kicks off used to start within milliseconds of navigation, competing
+    // with the LCP headline text for bandwidth on every load. Waiting for the
+    // page's own `load` event, then one idle turn, moves that cost off the
+    // critical path without changing the handover itself.
+    const schedule = () => {
+      if (typeof window.requestIdleCallback === 'function') {
+        idleHandle = window.requestIdleCallback(() => void boot(), { timeout: 1500 })
+      } else {
+        idleHandle = window.setTimeout(() => void boot(), 150)
+      }
+    }
+    if (document.readyState === 'complete') {
+      schedule()
+    } else {
+      window.addEventListener('load', schedule, { once: true })
+    }
 
     return () => {
       disposed = true
+      window.removeEventListener('load', schedule)
+      if (idleHandle !== null) {
+        if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleHandle)
+        else window.clearTimeout(idleHandle)
+      }
       handleRef.current = null
       ro.disconnect()
       canvas.removeEventListener('carscene:lost', onLost)

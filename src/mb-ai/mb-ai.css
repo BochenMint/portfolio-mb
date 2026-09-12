@@ -462,7 +462,9 @@
 .i18n-lang a {
   color: inherit;
   text-decoration: none;
-  opacity: 0.48;
+  /* 0.48 measured 4.32:1 against the footer's own ground — under the 4.5:1
+     floor. The current language is still the one at full strength. */
+  opacity: 0.66;
   padding: 0.25rem 0.35rem;
   min-height: 44px;
   display: inline-flex;

@@ -63,6 +63,8 @@ export function UnderHood() {
   const [active, setActive] = useState<PartId | null>(null)
   const [auto, setAuto] = useState<PartId>('body')
   const [intro, setIntro] = useState(true)
+  /** The section is close enough to the viewport to start loading its scene. */
+  const [nearViewport, setNearViewport] = useState(false)
 
   // Probed once before the first paint so a capable browser never downloads
   // the fallback clip; `lost` lets a browser that drops its context later fall
@@ -78,9 +80,32 @@ export function UnderHood() {
   )
   const total = copy.layers.length
 
+  /* ---- Boot gate ------------------------------------------------------
+   * The section sits well below the fold, but its scene shares the same F1
+   * .glb + Draco fetches the hero already primed the cache with — creating
+   * it at mount (as this used to) fired that decode again on every load,
+   * whether or not the visitor ever scrolled this far. An IntersectionObserver
+   * with a generous lead margin starts it only once the section is actually
+   * approaching the viewport, with enough runway to be ready before it
+   * arrives; the scroll pin below still sets up immediately so progress is
+   * never lost while the scene itself is still loading. */
+  useEffect(() => {
+    if (flat || nearViewport) return
+    const section = sectionRef.current
+    if (!section) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) setNearViewport(true)
+      },
+      { rootMargin: '800px 0px' },
+    )
+    io.observe(section)
+    return () => io.disconnect()
+  }, [flat, nearViewport])
+
   /* ---- Scene ------------------------------------------------------- */
   useEffect(() => {
-    if (flat) return
+    if (flat || !nearViewport) return
     const canvas = canvasRef.current
     const host = canvasHostRef.current
     if (!canvas || !host) return
@@ -132,7 +157,7 @@ export function UnderHood() {
       handle?.dispose()
       sceneRef.current = null
     }
-  }, [flat, reduced])
+  }, [flat, reduced, nearViewport])
 
   /* ---- Scroll pin -------------------------------------------------- */
   useLayoutEffect(() => {

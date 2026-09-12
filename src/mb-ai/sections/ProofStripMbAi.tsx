@@ -23,7 +23,11 @@ export function ProofStripMbAi() {
                   <img
                     className="mbai-proof-shot"
                     src={src}
-                    alt=""
+                    // Descriptive, not decorative: this is a real product
+                    // screenshot, not a background flourish — reuse the
+                    // locale-specific project name + detail already shown
+                    // below it rather than inventing separate copy.
+                    alt={`${item.name} — ${item.detail}`}
                     width={1200}
                     height={675}
                     loading="lazy"

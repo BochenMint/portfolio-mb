@@ -10,7 +10,7 @@ Marcin Bochenek is a one-person studio. He designs and ships websites that colle
 - [Homepage (UK)](https://marcinbochenek.com/ua/): Ukrainian locale (`lang="uk"`, URL prefix `/ua/`)
 - [Articles](https://marcinbochenek.com/artykuly/): 14 long-form pieces on websites, funnels, panels, HITL
 - [MB AI](https://mb-ai.pl/): HITL automations product landing
-- [Game](https://gra.marcinbochenek.com/): Interactive 3D hangar / mission (portfolio piece)
+- [Game](https://marcinbochenek.com/gra.html): Interactive 3D hangar / mission (portfolio piece)
 
 ## Live proof (clickable)
 - [Mint Apartments](https://mintapartments.pl): 36 apartments in Gdańsk, direct booking on the operator site, guest assistant, 24/7 check-in. Guest pays 10–15% less than on Booking.com / Airbnb (directional, volume-dependent).

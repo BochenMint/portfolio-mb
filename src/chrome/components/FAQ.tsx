@@ -1,9 +1,39 @@
+import { useEffect } from 'react'
 import { useLocale } from '../i18n/context'
 import { ChromeCard, SectionHeader } from './primitives'
+
+const FAQ_JSONLD_ID = 'faq-jsonld'
 
 export function FAQ() {
   const { t: c, content } = useLocale()
   const faq = content.faq
+
+  // FAQPage structured data for the homepage's real 6-question FAQ, built
+  // from the same `content.faq` the visible <details> below renders — one
+  // source of truth, so the JSON-LD can never drift from the copy on the
+  // page. Injected at runtime rather than baked into each locale's <head>
+  // because `content.faq` is already locale-aware (see src/chrome/data/i18n.ts).
+  useEffect(() => {
+    let script = document.getElementById(FAQ_JSONLD_ID) as HTMLScriptElement | null
+    if (!script) {
+      script = document.createElement('script')
+      script.id = FAQ_JSONLD_ID
+      script.type = 'application/ld+json'
+      document.head.appendChild(script)
+    }
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faq.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a },
+      })),
+    })
+    return () => {
+      script?.remove()
+    }
+  }, [faq])
 
   return (
     <section id="faq" className="px-5 py-24 md:px-10 md:py-32">

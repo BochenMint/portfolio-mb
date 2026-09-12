@@ -137,6 +137,8 @@ export const copyEn = {
     rights: (brand: string, year: number) => `© ${year} ${brand}. All rights reserved.`,
     classic: 'Lab',
     classicHref: '/lab.html',
+    mbAi: 'MB AI — automation with a human in the loop',
+    mbAiHref: 'https://mb-ai.pl',
     stack: 'Websites, systems and automation for companies in Poland and abroad. I work in English and Polish.',
   },
 } satisfies ChromeCopy

@@ -158,16 +158,19 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   scene.add(camera)
 
   // ─── Skybox: equirect background + PMREM env for PBR reflections ───────────
-  // Desktop tier gets the full-resolution 8K background (crisp Milky Way when
-  // the camera lingers), while the PMREM env — which gets prefiltered down to
-  // low-frequency mips anyway — is built from the cheaper 4K. Low-power keeps
-  // 2K for both. The background texture is ALSO what the black hole shader
-  // lenses, so the impostor stays pixel-continuous with the real sky.
+  // First paint loads the 4K background on desktop tier (2K on low-power);
+  // `scheduleSkyUpgrade` below swaps the dome — and the black hole shader
+  // that lenses the same texture object — up to the full 8K once the scene
+  // is idle, so the initial load never pays for the crisp-Milky-Way version.
+  // The PMREM env — which gets prefiltered down to low-frequency mips anyway
+  // — never needs more than 2K on any tier; a 4K source only cost bandwidth
+  // for identical output. The background texture is ALSO what the black hole
+  // shader lenses, so the impostor stays pixel-continuous with the real sky.
   const texLoader = new THREE.TextureLoader(manager)
   const maxAniso = Math.min(renderer.capabilities.getMaxAnisotropy(), 8)
 
-  const skyboxUrl = lowPower ? SKYBOX_2K : SKYBOX_8K
-  const envSrcUrl = lowPower ? SKYBOX_2K : SKYBOX_4K
+  const skyboxUrl = lowPower ? SKYBOX_2K : SKYBOX_4K
+  const envSrcUrl = SKYBOX_2K
   const skyTexPromise = texLoader.loadAsync(skyboxUrl)
   const envSrcPromise: Promise<THREE.Texture | null> =
     skyboxUrl === envSrcUrl ? Promise.resolve(null) : texLoader.loadAsync(envSrcUrl)
@@ -202,8 +205,47 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   const envRT = pmrem.fromEquirectangular(pmremSrc)
   scene.environment = envRT.texture
   const envMap = envRT.texture
-  // The 4K env source has served its purpose once PMREM is baked.
+  // The 2K env source has served its purpose once PMREM is baked.
   envSrcTex?.dispose()
+
+  // Set by dispose(), declared here so the idle sky upgrade below (and
+  // nothing else) can check it before touching a torn-down texture/renderer.
+  let engineDisposed = false
+
+  // ─── Progressive sky upgrade — 4K → 8K once idle ───────────────────────────
+  // `skyTex` is the SAME Texture instance the dome's `uSky` uniform and
+  // `createBlackHole`'s `uSky` uniform both hold a reference to (see
+  // world/index.ts / world/blackHole.ts), so swapping its `.image` in place —
+  // rather than creating a new Texture — upgrades both consumers for free,
+  // with no extra plumbing and no risk of the two ever showing different
+  // resolutions. Low-power skips this entirely: it is already at 2K/2K and
+  // has no idle budget to spend on a bigger download.
+  // A 4.4 MB texture is worth it on a desktop with a real connection and
+  // nowhere near worth it on a phone on mobile data, which is exactly what
+  // the Network Information API exists to tell us: 4g (or nothing said at
+  // all, on browsers that do not implement it) gets the upgrade, everything
+  // slower and anyone who has asked their browser to save data keeps the 4K.
+  const conn = (
+    navigator as Navigator & { connection?: { effectiveType?: string; saveData?: boolean } }
+  ).connection
+  const wantsBytes = !conn?.saveData && (conn?.effectiveType ?? '4g') === '4g'
+  if (!lowPower && wantsBytes) {
+    const scheduleIdle = (cb: () => void): number => {
+      if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+        return window.requestIdleCallback(cb, { timeout: 4000 })
+      }
+      return window.setTimeout(cb, 2000)
+    }
+    scheduleIdle(() => {
+      if (engineDisposed) return
+      const upgradeLoader = new THREE.ImageLoader()
+      upgradeLoader.load(SKYBOX_8K, (img) => {
+        if (engineDisposed) return
+        skyTex.image = img
+        skyTex.needsUpdate = true
+      })
+    })
+  }
 
   // ─── Lighting — starlight fill + sun spec + cool rim + warm disk bounce ──
   scene.add(new THREE.HemisphereLight(0x8aa0c8, 0x0a0c10, 0.55))
@@ -335,6 +377,7 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
     },
 
     dispose() {
+      engineDisposed = true
       running = false
       clearTimeout(raf)
       cancelAnimationFrame(raf)

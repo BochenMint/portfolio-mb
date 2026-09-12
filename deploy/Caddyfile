@@ -113,6 +113,14 @@
 	handle @mbai {
 		import common_headers
 		import portfolio_root
+		# A sitemap's <loc> entries must be same-origin as its own URL, so the
+		# shared marcinbochenek.com sitemap.xml/robots.txt are invalid served on
+		# this host — swap in mb-ai.pl's own files (URL stays the same). Ported
+		# 1:1 to public/.htaccess and public/_redirects.
+		@mbai_sitemap path /sitemap.xml
+		rewrite @mbai_sitemap /sitemap-mb-ai.xml
+		@mbai_robots path /robots.txt
+		rewrite @mbai_robots /robots-mb-ai.txt
 		@mbai_en path /en /en/
 		rewrite @mbai_en /mb-ai-en.html
 		@mbai_ua path /ua /ua/

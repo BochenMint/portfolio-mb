@@ -15,7 +15,10 @@
   min-height: 44px;
   display: inline-flex;
   align-items: center;
-  opacity: 0.72;
+  /* 0.72 put the inactive languages at 4.32:1 on the dark footer — under the
+     4.5:1 floor the rest of this site holds itself to. The active language is
+     still picked out by weight, which is what carries that distinction. */
+  opacity: 0.84;
 }
 
 .i18n-lang a:hover,

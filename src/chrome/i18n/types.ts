@@ -110,5 +110,7 @@ export type ChromeCopy = {
     classic: string
     classicHref: string
     stack: string
+    mbAi: string
+    mbAiHref: string
   }
 }

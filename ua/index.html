@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Marcin Bochenek — сайти, системи та автоматизації для компаній</title>
@@ -50,7 +51,7 @@
     <meta property="og:locale" content="uk_UA" />
     <meta property="og:locale:alternate" content="en_GB" />
     <meta property="og:locale:alternate" content="pl_PL" />
-    <meta property="og:image" content="https://marcinbochenek.com/chrome/f1-og.png" />
+    <meta property="og:image" content="https://marcinbochenek.com/chrome/f1-og.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Marcin Bochenek — сайти, системи та автоматизації для компаній" />
@@ -60,7 +61,7 @@
       name="twitter:description"
       content="Сайти, системи та автоматизації для компаній у Польщі. Від 2 000 PLN."
     />
-    <meta name="twitter:image" content="https://marcinbochenek.com/chrome/f1-og.png" />
+    <meta name="twitter:image" content="https://marcinbochenek.com/chrome/f1-og.jpg" />
 
     <!--
       Only the display face is preloaded. A <canvas> is not an eligible LCP
@@ -86,48 +87,73 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "ProfessionalService",
-        "name": "Marcin Bochenek",
-        "url": "https://marcinbochenek.com/ua/",
-        "inLanguage": "uk-UA",
-        "logo": "https://marcinbochenek.com/brand/logo-helmet-1200.png",
-        "image": "https://marcinbochenek.com/chrome/f1-og.png",
-        "description": "Сайти для бізнесу, онлайн-бронювання, операційні панелі та автоматизації з AI для компаній у Польщі та за кордоном, англійською та польською. Проєкт, впровадження й розвиток веде одна відповідальна людина.",
-        "email": "kontakt@marcinbochenek.com",
-        "priceRange": "2000-25000 PLN",
-        "currenciesAccepted": "PLN",
-        "areaServed": [
+        "@graph": [
           {
-            "@type": "Country",
-            "name": "Poland"
+            "@type": "Person",
+            "@id": "https://marcinbochenek.com/#person",
+            "name": "Marcin Bochenek",
+            "url": "https://marcinbochenek.com/ua/",
+            "image": "https://marcinbochenek.com/images/marcin-bochenek.webp",
+            "jobTitle": "Software engineer",
+            "email": "kontakt@marcinbochenek.com",
+            "sameAs": [
+              "https://github.com/BochenMint",
+              "https://mb-ai.pl",
+              "https://gra.marcinbochenek.com"
+            ]
           },
           {
-            "@type": "Place",
-            "name": "European Union"
+            "@type": "ProfessionalService",
+            "@id": "https://marcinbochenek.com/#service",
+            "name": "Marcin Bochenek",
+            "url": "https://marcinbochenek.com/ua/",
+            "inLanguage": "uk-UA",
+            "logo": "https://marcinbochenek.com/brand/logo-helmet-1200.png",
+            "image": "https://marcinbochenek.com/chrome/f1-og.jpg",
+            "description": "Сайти для бізнесу, онлайн-бронювання, операційні панелі та автоматизації з AI для компаній у Польщі та за кордоном, англійською та польською. Проєкт, впровадження й розвиток веде одна відповідальна людина.",
+            "email": "kontakt@marcinbochenek.com",
+            "priceRange": "2000-25000 PLN",
+            "currenciesAccepted": "PLN",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "Poland"
+              },
+              {
+                "@type": "Place",
+                "name": "European Union"
+              },
+              {
+                "@type": "Place",
+                "name": "Worldwide (remote)"
+              }
+            ],
+            "address": { "@type": "PostalAddress", "addressCountry": "PL" },
+            "availableLanguage": ["pl", "en", "uk"],
+            "knowsAbout": [
+              "Сайти",
+              "Онлайн-бронювання",
+              "Операційні панелі",
+              "Інтеграції API",
+              "Автоматизація з AI"
+            ],
+            "founder": { "@id": "https://marcinbochenek.com/#person" },
+            "employee": { "@id": "https://marcinbochenek.com/#person" },
+            "sameAs": [
+              "https://github.com/BochenMint",
+              "https://mintapartments.pl",
+              "https://plumm.pl"
+            ]
           },
           {
-            "@type": "Place",
-            "name": "Worldwide (remote)"
+            "@type": "WebSite",
+            "@id": "https://marcinbochenek.com/#website",
+            "url": "https://marcinbochenek.com/",
+            "name": "Marcin Bochenek",
+            "inLanguage": ["pl", "en", "uk"],
+            "publisher": { "@id": "https://marcinbochenek.com/#person" }
           }
-        ],
-        "availableLanguage": ["pl", "en", "uk"],
-        "knowsAbout": [
-          "Сайти",
-          "Онлайн-бронювання",
-          "Операційні панелі",
-          "Інтеграції API",
-          "Автоматизація з AI"
-        ],
-        "sameAs": [
-          "https://github.com/BochenMint",
-          "https://mintapartments.pl",
-          "https://plumm.pl"
-        ],
-        "founder": {
-          "@type": "Person",
-          "name": "Marcin Bochenek",
-          "url": "https://marcinbochenek.com/"
-        }
+        ]
       }
     </script>
   </head>
