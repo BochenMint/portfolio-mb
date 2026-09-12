@@ -333,14 +333,12 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }, shell
     disposables.push(m)
   })
 
-  /* The border planting ------------------------------------------------
+  /* The plantings --------------------------------------------------------
    *
-   * The edge of the garden, and the only thing in the scene that was
-   * already here before the visitor arrived: the soil is being prepared,
-   * the turf is being laid, the flowers are being planted — the shrubs
-   * just sit there. Low mounds around the outside of the frame, because
-   * the trees that were here first projected across the headline from
-   * well outside it (Marcin: "usuń drzewa — zasłaniają").
+   * Low shrubs around the outside of the frame — trees projected across
+   * the headline from well outside it at this tilt (Marcin: "usuń drzewa
+   * — zasłaniają"). They are planted, not scenery: they go in after the
+   * turf, left to right, each unfurling its own leaves.
    */
   const shrubs = createShrubs(THREE, {
     halfFar: fp.halfFar,
@@ -357,6 +355,7 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }, shell
     },
     light,
     coarse: opts.coarse,
+    window: [T.plantStart, T.plantEnd],
   })
   group.add(shrubs.group)
   disposables.push(shrubs)
