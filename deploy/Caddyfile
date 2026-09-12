@@ -39,9 +39,9 @@
 	@v4 path /v4 /v4/
 	rewrite @v4 /v4.html
 
-	# Niepubliczny landing dla pracowni architektury krajobrazu — dostępny
-	# tylko z bezpośredniego linku, noindex we własnym <head>, celowo
-	# nieobecny w sitemap.xml.
+	# Landing dla pracowni architektury krajobrazu. Do 2026-09-12 był ukryty
+	# i noindex; teraz to zwykła indeksowana podstrona — jest w sitemap.xml,
+	# w llms.txt i linkowana ze stopki.
 	@krajobraz path /krajobraz /krajobraz/
 	rewrite @krajobraz /krajobraz.html
 
