@@ -1,0 +1,158 @@
+/* ------------------------------------------------------------------
+   Shared skin for the niche landings (/krajobraz, /brukarstwo, …).
+
+   Everything here is the same on every one of them: the self-hosted faces,
+   the type scale, the base element styles, and the four utilities the
+   shared sections in `stage/Sections.tsx` are built from. What a landing
+   brings of its own is its palette — it sets `--cream`, `--cream-dim`,
+   `--page-bg`, `--card-bg`, `--card-border`, `--accent-mark` and its
+   `--stage-*` values, and this file spends them.
+
+   Imported after `@import 'tailwindcss'` in each landing's own stylesheet,
+   so `@apply` and the `@theme` block below are resolved in that landing's
+   Tailwind context.
+------------------------------------------------------------------- */
+
+/* Self-hosted fonts (no third-party requests, GDPR-clean, no FOUT on repeat
+   visits). Same URLs and unicode-range split as src/chrome/chrome.css. */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('/fonts/HankenGrotesk-latin-ext-wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('/fonts/HankenGrotesk-latin-wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/GeistMono-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-display: 'Hanken Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Hanken Grotesk', 'Inter', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
+}
+
+body {
+  @apply overflow-x-hidden antialiased;
+}
+
+::selection {
+  background: var(--accent-mark);
+  color: var(--page-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* --- Anchor-nav offset: keep the top of the viewport off section headings --- */
+section[id] {
+  scroll-margin-top: 24px;
+}
+
+@layer utilities {
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+  }
+
+  /* --- Hairlines ----------------------------------------------------- */
+  .hairline {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--hairline-ink) 30%,
+      var(--hairline-ink) 70%,
+      transparent
+    );
+  }
+
+  /* --- Offer section: step numbers + price ladder --------------------- */
+  /* Mono badge for the "Jak to działa" steps — same font-mono as .eyebrow,
+     in the landing's accent instead of cream so it reads as a marker, not
+     as body text. */
+  .offer-step-num {
+    display: inline-flex;
+    height: 2.25rem;
+    width: 2.25rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent-mark);
+  }
+
+  /* Two-tier price ladder in "Ile to kosztuje" — name in the display face,
+     price in mono/accent so it reads like a receipt line, not a sentence. */
+  .price-ladder-row {
+    padding: 1.5rem 0;
+  }
+  .price-ladder-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+  }
+  .price-ladder-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--cream);
+  }
+  .price-ladder-value {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--accent-mark);
+    white-space: nowrap;
+  }
+  .price-ladder-desc {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--cream-dim);
+  }
+}

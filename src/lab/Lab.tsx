@@ -73,6 +73,9 @@ function EditionRow({ edition, locale, t }: { edition: Edition; locale: Locale; 
   )
 }
 
+const SITE = 'https://marcinbochenek.com'
+const LAB_JSONLD_ID = 'lab-jsonld'
+
 export default function Lab() {
   const [locale, setLocale] = useLocale()
   const t = copy[locale]
@@ -86,6 +89,39 @@ export default function Lab() {
         ? 'Archiwum wersji — Marcin Bochenek'
         : 'Edition archive — Marcin Bochenek'
   }, [locale])
+
+  // CollectionPage/ItemList for the 8 archived editions — same `editions`
+  // array the visible list below renders, so the structured data can never
+  // list a page the archive itself doesn't.
+  useEffect(() => {
+    let script = document.getElementById(LAB_JSONLD_ID) as HTMLScriptElement | null
+    if (!script) {
+      script = document.createElement('script')
+      script.id = LAB_JSONLD_ID
+      script.type = 'application/ld+json'
+      document.head.appendChild(script)
+    }
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: t.title,
+      inLanguage: locale,
+      url: `${SITE}/lab.html`,
+      isPartOf: { '@type': 'WebSite', name: 'Marcin Bochenek', url: SITE },
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: editions.map((edition, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: `${SITE}${edition.href}`,
+          name: edition.name,
+        })),
+      },
+    })
+    return () => {
+      script?.remove()
+    }
+  }, [locale, t.title])
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 py-16 md:px-10 md:py-24">

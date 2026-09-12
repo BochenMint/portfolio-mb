@@ -39,4 +39,4 @@ The homepage demonstrates this directly: an interactive exploded F1 car that vis
 - Steering wheel & telemetry — measurement: events, conversions, a before/after comparison instead of a hunch.
 
 ## Contact
-Email: kontakt@marcinbochenek.com. Response: 1 business day. 20-minute audit is the default entry. GitHub: https://github.com/BochenMint. Related: https://mb-ai.pl (HITL product landing), https://gra.marcinbochenek.com (3D hangar piece).
+Email: kontakt@marcinbochenek.com. Response: 1 business day. 20-minute audit is the default entry. GitHub: https://github.com/BochenMint. Related: https://mb-ai.pl (HITL product landing), https://marcinbochenek.com/gra.html (3D hangar piece), https://marcinbochenek.com/krajobraz (Polish-only landing page for landscape-architecture studios: portfolio, offer and enquiry form).

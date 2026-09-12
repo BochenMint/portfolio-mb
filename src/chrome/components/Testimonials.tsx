@@ -48,16 +48,17 @@ export function Testimonials() {
                     <div className="hairline mt-8" />
                     <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-4">
                       {facts.map((fact) => (
-                        <div key={fact.id}>
-                          <dt className="sr-only">
+                        // The label is the `dt` itself rather than a `p`
+                        // repeating it: a `dl` may only hold dt/dd groups, and
+                        // the duplicate read the label out twice. Reversed so
+                        // the number still sits above its caption.
+                        <div key={fact.id} className="flex flex-col-reverse">
+                          <dt className="mt-1 font-mono text-[10px] tracking-[0.12em] text-muted uppercase">
                             {pick(fact.short ?? fact.label, locale)}
                           </dt>
                           <dd className="font-display text-2xl font-semibold text-white">
                             {fact.value}
                           </dd>
-                          <p className="mt-1 font-mono text-[10px] tracking-[0.12em] text-muted uppercase">
-                            {pick(fact.short ?? fact.label, locale)}
-                          </p>
                         </div>
                       ))}
                     </dl>

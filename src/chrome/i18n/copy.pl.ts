@@ -143,6 +143,10 @@ export const copyPl = {
     rights: (brand: string, year: number) => `© ${year} ${brand}. Wszystkie prawa zastrzeżone.`,
     classic: 'Laboratorium',
     classicHref: '/lab.html',
+    mbAi: 'MB AI — automatyzacje z kontrolą człowieka',
+    mbAiHref: 'https://mb-ai.pl',
     stack: 'Strony, systemy i automatyzacje dla firm w Polsce i za granicą. Pracuję po polsku i po angielsku.',
+    krajobraz: 'Dla pracowni architektury krajobrazu',
+    krajobrazHref: '/krajobraz',
   },
 } satisfies ChromeCopy

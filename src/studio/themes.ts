@@ -31,8 +31,10 @@ export const themes: ThemeDef[] = [
     label: 'Swiss Editorial',
     catalog: 'Typografia i siatka',
     note: 'Hierarchia bez ozdób. Najczytelniejszy kierunek sprzedażowy.',
-    fonts:
-      'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap',
+    // Self-hosted (see /fonts/studio-404.css): this is the default theme for
+    // studio.html/-en/-ua, so it must not re-add the Google Fonts CDN link
+    // ThemeProvider injects on every mount and undo the static <head> fix.
+    fonts: '/fonts/studio-404.css',
   },
   {
     id: 'liquid',

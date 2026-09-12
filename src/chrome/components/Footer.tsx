@@ -50,14 +50,34 @@ export function Footer() {
 
         <div className="flex flex-col gap-3 py-6 text-xs text-muted md:flex-row md:items-center md:justify-between">
           <p>{c.footer.rights(site.brand, new Date().getFullYear())}</p>
-          {/* The archive of earlier editions. Kept reachable but deliberately
-              quiet — it is a workshop, not part of the offer. */}
-          <a
-            href={c.footer.classicHref}
-            className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
-          >
-            {c.footer.classic}
-          </a>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            {/* The AI-automation sister site — the only followable link from the
+                live homepage to mb-ai.pl (see P1-5 of the 2026-09 SEO audit). */}
+            <a
+              href={c.footer.mbAiHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
+            >
+              {c.footer.mbAi}
+            </a>
+            {/* The archive of earlier editions. Kept reachable but deliberately
+                quiet — it is a workshop, not part of the offer. */}
+            <a
+              href={c.footer.classicHref}
+              className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
+            >
+              {c.footer.classic}
+            </a>
+            {/* The niche landing for landscape-architecture studios — indexed
+                but unlinked from any nav, so this is its only internal link. */}
+            <a
+              href={c.footer.krajobrazHref}
+              className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
+            >
+              {c.footer.krajobraz}
+            </a>
+          </div>
         </div>
       </div>
     </footer>

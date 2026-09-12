@@ -1,6 +1,10 @@
 /* Scan only this landing's own sources: the default (the whole repo) pulled
    every utility from every other edition into this page's stylesheet. */
 @import 'tailwindcss' source('./');
+/* The shared sections live outside this directory, so their classes have to
+   be scanned explicitly — `source()` above narrows the scan to this landing
+   and would otherwise drop every utility used only in stage/Sections.tsx. */
+@source '../stage';
 
 /* Self-hosted fonts (no third-party requests, GDPR-clean, no FOUT on repeat visits).
    Copied from src/chrome/chrome.css — same URLs, same unicode-range split. */
@@ -54,7 +58,33 @@
   --leaf: #8fbf4a;
   --petal: #ff5a3c;
 
+  /* What stage/Sections.tsx paints its cards and its ground with. The
+     sections themselves are shared with the other landings; these four
+     values are what make them this one. */
+  --page-bg: var(--moss-950);
+  --card-bg: var(--moss-900);
+  --card-border: rgba(244, 237, 220, 0.14);
+  --accent-mark: var(--leaf);
+
   color-scheme: dark;
+}
+
+/* stage/stage.css's own custom properties: the exact values the garden
+   stage used before it moved there, so the pinned scene doesn't shift by a
+   pixel. A different trade sets its own values for its own ground. */
+.garden {
+  --stage-ground-glow: rgba(122, 87, 60, 0.35);
+  --stage-ground-line: rgba(0, 0, 0, 0.16);
+  --stage-ground-1: #3a2618;
+  --stage-ground-2: #24170e;
+  --stage-ground-3: #150d08;
+  --stage-vignette-rgb: 10, 6, 3;
+  --stage-outro-a-rgb: 10, 17, 10;
+  --stage-outro-b-rgb: 12, 20, 13;
+  --stage-outro-end: var(--moss-950);
+  --stage-ink: #fbf6ea;
+  --stage-accent: #b3200f;
+  --stage-ink-dim: #e7dcc4;
 }
 
 html,
@@ -106,120 +136,6 @@ h3 {
     color: var(--cream-dim);
   }
 
-  /* --- CTA button: glossy racing red (echoes the red flowers in the hero) */
-  /* Copied from src/chrome/chrome.css .accent-btn, renamed for this page. */
-  .cta-red {
-    position: relative;
-    isolation: isolate;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    border-radius: 999px;
-    border: 1px solid transparent;
-    font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: #ffffff;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
-    background:
-      linear-gradient(180deg, #ff6b60 0%, #ff3526 40%, #dc0800 50%, #c00000 60%, #e61708 100%) padding-box,
-      linear-gradient(180deg, #ffb0a8, #6a0000) border-box;
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.7) inset,
-      0 -1px 0 rgba(0, 0, 0, 0.4) inset,
-      0 12px 32px -10px rgba(225, 6, 0, 0.7),
-      0 20px 40px -20px rgba(0, 0, 0, 0.9);
-    overflow: hidden;
-    transition:
-      transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-      box-shadow 0.35s ease,
-      filter 0.35s ease;
-  }
-  /* Lacquer highlight: the upper half of the pill catches the light. */
-  .cta-red::before {
-    content: '';
-    position: absolute;
-    inset: 1px;
-    border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.16) 46%, transparent 52%);
-    pointer-events: none;
-  }
-  .cta-red::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      110deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.55) 48%,
-      rgba(255, 255, 255, 0.6) 50%,
-      transparent 60%
-    );
-    transform: translateX(-120%);
-    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-    mix-blend-mode: overlay;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .cta-red::after {
-      transition: none;
-    }
-  }
-  .cta-red:hover::after {
-    transform: translateX(120%);
-  }
-  .cta-red:hover {
-    filter: brightness(1.06);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.45) inset,
-      0 -1px 0 rgba(0, 0, 0, 0.35) inset,
-      0 12px 40px -8px rgba(225, 6, 0, 0.7),
-      0 20px 40px -20px rgba(0, 0, 0, 0.9);
-  }
-  .cta-red:active {
-    transform: translateY(1px) scale(0.99);
-  }
-  .cta-red:disabled {
-    filter: saturate(0.6) brightness(0.9);
-  }
-  .cta-red:focus-visible {
-    outline-color: var(--cream);
-    border-radius: 999px;
-  }
-
-  /* --- Form fields ------------------------------------------------- */
-  .field {
-    width: 100%;
-    border-radius: 12px;
-    border: 1px solid rgba(244, 237, 220, 0.18);
-    background: rgba(244, 237, 220, 0.05);
-    padding: 0.8rem 1rem;
-    font-size: 0.9rem;
-    color: var(--cream);
-    outline: none;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
-    transition:
-      border-color 0.25s ease,
-      box-shadow 0.25s ease,
-      background 0.25s ease;
-  }
-  .field::placeholder {
-    color: var(--cream-dim);
-    opacity: 0.7;
-  }
-  .field:focus {
-    border-color: var(--leaf);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.03) inset,
-      0 0 0 4px rgba(143, 191, 74, 0.22);
-  }
-  .field:focus-visible {
-    outline: none;
-  }
-  .field:disabled {
-    opacity: 0.6;
-  }
-
   /* --- Hairlines ----------------------------------------------------- */
   .hairline {
     height: 1px;
@@ -230,6 +146,54 @@ h3 {
       rgba(244, 237, 220, 0.16) 70%,
       transparent
     );
+  }
+
+  /* --- Offer section: step numbers + price ladder --------------------- */
+  /* Mono badge for the "Jak to działa" steps — same font-mono as .eyebrow,
+     leaf-green instead of cream so it reads as a marker, not body text. */
+  .offer-step-num {
+    display: inline-flex;
+    height: 2.25rem;
+    width: 2.25rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(244, 237, 220, 0.18);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--leaf);
+  }
+
+  /* Two-tier price ladder in "Ile to kosztuje" — name in the display face,
+     price in mono/leaf so it reads like a receipt line, not a sentence. */
+  .price-ladder-row {
+    padding: 1.5rem 0;
+  }
+  .price-ladder-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+  }
+  .price-ladder-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--cream);
+  }
+  .price-ladder-value {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--leaf);
+    white-space: nowrap;
+  }
+  .price-ladder-desc {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--cream-dim);
   }
 }
 

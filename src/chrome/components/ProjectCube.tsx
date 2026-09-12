@@ -1274,7 +1274,10 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
         )}
       </div>
 
-      <div className="cube-dots" role="tablist" aria-label={title}>
+      {/* A group, not a tablist: these turn the cube to a face, and there are
+          no tab panels behind them — a `tablist` whose children are not `tab`s
+          is a broken widget to a screen reader, which is what it was. */}
+      <div className="cube-dots" role="group" aria-label={title}>
         {cubeFaces.map((face, i) => (
           <button
             // Index-suffixed: a project shipping fewer than six faces has the

@@ -42,7 +42,7 @@ const LOCALES = {
   },
   en: {
     lang: 'en',
-    og: 'en_US',
+    og: 'en_GB',
     indexPath: '/en/articles/',
     articlePath: (slug) => `/en/articles/${slug}/`,
     indexLabel: 'Journal',
@@ -293,7 +293,9 @@ function personJsonLd() {
     email: EMAIL,
     jobTitle: 'Software engineer',
     image: PHOTO,
-    sameAs: ['https://github.com/BochenMint'],
+    // Same @id + sameAs set as the homepages (index.html/en/ua) and
+    // studio.html's @graph — one Person entity across the whole site.
+    sameAs: ['https://github.com/BochenMint', 'https://mb-ai.pl', 'https://gra.marcinbochenek.com'],
   }
 }
 
@@ -356,7 +358,7 @@ function shell({ lang, ogLocale, title, description, canonical, hreflang, extraH
     <meta property="og:description" content="${escAttr(description)}" />
     <meta property="og:url" content="${escAttr(canonical)}" />
     <meta property="og:locale" content="${ogLocale}" />
-${['pl_PL', 'en_US', 'uk_UA']
+${['pl_PL', 'en_GB', 'uk_UA']
   .filter((og) => og !== ogLocale)
   .map((og) => `    <meta property="og:locale:alternate" content="${og}" />`)
   .join('\n')}
@@ -371,6 +373,7 @@ ${['pl_PL', 'en_US', 'uk_UA']
     <meta name="twitter:image" content="${OG}" />
     <meta name="twitter:image:alt" content="${escAttr(title)}" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -699,11 +702,19 @@ function patchSitemap(docs) {
 
   const lastmod = PUBLISHED_DEFAULT
   const landingMod = '2026-08-29'
+  // /krajobraz went from noindex/unlinked to a real indexed page (content
+  // section + schema) on this date — it needs its own lastmod, not the
+  // shared landingMod every other static landing keeps.
+  const krajobrazMod = '2026-09-12'
   const blocks = []
   for (const loc of kept) {
     const links = xhtmlForKeptLoc(loc)
     const extra = links ? `\n${links}` : ''
-    const mod = loc.includes('/artykuly') || loc.includes('/articles/') || loc.includes('/statti/') ? lastmod : landingMod
+    const mod = loc.includes('/artykuly') || loc.includes('/articles/') || loc.includes('/statti/')
+      ? lastmod
+      : loc === `${SITE}/krajobraz`
+        ? krajobrazMod
+        : landingMod
     blocks.push(`  <url>\n    <loc>${loc}</loc>\n    <lastmod>${mod}</lastmod>${extra}\n  </url>`)
   }
 
@@ -729,6 +740,34 @@ ${blocks.join('\n')}
 </urlset>
 `
   fs.writeFileSync(sitemapPath, xml)
+}
+
+/**
+ * mb-ai.pl's own sitemap — 3 URLs (/, /en/, /ua/), separate from sitemap.xml.
+ *
+ * The shared `dist/` docroot serves marcinbochenek.com, gra.marcinbochenek.com
+ * and mb-ai.pl (see public/.htaccess), but a sitemap's <loc> entries must be
+ * same-origin as the sitemap's own URL — a crawler on mb-ai.pl requesting
+ * /sitemap.xml and finding only marcinbochenek.com URLs treats every entry as
+ * invalid. This file is served instead of sitemap.xml on that host by the
+ * host-conditioned rewrites in .htaccess / _redirects / Caddyfile, so
+ * marcinbochenek.com/sitemap.xml (patched above) stays untouched and
+ * byte-identical for that host.
+ */
+function writeMbaiSitemap() {
+  const MBAI = 'https://mb-ai.pl'
+  const landingMod = '2026-08-29'
+  const blocks = ['/', '/en/', '/ua/'].map((p) => {
+    const loc = `${MBAI}${p}`
+    return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${landingMod}</lastmod>\n${mbaiXhtmlLinks()}\n  </url>`
+  })
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${blocks.join('\n')}
+</urlset>
+`
+  fs.writeFileSync(path.join(publicDir, 'sitemap-mb-ai.xml'), xml)
 }
 
 function writeFile(rel, contents) {
@@ -821,6 +860,7 @@ async function main() {
   }
 
   patchSitemap(docs)
+  writeMbaiSitemap()
 
   console.log('Generated journal pages\n')
   console.log(

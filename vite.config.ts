@@ -100,9 +100,16 @@ export default defineConfig({
         // named chunk, not silently inflate `main`/`vendor`. No rapier/cannon/ammo
         // physics engine is used anywhere in this repo (v4's flight physics is
         // hand-rolled in src/v4/ship, not a package) — nothing to chunk for that yet.
+        //
+        // @splinetool/react-spline is deliberately NOT chunked here: it is only
+        // ever reached through the lazy `import()` in SplineEmbed.tsx, and giving
+        // it a manualChunks entry forced Rollup to resolve that chunk eagerly on
+        // every entry that imports SplineEmbed — shipping a ~1.45 MB chunk on 9
+        // pages even though every VITE_SPLINE_*_URL is unset in this build and the
+        // feature never renders. Leaving it unlisted lets it fall back to a real
+        // on-demand chunk, fetched only when a scene URL is actually configured.
         manualChunks(id) {
           if (id.includes('node_modules/three')) return 'three'
-          if (id.includes('node_modules/@splinetool')) return 'react-spline'
         },
       },
     },

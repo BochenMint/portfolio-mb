@@ -10,15 +10,21 @@ export function normalizePathname(pathname: string): string {
 
 /**
  * URL wins. `localStorage` is never read for the first paint.
- * Preview files `/mb-ai-en.html` / `/mb-ai-ua.html` count as EN/UA for the AI landing.
- * Legacy `/uk/` and `/mb-ai-uk.html` still resolve to locale `ua`.
+ * Preview files `/mb-ai-en.html` / `/mb-ai-ua.html` count as EN/UA for the AI
+ * landing, and `/studio-en.html` / `/studio-ua.html` likewise for the Studio
+ * edition — both are flat files with the locale baked into the filename
+ * rather than a `/en/`/`/ua/` path prefix, so they need the same explicit
+ * check as the prefixed routes below.
+ * Legacy `/uk/`, `/mb-ai-uk.html` and `/studio-uk.html` still resolve to locale `ua`.
  */
 export function localeFromPath(pathname: string): Locale {
   const p = normalizePathname(pathname)
-  if (p.includes('mb-ai-en') || p === '/en' || p.startsWith('/en/')) return 'en'
+  if (p.includes('mb-ai-en') || p.includes('studio-en') || p === '/en' || p.startsWith('/en/')) return 'en'
   if (
     p.includes('mb-ai-ua') ||
     p.includes('mb-ai-uk') ||
+    p.includes('studio-ua') ||
+    p.includes('studio-uk') ||
     p === '/ua' ||
     p.startsWith('/ua/') ||
     p === '/uk' ||

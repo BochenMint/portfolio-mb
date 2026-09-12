@@ -1,0 +1,349 @@
+/* ------------------------------------------------------------------
+   Pinned scroll stage — see ScrollStage.tsx.
+   --intro / --outro (0…1) are written by the scroll handler.
+   --stage-height is the section's own scroll length, set by the landing;
+   the still/fallback state overrides it with a single viewport instead.
+   Every colour below is a --stage-* custom property the landing sets, so
+   a different trade can repaint the ground/vignette/ink without touching
+   this file; --cream / --cream-dim / --font-* are the page's own shared
+   theme tokens and stay as they are.
+------------------------------------------------------------------- */
+
+.stage {
+  position: relative;
+  height: var(--stage-height);
+}
+.stage--still {
+  height: 100svh;
+}
+
+.stage-frame {
+  --intro: 1;
+  --outro: 0;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  /* What shows while the scene loads, and if it never does: the landing's
+     own prepared ground. */
+  background:
+    radial-gradient(120% 80% at 30% 20%, var(--stage-ground-glow), transparent 60%),
+    repeating-linear-gradient(0deg, var(--stage-ground-line) 0 2px, transparent 2px 22px),
+    linear-gradient(180deg, var(--stage-ground-1) 0%, var(--stage-ground-2) 55%, var(--stage-ground-3) 100%);
+}
+
+.stage-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+.stage-frame[data-status='live'] .stage-canvas {
+  opacity: 1;
+}
+
+.stage-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(130% 95% at 50% 42%, transparent 58%, rgba(var(--stage-vignette-rgb), 0.55) 100%),
+    linear-gradient(180deg, rgba(var(--stage-vignette-rgb), 0.5) 0%, transparent 16%);
+}
+
+/* ---- Top bar ------------------------------------------------------- */
+.stage-bar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: max(1rem, env(safe-area-inset-top)) clamp(1.25rem, 4vw, 2.5rem) 1rem;
+}
+.stage-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+}
+.stage-bar-link {
+  border-radius: 999px;
+  border: 1px solid rgba(244, 237, 220, 0.28);
+  background: rgba(18, 12, 8, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cream);
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+.stage-bar-link:hover {
+  background: rgba(244, 237, 220, 0.12);
+  border-color: rgba(244, 237, 220, 0.5);
+}
+
+/* ---- Intro: over the loading/fallback ground ------------------------ */
+.stage-intro {
+  position: absolute;
+  z-index: 2;
+  left: clamp(1.25rem, 5vw, 4rem);
+  right: clamp(1.25rem, 5vw, 4rem);
+  bottom: max(clamp(2rem, 8vh, 5rem), env(safe-area-inset-bottom));
+  max-width: 34rem;
+  opacity: var(--intro);
+  transform: translateY(calc((1 - var(--intro)) * -2.5rem));
+  pointer-events: none;
+}
+.stage-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--stage-ink-dim);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+}
+.stage-intro-title {
+  margin-top: 0.9rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.1rem, 5.2vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--cream);
+  text-wrap: balance;
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55);
+}
+.stage-intro-hint {
+  margin-top: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.95rem;
+  color: var(--stage-ink-dim);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+}
+.stage-cue {
+  position: relative;
+  width: 1.25rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(244, 237, 220, 0.7);
+}
+.stage-cue::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0.35rem;
+  width: 3px;
+  height: 0.45rem;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: var(--cream);
+  animation: stage-cue 1.8s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+}
+@keyframes stage-cue {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(0.7rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+/* ---- Outro: under the finished scene --------------------------------- */
+.stage-outro {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 5rem clamp(1.25rem, 5vw, 3rem) max(clamp(1.5rem, 5vh, 3rem), env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  opacity: var(--outro);
+  transform: translateY(calc((1 - var(--outro)) * 1.5rem));
+  pointer-events: none;
+  /* Ends in the next section's own colour, so when the pin lets go the
+     scene hands over to it without a seam. */
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(var(--stage-outro-a-rgb), 0.6) 48%,
+    rgba(var(--stage-outro-b-rgb), 0.9) 86%,
+    var(--stage-outro-end) 100%
+  );
+}
+.stage-frame[data-phase='outro'] .stage-outro {
+  pointer-events: auto;
+}
+.stage-outro-line {
+  max-width: 40rem;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.45;
+  color: var(--cream);
+  text-wrap: balance;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.7);
+}
+.stage-outro-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1.5rem;
+}
+.stage-outro-cta {
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+}
+.stage-outro-mail {
+  font-size: 0.9rem;
+  color: var(--stage-ink-dim);
+  text-decoration: underline;
+  text-decoration-color: rgba(231, 220, 196, 0.35);
+  text-underline-offset: 4px;
+}
+.stage-outro-mail:hover {
+  text-decoration-color: currentColor;
+}
+
+/* ---- Fallback: no WebGL, or reduced motion --------------------------- */
+.stage-fallback-title {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 1.5rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 9vw, 7rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--stage-ink);
+  text-shadow:
+    0 2px 0 var(--stage-accent),
+    0 6px 40px rgba(0, 0, 0, 0.6);
+}
+.stage--still .stage-intro {
+  display: none;
+}
+.stage--still .stage-outro {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-cue::after {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   CTA button — glossy racing red. Shared by the stage's own outro and by
+   Inquiry.tsx's submit button; every landing built on this engine gets one
+   look for its one call to action. Copied from src/chrome/chrome.css
+   .accent-btn (same as krajobraz.css's own former copy, which this replaces).
+------------------------------------------------------------------- */
+.cta-red {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+  background:
+    linear-gradient(180deg, #ff6b60 0%, #ff3526 40%, #dc0800 50%, #c00000 60%, #e61708 100%) padding-box,
+    linear-gradient(180deg, #ffb0a8, #6a0000) border-box;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.4) inset,
+    0 12px 32px -10px rgba(225, 6, 0, 0.7),
+    0 20px 40px -20px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s ease,
+    filter 0.35s ease;
+}
+/* Lacquer highlight: the upper half of the pill catches the light. */
+.cta-red::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.16) 46%, transparent 52%);
+  pointer-events: none;
+}
+.cta-red::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.55) 48%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 60%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  mix-blend-mode: overlay;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-red::after {
+    transition: none;
+  }
+}
+.cta-red:hover::after {
+  transform: translateX(120%);
+}
+.cta-red:hover {
+  filter: brightness(1.06);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.35) inset,
+    0 12px 40px -8px rgba(225, 6, 0, 0.7),
+    0 20px 40px -20px rgba(0, 0, 0, 0.9);
+}
+.cta-red:active {
+  transform: translateY(1px) scale(0.99);
+}
+.cta-red:disabled {
+  filter: saturate(0.6) brightness(0.9);
+}
+.cta-red:focus-visible {
+  outline-color: var(--cream);
+  border-radius: 999px;
+}
