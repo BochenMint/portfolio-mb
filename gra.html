@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
@@ -13,8 +14,12 @@
     <link rel="canonical" href="https://marcinbochenek.com/gra.html" />
     <meta name="robots" content="index, follow" />
     <!-- Game HUD is Polish-only (mission copy). Marketing site: / /en/ /ua/ -->
-    <link rel="alternate" hreflang="pl" href="https://gra.marcinbochenek.com/" />
-    <link rel="alternate" hreflang="x-default" href="https://gra.marcinbochenek.com/" />
+    <!-- Self-referencing only: one canonical identity for the game, matching
+         the canonical/og:url above, sitemap.xml and llms.txt (see P2-3 of the
+         2026-09 SEO audit — the old pl/x-default pair pointed at
+         gra.marcinbochenek.com, a different, unlisted URL). -->
+    <link rel="alternate" hreflang="pl" href="https://marcinbochenek.com/gra.html" />
+    <link rel="alternate" hreflang="x-default" href="https://marcinbochenek.com/gra.html" />
     <meta property="og:title" content="Misja: nowa strona — gra kosmiczna | Marcin Bochenek" />
     <meta
       property="og:description"
@@ -25,26 +30,27 @@
     <meta property="og:locale" content="pl_PL" />
     <meta property="og:image" content="https://marcinbochenek.com/projects/mint/hero-card.webp" />
     <title>Misja: nowa strona — gra kosmiczna | Marcin Bochenek</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Instrument+Serif:ital@0;1&family=Roboto+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/fonts/RobotoMono-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
+    <link rel="stylesheet" href="/fonts/mb-ai-gra.css" />
     <script type="module" crossorigin src="/assets/rolldown-runtime-QTnfLwEv.js"></script>
-    <script type="module" crossorigin src="/assets/react-spline-CLS9LA80.js"></script>
-    <script type="module" crossorigin src="/assets/client-B2U1kGz6.js"></script>
-    <script type="module" crossorigin src="/assets/three-8V8V_zZj.js"></script>
-    <script type="module" crossorigin src="/assets/build-BX1ZBYnt.js"></script>
-    <script type="module" crossorigin src="/assets/i18n-B4OSHy4n.js"></script>
+    <script type="module" crossorigin src="/assets/jsx-runtime-i9uBjpvk.js"></script>
+    <script type="module" crossorigin src="/assets/three-5t8Jrc3N.js"></script>
+    <script type="module" crossorigin src="/assets/build-B_dLGevH.js"></script>
+    <script type="module" crossorigin src="/assets/i18n-YsAMyI18.js"></script>
     <script type="module" crossorigin src="/assets/gallery-CbU6Cxmm.js"></script>
-    <script type="module" crossorigin src="/assets/live-GncYZDaE.js"></script>
-    <script type="module" crossorigin src="/assets/buildShipV2-WzNP40ru.js"></script>
+    <script type="module" crossorigin src="/assets/live-CzdHeBfM.js"></script>
+    <script type="module" crossorigin src="/assets/buildShipV2-CsuYfgya.js"></script>
     <script type="module" crossorigin src="/assets/heroSceneTypes-BBcQTCIc.js"></script>
-    <script type="module" crossorigin src="/assets/main-Bq6jKhOW.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/i18n-CcupKqLG.css">
+    <script type="module" crossorigin src="/assets/main-D0QeGUPP.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/i18n-BJm3YzFu.css">
     <link rel="stylesheet" crossorigin href="/assets/main-bXtWn4G_.css">
-    <link rel="stylesheet" crossorigin href="/assets/src-CYNUW0Su.css">
+    <link rel="stylesheet" crossorigin href="/assets/src-DvE-5dSa.css">
   </head>
   <body>
     <noscript><p>This game is Polish-only. Portfolio: <a href="https://marcinbochenek.com/en/">English</a> · <a href="https://marcinbochenek.com/ua/">Українська</a></p></noscript>

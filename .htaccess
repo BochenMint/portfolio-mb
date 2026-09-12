@@ -96,6 +96,20 @@ RewriteRule ^en/?$ /mb-ai-en.html [L]
 RewriteCond %{HTTP_HOST} ^mb-ai\.pl$ [NC]
 RewriteRule ^ua/?$ /mb-ai-ua.html [L]
 
+# /robots.txt and /sitemap.xml -> host-specific files (URL stays the same,
+# internal rewrite). A sitemap's <loc> entries must be same-origin as the
+# sitemap's own URL, so the shared marcinbochenek.com sitemap.xml/robots.txt
+# are invalid on this host: mb-ai.pl needs its own 3-URL sitemap and a
+# robots.txt whose Sitemap: line points back at it. Also NOT guarded with
+# !-f/!-d — sitemap.xml and robots.txt are REAL files in the shared docroot
+# (the marcinbochenek.com versions), so this has to fire unconditionally for
+# this host, same reasoning as the /en//ua rewrites above.
+RewriteCond %{HTTP_HOST} ^mb-ai\.pl$ [NC]
+RewriteRule ^robots\.txt$ /robots-mb-ai.txt [L]
+
+RewriteCond %{HTTP_HOST} ^mb-ai\.pl$ [NC]
+RewriteRule ^sitemap\.xml$ /sitemap-mb-ai.xml [L]
+
 # Root ("/") needs its own rule: the shared docroot's "/" resolves to a real
 # directory (DOCUMENT_ROOT itself, -d true) whose DirectoryIndex is the MAIN
 # portfolio's index.html — without this, the generic !-f/!-d fallback below
@@ -124,9 +138,9 @@ RewriteRule ^uk/statti/(.*)$ /ua/statti/$1 [R=301,L]
 # Vanity shortcut: /v4, /v4/ -> v4.html (URL stays, internal rewrite).
 RewriteRule ^v4/?$ /v4.html [L]
 
-# Unlisted landing for landscape-architecture studios (pracownie architektury
-# krajobrazu): reachable only by direct link, noindex in its own <head>, and
-# deliberately absent from sitemap.xml — nothing on the main site links here.
+# Niche landing for landscape-architecture studios (pracownie architektury
+# krajobrazu). It was unlisted and noindex until 2026-09-12; it is now a
+# normal indexed page — in sitemap.xml, in llms.txt, linked from the footer.
 RewriteRule ^krajobraz/?$ /krajobraz.html [L]
 
 # Archive pages under a locale prefix: /(en|ua)/v[1-6].html serves the SAME

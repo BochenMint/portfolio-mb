@@ -47,5 +47,12 @@ https://www.marcinbochenek.com/* https://marcinbochenek.com/:splat 301
 /krajobraz /krajobraz.html 200
 /krajobraz/ /krajobraz.html 200
 
+# --- mb-ai.pl's own sitemap + robots.txt (host-specific, ported to .htaccess
+# and the Caddyfile too) -----------------------------------------------------
+# A sitemap's <loc> entries must be same-origin as its own URL, so the shared
+# marcinbochenek.com sitemap.xml/robots.txt are invalid served on this host.
+https://mb-ai.pl/sitemap.xml /sitemap-mb-ai.xml 200
+https://mb-ai.pl/robots.txt /robots-mb-ai.txt 200
+
 # Note: /artykuly/<slug>/, /en/articles/<slug>/ and /ua/statti/<slug>/ need no rule —
 # Cloudflare Pages serves public/.../index.html at the pretty directory URL natively.
