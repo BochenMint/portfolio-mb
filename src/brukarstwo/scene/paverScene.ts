@@ -18,21 +18,17 @@
 
 import type * as THREE_NS from 'three'
 import { GROUND_FRAG, GROUND_VERT, groundUniforms, type GroundPalette, type RakeConfig } from '../../stage/ground'
-import { setHeadline } from '../../stage/lettering'
 import { createSceneHost, type SceneCtx, type SceneHandle } from '../../stage/sceneHost'
 import { createPaverField, EDGE_SHORT, type PaverField } from './pavers'
 import { T } from './timeline'
 
 export type PaverSceneHandle = SceneHandle
 
-const DEG = Math.PI / 180
 const TILT_DEG = 24
 /** Only the camera's own framing needs the tilt in degrees (handed to the
  *  host); the headline's z-stretch needs it in radians right here — same
  *  split `gardenScene.ts` makes. */
-const TILT = TILT_DEG * DEG
 const VFOV = 36
-const FONT = `"Hanken Grotesk", system-ui, sans-serif`
 
 /* Aggregate ground: crushed stone under screeded sand — grey-brown, not the
  * garden's loam. `stage/ground.ts` already takes a palette as a plain
@@ -70,17 +66,6 @@ const SUN: [number, number, number] = normalize([-0.5, 0.74, -0.45])
 const SUN_COL: [number, number, number] = [1.45, 1.12, 0.78]
 const SKY: [number, number, number] = [0.36, 0.42, 0.55]
 const CLEAR_COLOR = 0x18140f
-
-/** Candidate line breaks for the headline, widest first — the sentence the
- *  garden plants (`krajobraz/scene/letters.ts`'s `LAYOUTS`), kept here as its
- *  own copy: this scene reads `stage/lettering.ts` directly rather than
- *  reaching into the garden's own planting file for it. */
-const LAYOUTS: string[][] = [
-  ['Zbuduję dla Ciebie', 'nową stronę'],
-  ['Zbuduję dla', 'Ciebie nową', 'stronę'],
-  ['Zbuduję', 'dla Ciebie', 'nową', 'stronę'],
-  ['Zbuduję', 'dla', 'Ciebie', 'nową', 'stronę'],
-]
 
 type World = {
   group: THREE_NS.Group
@@ -122,7 +107,6 @@ export async function createPaverScene(
       return {
         pavers: info?.stones,
         courses: info?.courses,
-        accents: info?.accents,
       }
     },
   })
@@ -169,52 +153,28 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
   groundMesh.renderOrder = 0
   group.add(groundMesh)
 
-  /* Headline: the same sentence the garden plants, read here as ink points
-   * to swap pavers under rather than as flowers to grow — `plantHeadline`'s
-   * carpet-bedding logic (species, colour, stems) has nothing to do here, so
-   * this scene calls `stage/lettering.ts` directly instead of going through
-   * the garden's own `letters.ts`. */
-  const textDepth = depth * 0.6
-  const centreZ = fp.zFar + depth * 0.46
-  const rand = mulberry32(20260912)
-  const { points, lines } = setHeadline({
-    layouts: LAYOUTS,
-    width: 2 * fp.halfAt(centreZ + textDepth / 2) * 0.86,
-    depth: textDepth,
-    centreZ,
-    stretch: 1 / Math.cos(TILT),
-    // As fine as the flower field's own grid, and for the same reason a
-    // dense grid buys nothing on its own: `pavers.ts` only accents a paver
-    // whose CENTRE lands in ink (see its `containsPoint`), and that small a
-    // target needs a point landing right on it, not just somewhere in the
-    // paver's much bigger body. Tried a pitch scaled to the paver instead
-    // (one sample per paver, ~0.4em): most letter ink went undetected or
-    // caught the wrong neighbour, and read as scattered noise, not words.
-    pitchPerEm: 0.05,
-    maxCount: opts.coarse ? 4200 : 6500,
-    fontFamily: FONT,
-    rand,
-  })
-  const lineCount = Math.max(1, lines.length - 1)
-  // Left-to-right across the whole block, every line at once with a small
-  // per-line lag — the same sweep order `letters.ts` plants the flower
-  // outline in, continued here for the accent swap instead.
-  const accents = points.map((pt) => ({
-    x: pt.x,
-    z: pt.z,
-    order: pt.nx * 0.82 + (pt.line / lineCount) * 0.12 + rand() * 0.06,
-  }))
-
+  /* No headline in the paving.
+   *
+   * The garden plants its sentence in flowers and it reads, because a bloom
+   * is a few centimetres across and there are two thousand of them. A paver
+   * is 20 × 10 cm. Letters built from whole pavers fused into bars; an inlay
+   * of 4 cm cut setts — which is what a real brukarz would lay, and was
+   * built and rendered — came out as a dot-matrix nobody could read, and the
+   * panel it needed swallowed the herringbone that says "paving" in the
+   * first place. So this trade says the sentence in type over the finished
+   * job (`outro.title` on the stage), and the scene does what it is actually
+   * good at: laying the field.
+   */
   const pavers = createPaverField(THREE, {
     x0,
     x1,
     zFar: fp.zFar,
     zNear: fp.zNear,
-    accents,
+    accents: [],
     light,
     coarse: opts.coarse,
     layWindow: [T.layStart, T.layEnd],
-    accentWindow: [T.accentStart, T.accentEnd],
+    accentWindow: [T.sandStart, T.sandStart],
     sandWindow: [T.sandStart, T.sandEnd],
   })
   group.add(pavers.group)
@@ -242,14 +202,3 @@ function normalize(v: [number, number, number]): [number, number, number] {
   return [v[0] / l, v[1] / l, v[2] / l]
 }
 
-/** Small, fast, seeded — same generator every scene file here uses. */
-function mulberry32(seed: number) {
-  let a = seed >>> 0
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0
-    let t = a
-    t = Math.imul(t ^ (t >>> 15), t | 1)
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
