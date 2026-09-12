@@ -22,6 +22,16 @@ export const T = {
   rollStagger: 0.12,
   /** The seams between strips close up over this window. */
   knit: [0.5, 0.64] as [number, number],
+  /**
+   * The shrubs go in: after the last roll is down and the seams have
+   * started to close, and finishing just as the first flower breaks the
+   * lawn. A garden is built in that order and the scroll now says so —
+   * they used to be standing there from the first frame, which made them
+   * scenery rather than work (Marcin 2026-09: "najpierw rozkładamy trawę,
+   * potem pojawia się kilka nasadzeń").
+   */
+  plantStart: 0.52,
+  plantEnd: 0.66,
   /** First sprout breaks the lawn. */
   flowerStart: 0.56,
   /** Left-to-right sweep of the planting across the words. */
