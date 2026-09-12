@@ -231,6 +231,54 @@ h3 {
       transparent
     );
   }
+
+  /* --- Offer section: step numbers + price ladder --------------------- */
+  /* Mono badge for the "Jak to działa" steps — same font-mono as .eyebrow,
+     leaf-green instead of cream so it reads as a marker, not body text. */
+  .offer-step-num {
+    display: inline-flex;
+    height: 2.25rem;
+    width: 2.25rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(244, 237, 220, 0.18);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--leaf);
+  }
+
+  /* Two-tier price ladder in "Ile to kosztuje" — name in the display face,
+     price in mono/leaf so it reads like a receipt line, not a sentence. */
+  .price-ladder-row {
+    padding: 1.5rem 0;
+  }
+  .price-ladder-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+  }
+  .price-ladder-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--cream);
+  }
+  .price-ladder-value {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--leaf);
+    white-space: nowrap;
+  }
+  .price-ladder-desc {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--cream-dim);
+  }
 }
 
 /* --- Anchor-nav offset: keep the top of the viewport off section headings --- */

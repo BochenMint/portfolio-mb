@@ -149,7 +149,7 @@ export function GardenStage() {
         {/* The real headline, for everything that cannot see flowers. The
             bed on the canvas is the same sentence, set in the same face. */}
         <h1 id="garden-title" className={status === 'fallback' ? 'garden-still-title' : 'sr-only'}>
-          Zbuduję dla Ciebie nową stronę
+          Zbuduję nową stronę dla Twojej pracowni architektury krajobrazu
         </h1>
 
         <div className="garden-intro">

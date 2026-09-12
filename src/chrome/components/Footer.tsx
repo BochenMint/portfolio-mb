@@ -69,6 +69,14 @@ export function Footer() {
             >
               {c.footer.classic}
             </a>
+            {/* The niche landing for landscape-architecture studios — indexed
+                but unlinked from any nav, so this is its only internal link. */}
+            <a
+              href={c.footer.krajobrazHref}
+              className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
+            >
+              {c.footer.krajobraz}
+            </a>
           </div>
         </div>
       </div>

@@ -702,11 +702,19 @@ function patchSitemap(docs) {
 
   const lastmod = PUBLISHED_DEFAULT
   const landingMod = '2026-08-29'
+  // /krajobraz went from noindex/unlinked to a real indexed page (content
+  // section + schema) on this date — it needs its own lastmod, not the
+  // shared landingMod every other static landing keeps.
+  const krajobrazMod = '2026-09-12'
   const blocks = []
   for (const loc of kept) {
     const links = xhtmlForKeptLoc(loc)
     const extra = links ? `\n${links}` : ''
-    const mod = loc.includes('/artykuly') || loc.includes('/articles/') || loc.includes('/statti/') ? lastmod : landingMod
+    const mod = loc.includes('/artykuly') || loc.includes('/articles/') || loc.includes('/statti/')
+      ? lastmod
+      : loc === `${SITE}/krajobraz`
+        ? krajobrazMod
+        : landingMod
     blocks.push(`  <url>\n    <loc>${loc}</loc>\n    <lastmod>${mod}</lastmod>${extra}\n  </url>`)
   }
 
