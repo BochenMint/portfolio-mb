@@ -3,7 +3,8 @@ import type { FormEvent } from 'react'
 import { useLocale } from '../i18n/context'
 import { Button, ChromeCard } from './primitives'
 
-type FormStatus = 'idle' | 'loading' | 'success' | 'error'
+/** `mailto`: the visitor's mail client was asked to open — nothing confirms it did. */
+type FormStatus = 'idle' | 'loading' | 'success' | 'mailto' | 'error'
 
 /** A form service that has not answered by now is not going to. */
 const REQUEST_TIMEOUT_MS = 15000
@@ -25,7 +26,7 @@ export function LeadForm() {
   const { qualificationFields, site } = content
   const [status, setStatus] = useState<FormStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
-  const [usedMailto, setUsedMailto] = useState(false)
+  const [mailtoHref, setMailtoHref] = useState('')
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -42,10 +43,13 @@ export function LeadForm() {
       const subject = `Audyt portfolio — ${body.company || body.name || 'zapytanie'}`
       const lines = qualificationFields.map((field) => `${field.label}: ${body[field.id] || '-'}`)
       const mailto = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`
+      // Asking for a mail client is not the same as sending anything: it
+      // may not open, and the visitor may close it without sending. So the
+      // form keeps what they wrote and stays on screen — pressing send
+      // again simply asks again — and nothing here claims delivery.
+      setMailtoHref(mailto)
+      setStatus('mailto')
       window.location.href = mailto
-      setUsedMailto(true)
-      form.reset()
-      setStatus('success')
       return
     }
 
@@ -79,7 +83,6 @@ export function LeadForm() {
         throw new Error((err as { message?: string }).message || `HTTP ${res.status}`)
       }
 
-      setUsedMailto(false)
       // Reset first: the success state swaps this form out for the thank-you
       // card, and a form that is no longer on screen cannot be cleared.
       form.reset()
@@ -105,7 +108,7 @@ export function LeadForm() {
       <ChromeCard tone="light" className="p-8 text-center md:p-10">
         <p className="font-display text-xl font-semibold text-ink">{c.form.successTitle}</p>
         <p className="mt-2 text-sm text-ink/70">
-          {usedMailto ? c.form.successMailtoNote(site.email) : c.form.successBody(site.responseTime)}
+          {c.form.successBody(site.responseTime)}
         </p>
         {site.calendly && (
           <a
@@ -163,6 +166,15 @@ export function LeadForm() {
             </label>
           ))}
         </div>
+
+        {status === 'mailto' && (
+          <p className="rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-sm leading-relaxed text-silver">
+            {c.form.successMailtoNote(site.email)}{' '}
+            <a href={mailtoHref} className="underline underline-offset-4">
+              {c.form.submitIdle}
+            </a>
+          </p>
+        )}
 
         {status === 'error' && (
           <p className="rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-silver">
