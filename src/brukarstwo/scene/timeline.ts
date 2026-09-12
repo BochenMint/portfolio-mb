@@ -19,10 +19,11 @@ export const T = {
   /** Courses lay themselves far-to-near across this window. */
   layStart: 0.05,
   layEnd: 0.55,
-  /** The headline's inlay — small setts, both ink and field-grey — drops in
-   *  across this window, in the sweep's left-to-right order. */
-  inlayStart: 0.56,
-  inlayEnd: 0.93,
+  /** The headline's letters — cut whole out of the field and repaved in
+   *  small setts — drop in across this window, in the sweep's left-to-right
+   *  order. */
+  letterStart: 0.56,
+  letterEnd: 0.93,
   /** The joint-sand pass sweeps left-to-right across the finished field. */
   sandStart: 0.6,
   sandEnd: 0.75,

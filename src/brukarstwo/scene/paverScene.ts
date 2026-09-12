@@ -18,17 +18,106 @@
 
 import type * as THREE_NS from 'three'
 import { GROUND_FRAG, GROUND_VERT, groundUniforms, type GroundPalette, type RakeConfig } from '../../stage/ground'
+import { setHeadline } from '../../stage/lettering'
 import { createSceneHost, type SceneCtx, type SceneHandle } from '../../stage/sceneHost'
-import { createPaverField, EDGE_SHORT, type PaverField } from './pavers'
+import {
+  createPaverField,
+  EDGE_SHORT,
+  paverMetrics,
+  settBodyForCapHeight,
+  settMetrics,
+  settsPerCapHeight,
+  type PaverField,
+} from './pavers'
 import { T } from './timeline'
 
 export type PaverSceneHandle = SceneHandle
 
+const DEG = Math.PI / 180
 const TILT_DEG = 24
 /** Only the camera's own framing needs the tilt in degrees (handed to the
  *  host); the headline's z-stretch needs it in radians right here — same
  *  split `gardenScene.ts` makes. */
+const TILT = TILT_DEG * DEG
 const VFOV = 36
+const FONT = `"Hanken Grotesk", system-ui, sans-serif`
+
+/** Candidate line breaks for the full sentence, widest-first — the same
+ *  freedom `letters.ts` gives the flower bed's own layout search, restored
+ *  here after an earlier round found that letting `setHeadline` choose from
+ *  an 18-characters-wide option produced too small an em to read (confirmed
+ *  by rendering it). Rather than banning that freedom outright, the fix is
+ *  to hand `setHeadline` only breaks whose widest line stays reasonably
+ *  short — three lines for a wide field down to five for a narrow, deep
+ *  one — and let its own largest-em-wins search (see its header) pick
+ *  whichever of THESE actually sets biggest for the field it's given. On
+ *  1440×900 that's still the 3-line break, ~7.3-7.5 setts per cap height. */
+const LAYOUTS_FULL: string[][] = [
+  ['Zbuduję dla', 'Ciebie nową', 'stronę'],
+  ['Zbuduję', 'dla Ciebie', 'nową', 'stronę'],
+  ['Zbuduję', 'dla', 'Ciebie', 'nową', 'stronę'],
+]
+/** Last resort when even the narrowest full-sentence break, at the sett's
+ *  own floor size, still can't clear `TARGET_SPCH` setts per cap height (a
+ *  phone too small for the whole sentence to read at all) — dropping words
+ *  for a shorter, much larger em beats shipping an unreadable one. See
+ *  `fitHeadline`'s own comment for the order this implements. */
+const LAYOUT_SHORT: string[][] = [['nową', 'stronę']]
+/** The floor this design won't render lettering below at all — see
+ *  `fitHeadline`. */
+const TARGET_SPCH = 6
+
+/** Set the headline against a field of the given size, then bring setts per
+ *  cap height up to `TARGET_SPCH` if the layout's own em didn't already
+ *  clear it — in the order the brief asks for:
+ *   1. `setHeadline`'s own search already picked whichever of `layouts`
+ *      sets largest for this width/depth (see its header) — that's the
+ *      line-break-from-aspect step; nothing further to do for it here.
+ *   2. If the resulting em, at the mode's own default sett body, comes in
+ *      under `TARGET_SPCH`, shrink the sett — not the field, not the text —
+ *      toward `SETT_BODY_FLOOR` until it clears `TARGET_SPCH`, or until the
+ *      floor itself is reached, whichever comes first.
+ *   3. The caller (`build`) checks the returned `spch`: if shrinking the
+ *      sett still wasn't enough, it calls this again with `LAYOUT_SHORT`
+ *      instead of `LAYOUTS_FULL` — dropping words rather than shipping an
+ *      unreadable sentence. That decision lives in `build`, not here, since
+ *      it also has to pick the `headline` outcome to report. */
+function fitHeadline(
+  layouts: string[][],
+  args: { width: number; depth: number; centreZ: number; coarse: boolean; rand: () => number },
+) {
+  const base = setHeadline({
+    layouts,
+    width: args.width,
+    depth: args.depth,
+    centreZ: args.centreZ,
+    stretch: 1 / Math.cos(TILT),
+    weight: 700,
+    // A saw cut can afford tighter spacing than letters assembled from
+    // whole stones could: with the fragment shader (not a paver's own body)
+    // now deciding the exact edge, adjacent letters no longer need a
+    // whole sett of daylight between them to read as separate — confirmed
+    // by rendering it against 900/0.02 (the flower bed's own numbers, too
+    // cramped once the cut is exact) and 800/0.08 (legible but airier than
+    // it needs to be).
+    tracking: 0.03,
+    fontFamily: FONT,
+    returnMask: true,
+    // The points this also generates aren't used for anything any more (the
+    // cut reads the mask directly) — a modest budget just keeps their build
+    // cost small rather than tuning it for a precision nothing consumes.
+    maxCount: 2000,
+    rand: args.rand,
+  })
+  const defaultBody = settMetrics(args.coarse).settBody
+  let settBody = defaultBody
+  let spch = settsPerCapHeight(base.em, settBody)
+  if (spch < TARGET_SPCH) {
+    settBody = settBodyForCapHeight(base.em, TARGET_SPCH, args.coarse)
+    spch = settsPerCapHeight(base.em, settBody)
+  }
+  return { ...base, settBody, spch, shrunk: settBody < defaultBody }
+}
 
 /* Aggregate ground: crushed stone under screeded sand — grey-brown, not the
  * garden's loam. `stage/ground.ts` already takes a palette as a plain
@@ -72,6 +161,19 @@ type World = {
   groundGeo: THREE_NS.PlaneGeometry
   groundMat: THREE_NS.ShaderMaterial
   pavers: PaverField
+  /** Debug-only, so the acceptance check has real numbers to read rather
+   *  than a screenshot alone: setts per cap height, the em they came from,
+   *  and which line break `setHeadline` actually chose from `LAYOUTS_FULL`
+   *  (or `LAYOUT_SHORT`, once `headline` says 'short'). */
+  settsPerCapHeight: number
+  em: number
+  lines: string[]
+  /** Which rung of `fitHeadline`'s fallback ladder this build landed on —
+   *  'full' (mode's default sett, whole sentence), 'shrunk' (sett shrunk
+   *  toward the floor, whole sentence still fits), or 'short' (words
+   *  dropped because even the floor sett couldn't clear six setts per cap
+   *  height for the whole sentence). See `fitHeadline`'s own comment. */
+  headline: 'full' | 'shrunk' | 'short'
   dispose(): void
 }
 
@@ -107,6 +209,12 @@ export async function createPaverScene(
       return {
         pavers: info?.stones,
         courses: info?.courses,
+        edging: info?.edging,
+        lettering: info?.lettering,
+        settsPerCapHeight: world?.settsPerCapHeight,
+        em: world?.em,
+        lines: world?.lines,
+        headline: world?.headline,
       }
     },
   })
@@ -153,33 +261,111 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
   groundMesh.renderOrder = 0
   group.add(groundMesh)
 
-  /* No headline in the paving.
+  /* Headline: the same sentence the garden plants, cut whole out of the
+   * field as basalt lettering rather than swapped-in field pavers or a
+   * rectangular inlay panel — see `pavers.ts`'s own header for why both of
+   * those were tried and rejected, and for why the cut is now decided from
+   * `stage/lettering.ts`'s own rasterised mask (`returnMask: true` below)
+   * rather than a second, coarser grid built from its planting points — a
+   * field paver's body is bigger than that grid's own cell, so a paver could
+   * survive the old cut with its centre clear of the ink and still lie
+   * across part of a stroke. `stage/lettering.ts` is read directly here (not
+   * through the garden's own `letters.ts`, whose carpet-bedding logic —
+   * species, colour, stems — has nothing to do with a saw cut).
    *
-   * The garden plants its sentence in flowers and it reads, because a bloom
-   * is a few centimetres across and there are two thousand of them. A paver
-   * is 20 × 10 cm. Letters built from whole pavers fused into bars; an inlay
-   * of 4 cm cut setts — which is what a real brukarz would lay, and was
-   * built and rendered — came out as a dot-matrix nobody could read, and the
-   * panel it needed swallowed the herringbone that says "paving" in the
-   * first place. So this trade says the sentence in type over the finished
-   * job (`outro.title` on the stage), and the scene does what it is actually
-   * good at: laying the field.
-   */
+   * The text box is the field's OWN rectangle (`x0`..`x1`, `zFar`..`zNear`),
+   * inset by one field paver's long body on every side — a hard margin, not
+   * a fraction-of-the-driveway guess: a phone build of this once sized the
+   * box from the camera frustum's half-width at a sample z instead of the
+   * field's own (fixed, non-trapezoidal) rectangle, and at a narrow enough
+   * aspect that frustum sample ran wider than the actual paved area, so the
+   * words set past the kerb onto the sub-base — confirmed by rendering it.
+   * A word crossing the kerb is not something a paver crew would ever lay,
+   * so the margin here is a hard constraint on the box `setHeadline` is
+   * handed, not something checked after the fact. */
+  const margin = paverMetrics(opts.coarse).longBody
+  const textWidth = Math.max(0.5, x1 - x0 - 2 * margin)
+  const textDepthBudget = Math.max(0.5, depth - 2 * margin)
+  const desiredCentreZ = fp.zFar + depth / 2
+  const rand = mulberry32(20260912)
+
+  let fit = fitHeadline(LAYOUTS_FULL, { width: textWidth, depth: textDepthBudget, centreZ: desiredCentreZ, coarse: opts.coarse, rand })
+  let headline: World['headline']
+  if (fit.spch >= TARGET_SPCH) {
+    headline = fit.shrunk ? 'shrunk' : 'full'
+  } else {
+    // Even the narrowest full-sentence break, sett shrunk to its floor,
+    // can't clear TARGET_SPCH on this field — drop words rather than ship
+    // an unreadable sentence. LAYOUT_SHORT's own em is set independently
+    // (a shorter widest line buys a much larger one), so this re-checks the
+    // shrink step for it too rather than assuming the default sett is
+    // enough.
+    fit = fitHeadline(LAYOUT_SHORT, { width: textWidth, depth: textDepthBudget, centreZ: desiredCentreZ, coarse: opts.coarse, rand })
+    headline = 'short'
+  }
+
+  // `setHeadline` guarantees the ink fits width × depth (see its own
+  // comment), but ONLY as measured by its own `lineHeight`-only approximate
+  // block height — the real rasterised box (each line's own 0.78em-above /
+  // 0.22em-below baseline padding, at `lineHeight` spacing) runs a per cent
+  // or two taller than that approximation, and isn't quite centred on the
+  // `centreZ` handed in either. Both are invisible to a caller with slack
+  // to spare (the flower bed), and both matter to a hard-margin caller: the
+  // 4-line break at 1440×900 put "stronę" close enough to zNear to read as
+  // running off-frame — confirmed by rendering it and reading `inkRect`
+  // against `zNear`. Rather than leaning on lettering.ts's own baseline
+  // constants (fragile: this file would silently go stale if those ever
+  // changed), a second pass uses ONLY the public `inkRect` it already
+  // returns: `toWorldX`/`toWorldZ` are affine in `width`/`centreZ` alone, so
+  // scaling both budgets by how far the first pass's ink overran them, and
+  // shifting `centreZ` by how far its mid-point missed `desiredCentreZ`,
+  // reproduces the exact same layout and em — just re-centred, and (only
+  // when the first pass overran) smaller by that same per cent or two,
+  // which is under 2% for every layout this file uses and too small to
+  // change `settsPerCapHeight`'s own full/shrunk/short call above.
+  if (fit.inkRect) {
+    const overW = fit.inkRect.x1 - fit.inkRect.x0
+    const overH = fit.inkRect.z1 - fit.inkRect.z0
+    const shrink = Math.min(1, textWidth / overW, textDepthBudget / overH)
+    const midZ = (fit.inkRect.z0 + fit.inkRect.z1) / 2
+    const centreZ = desiredCentreZ - (midZ - desiredCentreZ)
+    const refit = setHeadline({
+      layouts: [fit.lines],
+      width: textWidth * shrink,
+      depth: textDepthBudget * shrink,
+      centreZ,
+      stretch: 1 / Math.cos(TILT),
+      weight: 700,
+      tracking: 0.03,
+      fontFamily: FONT,
+      returnMask: true,
+      maxCount: 2000,
+      rand,
+    })
+    fit = { ...fit, lines: refit.lines, em: refit.em, mask: refit.mask, maskRect: refit.maskRect, inkRect: refit.inkRect }
+  }
+  const { lines, em, mask, maskRect, settBody, spch: finalSpch } = fit
+
   const pavers = createPaverField(THREE, {
     x0,
     x1,
     zFar: fp.zFar,
     zNear: fp.zNear,
-    accents: [],
+    letterMask: mask && maskRect ? { canvas: mask, rect: maskRect } : undefined,
     light,
     coarse: opts.coarse,
     layWindow: [T.layStart, T.layEnd],
-    accentWindow: [T.sandStart, T.sandStart],
+    letterWindow: [T.letterStart, T.letterEnd],
     sandWindow: [T.sandStart, T.sandEnd],
+    settBody,
   })
   group.add(pavers.group)
 
   return {
+    settsPerCapHeight: finalSpch,
+    em,
+    lines,
+    headline,
     group,
     groundGeo,
     groundMat,
@@ -200,5 +386,17 @@ function update(w: World, p: number, ctx: SceneCtx) {
 function normalize(v: [number, number, number]): [number, number, number] {
   const l = Math.hypot(v[0], v[1], v[2])
   return [v[0] / l, v[1] / l, v[2] / l]
+}
+
+/** Small, fast, seeded — same generator every scene file here uses. */
+function mulberry32(seed: number) {
+  let a = seed >>> 0
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0
+    let t = a
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
 }
 
