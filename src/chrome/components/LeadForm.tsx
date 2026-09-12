@@ -5,6 +5,9 @@ import { Button, ChromeCard } from './primitives'
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error'
 
+/** A form service that has not answered by now is not going to. */
+const REQUEST_TIMEOUT_MS = 15000
+
 const formEndpoint = import.meta.env.VITE_FORM_ENDPOINT || ''
 const formAccessKey = import.meta.env.VITE_FORM_ACCESS_KEY || ''
 
@@ -26,9 +29,13 @@ export function LeadForm() {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    // React clears `currentTarget` once the handler yields to an await, so
+    // the form is held on to here — reading it after the fetch threw, and a
+    // delivered inquiry was reported to the visitor as a failure.
+    const form = e.currentTarget
     setErrorMessage('')
 
-    const data = new FormData(e.currentTarget)
+    const data = new FormData(form)
     const body = Object.fromEntries(data.entries()) as Record<string, string>
 
     if (needsMailtoFallback(formEndpoint, formAccessKey)) {
@@ -37,8 +44,8 @@ export function LeadForm() {
       const mailto = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`
       window.location.href = mailto
       setUsedMailto(true)
+      form.reset()
       setStatus('success')
-      e.currentTarget.reset()
       return
     }
 
@@ -54,6 +61,8 @@ export function LeadForm() {
       payload.access_key = formAccessKey
     }
 
+    const controller = new AbortController()
+    const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
     try {
       const res = await fetch(formEndpoint, {
         method: 'POST',
@@ -62,6 +71,7 @@ export function LeadForm() {
           Accept: 'application/json',
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       })
 
       if (!res.ok) {
@@ -70,11 +80,23 @@ export function LeadForm() {
       }
 
       setUsedMailto(false)
+      // Reset first: the success state swaps this form out for the thank-you
+      // card, and a form that is no longer on screen cannot be cleared.
+      form.reset()
       setStatus('success')
-      e.currentTarget.reset()
     } catch (err) {
       setStatus('error')
-      setErrorMessage(err instanceof Error ? err.message : c.form.errorDefault)
+      setErrorMessage(
+        // A deadline that ran out is not something to explain in the raw —
+        // the visitor gets the same friendly line as any other failure.
+        err instanceof DOMException && err.name === 'AbortError'
+          ? c.form.errorDefault
+          : err instanceof Error
+            ? err.message
+            : c.form.errorDefault,
+      )
+    } finally {
+      window.clearTimeout(timer)
     }
   }
 
