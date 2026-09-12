@@ -49,6 +49,10 @@
 	@brukarstwo path /brukarstwo /brukarstwo/
 	rewrite @brukarstwo /brukarstwo.html
 
+	# Hub branżowy.
+	@branze path /branze /branze/
+	rewrite @branze /branze.html
+
 	# Archiwa v1–v6 pod /en/ i /ua/ — ten sam HTML, locale z prefiksu URL.
 	@archive_locale path_regexp arcloc ^/(en|ua)/(v[1-6]\.html)$
 	rewrite @archive_locale /{re.arcloc.2}

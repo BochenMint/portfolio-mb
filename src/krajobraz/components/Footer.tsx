@@ -11,6 +11,11 @@ export function Footer() {
             <a href={`mailto:${site.email}`} className="transition-colors hover:text-[var(--cream)]">
               {site.email}
             </a>
+            {/* Back to the hub: a visitor who landed here from search can
+                see the other trades without going through the homepage. */}
+            <a href="/branze" className="transition-colors hover:text-[var(--cream)]">
+              Strony dla branż
+            </a>
             <a
               href="https://marcinbochenek.com/"
               className="transition-colors hover:text-[var(--cream)]"

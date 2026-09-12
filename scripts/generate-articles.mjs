@@ -708,6 +708,7 @@ function patchSitemap(docs) {
   const krajobrazMod = '2026-09-12'
   // Same for /brukarstwo, which shipped indexed on the same day.
   const brukarstwoMod = '2026-09-12'
+  const branzeMod = '2026-09-12'
   const blocks = []
   for (const loc of kept) {
     const links = xhtmlForKeptLoc(loc)
@@ -718,7 +719,9 @@ function patchSitemap(docs) {
         ? krajobrazMod
         : loc === `${SITE}/brukarstwo`
           ? brukarstwoMod
-          : landingMod
+          : loc === `${SITE}/branze`
+            ? branzeMod
+            : landingMod
     blocks.push(`  <url>\n    <loc>${loc}</loc>\n    <lastmod>${mod}</lastmod>${extra}\n  </url>`)
   }
 

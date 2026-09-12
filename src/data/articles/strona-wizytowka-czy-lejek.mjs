@@ -68,6 +68,7 @@ export default {
       section(
         'Kiedy wizytówka jest właściwym, nie „wstydliwym” wyborem',
         p('Mała kancelaria, warsztat, JDG usługowe, freelancer z poleceń: wizytówka jest profesjonalnym narzędziem, nie porażką. Wstydem jest udawanie lejka bez budżetu na treść, pomiar i follow-up. Wolę pięć jasnych podstron niż „platformę”, której nikt nie ogarnie po odbiorze.'),
+        p('Jak taka wizytówka wygląda, kiedy jest zrobiona pod jeden zawód, a nie pod wszystkich naraz, widać na [stronach dla branż](/branze) — pracownia projektowa i ekipa wykonawcza dostają dwie różne strony, choć obie „pokazują realizacje”.'),
         p('Rozbudowę planuję od początku: ten sam stack, te same URL-e, bez przepisania za rok, bo „teraz chcemy rezerwacje”. Jeśli wiesz, że za dwa sezony wejdziesz w płatny ruch, mówię to na starcie — nawet jeśli dziś płacisz za wizytówkę.'),
       ),
       section(

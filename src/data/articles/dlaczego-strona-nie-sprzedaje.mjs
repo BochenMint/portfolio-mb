@@ -64,6 +64,7 @@ export default {
       section(
         'Co robimy po diagnozie — jedna zmiana, nie dwanaście',
         p('Wychodzi jedno zadanie wiodące: kanał, ścieżka albo follow-up. Wdrażamy to, mierzymy dwa tygodnie, dopiero wtedy dokładamy kolejne. Właściciele lubią checklisty 40 punktów, bo wyglądają na pracę. Ja lubię jedną metrykę: liczba kwalifikowanych zapytań albo czas do pierwszej odpowiedzi. Reszta jest komentarzem.'),
+        p('To, która zmiana jest ta jedna, zależy od branży — u projektanta zwykle wygrywa portfolio, u ekipy wykonawczej metraż i termin w formularzu. Pokazuję to na gotowych stronach: [strony robione pod konkretną branżę](/branze).'),
       ),
     ],
     faqs: [

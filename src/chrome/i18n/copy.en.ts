@@ -140,9 +140,7 @@ export const copyEn = {
     mbAi: 'MB AI — automation with a human in the loop',
     mbAiHref: 'https://mb-ai.pl',
     stack: 'Websites, systems and automation for companies in Poland and abroad. I work in English and Polish.',
-    krajobraz: 'For landscape-architecture studios',
-    krajobrazHref: '/krajobraz',
-    brukarstwo: 'For paving contractors',
-    brukarstwoHref: '/brukarstwo',
+    branze: 'Websites by trade',
+    branzeHref: '/branze',
   },
 } satisfies ChromeCopy

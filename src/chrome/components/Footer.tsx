@@ -69,20 +69,14 @@ export function Footer() {
             >
               {c.footer.classic}
             </a>
-            {/* The niche landings — indexed but unlinked from any nav, so
-                these are their only internal links. When there are four of
-                them they want a hub page instead of four footer links. */}
+            {/* One link for every trade landing: /branze lists them, and the
+                landings link back to it. Two footer links became four the
+                moment a third trade showed up, which is what a hub is for. */}
             <a
-              href={c.footer.krajobrazHref}
+              href={c.footer.branzeHref}
               className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
             >
-              {c.footer.krajobraz}
-            </a>
-            <a
-              href={c.footer.brukarstwoHref}
-              className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-white"
-            >
-              {c.footer.brukarstwo}
+              {c.footer.branze}
             </a>
           </div>
         </div>

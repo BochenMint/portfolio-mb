@@ -112,9 +112,7 @@ export type ChromeCopy = {
     stack: string
     mbAi: string
     mbAiHref: string
-    krajobraz: string
-    krajobrazHref: string
-    brukarstwo: string
-    brukarstwoHref: string
+    branze: string
+    branzeHref: string
   }
 }
