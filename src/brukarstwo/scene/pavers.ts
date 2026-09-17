@@ -74,7 +74,7 @@
  * fragment and every lettering fragment tests the SAME texture at its own
  * exact world position, so the two meet exactly wherever the glyph outline
  * actually runs. The FRAGMENT test is what draws the edge; the CPU side
- * (`inkAt`, reading the same canvas's pixel data once) only ever decides
+ * (`inkIn`, reading the same canvas's pixel data once) only ever decides
  * whether an instance is worth generating, and the rule it must obey is
  * one-sided: it may add an instance that ends up fully clipped, but it
  * must never drop one that any fragment needs. The first version broke
@@ -85,8 +85,9 @@
  * generated only when its centre was ink, so along every stroke edge,
  * where the field is already cut away, the sliver the neighbouring sett
  * should have filled was left empty. So: field pavers are never culled
- * by ink at all (FIELD_FRAG cuts them), and a sett is generated if ink
- * touches any part of its footprint (LETTER_FRAG cuts it).
+ * by ink at all (FIELD_FRAG cuts them), and a sett is generated if any ink
+ * pixel at all lies under its footprint — an exact summed-area query, not
+ * point probes (LETTER_FRAG cuts it).
  *
  * ---------------------------------------------------------------------------
  * Cutting, joints and the draw-call budget
@@ -603,11 +604,11 @@ export function createPaverField(
   const settJointDip = JOINT_DIP * settScale
 
   /* ---- The ink mask: read straight off `stage/lettering.ts`'s own canvas,
-   * once, into a plain pixel array `inkAt` can query cheaply from JS — no
+   * once, into a plain pixel array `inkIn` can query cheaply from JS — no
    * rediscretising it onto a grid of our own first, which is what broke a
    * stroke into pieces last time (see the header comment). The SAME canvas
    * is uploaded as a texture below, so the fragment shaders in both FIELD_
-   * FRAG and LETTER_FRAG test the exact pixels `inkAt` does here — CPU and
+   * FRAG and LETTER_FRAG test the exact pixels `inkIn` does here — CPU and
    * GPU never disagree about where the edge is, because they read one
    * source, not two independently rebuilt ones. ---- */
   const hasInk = !!opts.letterMask
@@ -618,21 +619,41 @@ export function createPaverField(
   const maskData = maskCanvas?.getContext('2d')?.getImageData(0, 0, maskW, maskH).data ?? null
   const maskSpanX = Math.max(1e-6, maskRect.x1 - maskRect.x0)
   const maskSpanZ = Math.max(1e-6, maskRect.z1 - maskRect.z0)
-  function inkAt(x: number, z: number): boolean {
+  // Mapping, shared with FIELD_FRAG and LETTER_FRAG through uInkOrigin /
+  // uInkExtent: the mask is drawn with canvas row 0 at maskRect.z0 and row
+  // (height − 1) at maskRect.z1, so a world z maps to a row directly, no
+  // flip. A CanvasTexture flips Y by default, which is why the textures get
+  // flipY = false — a mismatch here would put the CPU and GPU edges in
+  // different places, which is exactly what reading one mask exists to stop.
+
+  /* Summed-area table of ink over the mask, so "is there any ink under this
+   * rectangle" is exact and O(1). A sett must exist wherever even one ink
+   * pixel lies under it: FIELD_FRAG has already cut the field away there,
+   * so a missing sett is a hole to the sub-base. Point probes cannot promise
+   * that — nine of them per cell still left the pixels between them
+   * unchecked, and a thin diacritic tail fits between probes. */
+  const inkSat = new Int32Array((maskW + 1) * (maskH + 1))
+  if (maskData) {
+    for (let py = 0; py < maskH; py++) {
+      let row = 0
+      for (let px = 0; px < maskW; px++) {
+        row += maskData[(py * maskW + px) * 4] > 127 ? 1 : 0
+        inkSat[(py + 1) * (maskW + 1) + (px + 1)] = inkSat[py * (maskW + 1) + (px + 1)] + row
+      }
+    }
+  }
+  /** Any ink in the world-space rectangle? Rounded outward by a pixel on
+   *  every side, so it errs toward generating a sett, never toward a hole. */
+  function inkIn(x0w: number, z0w: number, x1w: number, z1w: number): boolean {
     if (!maskData) return false
-    const u = (x - maskRect.x0) / maskSpanX
-    const v = (z - maskRect.z0) / maskSpanZ
-    if (u < 0 || u > 1 || v < 0 || v > 1) return false
-    // The mask is drawn with canvas row 0 at maskRect.z0 (toWorldZ(0) in
-    // stage/lettering.ts) and row (height-1) at maskRect.z1, so v maps to a
-    // row directly — no flip. The fragment shader's own uInkOrigin/
-    // uInkExtent uniforms below reproduce this same mapping; a CanvasTexture
-    // flips Y by default, so that texture gets `flipY = false` explicitly to
-    // keep the two in agreement (a mismatch here would silently re-introduce
-    // exactly the CPU/GPU disagreement this design exists to remove).
-    const px = Math.min(maskW - 1, Math.max(0, Math.round(u * maskW)))
-    const py = Math.min(maskH - 1, Math.max(0, Math.round(v * maskH)))
-    return maskData[(py * maskW + px) * 4] > 127
+    const pxA = Math.max(0, Math.floor(((x0w - maskRect.x0) / maskSpanX) * maskW) - 1)
+    const pxB = Math.min(maskW, Math.ceil(((x1w - maskRect.x0) / maskSpanX) * maskW) + 1)
+    const pyA = Math.max(0, Math.floor(((z0w - maskRect.z0) / maskSpanZ) * maskH) - 1)
+    const pyB = Math.min(maskH, Math.ceil(((z1w - maskRect.z0) / maskSpanZ) * maskH) + 1)
+    if (pxB <= pxA || pyB <= pyA) return false
+    const W = maskW + 1
+    const sum = inkSat[pyB * W + pxB] - inkSat[pyA * W + pxB] - inkSat[pyB * W + pxA] + inkSat[pyA * W + pxA]
+    return sum > 0
   }
 
   const toWorld = (u: number, v: number) => ({ x: (u - v) * INV_SQRT2, z: (u + v) * INV_SQRT2 })
@@ -739,7 +760,7 @@ export function createPaverField(
   // sample moves the discard threshold's crossing point smoothly between
   // texels instead of snapping to whichever one is nearest. NoColorSpace:
   // this is a data mask, not a colour image — it must reach the shader as
-  // the exact 0..1 values `inkAt` reads on the CPU side, not sRGB-decoded.
+  // the exact 0..1 values `inkIn` reads on the CPU side, not sRGB-decoded.
   //
   // TWO separate THREE.CanvasTexture objects wrap this ONE canvas — a
   // one-object-shared-by-both-materials version was tried first (the
@@ -771,7 +792,7 @@ export function createPaverField(
   dummyCanvas.height = 1
   function makeInkTexture() {
     const tex = new THREE.CanvasTexture(maskCanvas ?? dummyCanvas)
-    tex.flipY = false // see inkAt's own comment on why
+    tex.flipY = false // see the mapping note above inkIn on why
     tex.colorSpace = THREE.NoColorSpace
     tex.generateMipmaps = false
     tex.magFilter = THREE.LinearFilter
@@ -874,7 +895,8 @@ export function createPaverField(
    * every stroke. The fragment shader clips each sett to the mask, so the
    * extra cells this admits cost a few clipped quads, not a visual defect.
    * No separate "background" instance: the field around it is already
-   * herringbone. ---- */
+   * herringbone. The test is an exact any-ink query over the cell (see
+   * inkIn), not point probes. ---- */
   let ni = 0
   let letterMat: THREE_NS.ShaderMaterial | null = null
   if (hasInk) {
@@ -885,21 +907,9 @@ export function createPaverField(
       for (let si = 0; si < cols; si++) {
         const cx = maskRect.x0 + (si + 0.5) * settPitch
         const cz = maskRect.z0 + (sj + 0.5) * settPitch
-        // Centre, the four corners and the four edge midpoints of the cell:
-        // at a 3–4 cm sett and a mask several pixels per sett, nine taps
-        // cannot miss a stroke that crosses the cell.
+        // Every mask pixel under the cell, not a handful of probes.
         const h = settPitch * 0.5
-        let hit = false
-        for (const dz of [-h, 0, h]) {
-          for (const dx of [-h, 0, h]) {
-            if (inkAt(cx + dx, cz + dz)) {
-              hit = true
-              break
-            }
-          }
-          if (hit) break
-        }
-        if (hit) centres.push({ cx, cz })
+        if (inkIn(cx - h, cz - h, cx + h, cz + h)) centres.push({ cx, cz })
       }
     }
     ni = centres.length
