@@ -73,12 +73,20 @@
  * instead of rediscretised into a second, coarser grid) — every field
  * fragment and every lettering fragment tests the SAME texture at its own
  * exact world position, so the two meet exactly wherever the glyph outline
- * actually runs. A cheap CPU test (`inkAt`, reading the same canvas's pixel
- * data once) still decides which pavers and which setts are worth
- * generating at all — there is no draw-call budget for a paver or a sett
- * that would be 100% discarded — but the FRAGMENT test is what draws the
- * edge, so a generous CPU test costs a few extra clipped instances, never a
- * visual defect.
+ * actually runs. The FRAGMENT test is what draws the edge; the CPU side
+ * (`inkAt`, reading the same canvas's pixel data once) only ever decides
+ * whether an instance is worth generating, and the rule it must obey is
+ * one-sided: it may add an instance that ends up fully clipped, but it
+ * must never drop one that any fragment needs. The first version broke
+ * that rule twice, and both showed up as holes to the bare sub-base
+ * (Marcin 2026-09: "brakuje kostek"). A field paver was dropped when its
+ * CENTRE fell on ink — but a 20 × 10 cm body is far wider than a stroke,
+ * so everything of it outside the letter vanished with it. And a sett was
+ * generated only when its centre was ink, so along every stroke edge,
+ * where the field is already cut away, the sliver the neighbouring sett
+ * should have filled was left empty. So: field pavers are never culled
+ * by ink at all (FIELD_FRAG cuts them), and a sett is generated if ink
+ * touches any part of its footprint (LETTER_FRAG cuts it).
  *
  * ---------------------------------------------------------------------------
  * Cutting, joints and the draw-call budget
@@ -655,7 +663,7 @@ export function createPaverField(
         const cu = -wp * m + lp * n + lp / 2
         const cv = wp * m + lp * n + wp / 2
         const w = toWorld(cu, cv)
-        if (w.x > x0 - pad && w.x < x1 + pad && w.z > zFar - pad && w.z < zNear + pad && !inkAt(w.x, w.z)) {
+        if (w.x > x0 - pad && w.x < x1 + pad && w.z > zFar - pad && w.z < zNear + pad) {
           stones.push({ cx: w.x, cz: w.z, sign: 1, seed: rand(), courseN: n })
           courseSet.add(n)
         }
@@ -665,7 +673,7 @@ export function createPaverField(
         const cu = lp - wp * m + lp * n + wp / 2
         const cv = wp * m + lp * n + lp / 2
         const w = toWorld(cu, cv)
-        if (w.x > x0 - pad && w.x < x1 + pad && w.z > zFar - pad && w.z < zNear + pad && !inkAt(w.x, w.z)) {
+        if (w.x > x0 - pad && w.x < x1 + pad && w.z > zFar - pad && w.z < zNear + pad) {
           stones.push({ cx: w.x, cz: w.z, sign: -1, seed: rand(), courseN: n })
           courseSet.add(n)
         }
@@ -859,12 +867,14 @@ export function createPaverField(
   group.add(edgeMesh)
   disposables.push(edgeMat)
 
-  /* ---- Lettering: one dark sett per grid cell `inkAt` calls ink — cheap
-   * (CPU-side, per-instance) existence test only, same as the field's own;
-   * the fragment shader above owns the actual edge, so a cell generated here
-   * that turns out to be mostly NOT ink under the true mask just draws a
-   * mostly-discarded quad, never a visual defect. No separate "background"
-   * instance, since the field around it is already herringbone. ---- */
+  /* ---- Lettering: one dark sett per grid cell that ink touches ANYWHERE
+   * in its footprint, not just at its centre. The field is cut away along
+   * the exact stroke edge, so every sliver of ink needs a sett over it; a
+   * centre-only test left a thin hole to the sub-base down both sides of
+   * every stroke. The fragment shader clips each sett to the mask, so the
+   * extra cells this admits cost a few clipped quads, not a visual defect.
+   * No separate "background" instance: the field around it is already
+   * herringbone. ---- */
   let ni = 0
   let letterMat: THREE_NS.ShaderMaterial | null = null
   if (hasInk) {
@@ -875,7 +885,21 @@ export function createPaverField(
       for (let si = 0; si < cols; si++) {
         const cx = maskRect.x0 + (si + 0.5) * settPitch
         const cz = maskRect.z0 + (sj + 0.5) * settPitch
-        if (inkAt(cx, cz)) centres.push({ cx, cz })
+        // Centre, the four corners and the four edge midpoints of the cell:
+        // at a 3–4 cm sett and a mask several pixels per sett, nine taps
+        // cannot miss a stroke that crosses the cell.
+        const h = settPitch * 0.5
+        let hit = false
+        for (const dz of [-h, 0, h]) {
+          for (const dx of [-h, 0, h]) {
+            if (inkAt(cx + dx, cz + dz)) {
+              hit = true
+              break
+            }
+          }
+          if (hit) break
+        }
+        if (hit) centres.push({ cx, cz })
       }
     }
     ni = centres.length

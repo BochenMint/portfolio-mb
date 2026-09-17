@@ -57,14 +57,14 @@ const LAYOUTS_FULL: string[][] = [
   ['Zbuduję', 'dla Ciebie', 'nową', 'stronę'],
   ['Zbuduję', 'dla', 'Ciebie', 'nową', 'stronę'],
 ]
-/** Last resort when even the narrowest full-sentence break, at the sett's
- *  own floor size, still can't clear `TARGET_SPCH` setts per cap height (a
- *  phone too small for the whole sentence to read at all) — dropping words
- *  for a shorter, much larger em beats shipping an unreadable one. See
- *  `fitHeadline`'s own comment for the order this implements. */
-const LAYOUT_SHORT: string[][] = [['nową', 'stronę']]
-/** The floor this design won't render lettering below at all — see
- *  `fitHeadline`. */
+/** How many setts per cap height the sett is shrunk toward, when the
+ *  sentence's own em leaves fewer. A texture target, not a legibility one:
+ *  the letter SHAPE comes from the mask the field is cut along, exact at any
+ *  sett size, so a narrow screen still reads the whole sentence — the setts
+ *  only decide how fine the stone inside each stroke looks. An earlier build
+ *  treated this as a legibility floor and dropped to "nową stronę" below it;
+ *  Marcin rejected that outright ("nie ma całego napisu"), and rightly: the
+ *  sentence was readable, only coarser. */
 const TARGET_SPCH = 6
 
 /** Set the headline against a field of the given size, then bring setts per
@@ -77,11 +77,9 @@ const TARGET_SPCH = 6
  *      under `TARGET_SPCH`, shrink the sett — not the field, not the text —
  *      toward `SETT_BODY_FLOOR` until it clears `TARGET_SPCH`, or until the
  *      floor itself is reached, whichever comes first.
- *   3. The caller (`build`) checks the returned `spch`: if shrinking the
- *      sett still wasn't enough, it calls this again with `LAYOUT_SHORT`
- *      instead of `LAYOUTS_FULL` — dropping words rather than shipping an
- *      unreadable sentence. That decision lives in `build`, not here, since
- *      it also has to pick the `headline` outcome to report. */
+ *   3. Words are never dropped. If the floor sett still leaves fewer than
+ *      `TARGET_SPCH` per cap height, the sentence ships at the floor — see
+ *      `TARGET_SPCH` for why that is coarser, not illegible. */
 function fitHeadline(
   layouts: string[][],
   args: { width: number; depth: number; centreZ: number; coarse: boolean; rand: () => number },
@@ -166,17 +164,14 @@ type World = {
   pavers: PaverField
   /** Debug-only, so the acceptance check has real numbers to read rather
    *  than a screenshot alone: setts per cap height, the em they came from,
-   *  and which line break `setHeadline` actually chose from `LAYOUTS_FULL`
-   *  (or `LAYOUT_SHORT`, once `headline` says 'short'). */
+   *  and which line break `setHeadline` actually chose from `LAYOUTS_FULL`. */
   settsPerCapHeight: number
   em: number
   lines: string[]
-  /** Which rung of `fitHeadline`'s fallback ladder this build landed on —
-   *  'full' (mode's default sett, whole sentence), 'shrunk' (sett shrunk
-   *  toward the floor, whole sentence still fits), or 'short' (words
-   *  dropped because even the floor sett couldn't clear six setts per cap
-   *  height for the whole sentence). See `fitHeadline`'s own comment. */
-  headline: 'full' | 'shrunk' | 'short'
+  /** 'full' when the mode's default sett already clears `TARGET_SPCH`,
+   *  'shrunk' when the sett had to go finer. The sentence is whole either
+   *  way. */
+  headline: 'full' | 'shrunk'
   dispose(): void
 }
 
@@ -298,19 +293,7 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
   const rand = mulberry32(20260912)
 
   let fit = fitHeadline(LAYOUTS_FULL, { width: textWidth, depth: textDepthBudget, centreZ: desiredCentreZ, coarse: opts.coarse, rand })
-  let headline: World['headline']
-  if (fit.spch >= TARGET_SPCH) {
-    headline = fit.shrunk ? 'shrunk' : 'full'
-  } else {
-    // Even the narrowest full-sentence break, sett shrunk to its floor,
-    // can't clear TARGET_SPCH on this field — drop words rather than ship
-    // an unreadable sentence. LAYOUT_SHORT's own em is set independently
-    // (a shorter widest line buys a much larger one), so this re-checks the
-    // shrink step for it too rather than assuming the default sett is
-    // enough.
-    fit = fitHeadline(LAYOUT_SHORT, { width: textWidth, depth: textDepthBudget, centreZ: desiredCentreZ, coarse: opts.coarse, rand })
-    headline = 'short'
-  }
+  const headline: World['headline'] = fit.shrunk ? 'shrunk' : 'full'
 
   // `setHeadline` guarantees the ink fits width × depth (see its own
   // comment), but ONLY as measured by its own `lineHeight`-only approximate
@@ -330,7 +313,7 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
   // reproduces the exact same layout and em — just re-centred, and (only
   // when the first pass overran) smaller by that same per cent or two,
   // which is under 2% for every layout this file uses and too small to
-  // change `settsPerCapHeight`'s own full/shrunk/short call above.
+  // change `settsPerCapHeight`'s own full/shrunk call above.
   if (fit.inkRect) {
     const overW = fit.inkRect.x1 - fit.inkRect.x0
     const overH = fit.inkRect.z1 - fit.inkRect.z0
