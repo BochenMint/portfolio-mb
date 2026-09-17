@@ -17,7 +17,7 @@
  */
 
 import type * as THREE_NS from 'three'
-import { GROUND_FRAG, GROUND_VERT, groundUniforms, type GroundPalette, type RakeConfig } from '../../stage/ground'
+import { GROUND_VERT, groundFragment, groundUniforms, type GroundPalette, type RakeConfig } from '../../stage/ground'
 import { setHeadline } from '../../stage/lettering'
 import { createSceneHost, type SceneCtx, type SceneHandle } from '../../stage/sceneHost'
 import {
@@ -107,14 +107,21 @@ function fitHeadline(
     maxCount: 2000,
     rand: args.rand,
   })
-  const defaultBody = settMetrics(args.coarse).settBody
+  return { ...base, ...sizeSett(base.em, args.coarse) }
+}
+
+/** The sett for a given em: the mode's default, shrunk toward the floor if
+ *  that leaves fewer than `TARGET_SPCH` per cap height. Called again after
+ *  the re-centring pass below, because that pass changes the em. */
+function sizeSett(em: number, coarse: boolean) {
+  const defaultBody = settMetrics(coarse).settBody
   let settBody = defaultBody
-  let spch = settsPerCapHeight(base.em, settBody)
+  let spch = settsPerCapHeight(em, settBody)
   if (spch < TARGET_SPCH) {
-    settBody = settBodyForCapHeight(base.em, TARGET_SPCH, args.coarse)
-    spch = settsPerCapHeight(base.em, settBody)
+    settBody = settBodyForCapHeight(em, TARGET_SPCH, coarse)
+    spch = settsPerCapHeight(em, settBody)
   }
-  return { ...base, settBody, spch, shrunk: settBody < defaultBody }
+  return { settBody, spch, shrunk: settBody < defaultBody }
 }
 
 /* Aggregate ground: crushed stone under screeded sand — grey-brown, not the
@@ -249,7 +256,10 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
   groundGeo.translate(0, 0, (fp.zFar + fp.zNear) / 2)
   const groundMat = new THREE.ShaderMaterial({
     vertexShader: GROUND_VERT,
-    fragmentShader: (opts.coarse ? '#define COARSE 1\n' : '') + GROUND_FRAG,
+    // angular: true is what compiles the crushed-stone path in at all — the
+    // uniform below only blends it. Without it this bed silently renders as
+    // the garden's clods.
+    fragmentShader: groundFragment({ coarse: opts.coarse, angular: true }),
     uniforms: {
       ...light,
       // Crushed, not dug: 0/31 aggregate is flat-faced chips with sharp
@@ -293,7 +303,6 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
   const rand = mulberry32(20260912)
 
   let fit = fitHeadline(LAYOUTS_FULL, { width: textWidth, depth: textDepthBudget, centreZ: desiredCentreZ, coarse: opts.coarse, rand })
-  const headline: World['headline'] = fit.shrunk ? 'shrunk' : 'full'
 
   // `setHeadline` guarantees the ink fits width × depth (see its own
   // comment), but ONLY as measured by its own `lineHeight`-only approximate
@@ -312,8 +321,9 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
   // shifting `centreZ` by how far its mid-point missed `desiredCentreZ`,
   // reproduces the exact same layout and em — just re-centred, and (only
   // when the first pass overran) smaller by that same per cent or two,
-  // which is under 2% for every layout this file uses and too small to
-  // change `settsPerCapHeight`'s own full/shrunk call above.
+  // which is under 2% for every layout this file uses. Small, but the sett
+  // is re-sized from the refit's em anyway: otherwise the stone laid and the
+  // ratio reported both describe an em that is not the one on screen.
   if (fit.inkRect) {
     const overW = fit.inkRect.x1 - fit.inkRect.x0
     const overH = fit.inkRect.z1 - fit.inkRect.z0
@@ -333,8 +343,17 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }): Worl
       maxCount: 2000,
       rand,
     })
-    fit = { ...fit, lines: refit.lines, em: refit.em, mask: refit.mask, maskRect: refit.maskRect, inkRect: refit.inkRect }
+    fit = {
+      ...fit,
+      lines: refit.lines,
+      em: refit.em,
+      mask: refit.mask,
+      maskRect: refit.maskRect,
+      inkRect: refit.inkRect,
+      ...sizeSett(refit.em, opts.coarse),
+    }
   }
+  const headline: World['headline'] = fit.shrunk ? 'shrunk' : 'full'
   const { lines, em, mask, maskRect, settBody, spch: finalSpch } = fit
 
   const pavers = createPaverField(THREE, {

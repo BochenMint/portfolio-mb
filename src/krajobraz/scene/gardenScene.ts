@@ -18,7 +18,7 @@
  */
 
 import type * as THREE_NS from 'three'
-import { GARDEN_PALETTE, GARDEN_RAKE, GROUND_FRAG, GROUND_VERT, groundUniforms } from '../../stage/ground'
+import { GARDEN_PALETTE, GARDEN_RAKE, GROUND_VERT, groundFragment, groundUniforms } from '../../stage/ground'
 import { createSceneHost, type SceneCtx, type SceneHandle } from '../../stage/sceneHost'
 import { BLOB_FRAG, BLOB_VERT } from '../../stage/shaders'
 import { easeInOut, smoothstep } from '../../stage/timing'
@@ -167,7 +167,7 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }, shell
       // The finest grade of crumb is a whole extra voronoi per pixel over
       // the full screen, which is the one thing on this page a phone
       // cannot afford — and at a phone's size it is under a pixel anyway.
-      fragmentShader: (opts.coarse ? '#define COARSE 1\n' : '') + GROUND_FRAG,
+      fragmentShader: groundFragment({ coarse: opts.coarse }),
       uniforms: { ...light, ...groundUniforms(THREE, GARDEN_PALETTE, GARDEN_RAKE) },
     })
     const mesh = new THREE.Mesh(geo, mat)
@@ -333,14 +333,12 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }, shell
     disposables.push(m)
   })
 
-  /* The border planting ------------------------------------------------
+  /* The plantings --------------------------------------------------------
    *
-   * The edge of the garden, and the only thing in the scene that was
-   * already here before the visitor arrived: the soil is being prepared,
-   * the turf is being laid, the flowers are being planted — the shrubs
-   * just sit there. Low mounds around the outside of the frame, because
-   * the trees that were here first projected across the headline from
-   * well outside it (Marcin: "usuń drzewa — zasłaniają").
+   * Low shrubs around the outside of the frame — trees projected across
+   * the headline from well outside it at this tilt (Marcin: "usuń drzewa
+   * — zasłaniają"). They are planted, not scenery: they go in after the
+   * turf, left to right, each unfurling its own leaves.
    */
   const shrubs = createShrubs(THREE, {
     halfFar: fp.halfFar,
@@ -357,6 +355,8 @@ function build(ctx: SceneCtx, opts: { reduced: boolean; coarse: boolean }, shell
     },
     light,
     coarse: opts.coarse,
+    reduced: opts.reduced,
+    window: [T.plantStart, T.plantEnd],
   })
   group.add(shrubs.group)
   disposables.push(shrubs)

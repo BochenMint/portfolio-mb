@@ -4,9 +4,10 @@
  * trade's own beats (the brief's "Scene choreography").
  *
  * One number drives everything, same as the garden: the bed is screeded and
- * bare at 0, every course is down by ~0.55, the headline's stones swap while
- * the joints are still being sanded, and the last stretch of the pin is left
- * for the finished drive to be read with the call to action under it.
+ * bare at 0, every course is down by ~0.55, the lettering is laid into the
+ * cut-outs by ~0.78, and only then does the sand go over the whole drive —
+ * the order a crew works in. The last stretch of the pin is left for the
+ * finished drive to be read with the call to action under it.
  *
  * `BrukarstwoStage.tsx` hands the intro/outro fractions of this same table to
  * `stage/ScrollStage.tsx` as its `timeline` prop, so the copy fades in and out
@@ -23,10 +24,14 @@ export const T = {
    *  small setts — drop in across this window, in the sweep's left-to-right
    *  order. */
   letterStart: 0.56,
-  letterEnd: 0.93,
-  /** The joint-sand pass sweeps left-to-right across the finished field. */
-  sandStart: 0.6,
-  sandEnd: 0.75,
+  letterEnd: 0.78,
+  /** The joint-sand pass sweeps left-to-right across the finished field,
+   *  AFTER the last sett is down. It used to run 0.60–0.75 while the letters
+   *  laid until 0.93, so everything right of the middle of the headline was
+   *  set down after the sweep had passed — and appeared with its joints
+   *  already sanded, which no crew has ever managed. */
+  sandStart: 0.78,
+  sandEnd: 0.9,
   /** Closing line and CTA. */
   outro: [0.88, 0.94] as [number, number],
 } as const

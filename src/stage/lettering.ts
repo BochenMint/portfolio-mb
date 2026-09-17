@@ -53,11 +53,14 @@ export type LetterField = {
    *  bounding box of the actual rasterised ink (the same `lineBoxes` this
    *  function already builds to bucket points by line and normalise `nx`),
    *  as opposed to `maskRect`'s canvas-plus-bleed extent. This is what a
-   *  hard-margin caller should size its clearance against — the em this
-   *  function picks already guarantees the ink itself fits the `width` ×
-   *  `depth` box handed in, so a caller that gave a margin-inset box gets a
-   *  margin-respecting `inkRect` for free; it should never need to touch
-   *  `maskRect` for that. */
+   *  hard-margin caller should measure its clearance against — and it has
+   *  to MEASURE, not assume. The width is honoured. The depth is only
+   *  approximately: the em is picked from `lines × lineHeight`, but the
+   *  rasterised boxes span `((lines − 1) × lineHeight + 1) × em`, so with a
+   *  line height under 1 the ink can run past `depth` by a few per cent of
+   *  an em, and its midpoint need not sit on `centreZ`. A caller with slack
+   *  (the flower bed) never notices; one cutting a field to a kerb must read
+   *  this rect and correct for both, as `brukarstwo/scene/paverScene.ts` does. */
   inkRect?: { x0: number; z0: number; x1: number; z1: number }
 }
 
@@ -164,8 +167,9 @@ export function setHeadline(opts: {
   // Set the words on a mask canvas, in world units × pxPerUnit. `blockW` is
   // the full `width` budget, not just the tight text — same bleed-canvas
   // reasoning as the em pick above, and why `maskRect` (built from this)
-  // can run past the box while `inkRect` (built from `lineBoxes` below)
-  // never does.
+  // can run past the box by the bleed, while `inkRect` (built from
+  // `lineBoxes` below) only ever overruns the depth by the line-height
+  // approximation described on `inkRect` itself.
   const pxPerUnit = maskPxPerPitch / pitch
   const emPx = em * pxPerUnit
   const blockW = opts.width * pxPerUnit
@@ -283,8 +287,8 @@ export function setHeadline(opts: {
     // `lineBoxes[0]`/`lineBoxes[last]` are the topmost/bottommost line's own
     // box (lines are laid out top-to-bottom in array order, so first/last
     // is min/max by construction) — no second measurement pass, just the
-    // corners of what's already computed. Guaranteed (by the em pick above)
-    // to sit within the `width` × `depth` box the caller handed in.
+    // corners of what's already computed. Within the `width` budget; within
+    // `depth` only approximately — see the note on `inkRect` in the type.
     field.inkRect = {
       x0: toWorldX(textLeft),
       z0: toWorldZ(lineBoxes[0].top),
