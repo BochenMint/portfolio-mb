@@ -1,0 +1,68 @@
+/* Scan only this landing's own sources: the default (the whole repo) pulled
+   every utility from every other edition into this page's stylesheet. */
+@import 'tailwindcss' source('./');
+/* The skin every niche landing shares: faces, type scale, base styles and
+   the utilities stage/Sections.tsx is built from. */
+@import '../stage/landing.css';
+/* The shared sections live outside this directory, so their classes have to
+   be scanned explicitly — `source()` above narrows the scan to this landing
+   and would otherwise drop every utility used only in stage/Sections.tsx. */
+@source '../stage';
+
+/* ------------------------------------------------------------------
+   Marcin Bochenek — /brukarstwo landing (firmy brukarskie)
+   Theme: a driveway at the end of the day — graphite and sand, cream text,
+   the same one red accent as everywhere else. Fixed dark look, no toggle.
+
+   The garden's landing is green because a garden is; this one is grey
+   because concrete is. Everything structural is shared with it: only these
+   values differ.
+------------------------------------------------------------------- */
+
+:root {
+  --sand-950: #14110d;
+  --sand-900: #1f1a14;
+  --graphite-950: #0e1012;
+  --graphite-900: #171a1d;
+  --graphite-800: #232830;
+  --cream: #f1eee8;
+  --cream-dim: #bdb9b0;
+  /* The cut face of a fresh paver: pale, dusty, faintly warm. */
+  --stone: #c3bdb2;
+  --ember: #ff5a3c;
+
+  /* What stage/Sections.tsx paints its cards and its ground with. */
+  --page-bg: var(--graphite-950);
+  --card-bg: var(--graphite-900);
+  --card-border: rgba(241, 238, 232, 0.14);
+  --accent-mark: var(--stone);
+  --hairline-ink: rgba(241, 238, 232, 0.16);
+
+  color-scheme: dark;
+}
+
+/* stage/stage.css's own custom properties, in this trade's materials: the
+   ground under the stage is compacted aggregate rather than loam, so the
+   glow behind the canvas is grey-brown and the outro settles onto
+   graphite instead of moss. */
+.paving {
+  --stage-ground-glow: rgba(120, 116, 108, 0.3);
+  --stage-ground-line: rgba(0, 0, 0, 0.18);
+  --stage-ground-1: #3b3833;
+  --stage-ground-2: #26241f;
+  --stage-ground-3: #131211;
+  --stage-vignette-rgb: 8, 8, 9;
+  --stage-outro-a-rgb: 12, 13, 15;
+  --stage-outro-b-rgb: 14, 16, 18;
+  --stage-outro-end: var(--graphite-950);
+  --stage-ink: #f5f2ec;
+  --stage-accent: #b3200f;
+  --stage-ink-dim: #ddd8ce;
+}
+
+html,
+body {
+  background: var(--sand-950);
+  color: var(--cream);
+  font-family: var(--font-body);
+}

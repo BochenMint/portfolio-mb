@@ -146,7 +146,7 @@ export const copyPl = {
     mbAi: 'MB AI — automatyzacje z kontrolą człowieka',
     mbAiHref: 'https://mb-ai.pl',
     stack: 'Strony, systemy i automatyzacje dla firm w Polsce i za granicą. Pracuję po polsku i po angielsku.',
-    krajobraz: 'Dla pracowni architektury krajobrazu',
-    krajobrazHref: '/krajobraz',
+    branze: 'Strony dla branż',
+    branzeHref: '/branze',
   },
 } satisfies ChromeCopy

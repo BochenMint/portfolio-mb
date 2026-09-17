@@ -140,7 +140,7 @@ export const copyUa = {
     mbAi: 'MB AI — автоматизації з контролем людини',
     mbAiHref: 'https://mb-ai.pl',
     stack: 'Сайти, системи та автоматизації для компаній у Польщі та за кордоном. Працюю англійською та польською.',
-    krajobraz: 'Для студій ландшафтної архітектури',
-    krajobrazHref: '/krajobraz',
+    branze: 'Сайти за галузями',
+    branzeHref: '/branze',
   },
 } satisfies ChromeCopy
