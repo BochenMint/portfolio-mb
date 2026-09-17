@@ -6,7 +6,7 @@ export type PanelImage = { src: string; alt: string }
 const PROJECT_TITLE: Record<PlanetId, string> = {
   mint: 'Mint Apartments',
   plumm: 'Plumm',
-  idrive: 'iDrive Cars',
+  idrive: 'I DRIVE CARS',
   agentic: 'Agentic OS',
 }
 
