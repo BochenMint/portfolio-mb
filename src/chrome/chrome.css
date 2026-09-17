@@ -790,6 +790,102 @@
     filter: drop-shadow(0 40px 80px rgba(20, 24, 30, 0.35));
   }
 
+  /* --- Chrome hero stage --------------------------------------- */
+  .chrome-hero-stage {
+    display: grid;
+    align-items: center;
+    gap: 1.2rem;
+    grid-template-areas:
+      'intro'
+      'object'
+      'actions';
+    z-index: 1;
+  }
+  .chrome-hero-intro {
+    grid-area: intro;
+  }
+  .chrome-hero-object {
+    grid-area: object;
+  }
+  .chrome-hero-actions {
+    grid-area: actions;
+  }
+  .chrome-hero-horizon {
+    top: 58%;
+  }
+  .chrome-hero-object__bloom {
+    background: radial-gradient(
+      circle at 50% 45%,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0.03) 40%,
+      transparent 65%
+    );
+  }
+
+  /* Graphite dusk: slow warm/cool veils on dark only. Light theme keeps
+     the studio wash from `.studio-bg` — a second pigment layer there reads
+     as a stain on the paper, not atmosphere. */
+  .chrome-hero-ambient {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .chrome-hero-ambient__shift {
+    position: absolute;
+    inset: -22%;
+    background:
+      radial-gradient(ellipse 48% 38% at 72% 28%, rgba(196, 148, 92, 0.14), transparent 58%),
+      radial-gradient(ellipse 42% 48% at 18% 78%, rgba(88, 108, 138, 0.12), transparent 62%),
+      radial-gradient(ellipse 36% 32% at 82% 82%, rgba(168, 120, 96, 0.1), transparent 55%);
+    animation: chrome-ambient-drift 28s ease-in-out infinite alternate;
+  }
+  :root[data-theme='light'] .chrome-hero-ambient {
+    display: none;
+  }
+
+  @keyframes chrome-ambient-drift {
+    from {
+      transform: translate3d(-2.2%, -1.4%, 0) scale(1);
+    }
+    to {
+      transform: translate3d(2.8%, 2.2%, 0) scale(1.05);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .chrome-hero-horizon {
+      display: none;
+    }
+    .chrome-hero-object {
+      max-width: min(26rem, 100%);
+    }
+    .chrome-hero-object [data-hero-object] {
+      width: 100%;
+      height: min(200px, 26svh);
+      max-height: 200px;
+      aspect-ratio: unset;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .chrome-hero-stage {
+      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-areas:
+        'intro object'
+        'actions object';
+      column-gap: 2rem;
+      row-gap: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chrome-hero-ambient__shift {
+      animation: none;
+    }
+  }
+
   /* Film grain overlay removed 2026-09 (Marcin): read as pixelation on the
      dark background. `.grain` wrapper div in App.tsx is now a harmless
      no-op class kept for layout/animation-opacity hooks only. */

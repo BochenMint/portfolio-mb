@@ -10,19 +10,24 @@ export function Hero() {
   const meta = [site.responseTime, site.location, c.hero.projectsFromLabel(site.minBudget)]
 
   return (
-    <section className="studio-bg relative overflow-hidden px-5 pt-32 pb-16 md:px-10 md:pt-40 md:pb-24">
-      {/* Horizon hairline behind the object */}
-      <div aria-hidden className="hairline absolute top-[58%] right-0 left-0 opacity-40" />
+    <section className="studio-bg chrome-hero relative overflow-hidden px-5 pt-24 pb-16 md:px-10 md:pt-40 md:pb-24">
+      {/* CSS-only graphite dusk. Dark theme only — see chrome.css. */}
+      <div aria-hidden className="chrome-hero-ambient">
+        <div className="chrome-hero-ambient__shift" />
+      </div>
 
-      <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
-        <div className="relative z-10">
+      {/* Horizon hairline behind the object */}
+      <div aria-hidden className="hairline chrome-hero-horizon absolute right-0 left-0 opacity-40" />
+
+      <div className="chrome-hero-stage relative mx-auto w-full max-w-7xl">
+        <div className="chrome-hero-intro relative z-10">
           <p data-hero-fade className="eyebrow">
             {c.hero.eyebrow}
           </p>
 
           {/* 15ch, not 14: the closing line measures 641px against a 636px
               box at 14ch, so it used to break onto a fourth line by 5px. */}
-          <h1 className="mt-6 max-w-[15ch] text-[clamp(2.5rem,5.2vw,4.75rem)] leading-[1.02] font-bold tracking-[-0.035em]">
+          <h1 className="mt-5 max-w-[15ch] text-[clamp(2.5rem,5.2vw,4.75rem)] leading-[1.02] font-bold tracking-[-0.035em] md:mt-6">
             <LiquidChrome>
               <span data-hero-line className="chrome-text inline-block">
                 {c.hero.h1a} {c.hero.h1b}
@@ -32,16 +37,37 @@ export function Hero() {
               </span>
             </LiquidChrome>
           </h1>
+        </div>
 
+        {/* Chrome object. On desktop it reaches back over the gap and out past
+            the grid on the right, so the car spans the whole column rather
+            than the 0.85fr the text layout wants. On mobile it sits between
+            the headline and the lead so the signature is in the first screen,
+            not under the fold. */}
+        <div className="chrome-hero-object relative mx-auto w-full max-w-[560px] lg:-mt-10 lg:mr-[-16%] lg:-ml-56 lg:w-auto lg:max-w-none">
+          <div
+            aria-hidden
+            className="chrome-hero-object__bloom pointer-events-none absolute inset-[-20%] rounded-full opacity-60 blur-3xl"
+          />
+          <HeroObject />
+        </div>
+
+        <div className="chrome-hero-actions relative z-10">
           <p
             data-hero-fade
-            className="mt-8 max-w-xl text-base leading-relaxed text-silver-2 md:text-lg"
+            className="mt-0 max-w-xl text-base leading-relaxed text-silver-2 md:mt-8 md:text-lg"
           >
             {c.hero.lead}
           </p>
 
-          <div data-hero-fade className="mt-10 flex flex-wrap items-center gap-3">
-            <LinkButton href={ctaHref} external={!!site.calendly} size="lg" variant="accent">
+          <div data-hero-fade className="mt-6 flex flex-wrap items-center gap-3 md:mt-10">
+            <LinkButton
+              href={ctaHref}
+              external={!!site.calendly}
+              size="lg"
+              variant="accent"
+              data-hero-cta
+            >
               {c.hero.ctaPrimary}
               <Arrow />
             </LinkButton>
@@ -50,38 +76,13 @@ export function Hero() {
             </LinkButton>
           </div>
 
-          <ul data-hero-fade className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
+          <ul data-hero-fade className="mt-6 flex flex-wrap gap-x-6 gap-y-2 md:mt-8">
             {meta.map((m) => (
               <li key={m} className="font-mono text-[11px] tracking-[0.12em] text-muted uppercase">
                 {m}
               </li>
             ))}
           </ul>
-        </div>
-
-        {/* Chrome object. It reaches back over the gap and out past the grid
-            on the right, so the car spans the whole column rather than the
-            0.85fr the text layout wants: at 1440 that is ~760px of host
-            instead of 530, which is the difference between an object beside
-            the headline and a decoration under it. The overhang lands on the
-            headline's own right margin and on the horizon hairline, both of
-            which are empty there.
-
-            The camera no longer dollies as the car turns — it is fitted once
-            to the whole yaw sweep — so every pixel of host width is now a
-            pixel of car at the broadside angles, and the width is the only
-            lever left: the car uses barely a third of the host's height at any
-            angle, so making the box taller would buy nothing. */}
-        <div className="relative mx-auto w-full max-w-[560px] lg:-mt-10 lg:mr-[-16%] lg:-ml-56 lg:w-auto lg:max-w-none">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-[-20%] rounded-full opacity-60 blur-3xl"
-            style={{
-              background:
-                'radial-gradient(circle at 50% 45%, rgba(255,255,255,0.14), rgba(255,255,255,0.03) 40%, transparent 65%)',
-            }}
-          />
-          <HeroObject />
         </div>
       </div>
 

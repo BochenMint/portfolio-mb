@@ -9,8 +9,10 @@ type FormStatus = 'idle' | 'loading' | 'success' | 'mailto' | 'error'
 /** A form service that has not answered by now is not going to. */
 const REQUEST_TIMEOUT_MS = 15000
 
-const formEndpoint = import.meta.env.VITE_FORM_ENDPOINT || ''
 const formAccessKey = import.meta.env.VITE_FORM_ACCESS_KEY || ''
+const WEB3FORMS_SUBMIT = 'https://api.web3forms.com/submit'
+const formEndpoint =
+  import.meta.env.VITE_FORM_ENDPOINT || (formAccessKey ? WEB3FORMS_SUBMIT : '')
 
 function isWeb3Forms(endpoint: string) {
   return endpoint.includes('web3forms.com')
@@ -27,6 +29,20 @@ export function LeadForm() {
   const [status, setStatus] = useState<FormStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [mailtoHref, setMailtoHref] = useState('')
+  // Native `required` on an empty <select> is :invalid from first paint, and
+  // Chromium exposes that as combobox invalid=true in the a11y tree. Hold the
+  // invalid announcement until the visitor submits or leaves a required field.
+  const [invalidIds, setInvalidIds] = useState<Set<string>>(() => new Set())
+
+  const setFieldInvalid = (id: string, invalid: boolean) => {
+    setInvalidIds((prev) => {
+      if (prev.has(id) === invalid) return prev
+      const next = new Set(prev)
+      if (invalid) next.add(id)
+      else next.delete(id)
+      return next
+    })
+  }
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -126,7 +142,14 @@ export function LeadForm() {
 
   return (
     <ChromeCard tone="dark" className="p-6 md:p-8">
-      <form onSubmit={onSubmit} className="space-y-5">
+      <form
+        onSubmit={onSubmit}
+        onInvalid={(e) => {
+          const t = e.target
+          if (t instanceof HTMLSelectElement && t.name) setFieldInvalid(t.name, true)
+        }}
+        className="space-y-5"
+      >
         <div>
           <p className="font-display text-lg font-semibold text-white">{c.form.title}</p>
           <p className="mt-1 text-sm text-silver-2">{c.form.subtitle(site.responseTime)}</p>
@@ -137,7 +160,19 @@ export function LeadForm() {
             <label key={field.id} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
               <span className="eyebrow mb-2 block">{field.label}</span>
               {field.type === 'select' ? (
-                <select name={field.id} required={field.required} disabled={status === 'loading'} className="field">
+                <select
+                  name={field.id}
+                  required={field.required}
+                  disabled={status === 'loading'}
+                  className="field"
+                  aria-invalid={invalidIds.has(field.id)}
+                  onBlur={(e) => {
+                    if (field.required) setFieldInvalid(field.id, !e.currentTarget.value)
+                  }}
+                  onChange={(e) => {
+                    if (e.currentTarget.value) setFieldInvalid(field.id, false)
+                  }}
+                >
                   <option value="">{c.form.selectPlaceholder}</option>
                   {field.options?.map((o) => (
                     <option key={o} value={o}>

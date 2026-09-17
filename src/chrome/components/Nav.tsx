@@ -80,6 +80,9 @@ export function Nav() {
   const ctaHref = site.calendly || '#kontakt'
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  // Mobile: hide the nav CTA while the in-flow hero CTA is on screen, so the
+  // two red "Umów audyt" pills do not stack or collide under the sticky bar.
+  const [heroCtaInView, setHeroCtaInView] = useState(true)
 
   // The scrolled bar is 256px narrower, which slides every control on its
   // right edge ~128px sideways — more than three times the width of the
@@ -134,6 +137,25 @@ export function Nav() {
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
+  useEffect(() => {
+    const el = document.querySelector('[data-hero-cta]')
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry) setHeroCtaInView(entry.isIntersecting)
+      },
+      {
+        threshold: 0,
+        // The sticky bar occupies the top ~72px; once the in-flow CTA is only
+        // under that bar it has left the usable viewport and the nav CTA may
+        // take over.
+        rootMargin: '-72px 0px 0px 0px',
+      },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
   return (
     <header
       className="fixed top-0 right-0 left-0 z-50 px-4 pt-4 md:px-8 md:pt-5"
@@ -171,9 +193,11 @@ export function Nav() {
           <div className="max-sm:hidden">
             <LangSwitch />
           </div>
-          <LinkButton href={ctaHref} external={!!site.calendly} size="sm" magnetic={false} variant="accent">
-            {c.navCta}
-          </LinkButton>
+          <div className={heroCtaInView && !open ? 'max-lg:hidden' : undefined}>
+            <LinkButton href={ctaHref} external={!!site.calendly} size="sm" magnetic={false} variant="accent">
+              {c.navCta}
+            </LinkButton>
+          </div>
           <button
             type="button"
             aria-label={open ? c.navAria.closeMenu : c.navAria.openMenu}
