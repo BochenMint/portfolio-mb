@@ -167,6 +167,7 @@ RewriteRule ^(en|ua)/(v[1-6]\.html)$ /$2 [L]
   AddType image/avif .avif
   AddType font/woff2 .woff2
   AddType model/gltf-binary .glb
+  AddType application/wasm .wasm
   AddType video/mp4 .mp4
   AddType video/webm .webm
 </IfModule>
@@ -232,6 +233,10 @@ RewriteRule ^(en|ua)/(v[1-6]\.html)$ /$2 [L]
   #     per-build hash list is maintained for this repo (unlike Mint's
   #     Astro build), so 'unsafe-inline' stays rather than risk silently
   #     blocking a script after every content edit.
+  #   - script-src 'wasm-unsafe-eval': Draco's decoder (hero + exploded F1)
+  #     compiles /draco/draco_decoder.wasm via WebAssembly.instantiate.
+  #     Without this token Chrome treats that as eval and the car never
+  #     leaves the poster. Narrower than 'unsafe-eval'; do not drop it.
   #   - font-src/style-src allow Google Fonts (self-hosted fonts also
   #     covered by 'self' via font-src).
   #   - connect-src covers Web3Forms (contact form) and Cal.com/Calendly
@@ -240,7 +245,7 @@ RewriteRule ^(en|ua)/(v[1-6]\.html)$ /$2 [L]
   #   - img-src/media-src allow data:/blob: (generated textures, canvases)
   #     alongside 'self'.
   #   - worker-src 'self' blob: for three.js / postprocessing workers.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://api.web3forms.com https://cal.com https://*.cal.com https://calendly.com https://*.calendly.com; frame-src 'self' https://cal.com https://*.cal.com https://calendly.com https://*.calendly.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com;"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://api.web3forms.com https://cal.com https://*.cal.com https://calendly.com https://*.calendly.com; frame-src 'self' https://cal.com https://*.cal.com https://calendly.com https://*.calendly.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com;"
 </IfModule>
 
 # ============================================================

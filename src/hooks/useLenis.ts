@@ -5,15 +5,17 @@ import { gsap, ScrollTrigger } from '../animation/gsap'
 export function useLenis() {
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduced) return
-
+    // Touch / narrow viewports keep native scroll. Lenis + a GSAP pin together
+    // is what yanked the live phone page: scrollerProxy writes scrollTop
+    // through Lenis while the pin snaps the stage to position:fixed.
+    const coarse = window.matchMedia('(pointer: coarse)').matches
     const mobile = window.matchMedia('(max-width: 767px)').matches
+    if (reduced || coarse || mobile) return
 
     const lenis = new Lenis({
-      duration: mobile ? 0.85 : 1.12,
+      duration: 1.12,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: !mobile,
-      lerp: mobile ? 1 : undefined,
+      smoothWheel: true,
       // Anchor clicks go through Lenis instead of the browser's own smooth
       // scroll, so the two never fight over the target. Lenis honours the
       // section's scroll-margin-top, which keeps the fixed nav off headings.

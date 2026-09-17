@@ -9,10 +9,17 @@
    saw flickering was one of those two things changing under the cursor. */
 
 .uh-stage {
-  height: 100svh;
-  min-height: 620px;
+  height: auto;
+  min-height: 0;
   display: flex;
   align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .uh-stage {
+    height: 100svh;
+    min-height: 620px;
+  }
 }
 
 .uh-canvas {
@@ -432,10 +439,13 @@
   }
 }
 
-/* The pinned stage must never spill its column into the content that follows
-   it (Marcin saw the CTA overlapping the rail on a short viewport). */
-.uh-stage {
-  overflow: hidden;
+/* Desktop pin: clip the stage so the rail cannot paint over the next section.
+   Mobile is not pinned — overflow must stay visible or the copy is trapped
+   inside 100svh and the only way out is the pin, which is the jump. */
+@media (min-width: 1024px) {
+  .uh-stage {
+    overflow: hidden;
+  }
 }
 @media (min-width: 1024px) and (max-height: 820px) {
   .uh-item {

@@ -124,9 +124,10 @@ export function UnderHood() {
       sceneRef.current = handle
       handle.onHover(setHovered)
       handle.onSelect((id) => setActive((prev) => (prev === id ? null : id)))
-      // The pin may already have scrolled past its start before the model
-      // finished decoding.
-      ScrollTrigger.refresh()
+      // Apply wherever the pin already is. A full ScrollTrigger.refresh()
+      // here rebuilt pin spacers and jumped scrollY on phones.
+      const st = triggerRef.current
+      if (st) handle.setProgress(st.progress)
       if (DEBUG) {
         ;(window as unknown as { __underhood?: unknown }).__underhood = {
           ready: true,
@@ -173,15 +174,19 @@ export function UnderHood() {
         const per = desktop ? CHAPTER_VH.desktop : CHAPTER_VH.mobile
         const st = ScrollTrigger.create({
           trigger: section,
-          start: 'top top',
-          // One viewport-ish stretch per chapter, in pixels rather than a
-          // percentage so the number means the same thing at every aspect.
-          // `invalidateOnRefresh` re-runs this on resize.
-          end: () => `+=${Math.round(total * per * window.innerHeight)}`,
-          pin: stage,
-          pinSpacing: true,
-          scrub: 0.6,
-          invalidateOnRefresh: true,
+          start: desktop ? 'top top' : 'top 72px',
+          // Desktop pins the stage and stretches one viewport-ish slice per
+          // chapter. Mobile must not pin: on the live phone the stage jumping
+          // to position:fixed produced a CLS of 1.0 and the page yanked up.
+          // The section's own height (auto, not 100svh) is the scroll runway;
+          // sticky canvas keeps the car in view while the copy moves.
+          end: desktop
+            ? () => `+=${Math.round(total * per * window.innerHeight)}`
+            : 'bottom top',
+          pin: desktop ? stage : false,
+          pinSpacing: desktop,
+          scrub: desktop ? 0.6 : true,
+          invalidateOnRefresh: desktop,
           onUpdate: (self) => {
             sceneRef.current?.setProgress(self.progress)
             setAuto(partAtProgress(self.progress))
@@ -387,7 +392,7 @@ export function UnderHood() {
               chapter, and on the desktop grid it is placed into column 6. */}
           <div
             ref={canvasHostRef}
-            className="uh-canvas-host relative h-[40svh] w-full min-w-0 lg:col-span-7 lg:col-start-6 lg:h-full"
+            className="uh-canvas-host sticky top-[72px] z-[1] h-[40svh] w-full min-w-0 bg-[var(--bg)] lg:static lg:top-auto lg:z-auto lg:col-span-7 lg:col-start-6 lg:h-full lg:bg-transparent"
           >
             <canvas ref={canvasRef} className="uh-canvas" aria-hidden />
           </div>
