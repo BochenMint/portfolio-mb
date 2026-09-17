@@ -51,7 +51,7 @@ export default {
       ),
       section(
         'Przykład, który da się kliknąć: rezerwacja zamiast teorii',
-        p('[Mint Apartments](https://mintapartments.pl) jest lejkiem operacyjnym, nie artykułem o awareness. Gość widzi termin i cenę na żywo, płaci na domenie operatora, dostaje kod do zamka. Szacunek: 10–15% taniej niż na portalu*. To nie jest case „wzrost CR o 347%”. To URL i mechanika. iDrive nie jest live — nie używam go jako dowodu.'),
+        p('[Mint Apartments](https://mintapartments.pl) jest lejkiem operacyjnym, nie artykułem o awareness. Gość widzi termin i cenę na żywo, płaci na domenie operatora, dostaje kod do zamka. Szacunek: 10–15% taniej niż na portalu*. To nie jest case „wzrost CR o 347%”. To URL i mechanika. I DRIVE CARS nie jest live — nie używam go jako dowodu.'),
         note('*Szacunki orientacyjne, zależą od wolumenu i sezonu. Na audycie liczę Twój kanał, nie średnią z bloga o lejkach.'),
         p('Gdybyśmy zostawili ładną stronę noclegową bez kalendarza, lejek kończyłby się na Booking.com. Dlatego lejek konwersji na stronie bywa tożsamy z decyzją produktową: czy transakcja ma prawo wydarzyć się u Ciebie.'),
       ),
@@ -121,7 +121,7 @@ export default {
       ),
       section(
         'A clickable example: booking instead of theory',
-        p('[Mint Apartments](https://mintapartments.pl) is an operational funnel, not an awareness essay. The guest sees a live date and price, pays on the operator’s domain, gets a lock code. Estimate: 10–15% cheaper than the portal*. This is not a “+347% CR” case. It is a URL and a mechanic. iDrive is not live — I do not use it as proof.'),
+        p('[Mint Apartments](https://mintapartments.pl) is an operational funnel, not an awareness essay. The guest sees a live date and price, pays on the operator’s domain, gets a lock code. Estimate: 10–15% cheaper than the portal*. This is not a “+347% CR” case. It is a URL and a mechanic. I DRIVE CARS is not live — I do not use it as proof.'),
         note('*Directional estimates, volume and season apply. In the audit I count your channel, not a funnel-blog average.'),
         p('A pretty lodging site without a calendar would end the funnel on Booking.com. So a conversion funnel on the site is often a product decision: whether the transaction is allowed to happen with you.'),
       ),
@@ -191,7 +191,7 @@ export default {
       ),
       section(
         'Приклад, який можна клікнути: бронювання замість теорії',
-        p('[Mint Apartments](https://mintapartments.pl) — операційна воронка, не текст про awareness. Гість бачить дату й ціну наживо, платить на домені оператора, отримує код до замка. Оцінка: на 10–15% дешевше, ніж на порталі*. Це не кейс «+347% CR». Це URL і механіка. iDrive не в продакшені — не використовую його як доказ.'),
+        p('[Mint Apartments](https://mintapartments.pl) — операційна воронка, не текст про awareness. Гість бачить дату й ціну наживо, платить на домені оператора, отримує код до замка. Оцінка: на 10–15% дешевше, ніж на порталі*. Це не кейс «+347% CR». Це URL і механіка. I DRIVE CARS не в продакшені — не використовую його як доказ.'),
         note('*Орієнтовні оцінки, залежать від обсягу й сезону. На аудиті рахую ваш канал, не середнє з блогу про воронки.'),
         p('Гарний сайт ночівлі без календаря закінчив би воронку на Booking.com. Тому воронка конверсії на сайті часто тотожна продуктовому рішенню: чи транзакція має право статися у вас.'),
       ),

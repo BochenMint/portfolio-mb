@@ -87,7 +87,7 @@ export const projectsUa: Project[] = [
   },
   {
     id: 'idrive',
-    title: 'iDrive Cars',
+    title: 'I DRIVE CARS',
     domain: 'idrivecars.pl',
     url: '#',
     tagline: 'Автомобільна журналістика · тести авто · галереї',

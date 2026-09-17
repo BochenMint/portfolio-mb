@@ -19,7 +19,7 @@ export const expandClose = {
     section(
       'Як призначаємо спринт, щоб не змарнувати тиждень',
       p('Audit Sprint не стартує з «надішліть доступ до всього». Спочатку 20 хвилин: чи взагалі є про що говорити. Якщо так, списую, які доступи потрібні і в якому вікні. Аналітика, записи, скринька — без цього мапа буде ввічлива і марна. Не розтягую kick-off на три статус-мітинги. Один вхід, один документ, рішення. Якщо посередині немає власника з вашого боку, зупиняю годинник. Краще перервати, ніж виставити рахунок за PDF, який помре в Drive.'),
-      p('Після спринту немає «а може ще раз проженемо hero». Є 30/60/90 або стоп. Якщо йдемо у впровадження, зарахування суми є в угоді, не в обіцянці на дзвінку. Якщо ні — лишаєтесь із мапою. Це єдиний аудит сайту, який хочу продавати: такий, після якого хтось може сказати ні. Решта ринку продає чеклісти, які завжди кінчаються «треба більше SEO». Живий доказ, який клікаємо разом, — Mint Apartments і Plumm. iDrive не live. Agentic внутрішній. Аудит не стоїть на чужих кейсах з LinkedIn.'),
+      p('Після спринту немає «а може ще раз проженемо hero». Є 30/60/90 або стоп. Якщо йдемо у впровадження, зарахування суми є в угоді, не в обіцянці на дзвінку. Якщо ні — лишаєтесь із мапою. Це єдиний аудит сайту, який хочу продавати: такий, після якого хтось може сказати ні. Решта ринку продає чеклісти, які завжди кінчаються «треба більше SEO». Живий доказ, який клікаємо разом, — Mint Apartments і Plumm. I DRIVE CARS не live. Agentic внутрішній. Аудит не стоїть на чужих кейсах з LinkedIn.'),
     ),
   ),
   'automatyzacja-z-kontrola-czlowieka': S(
@@ -206,15 +206,15 @@ export const expandClose = {
   'wdrozyc-chatgpt-w-firmie': S(
     section(
       'Seat bez kontraktu zostawcie. Wdrożenie zaczyna się od logu',
-      p('Jedna osoba, jeden proces, tydzień liczb: przyjęte, odrzucone, wyszłe na zewnątrz. Bez tego Team jest tańszy niż pozory. Nie wpinam modelu w formularz strony firmowej w cenie wizytówki. HITL jest osobnym zakresem. Agentic nie jest Waszym URL-em. iDrive nie jest live. Mint i Plumm nie udają, że AI prowadzi operację. Jeśli 20 minut kończy się „nie wpinajcie”, nie sprzedaję winy. Wdrożyć ChatGPT w firmie to spisać, czego modelowi nie wolno — nie kupić kolejnego miejsca i wkleić regulamin do Notion.'),
+      p('Jedna osoba, jeden proces, tydzień liczb: przyjęte, odrzucone, wyszłe na zewnątrz. Bez tego Team jest tańszy niż pozory. Nie wpinam modelu w formularz strony firmowej w cenie wizytówki. HITL jest osobnym zakresem. Agentic nie jest Waszym URL-em. I DRIVE CARS nie jest live. Mint i Plumm nie udają, że AI prowadzi operację. Jeśli 20 minut kończy się „nie wpinajcie”, nie sprzedaję winy. Wdrożyć ChatGPT w firmie to spisać, czego modelowi nie wolno — nie kupić kolejnego miejsca i wkleić regulamin do Notion.'),
     ),
     section(
       'Leave the seat without a contract. A rollout starts with a log',
-      p('One person, one process, a week of numbers: accepted, rejected, sent outside. Without that, Team is cheaper than appearances. I do not wire a model into a company-site form at brochure price. HITL is a separate scope. Agentic is not your URL. iDrive is not live. Mint and Plumm do not pretend AI runs operations. If 20 minutes end as “do not wire it”, I do not sell guilt. Implementing ChatGPT at work is writing down what the model must not do — not buying another seat and pasting a policy into Notion.'),
+      p('One person, one process, a week of numbers: accepted, rejected, sent outside. Without that, Team is cheaper than appearances. I do not wire a model into a company-site form at brochure price. HITL is a separate scope. Agentic is not your URL. I DRIVE CARS is not live. Mint and Plumm do not pretend AI runs operations. If 20 minutes end as “do not wire it”, I do not sell guilt. Implementing ChatGPT at work is writing down what the model must not do — not buying another seat and pasting a policy into Notion.'),
     ),
     section(
       'Місце без контракту лишіть. Впровадження починається з логу',
-      p('Одна людина, один процес, тиждень цифр: прийняті, відхилені, вийшли назовні. Без цього Team дешевший за видимість. Не врізаю модель у форму корпоративного сайту в ціні візитівки. HITL — окремий обсяг. Agentic не ваш URL. iDrive не live. Mint і Plumm не вдають, що ШІ веде операцію. Якщо 20 хвилин кінчаються «не врізайте», не продаю провину. Впровадити ChatGPT у фірмі — списати, чого моделі не можна — не купити ще одне місце і вставити регламент у Notion.'),
+      p('Одна людина, один процес, тиждень цифр: прийняті, відхилені, вийшли назовні. Без цього Team дешевший за видимість. Не врізаю модель у форму корпоративного сайту в ціні візитівки. HITL — окремий обсяг. Agentic не ваш URL. I DRIVE CARS не live. Mint і Plumm не вдають, що ШІ веде операцію. Якщо 20 хвилин кінчаються «не врізайте», не продаю провину. Впровадити ChatGPT у фірмі — списати, чого моделі не можна — не купити ще одне місце і вставити регламент у Notion.'),
     ),
   ),
 }

@@ -60,7 +60,7 @@ export const site = {
   role: 'PropTech · FinTech · AI ops',
   icpBadge: 'Strony od 2 000 PLN · systemy od 8 000 PLN',
   headline: ['4 produkcyjne systemy.', 'Jeden standard jakości.'],
-  headlineAccent: 'Mint · Plumm · iDrive · Agentic OS',
+  headlineAccent: 'Mint · Plumm · I DRIVE CARS · Agentic OS',
   subhead:
     'Buduję strony, platformy rezerwacji i automatyzacje z AI — dla właścicieli firm, którzy chcą mniej ręcznej pracy i więcej marży. Astro, React, integracje API, audytowalne agenty.',
   ctaPrimary: 'Umów 20-min audyt (bezpłatnie)',
@@ -142,7 +142,7 @@ export const projects: Project[] = [
   },
   {
     id: 'idrive',
-    title: 'iDrive Cars',
+    title: 'I DRIVE CARS',
     domain: 'idrivecars.pl',
     url: '#',
     tagline: 'Dziennikarstwo motoryzacyjne · testy aut · galerie',

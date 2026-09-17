@@ -179,7 +179,7 @@ const en: StudioChrome = {
   proofTitle: 'The result has to be countable',
   proofLead: 'Figures below are directional. The real baseline comes from your numbers on the audit.',
   workLead:
-    'Mint Apartments and Plumm are live. iDrive is waiting to launch; Agentic OS is an internal tool.',
+    'Mint Apartments and Plumm are live. I DRIVE CARS is waiting to launch; Agentic OS is an internal tool.',
   offerTitle: 'Scope of work',
   packagesTitle: 'Packages and entry point',
   trustTitle: 'How we work',
@@ -298,7 +298,7 @@ const uk: StudioChrome = {
   proofTitle: 'Результат має піддаватися підрахунку',
   proofLead: 'Нижче — орієнтири. Реальну базу рахую з цифр вашої компанії на аудиті.',
   workLead:
-    'У відкритому доступі працюють Mint Apartments і Plumm. iDrive чекає на запуск, Agentic OS — внутрішній інструмент.',
+    'У відкритому доступі працюють Mint Apartments і Plumm. I DRIVE CARS чекає на запуск, Agentic OS — внутрішній інструмент.',
   offerTitle: 'Обсяг робіт',
   packagesTitle: 'Пакети та поріг входу',
   trustTitle: 'Умови співпраці',

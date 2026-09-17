@@ -8,7 +8,7 @@ export const studioCopy = {
   proofLead:
     'Poniższe wartości są orientacyjne. Właściwy punkt odniesienia ustalam na podstawie danych firmy.',
   workLead:
-    'Publicznie działają Mint Apartments i Plumm. iDrive czeka na uruchomienie, a Agentic OS jest narzędziem wewnętrznym.',
+    'Publicznie działają Mint Apartments i Plumm. I DRIVE CARS czeka na uruchomienie, a Agentic OS jest narzędziem wewnętrznym.',
   offerTitle: 'Zakres prac',
   packagesTitle: 'Pakiety i próg wejścia',
   trustTitle: 'Warunki współpracy',

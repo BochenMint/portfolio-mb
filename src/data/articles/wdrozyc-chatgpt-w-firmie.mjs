@@ -37,7 +37,7 @@ export default {
       section(
         'Co wdrażam zamiast widgetu na wizytówce',
         p('Na [stronie firmowej](/artykuly/strona-firmowa-b2b/) czat AI jest zwykle złym CTA: zgaduje, nie zbiera kwalifikacji, nie zostawia SLA. Najpierw formularz i człowiek. Asystenta dokładam, gdy jest kontekst (apartament, faktura, status zlecenia) i lista rzeczy, których modelowi nie wolno zrobić: nie nadać zniżki, nie obiecać terminu urzędowego, nie otworzyć zamka bez reguły.'),
-        p('W Mint asystent gościa ma kontekst lokalu i eskalację. W Plumm asystent podatkowy oddaje trudne sprawy księgowej. Agentic OS jest narzędziem wewnętrznym — nie case’em „u klienta z ulicy”. Nie opowiadam o iDrive jako live.'),
+        p('W Mint asystent gościa ma kontekst lokalu i eskalację. W Plumm asystent podatkowy oddaje trudne sprawy księgowej. Agentic OS jest narzędziem wewnętrznym — nie case’em „u klienta z ulicy”. Nie opowiadam o I DRIVE CARS jako live.'),
       ),
       section(
         'HITL w jednym zdaniu i w checklistie',
@@ -96,7 +96,7 @@ export default {
       section(
         'What I ship instead of a widget on a brochure',
         p('On a [company website](/artykuly/strona-firmowa-b2b/) an AI chat is usually a bad CTA: it guesses, it does not qualify, it leaves no SLA. Form and human first. I add an assistant when there is context (apartment, invoice, job status) and a list of things the model must not do: no discount, no official deadline promise, no lock open without a rule.'),
-        p('At Mint the guest assistant has listing context and escalation. At Plumm the tax assistant hands hard cases to a bookkeeper. Agentic OS is internal — not a “street client” case. I do not present iDrive as live.'),
+        p('At Mint the guest assistant has listing context and escalation. At Plumm the tax assistant hands hard cases to a bookkeeper. Agentic OS is internal — not a “street client” case. I do not present I DRIVE CARS as live.'),
       ),
       section(
         'HITL in one sentence and a checklist',
@@ -155,7 +155,7 @@ export default {
       section(
         'Що впроваджую замість віджета на візитівці',
         p('На [корпоративному сайті](/artykuly/strona-firmowa-b2b/) чат ШІ зазвичай погане CTA: вгадує, не кваліфікує, не лишає SLA. Спочатку форма й людина. Асистента додаю, коли є контекст (апартаменти, рахунок, статус замовлення) і список речей, яких моделі не можна: не давати знижку, не обіцяти термін установи, не відкривати замок без правила.'),
-        p('У Mint асистент гостя має контекст локації й ескалацію. У Plumm податковий асистент віддає складні справи бухгалтерці. Agentic OS — внутрішній інструмент, не кейс «клієнта з вулиці». Не розповідаю про iDrive як live.'),
+        p('У Mint асистент гостя має контекст локації й ескалацію. У Plumm податковий асистент віддає складні справи бухгалтерці. Agentic OS — внутрішній інструмент, не кейс «клієнта з вулиці». Не розповідаю про I DRIVE CARS як live.'),
       ),
       section(
         'HITL одним реченням і в чеклісті',

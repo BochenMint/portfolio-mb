@@ -100,7 +100,7 @@ export const galleryManifest: GalleryEntry[] = [
     height: 1500,
     page: '',
     caption:
-      'Strona główna iDrive Cars — editorial layout, sekcje testów i felietonów, szybkie ładowanie bez WordPressa.',
+      'Strona główna I DRIVE CARS — editorial layout, sekcje testów i felietonów, szybkie ładowanie bez WordPressa.',
   },
   {
     project: 'idrive',

@@ -36,7 +36,7 @@ export default {
       section(
         'Gdzie to już siedzi w żywych produktach',
         p('Mint: asystent gościa z kontekstem apartamentu, nie generyczny GPT, i przekazanie człowiekowi. Plumm: pytanie podatkowe po polsku, trudniejsze sprawy do księgowej. Szacunki godzin są orientacyjne i opisane przy tych produktach — nie przenoszę ich na Twoją firmę jako gwarancji.'),
-        note('iDrive nie jest live. Agentic nie jest produktem dla Ciebie z URL-em. Zero fałszywych wdrożeń „u dwudziestu korporacji”.'),
+        note('I DRIVE CARS nie jest live. Agentic nie jest produktem dla Ciebie z URL-em. Zero fałszywych wdrożeń „u dwudziestu korporacji”.'),
       ),
       section(
         'Kiedy HITL jest overkill',
@@ -87,7 +87,7 @@ export default {
       section(
         'Where this already sits in live products',
         p('Mint: a guest assistant with apartment context, not generic GPT, and a hand-off to a human. Plumm: a tax question in Polish, harder cases to a bookkeeper. Hour estimates are directional and described on those products — I do not transfer them onto your firm as a guarantee.'),
-        note('iDrive is not live. Agentic is not a product for you with a URL. No fake rollouts “at twenty corporations”.'),
+        note('I DRIVE CARS is not live. Agentic is not a product for you with a URL. No fake rollouts “at twenty corporations”.'),
       ),
       section(
         'When HITL is overkill',
@@ -138,7 +138,7 @@ export default {
       section(
         'Де це вже сидить у живих продуктах',
         p('Mint: асистент гостя з контекстом апартаментів, не генеричний GPT, і передача людині. Plumm: податкове питання польською, складніші справи — бухгалтерці. Оцінки годин орієнтовні й описані при цих продуктах — не переношу їх на вашу фірму як гарантію.'),
-        note('iDrive не live. Agentic не продукт для вас з URL. Нуль фальшивих впроваджень «у двадцяти корпораціях».'),
+        note('I DRIVE CARS не live. Agentic не продукт для вас з URL. Нуль фальшивих впроваджень «у двадцяти корпораціях».'),
       ),
       section(
         'Коли HITL — overkill',

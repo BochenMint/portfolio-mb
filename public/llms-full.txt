@@ -16,7 +16,7 @@ The 20-minute audit that opens every engagement is free; there is no separate pa
 - Mint Apartments (https://mintapartments.pl): operator of 36 apartments in Gdańsk since 2017. Direct booking on the own site (Previo), guest assistant (WhatsApp, 7 languages), Tedee/Nuki locks, settlements into Plumm. Directional outcomes discussed on the audit: 8–15 hours/month less on guest mail/WhatsApp; guest pays 10–15% less than Booking/Airbnb.
 - Plumm (https://plumm.pl): company panel with bookkeeping, e-invoices, CRM, mail, and a tax assistant. Directional: 12–20 hours/month less on invoices and filings vs Excel; 300–600 PLN/month less than a traditional office for a JDG; Plumm from 149 PLN/month.
 
-Not live: iDrive Cars (built, waiting for public launch). Internal: Agentic OS (repeatable processes with a step audit, no public URL).
+Not live: I DRIVE CARS (built, waiting for public launch). Internal: Agentic OS (repeatable processes with a step audit, no public URL).
 
 ## How HITL is defined here
 Human-in-the-loop automation is not “a human clicks OK under every token.” It is a list of allowed actions, a durable log of each step, and escalation when confidence drops or the case is out of policy. Unsupervised chat is not offered as a production system.

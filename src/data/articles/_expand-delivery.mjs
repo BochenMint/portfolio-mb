@@ -30,7 +30,7 @@ export const expandDelivery = {
           'Fałszywego benchmarku „strony konkurencji konwertują 4,2%”. Nie mam ich CRM-u. Nie zgaduję.',
           'Obietnicy, że po sprincie „na pewno wdrażamy”. Część sprintów kończy się stopem. To sukces, jeśli stop oszczędza 40 tysięcy.',
         ]),
-        note('Live proof, który mogę kliknąć razem z Tobą, to Mint Apartments i Plumm. iDrive nie jest live. Agentic jest wewnętrzne. Audyt nie polega na pokazywaniu cudzych case’ów z LinkedIn.'),
+        note('Live proof, który mogę kliknąć razem z Tobą, to Mint Apartments i Plumm. I DRIVE CARS nie jest live. Agentic jest wewnętrzne. Audyt nie polega na pokazywaniu cudzych case’ów z LinkedIn.'),
       ),
       section(
         'Kiedy sprint jest złym zakupem',
@@ -64,7 +64,7 @@ export const expandDelivery = {
           'A fake benchmark that “competitors convert at 4.2%”. I do not have their CRM. I do not guess.',
           'A promise that after the sprint “we definitely build”. Some sprints end in a stop. That is a win if the stop saves forty thousand.',
         ]),
-        note('Live proof I can click with you is Mint Apartments and Plumm. iDrive is not live. Agentic is internal. An audit is not a parade of other people’s LinkedIn case studies.'),
+        note('Live proof I can click with you is Mint Apartments and Plumm. I DRIVE CARS is not live. Agentic is internal. An audit is not a parade of other people’s LinkedIn case studies.'),
       ),
       section(
         'When the sprint is a bad purchase',
@@ -98,7 +98,7 @@ export const expandDelivery = {
           'Фальшивого бенчмарку «конкуренти конвертять 4,2%». Не маю їхнього CRM. Не здогадуюсь.',
           'Обіцянки, що після спринту «точно впроваджуємо». Частина спринтів закінчується стопом. Це успіх, якщо стоп рятує сорок тисяч.',
         ]),
-        note('Живий доказ, який можу клікнути разом із вами — Mint Apartments і Plumm. iDrive не live. Agentic внутрішній. Аудит — не парад чужих кейсів із LinkedIn.'),
+        note('Живий доказ, який можу клікнути разом із вами — Mint Apartments і Plumm. I DRIVE CARS не live. Agentic внутрішній. Аудит — не парад чужих кейсів із LinkedIn.'),
       ),
       section(
         'Коли спринт — погана покупка',
@@ -212,7 +212,7 @@ export const expandDelivery = {
     pl: [
       section(
         'Co naprawdę mierzę po deploju, a czego nie wklejam na slajd',
-        p('Szybkość strony a SEO to nie wyścig Lighthouse na localhostcie z kablem. Po starcie otwieram stronę na telefonie, na sieci, której nie kontroluję, i patrzę na LCP oraz INP. Lab z CrUX, gdy ruch w ogóle istnieje. Jeśli ruchu nie ma, lab jest hipotezą — nie certyfikatem. Nie publikuję tu fałszywego „PageSpeed 98 na Mint”. Mint i Plumm możesz zmierzyć sam. iDrive nie jest live, więc nie ma czego chwalić na produkcji.'),
+        p('Szybkość strony a SEO to nie wyścig Lighthouse na localhostcie z kablem. Po starcie otwieram stronę na telefonie, na sieci, której nie kontroluję, i patrzę na LCP oraz INP. Lab z CrUX, gdy ruch w ogóle istnieje. Jeśli ruchu nie ma, lab jest hipotezą — nie certyfikatem. Nie publikuję tu fałszywego „PageSpeed 98 na Mint”. Mint i Plumm możesz zmierzyć sam. I DRIVE CARS nie jest live, więc nie ma czego chwalić na produkcji.'),
         p('FID wypadł z Core Web Vitals. Agencja, która w 2026 raportuje FID jako sukces, audytuje wspomnienia. INP opisuje, jak strona reaguje na klik i pisanie. Ciężki JS, hydracja całego SPA, czat wklejony w hero — to zabójcy INP. Dlatego wizytówki stawiam na lekkim stacku. Gra i hangar 3D są osobnymi wejściami, nie obowiązkowym bagażem strony firmowej.'),
         ul([
           'LCP: hero nie może być dekoracją 4 MB „bo ładnie w portfolio”.',
@@ -245,7 +245,7 @@ export const expandDelivery = {
     en: [
       section(
         'What I actually measure after deploy, and what I refuse to slide-deck',
-        p('Website speed and SEO is not a Lighthouse race on localhost with a cable. After launch I open the site on a phone, on a network I do not control, and I look at LCP and INP. CrUX when traffic exists at all. If there is no traffic, lab is a hypothesis — not a certificate. I do not publish a fake “PageSpeed 98 on Mint”. You can measure Mint and Plumm yourself. iDrive is not live, so there is nothing to boast about in production.'),
+        p('Website speed and SEO is not a Lighthouse race on localhost with a cable. After launch I open the site on a phone, on a network I do not control, and I look at LCP and INP. CrUX when traffic exists at all. If there is no traffic, lab is a hypothesis — not a certificate. I do not publish a fake “PageSpeed 98 on Mint”. You can measure Mint and Plumm yourself. I DRIVE CARS is not live, so there is nothing to boast about in production.'),
         p('FID left Core Web Vitals. An agency that in 2026 reports FID as success is auditing memories. INP describes how the page reacts to a click and to typing. Heavy JS, hydrating a whole SPA, a chat pasted into the hero — those kill INP. That is why brochure sites sit on a light stack. The 3D hangar and the game are separate entries, not mandatory luggage on a company site.'),
         ul([
           'LCP: the hero must not be a 4 MB decoration “because it looks good in a portfolio”.',
@@ -278,7 +278,7 @@ export const expandDelivery = {
     uk: [
       section(
         'Що насправді міряю після деплою, а чого не кладу на слайд',
-        p('Швидкість сайту і SEO — не гонка Lighthouse на localhost з кабелем. Після старту відкриваю сайт на телефоні, в мережі, яку не контролюю, і дивлюсь LCP та INP. CrUX, коли трафік узагалі є. Якщо трафіку немає, lab — гіпотеза, не сертифікат. Не публікую тут фальшиве «PageSpeed 98 на Mint». Mint і Plumm можете виміряти самі. iDrive не live, тож хвалити продакшен немає чим.'),
+        p('Швидкість сайту і SEO — не гонка Lighthouse на localhost з кабелем. Після старту відкриваю сайт на телефоні, в мережі, яку не контролюю, і дивлюсь LCP та INP. CrUX, коли трафік узагалі є. Якщо трафіку немає, lab — гіпотеза, не сертифікат. Не публікую тут фальшиве «PageSpeed 98 на Mint». Mint і Plumm можете виміряти самі. I DRIVE CARS не live, тож хвалити продакшен немає чим.'),
         p('FID випав з Core Web Vitals. Агенція, яка в 2026 звітує FID як успіх, аудитить спогади. INP описує, як сторінка реагує на клік і введення. Важкий JS, гідрація всього SPA, чат у hero — вбивці INP. Тому візитівки ставлю на легкому стеку. Гра і 3D-ангар — окремі входи, не обов’язковий багаж корпоративного сайту.'),
         ul([
           'LCP: hero не може бути декорацією на 4 МБ «бо гарно в портфоліо».',

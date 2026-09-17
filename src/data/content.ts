@@ -220,8 +220,8 @@ export type ProofProduct = { name: string; url: string; live: boolean }
 export const proofProducts: ProofProduct[] = [
   { name: 'Mint Apartments', url: 'https://mintapartments.pl', live: true },
   { name: 'Plumm', url: 'https://plumm.pl', live: true },
-  // idrivecars.pl serwuje obecnie stronę parkingową (SEOHOST) — nie linkujemy jako „live", dopóki iDrive 2.0 nie wyjdzie na produkcję
-  { name: 'iDrive Cars', url: '', live: false },
+  // idrivecars.pl serwuje obecnie stronę parkingową (SEOHOST) — nie linkujemy jako „live", dopóki I DRIVE CARS 2.0 nie wyjdzie na produkcję
+  { name: 'I DRIVE CARS', url: '', live: false },
   { name: 'Agentic OS', url: '', live: false },
 ]
 
@@ -414,7 +414,7 @@ export const projects: Project[] = [
   },
   {
     id: 'idrive',
-    title: 'iDrive Cars',
+    title: 'I DRIVE CARS',
     domain: `idrivecars.pl · przed publicznym startem`,
     url: '#',
     tagline: 'Blog motoryzacyjny · publikacja bez WordPressa',
@@ -553,7 +553,7 @@ export const liveProof: LiveProof[] = [
       'Panel firmy: księgowość online, e-faktury, CRM, poczta i asystent podatkowy — zamiast Excela i osobnego biura.',
     tag: 'Księgowość online',
   },
-  // iDrive wróci tu po publicznym starcie — idrivecars.pl to dziś strona parkingowa,
+  // I DRIVE CARS wróci tu po publicznym starcie — idrivecars.pl to dziś strona parkingowa,
   // a sekcja obiecuje „kliknij i sprawdź". Zero linków do parkingu.
 ]
 

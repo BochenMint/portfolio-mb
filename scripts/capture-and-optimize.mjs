@@ -97,7 +97,7 @@ const GALLERY_SHOTS = [
     file: '01-strona-glowna',
     page: 'https://idrivecars.pl',
     caption:
-      'Strona główna iDrive Cars — editorial layout, sekcje testów i felietonów, szybkie ładowanie bez WordPressa.',
+      'Strona główna I DRIVE CARS — editorial layout, sekcje testów i felietonów, szybkie ładowanie bez WordPressa.',
   },
   {
     project: 'idrive',
@@ -220,7 +220,7 @@ const LIVE_CAPTURES = [
     wait: 5500,
     scrollTo: 'main, .hero, [class*="hero"]',
   },
-  // iDrive — live parking page probe (fallback → local dev)
+  // I DRIVE CARS — live parking page probe (fallback → local dev)
   {
     id: 'idrive',
     name: 'hero',
@@ -365,7 +365,7 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:20px 4
 .card-body h2{font-size:14px;font-weight:600;margin-bottom:6px}.card-body p{font-size:12px;color:#737373}
 .tag{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#e63946;margin-bottom:8px}
 </style></head><body>
-<nav><div class="logo">i<span>Drive</span> Cars</div><span style="font-size:12px;color:#525252">Testy · Felietony · News</span></nav>
+<nav><div class="logo">I DRIVE CARS</div><span style="font-size:12px;color:#525252">Testy · Felietony · News</span></nav>
 <main><div class="hero"><p class="tag">Blog motoryzacyjny</p><h1>Testy, które<br>warto przeczytać</h1>
 <p>Next.js + MDX. Galerie WEBP, sitemap, zero WordPressa — publikacja z repozytorium.</p></div>
 <div class="grid">

@@ -51,7 +51,7 @@ export default {
         'Co w praktyce oznacza strona firmowa B2B',
         p('W B2B nikt nie kupuje z hero. Kupuje po tym, że rozumie zakres, ryzyko i następny krok. Dlatego strona firmowa B2B, którą buduję, ma pięć podstron albo mniej: start, oferta, o firmie, realizacje albo dowód, kontakt. Nie dokładam bloga „na SEO”, wielojęzyczności ani CRM-u w tej cenie — to są dopłaty albo [pakiet Launch](/#cennik).'),
         p('Start musi odpowiadać na trzy pytania bez scrollowania w ciemno: czy to dla mnie, co dostanę, co mam kliknąć. Oferta nie może być listą fraz typu „kompleksowe rozwiązania”. Podaję, co wchodzi w pracę, czego nie robię i w jakim horyzoncie czasowym. Kontakt to formularz z powiadomieniem, nie sam mailto, bo mailto ginie na telefonie i nie zostawia śladu.'),
-        p('Dowód na stronie B2B jest najtrudniejszy, gdy nie chcesz kłamać. Ja nie wklejam fikcyjnych opinii. Jeśli masz żywe wdrożenie — linkuję. Publicznie pokazuję [Mint Apartments](https://mintapartments.pl) i [Plumm](https://plumm.pl). iDrive nie jest live, Agentic OS jest narzędziem wewnętrznym. Lepiej mniej dowodu niż teatr z gwiazdkami.'),
+        p('Dowód na stronie B2B jest najtrudniejszy, gdy nie chcesz kłamać. Ja nie wklejam fikcyjnych opinii. Jeśli masz żywe wdrożenie — linkuję. Publicznie pokazuję [Mint Apartments](https://mintapartments.pl) i [Plumm](https://plumm.pl). I DRIVE CARS nie jest live, Agentic OS jest narzędziem wewnętrznym. Lepiej mniej dowodu niż teatr z gwiazdkami.'),
       ),
       section(
         'Zakres, który mieści się w pakiecie Start (od 2 000 zł)',
@@ -137,7 +137,7 @@ export default {
         'What a B2B company website means in practice',
         p('In B2B nobody buys from the hero. They buy once they understand scope, risk and the next step. The B2B company website I build has five pages or fewer: home, offer, about, proof, contact. I do not add a “SEO blog”, extra languages or a CRM at this price — those are extras or a [the Launch package](/#cennik).'),
         p('Home must answer three questions without a treasure hunt: is this for me, what do I get, what do I click. The offer cannot be a list of “comprehensive solutions”. I state what is in, what is out, and the time horizon. Contact is a form with a notification, not a lone mailto that dies on mobile and leaves no trace.'),
-        p('Proof is the hard part if you refuse to lie. I do not paste fake reviews. If you have a live deployment, I link it. Publicly I show [Mint Apartments](https://mintapartments.pl) and [Plumm](https://plumm.pl). iDrive is not live. Agentic OS is an internal tool. Less proof beats a theatre of stars.'),
+        p('Proof is the hard part if you refuse to lie. I do not paste fake reviews. If you have a live deployment, I link it. Publicly I show [Mint Apartments](https://mintapartments.pl) and [Plumm](https://plumm.pl). I DRIVE CARS is not live. Agentic OS is an internal tool. Less proof beats a theatre of stars.'),
       ),
       section(
         'What the Start package (from PLN 2,000) actually covers',
@@ -223,7 +223,7 @@ export default {
         'Що на практиці означає корпоративний сайт B2B',
         p('У B2B ніхто не купує з героя. Купують, коли зрозумілі обсяг, ризик і наступний крок. Тому корпоративний сайт B2B, який я будую, має п’ять сторінок або менше: головна, оферта, про компанію, доказ, контакт. Я не додаю блог «для SEO», багатомовність чи CRM у цій ціні — це доплати або [пакет Launch](/#cennik).'),
         p('Головна має відповісти на три питання без полювання: чи це для мене, що я отримаю, що натиснути. Оферта не може бути списком фраз на кшталт «комплексні рішення». Я вказую, що входить у роботу, чого не роблю і в якому горизонті. Контакт — форма з повідомленням, не сам mailto, який помирає на телефоні й не лишає сліду.'),
-        p('Доказ на сайті B2B найважчий, якщо ви не хочете брехати. Я не вставляю вигадані відгуки. Якщо є живе впровадження — ставлю посилання. Публічно показую [Mint Apartments](https://mintapartments.pl) і [Plumm](https://plumm.pl). iDrive не в продакшені, Agentic OS — внутрішній інструмент. Краще менше доказу, ніж театр із зірками.'),
+        p('Доказ на сайті B2B найважчий, якщо ви не хочете брехати. Я не вставляю вигадані відгуки. Якщо є живе впровадження — ставлю посилання. Публічно показую [Mint Apartments](https://mintapartments.pl) і [Plumm](https://plumm.pl). I DRIVE CARS не в продакшені, Agentic OS — внутрішній інструмент. Краще менше доказу, ніж театр із зірками.'),
       ),
       section(
         'Що реально входить у пакет Start (від 2 000 злотих)',

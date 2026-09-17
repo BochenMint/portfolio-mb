@@ -28,7 +28,7 @@ export const expandHitl = {
           'Szkolenie na danych klientów w narzędziu, którego nie kontrolujecie umową.',
         ]),
         p('To nie jest lęk przed nowością. To rachunek reputacji. Agentic, które buduję wewnętrznie, nie jest produktem z URL-em dla Ciebie — i nie udaję, że „wdrożyłem agentów u dwudziestu korporacji”. Jeśli chcesz agentów na produkcji, zaczynamy od jednej akcji, jednego logu i jednego właściciela. Nie od slajdu ze stadem awatarów.'),
-        note('iDrive nie jest live. Nie używam go jako dowodu, że „AI w firmie działa u klientów”. Live są Mint i Plumm — i tam AI nie udaje, że prowadzi hotel albo podpisuje PIT.'),
+        note('I DRIVE CARS nie jest live. Nie używam go jako dowodu, że „AI w firmie działa u klientów”. Live są Mint i Plumm — i tam AI nie udaje, że prowadzi hotel albo podpisuje PIT.'),
       ),
       section(
         'Minimalny kontrakt, zanim kupicie kolejny seat',
@@ -62,7 +62,7 @@ export const expandHitl = {
           'Training on client data in a tool you do not control by contract.',
         ]),
         p('This is not fear of novelty. It is reputation arithmetic. The agentic stack I build internally is not a product with a URL for you — and I do not pretend I “rolled agents out to twenty corporations”. If you want agents in production, we start with one action, one log and one owner. Not a slide with a flock of avatars.'),
-        note('iDrive is not live. I do not use it as proof that “AI at work works for clients”. Live are Mint and Plumm — and there AI does not pretend to run a hotel or sign a PIT return.'),
+        note('I DRIVE CARS is not live. I do not use it as proof that “AI at work works for clients”. Live are Mint and Plumm — and there AI does not pretend to run a hotel or sign a PIT return.'),
       ),
       section(
         'A minimum contract before you buy another seat',
@@ -96,7 +96,7 @@ export const expandHitl = {
           'Тренування на даних клієнтів в інструменті, якого не контролюєте угодою.',
         ]),
         p('Це не страх новизни. Це арифметика репутації. Agentic, який будую всередині, не є продуктом з URL для вас — і не вдаю, що «впровадив агентів у двадцяти корпораціях». Якщо хочете агентів на продакшені, починаємо з однієї дії, одного логу і одного власника. Не зі слайда зі зграєю аватарів.'),
-        note('iDrive не live. Не використовую його як доказ, що «ШІ у фірмі працює в клієнтів». Live — Mint і Plumm, і там ШІ не вдає, що веде готель або підписує PIT.'),
+        note('I DRIVE CARS не live. Не використовую його як доказ, що «ШІ у фірмі працює в клієнтів». Live — Mint і Plumm, і там ШІ не вдає, що веде готель або підписує PIT.'),
       ),
       section(
         'Мінімальний контракт, перш ніж купувати ще одне місце',
@@ -132,7 +132,7 @@ export const expandHitl = {
           'Sukces mierzoną liczbą „załatwionych bez człowieka”. Wtedy system uczy się ukrywać niepewność.',
         ]),
         p('Mierzę odwrotnie: ile eskalacji było słusznych, ile draftów odrzucono, ile razy człowiek poprawił treść zanim wyszła. To są zdrowe liczby. Zero eskalacji po tygodniu zwykle znaczy, że limity są martwe albo że nikt nie używa narzędzia.'),
-        note('Agentic OS jest narzędziem wewnętrznym. Nie sprzedaję go jako case „dla korporacji”. iDrive nie jest live. HITL opisuję na tym, co mogę utrzymać i pokazać.'),
+        note('Agentic OS jest narzędziem wewnętrznym. Nie sprzedaję go jako case „dla korporacji”. I DRIVE CARS nie jest live. HITL opisuję na tym, co mogę utrzymać i pokazać.'),
       ),
       section(
         'Jak zaczynam, gdy automatyzacja ma prawo wejść na produkcję',
@@ -166,7 +166,7 @@ export const expandHitl = {
           'Success measured as “resolved without a human”. Then the system learns to hide uncertainty.',
         ]),
         p('I measure the other way: how many escalations were right, how many drafts rejected, how often a human edited copy before it left. Those are healthy numbers. Zero escalations after a week usually means limits are dead or nobody uses the tool.'),
-        note('Agentic OS is an internal tool. I do not sell it as a “for corporations” case. iDrive is not live. I describe HITL on what I can maintain and show.'),
+        note('Agentic OS is an internal tool. I do not sell it as a “for corporations” case. I DRIVE CARS is not live. I describe HITL on what I can maintain and show.'),
       ),
       section(
         'How I start when automation may enter production',
@@ -200,7 +200,7 @@ export const expandHitl = {
           'Успіх міряють «закрито без людини». Тоді система вчиться ховати непевність.',
         ]),
         p('Міряю навпаки: скільки ескалацій були слушні, скільки чернеток відхилено, скільки разів людина править текст до виходу. Це здорові цифри. Нуль ескалацій за тиждень зазвичай означає, що ліміти мертві або інструментом ніхто не користується.'),
-        note('Agentic OS — внутрішній інструмент. Не продаю його як кейс «для корпорацій». iDrive не live. HITL описую на тому, що можу підтримувати і показати.'),
+        note('Agentic OS — внутрішній інструмент. Не продаю його як кейс «для корпорацій». I DRIVE CARS не live. HITL описую на тому, що можу підтримувати і показати.'),
       ),
       section(
         'Як починаю, коли автоматизація має право вийти в продакшен',

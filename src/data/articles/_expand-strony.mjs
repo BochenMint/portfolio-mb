@@ -6,7 +6,7 @@ export const expandStrony = {
       section(
         'Jak wygląda pierwszy ekran, gdy nie kłamię w H1',
         p('Strona firmowa B2B, którą wdrażam, nie obiecuje trzech biznesów naraz. Jedna obietnica, jeden odbiorca, jeden następny krok. Lokalizacja i model współpracy są na starcie, bo właściciel firmy nie chce zgadywać, czy ogarniam Trójmiasto on-site i resztę Polski zdalnie. Próg cenowy też. Ukrywanie „wycena indywidualna” bez rzędu wielkości obcina zapytania od ludzi, którzy i tak nie wejdą w pakiet Start (2 000 zł) — i od tych, którzy wejdą w Platformę (25 000 zł), ale nie chcą tracić calla na wizytówkę.'),
-        p('Dowód zostawiam klikalny albo nie wstawiam teatru. Mint i Plumm są publiczne. iDrive nie jest live, Agentic jest wewnętrzne. Lepiej proces i zasady niż gwiazdki z generatora. Jeśli nie masz jeszcze nic do kliknięcia, piszemy jak pracuję i czego nie biorę — to też jest oferta. Fałszywy case w B2B wraca w pierwszym poważnym mailu.'),
+        p('Dowód zostawiam klikalny albo nie wstawiam teatru. Mint i Plumm są publiczne. I DRIVE CARS nie jest live, Agentic jest wewnętrzne. Lepiej proces i zasady niż gwiazdki z generatora. Jeśli nie masz jeszcze nic do kliknięcia, piszemy jak pracuję i czego nie biorę — to też jest oferta. Fałszywy case w B2B wraca w pierwszym poważnym mailu.'),
       ),
       section(
         'Kiedy ta strona przestaje wystarczać i trzeba lejka',
@@ -17,7 +17,7 @@ export const expandStrony = {
       section(
         'What the first screen looks like when the H1 does not lie',
         p('The B2B company website I ship does not promise three businesses at once. One promise, one reader, one next step. Location and working model sit up front, because a business owner should not guess whether I do on-site in the Tri-City and the rest of Poland remote. A price threshold too. Hiding “individual quote” with no order of magnitude cuts enquiries from people who will never enter the Start package (PLN 2,000) — and from those who will enter Platform (PLN 25,000) but refuse a call about a brochure.'),
-        p('Proof stays clickable or I skip the theatre. Mint and Plumm are public. iDrive is not live, Agentic is internal. Process and rules beat generated stars. If you have nothing to click yet, we write how I work and what I refuse — that is also an offer. A fake B2B case comes back in the first serious email.'),
+        p('Proof stays clickable or I skip the theatre. Mint and Plumm are public. I DRIVE CARS is not live, Agentic is internal. Process and rules beat generated stars. If you have nothing to click yet, we write how I work and what I refuse — that is also an offer. A fake B2B case comes back in the first serious email.'),
       ),
       section(
         'When this site stops being enough and you need a funnel',
@@ -28,7 +28,7 @@ export const expandStrony = {
       section(
         'Як виглядає перший екран, коли H1 не бреше',
         p('Корпоративний сайт B2B, який впроваджую, не обіцяє три бізнеси одразу. Одна обіцянка, один читач, один наступний крок. Локація і модель співпраці на старті, бо власник не хоче здогадуватися, чи я онсайт у Тримісті і решту Польщі віддалено. Поріг ціни теж. Ховання «індивідуальна оцінка» без порядку величини ріже запити від тих, хто не зайде в пакет Start (2 000) — і від тих, хто зайде в Платформу (25 000), але не хоче палити дзвінок на візитівку.'),
-        p('Доказ лишаю клікабельним або не ставлю театру. Mint і Plumm публічні. iDrive не live, Agentic внутрішній. Процес і правила кращі за зірки з генератора. Якщо ще немає що клікнути, пишемо як працюю і чого не беру — це теж оферта. Фальшивий кейс у B2B повертається в першому серйозному листі.'),
+        p('Доказ лишаю клікабельним або не ставлю театру. Mint і Plumm публічні. I DRIVE CARS не live, Agentic внутрішній. Процес і правила кращі за зірки з генератора. Якщо ще немає що клікнути, пишемо як працюю і чого не беру — це теж оферта. Фальшивий кейс у B2B повертається в першому серйозному листі.'),
       ),
       section(
         'Коли цього сайту вже мало і потрібна воронка',
@@ -224,7 +224,7 @@ export const expandStrony = {
       section(
         'Elementy lejka, bez których zostaje ładny landing',
         p('Lejek konwersji na stronie to intencja (skąd przyszedł i po co), kwalifikacja (czy w ogóle wolno iść dalej), jedno główne CTA i pomiar od kliknięcia do zapytania albo rezerwacji. Bez kwalifikacji zbieracie śmieć. Bez pomiaru nie wiecie, czy landing działa, czy tylko „wygląda nowocześnie”. Pakiet Launch (od 8 000 zł) pokrywa tę ścieżkę, nie „więcej animacji na wizytówce”. Jeśli nie płacicie za uwagę i decyzja to jeden mail, [wizytówka Start](/artykuly/strona-wizytowka-czy-lejek/) jest tańszym, uczciwszym pudełkiem.'),
-        p('W Mint lejek jest żywy: gość kończy rezerwację na własnej domenie, nie na plakacie „book now” prowadzącym na OTA z prowizją. Nie zmyślam procentów konwersji „jak w branży”. Możesz wejść i przejść ścieżkę. iDrive nie jest live — nie używam go jako lejka-dowodu. Agentic nie jest produktem z URL-em dla Ciebie.'),
+        p('W Mint lejek jest żywy: gość kończy rezerwację na własnej domenie, nie na plakacie „book now” prowadzącym na OTA z prowizją. Nie zmyślam procentów konwersji „jak w branży”. Możesz wejść i przejść ścieżkę. I DRIVE CARS nie jest live — nie używam go jako lejka-dowodu. Agentic nie jest produktem z URL-em dla Ciebie.'),
         ul([
           'Jedna konwersja wiodąca. Druga może istnieć, ale nie jako równe CTA.',
           'Pytania kwalifikujące, które bolą mniej niż zły call sprzedażowy.',
@@ -247,7 +247,7 @@ export const expandStrony = {
       section(
         'Funnel pieces without which you just have a pretty landing',
         p('A conversion funnel on a site is intent (where they came from and why), qualification (whether they may go on), one primary CTA, and measurement from click to enquiry or booking. Without qualification you collect junk. Without measurement you cannot tell if the landing works or only “looks modern”. The Launch package (from PLN 8,000) covers that path, not “more motion on a brochure”. If you do not pay for attention and the decision is one email, a [Start brochure](/artykuly/strona-wizytowka-czy-lejek/) is the cheaper, more honest box.'),
-        p('At Mint the funnel is live: the guest finishes booking on the domain, not a “book now” poster into an OTA with commission. I do not invent “industry conversion rates”. You can enter and walk the path. iDrive is not live — I do not use it as funnel proof. Agentic is not a product with a URL for you.'),
+        p('At Mint the funnel is live: the guest finishes booking on the domain, not a “book now” poster into an OTA with commission. I do not invent “industry conversion rates”. You can enter and walk the path. I DRIVE CARS is not live — I do not use it as funnel proof. Agentic is not a product with a URL for you.'),
         ul([
           'One leading conversion. A second may exist, but not as an equal CTA.',
           'Qualifying questions that hurt less than a bad sales call.',
@@ -270,7 +270,7 @@ export const expandStrony = {
       section(
         'Елементи воронки, без яких лишається гарний лендінг',
         p('Воронка конверсії на сайті — це намір (звідки і навіщо), кваліфікація (чи взагалі можна далі), одне головне CTA і вимір від кліку до запиту або бронювання. Без кваліфікації збираєте сміття. Без виміру не знаєте, чи лендінг працює, чи лише «виглядає сучасно». Пакет Launch (від 8 000 злотих) покриває цей шлях, не «більше анімації на візитівці». Якщо не платите за увагу і рішення — один лист, [візитівка Start](/artykuly/strona-wizytowka-czy-lejek/) дешевша й чесніша коробка.'),
-        p('У Mint воронка жива: гість закінчує бронювання на власному домені, не на плакаті «book now» в OTA з комісією. Не вигадую відсотків конверсії «як у галузі». Можете зайти і пройти шлях. iDrive не live — не використовую його як доказ воронки. Agentic не продукт з URL для вас.'),
+        p('У Mint воронка жива: гість закінчує бронювання на власному домені, не на плакаті «book now» в OTA з комісією. Не вигадую відсотків конверсії «як у галузі». Можете зайти і пройти шлях. I DRIVE CARS не live — не використовую його як доказ воронки. Agentic не продукт з URL для вас.'),
         ul([
           'Одна провідна конверсія. Друга може бути, але не як рівне CTA.',
           'Кваліфікаційні питання, які болять менше за поганий продажний кол.',

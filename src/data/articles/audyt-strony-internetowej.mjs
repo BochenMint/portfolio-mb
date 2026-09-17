@@ -44,7 +44,7 @@ export default {
           'Nie obiecuję pozycji w Google w 30 dni.',
           'Nie sprzedaję HowTo-schema ani sztuczek z 2019.',
           'Nie dokładam fałszywych recenzji jako „quick win zaufania”.',
-          'Nie audytuję iDrive jako live ani Agentic jako Waszego case’u.',
+          'Nie audytuję I DRIVE CARS jako live ani Agentic jako Waszego case’u.',
         ]),
       ),
       section(
@@ -102,7 +102,7 @@ export default {
           'I do not promise a Google rank in 30 days.',
           'I do not sell HowTo schema or 2019 tricks.',
           'I do not add fake reviews as a “trust quick win”.',
-          'I do not audit iDrive as live or Agentic as your case.',
+          'I do not audit I DRIVE CARS as live or Agentic as your case.',
         ]),
       ),
       section(
@@ -160,7 +160,7 @@ export default {
           'Не обіцяю позицію в Google за 30 днів.',
           'Не продаю HowTo-схему чи трюки з 2019.',
           'Не додаю фальшивих відгуків як «quick win довіри».',
-          'Не аудитую iDrive як live і Agentic як ваш кейс.',
+          'Не аудитую I DRIVE CARS як live і Agentic як ваш кейс.',
         ]),
       ),
       section(

@@ -38,7 +38,7 @@ export default {
           'JS: nie ładuj Three.js na wizytówce „bo ładnie”. Gra i hangar są osobnymi wejściami.',
           'Trzecie skrypty: każdy pixel to INP. Zgoda marketingu nie jest darmowa.',
         ]),
-        note('Nie publikuję tu fałszywego „PageSpeed 98 na Mint”. Mint i Plumm możesz zmierzyć sam. iDrive nie jest live — nie ma czego chwalić na produkcji.'),
+        note('Nie publikuję tu fałszywego „PageSpeed 98 na Mint”. Mint i Plumm możesz zmierzyć sam. I DRIVE CARS nie jest live — nie ma czego chwalić na produkcji.'),
       ),
       section(
         'Crawlable HTML kontra SPA z hashem',
@@ -88,7 +88,7 @@ export default {
           'JS: do not load Three.js on a brochure “because it looks nice”. The game and hangar are separate entries.',
           'Third-party scripts: every pixel is INP. Marketing consent is not free.',
         ]),
-        note('I do not publish a fake “PageSpeed 98 on Mint” here. You can measure Mint and Plumm yourself. iDrive is not live — there is nothing to boast about in production.'),
+        note('I do not publish a fake “PageSpeed 98 on Mint” here. You can measure Mint and Plumm yourself. I DRIVE CARS is not live — there is nothing to boast about in production.'),
       ),
       section(
         'Crawlable HTML versus a hash SPA',
@@ -138,7 +138,7 @@ export default {
           'JS: не вантажте Three.js на візитівку «бо гарно». Гра і ангар — окремі входи.',
           'Сторонні скрипти: кожен піксель — це INP. Згода маркетингу не безкоштовна.',
         ]),
-        note('Не публікую тут фальшиве «PageSpeed 98 на Mint». Mint і Plumm можете виміряти самі. iDrive не live — немає чим хвалитися на продакшені.'),
+        note('Не публікую тут фальшиве «PageSpeed 98 на Mint». Mint і Plumm можете виміряти самі. I DRIVE CARS не live — немає чим хвалитися на продакшені.'),
       ),
       section(
         'Crawlable HTML проти SPA з хешем',
