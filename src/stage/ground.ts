@@ -180,15 +180,30 @@ void main() {
   float clodMask = smoothstep(0.4, 0.72, v1.z);
   float dome = (1.0 - smoothstep(0.0, 0.44, v1.x)) * clodMask;
   // The same lump, crushed: a flat tilted face with a hard seam round it.
+  // Compiled in only where it is used. chips() is two nested 3×3 cell
+  // searches, and the garden — a full-screen shader at p = 0, the heaviest
+  // frame on that page — would otherwise pay for both on every fragment
+  // only to multiply the result by zero. Without ANGULAR the blend weight
+  // is a constant 0, so a uniform set by mistake cannot half-enable it.
+#ifdef ANGULAR
+  float angularK = uAngular;
   vec3 chip = chips(warp * 4.6);
-  float clod = mix(dome, chip.x, uAngular);
+#else
+  const float angularK = 0.0;
+  vec3 chip = vec3(0.0);
+#endif
+  float clod = mix(dome, chip.x, angularK);
   vec3 v2 = voronoi(warp * 13.0 + 3.1);
   // Not every cell, and not one size: an even field of round domes reads as
   // sand sprinkled on chocolate, which is exactly what it looked like.
   float crumbR = 0.18 + 0.3 * fract(v2.z * 5.0);
+#ifdef ANGULAR
   vec3 chipFine = chips(warp * 13.0 + 3.1);
+#else
+  vec3 chipFine = vec3(0.0);
+#endif
   float crumb =
-    mix((1.0 - smoothstep(0.0, crumbR, v2.x)) * step(0.35, fract(v2.z * 11.0)), chipFine.x, uAngular) *
+    mix((1.0 - smoothstep(0.0, crumbR, v2.x)) * step(0.35, fract(v2.z * 11.0)), chipFine.x, angularK) *
     mix(0.45, 1.0, fine);
   // The roughness between the lumps: no shape of its own, which is the
   // point — it is what stops the ground reading as a poured surface.
@@ -239,7 +254,7 @@ void main() {
   vec2 g = abs(det) > 1e-9 ? vec2(dhx * dpy.z - dhy * dpx.z, dpx.x * dhy - dpy.x * dhx) / det : vec2(0.0);
   // Strong near, flat far: the same slope at the far edge is a pixel wide
   // and only produces sparkle.
-  float relief = mix(0.045, 0.19, near) * mix(1.0, 1.45, uAngular);
+  float relief = mix(0.045, 0.19, near) * mix(1.0, 1.45, angularK);
   vec3 n = normalize(vec3(-g.x * relief, 1.0, -g.y * relief));
 
   /* --- colour ---------------------------------------------------------
@@ -262,7 +277,7 @@ void main() {
   c *= mix(0.86, 1.14, fract(v1.z * 7.3) * clod + 0.5 * (1.0 - clod));
   // Crushed stone comes out of the pit in a dozen shades at once, far more
   // spread than one bed of loam ever shows.
-  c *= mix(1.0, mix(0.72, 1.3, fract(chip.z * 19.0)), uAngular);
+  c *= mix(1.0, mix(0.72, 1.3, fract(chip.z * 19.0)), angularK);
   // …and the tilth between them varies too, but only just: this is the
   // difference between a material and a surface, not a pattern.
   c *= mix(0.94, 1.07, fract(v2.z * 19.0));
@@ -295,10 +310,20 @@ void main() {
 }
 `
 
+/**
+ * The fragment source with its compile-time switches applied. Use this
+ * rather than prefixing `GROUND_FRAG` by hand: `angular` here and
+ * `angular` in `groundUniforms` have to agree, and a crushed-stone bed
+ * built without the define silently renders as clods.
+ */
+export function groundFragment(opts: { coarse: boolean; angular?: boolean }): string {
+  return (opts.coarse ? '#define COARSE 1\n' : '') + (opts.angular ? '#define ANGULAR 1\n' : '') + GROUND_FRAG
+}
+
 /** Build the ground shader's uniform set from a palette + rake, given the
  *  landing's own `THREE` (dynamically imported, never at module scope here). */
 export type GroundExtras = {
-  /** 0 = a dug bed of clods, 1 = crushed stone. */
+  /** 0 = a dug bed of clods, 1 = crushed stone. Needs `groundFragment({ angular: true })`. */
   angular?: number
   /** 0 = nothing organic lying about (a sub-base), 1 = a garden bed. */
   organic?: number

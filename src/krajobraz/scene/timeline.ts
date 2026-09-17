@@ -24,8 +24,10 @@ export const T = {
   knit: [0.5, 0.64] as [number, number],
   /**
    * The shrubs go in: after the last roll is down and the seams have
-   * started to close, and finishing just as the first flower breaks the
-   * lawn. A garden is built in that order and the scroll now says so —
+   * started to close, and overlapping the first flowers rather than
+   * waiting for them to finish — the last shrubs are still unfurling at
+   * the edges while the headline starts breaking the lawn in the middle,
+   * so the garden fills in as one motion instead of two queued ones. A garden is built in that order and the scroll now says so —
    * they used to be standing there from the first frame, which made them
    * scenery rather than work (Marcin 2026-09: "najpierw rozkładamy trawę,
    * potem pojawia się kilka nasadzeń").

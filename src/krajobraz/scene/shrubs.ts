@@ -203,6 +203,8 @@ export function createShrubs(
     bed: { centreZ: number; halfDepth: number; halfWidth: number }
     light: Record<string, { value: unknown }>
     coarse: boolean
+    /** Visitor asked for reduced motion: the leaves hold still. */
+    reduced: boolean
     /** When the planting happens, as scroll progress. */
     window: [number, number]
     seed?: number
@@ -362,7 +364,9 @@ export function createShrubs(
     uniforms: {
       ...opts.light,
       uTime: { value: 0 },
-      uWind: { value: 0 },
+      // Set once, not per frame: it never changes, and under reduced motion
+      // it has to stay at zero however long the page is open.
+      uWind: { value: opts.reduced ? 0 : base * 0.03 },
       uGrow: { value: growArr },
       uWarmth: { value: warmthArr },
     },
@@ -424,7 +428,6 @@ export function createShrubs(
         growArr[i] = Math.min(1, Math.max(0, (progress - start) / slot))
       })
       leafMat.uniforms.uTime.value = time
-      leafMat.uniforms.uWind.value = base * 0.03
     },
     dispose() {
       for (const d of disposables) d.dispose()
