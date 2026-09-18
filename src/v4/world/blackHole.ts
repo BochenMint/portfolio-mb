@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { NOISE_GLSL, SKY_ROT_SPEED, TONE_OUTPUT_GLSL } from './shaderChunks'
-import { BLACK_HOLE_POS } from '../engine/world-anchors'
+import { BLACK_HOLE_HORIZON_R, BLACK_HOLE_POS } from '../engine/world-anchors'
 
 /**
  * Black hole — camera-facing impostor plane at BLACK_HOLE_POS.
@@ -11,43 +11,41 @@ import { BLACK_HOLE_POS } from '../engine/world-anchors'
  * marched past the hole using the standard Schwarzschild null-geodesic
  * central-force form  d²x/dλ² = -1.5·Rs·h²·x/r⁵  (h = |x×v| conserved per
  * ray, leapfrog integration) — strong bending only very near the photon
- * sphere, negligible at disk radii, which is exactly what produces the
- * iconic Gargantua anatomy: a small crisp shadow, a THIN photon ring at
- * b≈b_crit, and the accretion disk lensed into halo arcs ABOVE and BELOW the
- * horizon (far-side disk light bent over the poles). Crossings of the tilted
- * disk plane are tested DURING bending and shaded with a white-gold→amber→
- * ember temperature gradient + doppler beaming; rays that escape sample the
- * real skybox equirect texture along their final (bent) direction — so the
- * lensing distorts the actual Milky Way background, not a stand-in.
+ * sphere, negligible at disk radii.
+ *
+ * P0-B composition (cheap Schwarzschild minimum, not a full geodesic
+ * raymarch): the 3D horizon sphere IS the apparent shadow and fills the
+ * optical aperture — no sky collar between silhouette and disk. Impostor
+ * never paints that core (a billboard stamp ate the ship). It only adds a
+ * thin photon-ring rim + far-side disk wrap. Near-side annulus is a real
+ * 3D ring with depth.
  */
 
-/** Horizon mesh sits INSIDE the photon sphere so the 3D silhouette cannot
- * eat the ring — large enough (with real depth) that a planet mesh BEHIND
- * the hole cannot shine through the core. The impostor no longer paints
- * that core: a camera-facing black circle + gl_FragDepth was a screen-space
- * stamp that ate the ship whenever the hull overlapped the silhouette.
- * Impostor = photon ring + accretion disk only; empty core discards so the
- * sphere owns the hole. Circle, not a quad.
- */
-const HORIZON_MESH_R = 96
-const HORIZON_R = 90
-const PHOTON_RING_R = 114
-const PHOTON_RING_WIDTH = 3.4
-const DISK_INNER = 124
-const DISK_OUTER = 248
-const DISK_TILT_DEG = 14
+/** Occlusion sphere = gameplay Rs. Slightly inside the photon rim so the
+ * ring stays visible; large enough that the inner disk hole cannot show sky. */
+const HORIZON_R = BLACK_HOLE_HORIZON_R
+const HORIZON_MESH_R = BLACK_HOLE_HORIZON_R
+/** Thin rim hugging the silhouette — not a second decorative hoop. */
+const PHOTON_RING_R = BLACK_HOLE_HORIZON_R * 1.012
+const PHOTON_RING_WIDTH = 1.35
+/** Inner edge kisses the shadow so the aperture is filled (gap < 2u). */
+const DISK_INNER = BLACK_HOLE_HORIZON_R * 1.018
+/** Narrow radial span — a plate this wide reads as Saturn, not accretion. */
+const DISK_OUTER = BLACK_HOLE_HORIZON_R * 1.14
+/** Degrees from a face-on XZ disk. Launch camera sits near the equatorial
+ * plane, so a modest tilt keeps a thin crescent instead of a Saturn hoop. */
+const DISK_TILT_DEG = 22
 /** Unit CircleGeometry — JS scales to the disk, not the whole frustum. */
 const IMPOSTOR_GEO_R = 1
-const MARCH_START_R = 175
-/** Apparent-shadow interior — matches the occlusion sphere. Shader writes
- * opaque black here (plus any lensed disk that crossed during the march). */
-const SHADOW_CAPTURE_R = HORIZON_MESH_R
+const MARCH_START_R = DISK_OUTER * 1.12
+/** Fill to the inner disk so the aperture cannot show sky. Depth comes from
+ * a ray-sphere hit at this radius — not a billboard stamp. */
+const SHADOW_CAPTURE_R = DISK_INNER
 const BEND_K = 0.94
-/** HARD CAP: the march loop below is `for (int i = 0; i < 128; i++)` — uSteps
- * must stay <= 127 or the step-budget early-out (`if (i >= uSteps) break`)
- * never fires and the loop silently runs one iteration short of intent. */
-const STEPS_HIGH = 126
-const STEPS_LOW = 64
+/** HARD CAP: the march loop below is `for (int i = 0; i < 48; i++)` — uSteps
+ * must stay <= 47 or the step-budget early-out never fires. */
+const STEPS_HIGH = 48
+const STEPS_LOW = 24
 
 const VERT = /* glsl */ `
   varying vec3 vWorldPos;
@@ -83,6 +81,9 @@ const FRAG = /* glsl */ `
 
   varying vec3 vWorldPos;
   varying vec2 vLocalXY;
+
+  // Vertex-only built-in in three.js — needed here for ray-sphere gl_FragDepth.
+  uniform mat4 projectionMatrix;
 
   #define PI 3.14159265359
   // Tight safety margin — catches step-budget leaks without swallowing the
@@ -124,14 +125,13 @@ const FRAG = /* glsl */ `
     vec3 hot = vec3(1.0, 0.969, 0.91);
     vec3 amber = vec3(1.0, 0.784, 0.38);
     vec3 ember = vec3(0.91, 0.463, 0.102);
-    vec3 c = mix(amber, ember, smoothstep(0.25, 0.9, t));
-    c = mix(hot, c, smoothstep(0.0, 0.22, t));
+    vec3 c = mix(amber, ember, smoothstep(0.18, 0.82, t));
+    c = mix(hot, c, smoothstep(0.0, 0.16, t));
     return c;
   }
 
-  // Shared disk-plane shading — used for direct outer annulus hits and for
-  // lensed crossings inside the march sphere.
-  vec3 shadeDiskCrossing(vec3 crossP, vec3 d, float imageFalloff, bool isOuterDirect) {
+  // Shared disk-plane shading — used for lensed far-side crossings.
+  vec3 shadeDiskCrossing(vec3 crossP, vec3 d, float imageFalloff) {
     float cu = dot(crossP, uDiskU);
     float cv = dot(crossP, uDiskV);
     float rad = length(vec2(cu, cv));
@@ -146,29 +146,17 @@ const FRAG = /* glsl */ `
     // a radial gold scratch across the disk.
     vec2 flow = vec2(sin(flowAngle), cos(flowAngle));
 
-    float streak = fbm2(vec2(rad * 0.22, 0.0) + flow * 2.6, 5);
-    float streak2 = fbm2(vec2(rad * 0.62, 4.1) + flow * 5.4, 4);
+    float streak = fbm2(vec2(rad * 0.08, ang * 0.55) + flow * 3.1, 5);
+    float streak2 = fbm2(vec2(rad * 0.18, ang * 1.1) + flow * 5.8, 4);
     float streakMix = smoothstep(0.22, 0.78, mix(streak, streak2, 0.34));
-
-    vec3 tempColor = diskTemperatureColor(tRad);
 
     vec3 tangent = normalize(-sin(ang) * uDiskU + cos(ang) * uDiskV);
     float approach = dot(tangent, -d);
-    // Mild Doppler — 2.1 was a circular gold spotlight on the approaching
-    // rim that bloom then smeared into a kleks against the horizon.
-    float beam = mix(0.72, 1.12, smoothstep(-0.7, 0.7, approach));
-
-    float innerFade = smoothstep(0.0, 0.14, tRad);
-    float outerFade = isOuterDirect
-      ? (1.0 - smoothstep(0.78, 1.0, tRad))
-      : (1.0 - smoothstep(0.68, 1.0, tRad));
-    float brightness = (0.42 + streakMix * 0.7) * beam * innerFade * outerFade;
-
-    if (isOuterDirect) {
-      brightness *= mix(1.0, 0.55, smoothstep(uMarchStartR, uDiskOuter, rad));
-    }
-
-    return tempColor * brightness * imageFalloff;
+    float beam = mix(0.42, 1.35, smoothstep(-0.55, 0.55, approach));
+    float innerFade = smoothstep(0.0, 0.08, tRad);
+    float outerFade = 1.0 - smoothstep(0.2, 1.0, tRad);
+    float brightness = 0.7 * beam * innerFade * outerFade;
+    return vec3(0.98, 0.82, 0.48) * brightness * imageFalloff;
   }
 
   void main() {
@@ -184,34 +172,10 @@ const FRAG = /* glsl */ `
     // Periapsis / impact parameter — single source of truth for the shadow cone.
     float b2Early = dot(w0, w0) - pow(dot(w0, rd), 2.0);
     float closestREarly = sqrt(max(b2Early, 0.0));
-    // Apparent shadow (inside photon ring). The 3D horizon sphere writes
-    // opaque black + real depth for this cone — the impostor must NOT fill
-    // it (that was the circular stamp on the ship). March still runs so
-    // far-side disk can wrap just outside the silhouette.
+    // Apparent shadow fills to the inner disk. Painted black below with the
+    // real sphere depth so a closer hull still wins the depth test.
     bool inCore = closestREarly < uShadowCaptureR;
 
-    // Near-side outer annulus (r > march sphere) — direct, unlensed shading.
-    // Interstellar: the wide disk plane extends past the lensing volume; only
-    // the inner band + far-side images need geodesic bending.
-    vec3 directDisk = vec3(0.0);
-    float diskDenom = dot(rd, uDiskN);
-    if (abs(diskDenom) > 1e-5) {
-      float tPlane = -dot(w0, uDiskN) / diskDenom;
-      if (tPlane > 0.0) {
-        vec3 crossP = w0 + rd * tPlane;
-        float rad = length(vec2(dot(crossP, uDiskU), dot(crossP, uDiskV)));
-        if (rad > uDiskInner && rad < uDiskOuter && rad > uMarchStartR * 0.94) {
-          directDisk = shadeDiskCrossing(crossP, rd, 1.0, true);
-        }
-      }
-    }
-    bool hadOuterDirect = dot(directDisk, vec3(0.299, 0.587, 0.114)) > 1e-5;
-
-    // Far-field deflection is negligible — analytically fast-forward to
-    // where the ray first enters the march sphere instead of burning the
-    // step budget on a straight line where nothing happens. Rays that never
-    // enter it at all may still see the outer disk (directDisk); the empty
-    // core is the sphere's job, so we discard here instead of stamping black.
     vec3 oc = w0;
     float bIsec = dot(oc, rd);
     float cIsec = dot(oc, oc) - uMarchStartR * uMarchStartR;
@@ -237,7 +201,7 @@ const FRAG = /* glsl */ `
     bool captured = false;
     int diskHits = 0;
 
-    for (int i = 0; i < 128; i++) {
+    for (int i = 0; i < 48; i++) {
       if (i >= uSteps) break;
 
       float r = length(p);
@@ -251,7 +215,7 @@ const FRAG = /* glsl */ `
 
       // Finer steps deep in the strong field (photon-ring region needs them),
       // coarser out at disk radii where curvature is already tiny.
-      float ds = clamp(r * 0.14, 0.35, 5.0);
+      float ds = clamp(r * 0.16, 0.45, 6.0);
       float r2 = r * r;
       vec3 accel = p * (-bendScale / (r2 * r2 * r));
       vec3 newD = d + accel * ds;
@@ -263,25 +227,22 @@ const FRAG = /* glsl */ `
       // Tilted accretion-disk plane crossing test (basis uDiskU/uDiskV/uDiskN),
       // run DURING bending so rays that pass above/below the hole can still
       // hit the far side of the disk behind it — that is what paints the
-      // over-pole halo arcs. Capped at three hits (direct + two lensed
-      // images) so a ray orbiting the photon sphere can't rack up unbounded
-      // brightness.
+      // over-pole wrap. Capped at two hits; the near-side face is the 3D
+      // ring mesh so we skip crossings on the camera hemisphere.
       float prevZ = dot(prevP, uDiskN);
       float curZ = dot(p, uDiskN);
-      if (diskHits < 3 && prevZ * curZ < 0.0) {
+      if (diskHits < 1 && prevZ * curZ < 0.0) {
         float tt = prevZ / (prevZ - curZ);
         vec3 crossP = mix(prevP, p, tt);
         float cu = dot(crossP, uDiskU);
         float cv = dot(crossP, uDiskV);
         float rad = length(vec2(cu, cv));
         if (rad > uDiskInner && rad < uDiskOuter) {
-          // Skip the near-side outer hit already shaded analytically.
-          if (hadOuterDirect && diskHits == 0 && rad > uMarchStartR * 0.94) {
-            // no-op
-          } else {
-            diskHits += 1;
-            float imageFalloff = diskHits == 1 ? 1.0 : (diskHits == 2 ? 0.78 : 0.45);
-            accum += shadeDiskCrossing(crossP, d, imageFalloff, false);
+          diskHits += 1;
+          bool nearSide = dot(crossP, w0) > 0.0;
+          if (!nearSide) {
+            float imageFalloff = diskHits == 1 ? 0.92 : 0.38;
+            accum += shadeDiskCrossing(crossP, d, imageFalloff);
           }
         }
       }
@@ -292,28 +253,44 @@ const FRAG = /* glsl */ `
     // captured rather than leaking a stray bright/ambiguous sample.
     if (!captured && minDist < HORIZON_SAFETY_R) captured = true;
 
-    // Near-side annulus is the 3D ring mesh (real depth). Impostor only
-    // contributes lensed far-side crossings + the photon ring — never fill
-    // stronglyBent sky (that was the gold circular kleks clipped against
-    // the horizon).
+    // Near-side annulus is the 3D ring mesh. Impostor fills the apparent
+    // shadow (no sky collar) and adds far-side wrap + a disk-plane rim —
+    // never a decorative gold hoop, never a dim-core discard that leaks sky.
     bool sealed = inCore || captured;
-    vec3 color;
+    vec3 peri = w0 - rd * dot(w0, rd);
+    float periLen = length(peri);
+    float polar = periLen > 1e-4 ? abs(dot(peri / periLen, uDiskN)) : 1.0;
     float ring = exp(-pow((minDist - uPhotonR) / uPhotonWidth, 2.0));
+    ring *= 1.0 - smoothstep(0.08, 0.38, polar);
     ring *= 1.0 / (1.0 + dot(accum, vec3(0.6)));
+
+    vec3 color;
     if (sealed) {
-      color = accum;
-      color += vec3(1.0, 0.969, 0.91) * ring * 0.35;
-      if (dot(color, vec3(0.299, 0.587, 0.114)) < 0.004) discard;
+      // Captured rays terminate at ~Rs, so march minDist cannot drive the
+      // photon rim — it would paint the whole interior. Use the straight
+      // impact parameter (closestREarly) so only the silhouette limb glows.
+      float rim = exp(-pow((closestREarly - uPhotonR) / uPhotonWidth, 2.0));
+      rim *= 1.0 - smoothstep(0.08, 0.38, polar);
+      color = vec3(1.0, 0.969, 0.91) * rim * 0.16;
     } else {
-      bool onRing = ring > 0.05;
-      bool onDisk = dot(accum, vec3(0.299, 0.587, 0.114)) > 0.008;
-      if (!onRing && !onDisk) discard;
-      color = accum;
-      color += vec3(1.0, 0.969, 0.91) * ring * 0.35;
+      float rim = exp(-pow((closestREarly - uPhotonR) / uPhotonWidth, 2.0));
+      rim *= 1.0 - smoothstep(0.08, 0.38, polar);
+      if (rim < 0.05) discard;
+      color = vec3(1.0, 0.969, 0.91) * rim * 0.16;
     }
 
-    // Billboard depth + depthTest, no depthWrite, no gl_FragDepth: the 3D
-    // disk mesh and horizon sphere own occlusion; this cannot stamp the ship.
+    float Rshadow = uShadowCaptureR;
+    float cShadow = dot(w0, w0) - Rshadow * Rshadow;
+    float discShadow = bIsec * bIsec - cShadow;
+    if (sealed && discShadow >= 0.0) {
+      float tHit = -bIsec - sqrt(discShadow);
+      if (tHit < 0.0) tHit = -bIsec + sqrt(discShadow);
+      if (tHit > 0.0) {
+        vec4 clip = projectionMatrix * viewMatrix * vec4(ro + rd * tHit, 1.0);
+        gl_FragDepth = 0.5 * (clip.z / clip.w) + 0.5;
+      }
+    }
+
     gl_FragColor = vec4(color, 1.0);
     ${TONE_OUTPUT_GLSL}
   }
@@ -333,6 +310,7 @@ const DISK_FRAG = /* glsl */ `
   uniform vec3 uBHPos;
   uniform float uDiskInner;
   uniform float uDiskOuter;
+  uniform float uHorizonR;
   uniform vec3 uDiskU;
   uniform vec3 uDiskV;
   uniform float uTime;
@@ -341,11 +319,11 @@ const DISK_FRAG = /* glsl */ `
   ${NOISE_GLSL}
 
   vec3 diskTemperatureColor(float t) {
-    vec3 hot = vec3(0.96, 0.9, 0.78);
-    vec3 amber = vec3(0.92, 0.68, 0.32);
-    vec3 ember = vec3(0.72, 0.36, 0.1);
-    vec3 c = mix(amber, ember, smoothstep(0.25, 0.9, t));
-    c = mix(hot, c, smoothstep(0.0, 0.22, t));
+    vec3 hot = vec3(0.99, 0.94, 0.84);
+    vec3 amber = vec3(0.94, 0.66, 0.28);
+    vec3 ember = vec3(0.62, 0.28, 0.08);
+    vec3 c = mix(amber, ember, smoothstep(0.18, 0.8, t));
+    c = mix(hot, c, smoothstep(0.0, 0.14, t));
     return c;
   }
 
@@ -361,16 +339,35 @@ const DISK_FRAG = /* glsl */ `
     float omega = 2.0 / pow(rad / uDiskInner, 1.5);
     float flowAngle = ang - uTime * omega;
     vec2 flow = vec2(sin(flowAngle), cos(flowAngle));
-    float streak = fbm2(vec2(rad * 0.22, 0.0) + flow * 2.6, 5);
-    float streak2 = fbm2(vec2(rad * 0.62, 4.1) + flow * 5.4, 4);
+    float streak = fbm2(vec2(rad * 0.08, ang * 0.55) + flow * 3.1, 5);
+    float streak2 = fbm2(vec2(rad * 0.18, ang * 1.1) + flow * 5.8, 4);
     float streakMix = smoothstep(0.22, 0.78, mix(streak, streak2, 0.34));
 
     vec3 rd = normalize(vWorldPos - cameraPosition);
+    // Far side of the hole is the impostor's lensed wrap — a full 3D ring
+    // here is a Saturn hoop.
+    vec3 toCam = cameraPosition - uBHPos;
+    if (dot(rel, toCam) < 0.0) discard;
+
+    // Horizon owns the silhouette — a near-edge-on ring would otherwise
+    // stamp concentric rims across the shadow.
+    vec3 rdOc = normalize(vWorldPos - cameraPosition);
+    vec3 oc = cameraPosition - uBHPos;
+    float bOc = dot(oc, rdOc);
+    float cOc = dot(oc, oc) - uHorizonR * uHorizonR;
+    float discOc = bOc * bOc - cOc;
+    if (discOc > 0.0) {
+      float tSph = -bOc - sqrt(discOc);
+      if (tSph < 0.0) tSph = -bOc + sqrt(discOc);
+      float tFrag = length(vWorldPos - cameraPosition);
+      if (tSph > 0.02 && tSph < tFrag - 0.02) discard;
+    }
+
     vec3 tangent = normalize(-sin(ang) * uDiskU + cos(ang) * uDiskV);
-    float beam = mix(0.78, 1.08, smoothstep(-0.7, 0.7, dot(tangent, -rd)));
-    float innerFade = smoothstep(0.1, 0.28, tRad);
-    float outerFade = 1.0 - smoothstep(0.82, 1.0, tRad);
-    float brightness = (0.32 + streakMix * 0.5) * beam * innerFade * outerFade;
+    float beam = mix(0.38, 1.48, smoothstep(-0.55, 0.55, dot(tangent, -rd)));
+    float innerFade = smoothstep(0.0, 0.05, tRad);
+    float outerFade = 1.0 - smoothstep(0.34, 1.0, tRad);
+    float brightness = (0.24 + streakMix * 0.62) * beam * innerFade * outerFade;
 
     gl_FragColor = vec4(diskTemperatureColor(tRad) * brightness, 1.0);
     ${TONE_OUTPUT_GLSL}
@@ -427,7 +424,7 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
   impostor.renderOrder = 7
   impostor.name = 'black-hole-impostor'
 
-  const horizonGeo = new THREE.SphereGeometry(HORIZON_MESH_R, 128, 96)
+  const horizonGeo = new THREE.SphereGeometry(HORIZON_MESH_R, 64, 48)
   const horizonMat = new THREE.MeshBasicMaterial({
     color: 0x000000,
     toneMapped: false,
@@ -444,12 +441,13 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
   horizon.renderOrder = 0
   horizon.frustumCulled = false
 
-  const diskGeo = new THREE.RingGeometry(DISK_INNER, DISK_OUTER, 160, 5)
+  const diskGeo = new THREE.RingGeometry(DISK_INNER, DISK_OUTER, 128, 1)
   const diskMat = new THREE.ShaderMaterial({
     uniforms: {
       uBHPos: { value: BLACK_HOLE_POS.clone() },
       uDiskInner: { value: DISK_INNER },
       uDiskOuter: { value: DISK_OUTER },
+      uHorizonR: { value: HORIZON_R },
       uDiskU: { value: diskU },
       uDiskV: { value: diskV },
       uTime: { value: 0 },
@@ -502,7 +500,7 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
       // (foreshortening) — NOT the whole frustum (that was a 3800u stamp).
       const dist = Math.max(rel.length(), 1)
       const facing = THREE.MathUtils.clamp(Math.abs(depth) / dist, 0.38, 1)
-      const cover = THREE.MathUtils.clamp(DISK_OUTER * 2.4 / facing, DISK_OUTER * 2.2, DISK_OUTER * 5.5)
+      const cover = THREE.MathUtils.clamp(DISK_OUTER * 2.2 / facing, DISK_OUTER * 2.0, DISK_OUTER * 4.8)
       impostor.scale.setScalar(cover)
       mat.uniforms.uHalfSize.value = cover
     },

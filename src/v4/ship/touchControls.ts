@@ -14,6 +14,8 @@ export type TouchControls = {
   input: TouchInput
   /** True when the overlay is mounted (coarse pointer). */
   active: boolean
+  /** Stick/thrust/brake arm after the first launch; hidden in prelaunch. */
+  setArmed(armed: boolean): void
   dispose(): void
 }
 
@@ -35,11 +37,12 @@ export function createTouchControls(container: HTMLElement): TouchControls {
 
   const coarse = window.matchMedia('(pointer: coarse)').matches
   if (!coarse) {
-    return { input, active: false, dispose() {} }
+    return { input, active: false, setArmed() {}, dispose() {} }
   }
 
   const root = document.createElement('div')
-  root.className = 'v4-touch'
+  root.className = 'v4-touch is-prelaunch'
+  root.setAttribute('aria-hidden', 'true')
   root.innerHTML = `
     <div class="v4-touch__stick-zone" aria-hidden="true">
       <div class="v4-touch__stick-ring"></div>
@@ -84,11 +87,11 @@ export function createTouchControls(container: HTMLElement): TouchControls {
   const onStickDown = (e: PointerEvent) => {
     if (stickPointerId !== null) return
     stickPointerId = e.pointerId
-    stickZone.setPointerCapture(e.pointerId)
     const rect = stickZone.getBoundingClientRect()
     stickCenterX = rect.left + rect.width / 2
     stickCenterY = rect.top + rect.height / 2
     updateStick(e.clientX, e.clientY)
+    try { stickZone.setPointerCapture(e.pointerId) } catch { /* untrusted QA events */ }
     e.preventDefault()
   }
 
@@ -117,8 +120,8 @@ export function createTouchControls(container: HTMLElement): TouchControls {
 
   const holdBtn = (btn: HTMLButtonElement, key: 'thrust' | 'brake') => {
     const onDown = (e: PointerEvent) => {
-      btn.setPointerCapture(e.pointerId)
       setBtn(btn, true, key)
+      try { btn.setPointerCapture(e.pointerId) } catch { /* untrusted QA events */ }
       e.preventDefault()
     }
     const onUp = (e: PointerEvent) => {
@@ -149,6 +152,15 @@ export function createTouchControls(container: HTMLElement): TouchControls {
   return {
     input,
     active: true,
+    setArmed(armed) {
+      root.classList.toggle('is-prelaunch', !armed)
+      root.setAttribute('aria-hidden', armed ? 'false' : 'true')
+      if (!armed) {
+        resetStick()
+        setBtn(thrustBtn, false, 'thrust')
+        setBtn(brakeBtn, false, 'brake')
+      }
+    },
     dispose() {
       window.removeEventListener('blur', onBlur)
       stickZone.removeEventListener('pointerdown', onStickDown)

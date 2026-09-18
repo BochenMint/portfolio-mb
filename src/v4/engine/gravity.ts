@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { BLACK_HOLE_POS } from './world-anchors'
+import { BLACK_HOLE_HORIZON_R, BLACK_HOLE_POS } from './world-anchors'
 
 /**
  * Newtonian-ish inverse-square pull toward the black hole (a = GM / r^2),
@@ -16,7 +16,7 @@ import { BLACK_HOLE_POS } from './world-anchors'
  *
  * Numerically verified curve (falloff = 1 for r <= 250; GM and the falloff
  * band are unchanged by the visual black-hole rescale — only EVENT_HORIZON_R
- * below tracks world/blackHole.ts HORIZON_R (now 124)):
+ * below tracks BLACK_HOLE_HORIZON_R / the visual mesh (108u)):
  *  - a(300) ≈ 1.26 u/s^2 — light drift, easy correction, edge of the falloff band.
  *  - a(150) ≈ 5.33 u/s^2 — clearly felt, needs active correction, still flyable.
  *  - a(95)  ≈ 13.3 u/s^2 (0.25x thrust) — HUD fairness-warning threshold
@@ -51,9 +51,9 @@ const FALLOFF_START = 250
 /** Pull fades to exactly zero by this radius — free flight beyond it. */
 const FALLOFF_END = 600
 
-/** Gameplay game-over trigger — just outside the visual horizon mesh (100u)
- * and inside the photon ring (~114u) in world/blackHole.ts. */
-export const EVENT_HORIZON_R = 108
+/** Gameplay game-over trigger — identical to the visual horizon mesh / Rs
+ * in world/blackHole.ts (BLACK_HOLE_HORIZON_R). Collision is the silhouette. */
+export const EVENT_HORIZON_R = BLACK_HOLE_HORIZON_R
 
 /** Floor on r so the accel doesn't spike toward infinity this close to the
  * singularity — irrelevant in practice since EVENT_HORIZON_R (26) always

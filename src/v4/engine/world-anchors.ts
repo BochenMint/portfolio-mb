@@ -3,6 +3,11 @@ import * as THREE from 'three'
 /** Origin anchor — the black hole shader (world/blackHole.ts) sits here. */
 export const BLACK_HOLE_POS = new THREE.Vector3(0, 0, 0)
 
+/** Shared Schwarzschild radius: visual occlusion mesh, geodesic Rs, and
+ * gameplay death in engine/gravity.ts (EVENT_HORIZON_R). Keep these locked
+ * together so the ship dies at the visible shadow edge, not in the sky gap. */
+export const BLACK_HOLE_HORIZON_R = 108
+
 export type PlanetId = 'plumm' | 'mint' | 'idrive' | 'agentic'
 
 export type PlanetSlot = {

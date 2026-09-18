@@ -19,20 +19,18 @@ import { createGameOverOverlay } from './ui/gameOverOverlay'
 import { createCompletionOverlay } from './ui/completionOverlay'
 import { projects } from '../i18n/live'
 
-// Establishing shot: outside the black hole's disk (outer radius ~208u) and
-// impostor (half-size 305u), offset sideways so the ship doesn't occlude the
-// hole, and close to the (18°-tilted) disk plane so the accretion disk reads
-// near-edge-on — thin front band + over-pole halo arcs, the Gargantua frame.
+// Establishing shot: outside the accretion disk, offset sideways so the hull
+// does not sit on the silhouette. Disk tilt is a few degrees from edge-on
+// (world/blackHole.ts) so the hole reads as a filled shadow, not Saturn.
 const START_POSITION = new THREE.Vector3(158, -70, 534)
 const START_QUATERNION = (() => {
   const radial = START_POSITION.clone().normalize()
   const tangent = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), radial).normalize()
   const toHole = radial.clone().negate()
-  const forward = tangent.clone().multiplyScalar(0.42).addScaledVector(toHole, 0.58)
-  forward.y = 0
+  // Keep pitch toward the hole. Flattening Y parked the silhouette above
+  // the chase frustum so the start screen was hull-only against empty sky.
+  const forward = tangent.clone().multiplyScalar(0.2).addScaledVector(toHole, 0.8)
   forward.normalize()
-  // lookAt keeps +Y close to world up — setFromUnitVectors was rolling the
-  // hull so chase sat under the hammer (frog + one-armed młot).
   const dummy = new THREE.Object3D()
   dummy.up.set(0, 1, 0)
   dummy.lookAt(forward)
@@ -66,6 +64,14 @@ type V4Debug = {
   /** Dev/preview-only — hide the hull so BH/planet probes aren't blocked by it. */
   setShipVisible(visible: boolean): void
   getChaseInfo(): { heightDot: number; backDot: number; dist: number; upDot: number }
+  /** Dev/preview-only — screen-space AABBs for overlap QA. */
+  getScreenAabbs(): {
+    ship: { left: number; top: number; right: number; bottom: number }
+    bh: { left: number; top: number; right: number; bottom: number }
+    viewport: { w: number; h: number }
+  }
+  /** Dev/preview-only — move the hull without pinning the chase camera. */
+  setShipPos(pos: [number, number, number]): void
 }
 
 declare global {
@@ -98,12 +104,16 @@ export function GameShell() {
     let unsubscribeTick: (() => void) | null = null
     let onResize: (() => void) | null = null
     let onKeyDownRestart: ((e: KeyboardEvent) => void) | null = null
+    let onPrelaunchPointer: ((e: PointerEvent) => void) | null = null
+    let boundRoot: HTMLDivElement | null = null
 
     async function init() {
       const root = rootRef.current
       const canvas = canvasRef.current
       const hudContainer = hudContainerRef.current
       if (!root || !canvas || !hudContainer) return
+      const rootEl = root
+      boundRoot = rootEl
 
       // Keyboard flight controls listen on `window`, but focusing the canvas
       // helps first-time visitors discover input and keeps Space from scrolling.
@@ -166,8 +176,35 @@ export function GameShell() {
       controls = controlsInstance
 
       const cameraRig = createCameraRig(engineInstance.camera)
-      const hudInstance = createHud(hudContainer, { touchActive: touchControlsInstance.active })
+      const launchByTap =
+        touchControlsInstance.active || window.matchMedia('(max-width: 480px), (hover: none)').matches
+      const hudInstance = createHud(hudContainer, {
+        touchActive: touchControlsInstance.active,
+        launchByTap,
+        onLaunch: () => {
+          controlsInstance.state.hasThrusted = true
+        },
+      })
       hud = hudInstance
+
+      function setPrelaunch(pre: boolean) {
+        rootEl.classList.toggle('is-prelaunch', pre)
+        touchControlsInstance.setArmed(!pre)
+      }
+      setPrelaunch(true)
+
+      onPrelaunchPointer = (e: PointerEvent) => {
+        if (!launchByTap) return
+        if (!rootEl.classList.contains('is-prelaunch')) return
+        const target = e.target
+        if (!(target instanceof Element)) return
+        if (target.closest('a, .v4-loading, .v4-overlay, input, textarea, button.v4-comm__collapse, button.v4-comm__icon')) {
+          return
+        }
+        e.preventDefault()
+        controlsInstance.state.hasThrusted = true
+      }
+      rootEl.addEventListener('pointerdown', onPrelaunchPointer)
 
       const commPanelInstance = createCommPanel(hudContainer, {
         reducedMotion,
@@ -214,6 +251,8 @@ export function GameShell() {
         completionOverlay?.reset()
         commPanel?.restart()
         hudInstance.reset()
+        cameraRig.holdLaunch(START_POSITION, START_QUATERNION)
+        setPrelaunch(true)
       }
 
       const gameOverOverlayInstance = createGameOverOverlay(hudContainer, {
@@ -231,17 +270,22 @@ export function GameShell() {
       completionOverlay = completionOverlayInstance
 
       onKeyDownRestart = (e: KeyboardEvent) => {
-        if (e.code === 'KeyR' && (gameOverTriggered || missionCompleted)) {
-          resetRun()
-        }
+        if (e.code !== 'KeyR') return
+        const target = e.target
+        if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) return
+        resetRun()
       }
       window.addEventListener('keydown', onKeyDownRestart)
 
       onResize = () => {
-        engineInstance.setSize(root.clientWidth, root.clientHeight)
+        engineInstance.setSize(rootEl.clientWidth, rootEl.clientHeight)
+        if (!controlsInstance.state.hasThrusted) {
+          cameraRig.holdLaunch(START_POSITION, START_QUATERNION)
+        }
       }
       window.addEventListener('resize', onResize)
       onResize()
+      cameraRig.holdLaunch(START_POSITION, START_QUATERNION)
 
       // Dev/preview-only free-camera pin for visual verification, opt-in via
       // `?debug=1` — never advertised, harmless if left in a shipped build.
@@ -254,13 +298,6 @@ export function GameShell() {
             debugFreeCam = true
             debugCamPos.set(pos[0], pos[1], pos[2])
             debugLookAt.set(lookAt[0], lookAt[1], lookAt[2])
-            // Also relocates the actual ship (not just the pinned debug
-            // camera) — needed so gravity/event-horizon/proximity checks,
-            // which all key off controlsInstance.state.position, can be
-            // exercised deterministically from a verification script.
-            controlsInstance.state.position.set(pos[0], pos[1], pos[2])
-            controlsInstance.state.velocity.set(0, 0, 0)
-            controlsInstance.state.angularVelocity.set(0, 0, 0)
           },
           spawnMeteor(kind) {
             worldInstance.debugForceMeteor(kind)
@@ -290,6 +327,54 @@ export function GameShell() {
               dist: rel.length(),
               upDot: shipUp.dot(new THREE.Vector3(0, 1, 0)),
             }
+          },
+          getScreenAabbs() {
+            const cam = engineInstance.camera
+            const canvas = engineInstance.renderer.domElement
+            const w = canvas.clientWidth
+            const h = canvas.clientHeight
+            const projectBox = (box: THREE.Box3) => {
+              const corners = [
+                new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+                new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+                new THREE.Vector3(box.min.x, box.max.y, box.min.z),
+                new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+                new THREE.Vector3(box.max.x, box.min.y, box.min.z),
+                new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+                new THREE.Vector3(box.max.x, box.max.y, box.min.z),
+                new THREE.Vector3(box.max.x, box.max.y, box.max.z),
+              ]
+              let left = Infinity
+              let top = Infinity
+              let right = -Infinity
+              let bottom = -Infinity
+              for (const c of corners) {
+                c.project(cam)
+                const sx = (c.x * 0.5 + 0.5) * w
+                const sy = (-c.y * 0.5 + 0.5) * h
+                left = Math.min(left, sx)
+                right = Math.max(right, sx)
+                top = Math.min(top, sy)
+                bottom = Math.max(bottom, sy)
+              }
+              return { left, top, right, bottom }
+            }
+            const shipBox = new THREE.Box3().setFromObject(shipInstance.group)
+            const bhSize = EVENT_HORIZON_R * 2
+            const bhBox = new THREE.Box3().setFromCenterAndSize(
+              BLACK_HOLE_POS,
+              new THREE.Vector3(bhSize, bhSize, bhSize),
+            )
+            return {
+              ship: projectBox(shipBox),
+              bh: projectBox(bhBox),
+              viewport: { w, h },
+            }
+          },
+          setShipPos(pos) {
+            controlsInstance.state.position.set(pos[0], pos[1], pos[2])
+            controlsInstance.state.velocity.set(0, 0, 0)
+            controlsInstance.state.angularVelocity.set(0, 0, 0)
           },
         }
       }
@@ -330,6 +415,7 @@ export function GameShell() {
           // the crew comm intro.
           if (controlsInstance.state.hasThrusted && !prevHasThrusted) {
             prevHasThrusted = true
+            setPrelaunch(false)
             if (!missionRunning) {
               missionRunning = true
               missionStartElapsed = elapsed
@@ -422,6 +508,10 @@ export function GameShell() {
             controlsInstance.state.thrustLevel,
             controlsInstance.state.bankAngle,
             controlsInstance.state.angularVelocity,
+            {
+              hasThrusted: controlsInstance.state.hasThrusted,
+              reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+            },
           )
         }
 
@@ -462,6 +552,7 @@ export function GameShell() {
       cancelled = true
       if (onResize) window.removeEventListener('resize', onResize)
       if (onKeyDownRestart) window.removeEventListener('keydown', onKeyDownRestart)
+      if (onPrelaunchPointer && boundRoot) boundRoot.removeEventListener('pointerdown', onPrelaunchPointer)
       unsubscribeTick?.()
       delete window.__v4
       completionOverlay?.dispose()
@@ -480,7 +571,7 @@ export function GameShell() {
   }, [])
 
   return (
-    <div className="v4-root" ref={rootRef}>
+    <div className="v4-root is-prelaunch" ref={rootRef}>
       <canvas className="v4-canvas" ref={canvasRef} />
       <div className="v4-hud-container" ref={hudContainerRef} />
       <div

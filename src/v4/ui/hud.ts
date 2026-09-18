@@ -35,6 +35,10 @@ const GRAVITY_WARNING_RATIO = 0.4
 
 type HudOptions = {
   touchActive?: boolean
+  /** Mobile/compact start is a tap, not Space. */
+  launchByTap?: boolean
+  /** Touch start CTA — one shot, not a held thrust. */
+  onLaunch?: () => void
 }
 
 /**
@@ -52,11 +56,12 @@ export function createHud(container: HTMLElement, opts: HudOptions = {}): Hud {
   }
 
   const touchActive = opts.touchActive ?? false
+  const launchByTap = opts.launchByTap ?? touchActive
   const legendControls = touchActive
     ? '<span>Lewy drążek</span> — lot · <span>Ciąg</span> — napęd · <span>Ham</span> — hamowanie'
     : '<span>W/S</span> — pochylenie · <span>A/D</span> — skręt · <span>Spacja</span> — ciąg · <span>Shift</span> — hamowanie'
-  const startPrompt = touchActive
-    ? 'Przytrzymaj <span class="v4-hud__start-keys">Ciąg</span>, aby uruchomić silniki'
+  const startPrompt = launchByTap
+    ? 'Dotknij, aby uruchomić silniki'
     : 'Naciśnij <span class="v4-hud__start-keys">Spację</span>, aby uruchomić silniki'
   const root = document.createElement('div')
   root.className = 'v4-hud'
@@ -86,7 +91,11 @@ export function createHud(container: HTMLElement, opts: HudOptions = {}): Hud {
 
     <div class="v4-hud__warning">Uwaga: studnia grawitacyjna</div>
 
-    <div class="v4-hud__start-prompt">${startPrompt}</div>
+    ${
+      launchByTap
+        ? `<button type="button" class="v4-hud__start-prompt v4-hud__start-prompt--touch">${startPrompt}</button>`
+        : `<div class="v4-hud__start-prompt">${startPrompt}</div>`
+    }
 
     <div class="v4-hud__legend" aria-hidden="true">
       ${legendControls}
@@ -104,6 +113,12 @@ export function createHud(container: HTMLElement, opts: HudOptions = {}): Hud {
   const thrustFillEl = root.querySelector<HTMLElement>('.v4-hud__thrust-fill')!
   const legendEl = root.querySelector<HTMLElement>('.v4-hud__legend')!
   const startPromptEl = root.querySelector<HTMLElement>('.v4-hud__start-prompt')!
+  if (launchByTap && opts.onLaunch) {
+    startPromptEl.addEventListener('pointerdown', (e) => {
+      e.preventDefault()
+      opts.onLaunch?.()
+    })
+  }
   const timerEl = root.querySelector<HTMLElement>('.v4-hud__timer')!
   const warningEl = root.querySelector<HTMLElement>('.v4-hud__warning')!
   const pipEls = Array.from(root.querySelectorAll<HTMLElement>('.v4-hud__pip'))
