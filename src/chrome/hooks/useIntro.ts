@@ -147,7 +147,6 @@ export function useIntro(ready: boolean) {
               0.9,
             )
           }
-          ScrollTrigger.addEventListener('update', catchup)
           window.addEventListener('scroll', catchup, { passive: true })
           catchup()
 
@@ -159,6 +158,7 @@ export function useIntro(ready: boolean) {
               start: 'top top',
               end: 'bottom bottom',
               scrub: 0.3,
+              onUpdate: catchup,
             },
           })
 
@@ -167,7 +167,6 @@ export function useIntro(ready: boolean) {
           return () => {
             window.clearTimeout(safety)
             window.removeEventListener('scroll', catchup)
-            ScrollTrigger.removeEventListener('update', catchup)
           }
         },
       )
