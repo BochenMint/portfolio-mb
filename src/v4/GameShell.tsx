@@ -205,7 +205,10 @@ export function GameShell() {
       controlsInstance.state.quaternion.copy(START_QUATERNION)
       controls = controlsInstance
 
-      const cameraRig = createCameraRig(engineInstance.camera)
+      const cameraRig = createCameraRig(
+        engineInstance.camera,
+        shipInstance.group.userData.hullStats as { length: number; span: number; height: number } | undefined,
+      )
       const launchByTap =
         touchControlsInstance.active || window.matchMedia('(max-width: 480px), (hover: none)').matches
       const hudInstance = createHud(hudContainer, {

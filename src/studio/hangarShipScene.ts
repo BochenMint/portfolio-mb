@@ -155,7 +155,7 @@ export async function createHangarShipScene(
     const aspect = Math.max(w, 1) / Math.max(h, 1)
     camera.aspect = aspect
     const fov = camera.fov * (Math.PI / 180)
-    const dist = (radius / Math.sin(fov / 2)) * (aspect < 1.1 ? 0.7 : 0.54)
+    const dist = (radius / Math.sin(fov / 2)) * (aspect < 1.1 ? 0.78 : 0.6)
     camera.position.set(dist * 0.52, dist * 0.22, dist * 0.74)
     camera.lookAt(0, radius * 0.04, 0)
     camera.updateProjectionMatrix()

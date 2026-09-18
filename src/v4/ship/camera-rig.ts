@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { BLACK_HOLE_POS } from '../engine/world-anchors'
 
 // Classic chase in SHIP space: +Y = dorsal, +Z = aft (forward is local -Z).
 // World-up height was a frog trap — nose-up pitch puts "behind" below the keel.
@@ -18,15 +19,18 @@ const THRUST_PULLBACK_LERP = 4.5
 const OFFSET_LERP_RATE = 10
 const OFFSET_ANG_BOOST = 16
 
-/** Cinematic start — ship-local 3/4 rear/top (aft + dorsal + slight starboard).
- * SIDE/BACK ≈ 0.3 so both gondolas read; a large SIDE was a side-on pencil. */
-const LAUNCH_BACK = 50
-const LAUNCH_HEIGHT = 18
-const LAUNCH_SIDE = 13
-const LAUNCH_LOOK_AHEAD = 400
-const LAUNCH_LOOK_LIFT = 6
+/** Cinematic start — ship-local 3/4 rear/top. Distance is fitted from the
+ * live hull AABB (MB Kite ~35×7.4), not the old T-hull constants. */
+export type HullFit = {
+  length: number
+  span: number
+  height: number
+}
+
 const LAUNCH_FOV = 50
 const LAUNCH_BLEND_S = 0.95
+const LAUNCH_WIDTH_TARGET = 0.37
+const DEFAULT_HULL: HullFit = { length: 34, span: 7.4, height: 3.3 }
 
 const DEFLECT_PER_RATE = 0.45
 const DEFLECT_MAX = 0.9
@@ -56,32 +60,83 @@ function safeNormalize(v: THREE.Vector3, fallback: THREE.Vector3): THREE.Vector3
   return v.normalize()
 }
 
-function launchFit(aspect: number): {
-  back: number
-  height: number
-  side: number
-  fov: number
-  pull: number
-  lookLift: number
-} {
-  // Portrait is a different shot: extra back so the shadow+disk keep a
-  // margin on the short axis, and a milder look-down so the hull sits
-  // above the bottom start dock. Do not reuse the desktop pose.
-  if (aspect > 0 && aspect < 0.62) {
-    return { back: 1.95, height: 1.08, side: 0.68, fov: 55, pull: 0.78, lookLift: 6 }
-  }
-  if (aspect > 0 && aspect < 0.85) {
-    return { back: 1.55, height: 1.12, side: 0.78, fov: 53, pull: 0.88, lookLift: 2 }
-  }
-  return { back: 1, height: 1, side: 1, fov: LAUNCH_FOV, pull: 1, lookLift: 0 }
-}
-
 function smoothstep01(t: number): number {
   const x = THREE.MathUtils.clamp(t, 0, 1)
   return x * x * (3 - 2 * x)
 }
 
-export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
+function readHull(fit?: HullFit | null): HullFit {
+  const length = fit?.length
+  const span = fit?.span
+  const height = fit?.height
+  return {
+    length: Number.isFinite(length) && (length as number) > 8 ? (length as number) : DEFAULT_HULL.length,
+    span: Number.isFinite(span) && (span as number) > 2 ? (span as number) : DEFAULT_HULL.span,
+    height: Number.isFinite(height) && (height as number) > 1 ? (height as number) : DEFAULT_HULL.height,
+  }
+}
+
+function launchProfile(aspect: number): {
+  fov: number
+  sideOverBack: number
+  heightOverBack: number
+  widthTarget: number
+  cyTarget: number
+  bottomNdc: number
+  lookAheadMul: number
+  lookLiftMul: number
+} {
+  // Portrait is a different shot: extra pullback, milder look-down, room
+  // above the start dock. Do not reuse the desktop pose.
+  if (aspect > 0 && aspect < 0.62) {
+    return {
+      fov: 55,
+      sideOverBack: 0.24,
+      heightOverBack: 0.5,
+      widthTarget: 0.4,
+      cyTarget: 0.54,
+      bottomNdc: -0.62,
+      lookAheadMul: 0.9,
+      lookLiftMul: 2.2,
+    }
+  }
+  if (aspect > 0 && aspect < 0.85) {
+    return {
+      fov: 53,
+      sideOverBack: 0.26,
+      heightOverBack: 0.46,
+      widthTarget: 0.38,
+      cyTarget: 0.56,
+      bottomNdc: -0.66,
+      lookAheadMul: 0.8,
+      lookLiftMul: 2.0,
+    }
+  }
+  return {
+    fov: LAUNCH_FOV,
+    sideOverBack: 0.32,
+    heightOverBack: 0.48,
+    widthTarget: LAUNCH_WIDTH_TARGET,
+    cyTarget: 0.62,
+    bottomNdc: -0.74,
+    lookAheadMul: 0.55,
+    lookLiftMul: 2.1,
+  }
+}
+
+export function createCameraRig(camera: THREE.PerspectiveCamera, hullFit?: HullFit | null): CameraRig {
+  const hull = readHull(hullFit)
+  const hullCorners: THREE.Vector3[] = []
+  for (const sx of [-0.5, 0.5] as const) {
+    for (const sy of [-0.5, 0.5] as const) {
+      for (const sz of [-0.5, 0.5] as const) {
+        hullCorners.push(new THREE.Vector3(sx * hull.span, sy * hull.height, sz * hull.length))
+      }
+    }
+  }
+  const cornerWorld = new THREE.Vector3()
+  const ndc = new THREE.Vector3()
+
   const desiredPos = new THREE.Vector3()
   const lookTarget = new THREE.Vector3()
   const forward = new THREE.Vector3()
@@ -110,9 +165,10 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
   camera.updateProjectionMatrix()
 
   function poseLaunch(shipPos: THREE.Vector3, shipQuat: THREE.Quaternion): void {
-    const fit = launchFit(camera.aspect)
-    // Ship-local 3/4: -Z is the nose, so aft is +Z / -forward. World-radial
-    // offset was a side profile whenever the hull wasn't pointing at the hole.
+    const aspect = camera.aspect > 0.05 ? camera.aspect : 1.6
+    const profile = launchProfile(aspect)
+    launchFov = profile.fov
+
     forward.set(0, 0, -1).applyQuaternion(shipQuat)
     safeNormalize(forward, fwdFallback)
     shipUp.set(0, 1, 0).applyQuaternion(shipQuat)
@@ -121,17 +177,101 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
     if (right.lengthSq() < 1e-8) right.crossVectors(forward, worldUp)
     right.normalize()
 
-    launchPos.copy(shipPos)
-      .addScaledVector(forward, -LAUNCH_BACK * fit.back)
-      .addScaledVector(worldUp, LAUNCH_HEIGHT * fit.height)
-      .addScaledVector(right, LAUNCH_SIDE * fit.side)
+    dummy.near = camera.near
+    dummy.far = camera.far
+    dummy.aspect = aspect
+    dummy.fov = launchFov
+    dummy.up.copy(worldUp)
 
-    launchLook.copy(shipPos)
-      .addScaledVector(forward, LAUNCH_LOOK_AHEAD * fit.pull)
-      .addScaledVector(worldUp, LAUNCH_LOOK_LIFT + fit.lookLift)
-    launchFov = fit.fov
+    const hypot = Math.hypot(1, profile.heightOverBack, profile.sideOverBack)
+    const vfov = THREE.MathUtils.degToRad(launchFov)
+    const hfov = 2 * Math.atan(Math.tan(vfov / 2) * aspect)
+    const projected = hull.length * 0.72 + hull.span * 0.85
+    let dist = projected / Math.max(0.12, profile.widthTarget * 2 * Math.tan(hfov / 2))
+    const distMin = hull.length * 1.05
+    const distMax = hull.length * 3.2
+    dist = THREE.MathUtils.clamp(dist, distMin, distMax)
 
-    dummy.position.copy(launchPos)
+    let lookAhead = hull.length * profile.lookAheadMul
+    let lookLift = hull.height * profile.lookLiftMul
+    const lookAheadMin = hull.length * 0.12
+    const lookAheadMax = hull.length * 2.2
+
+    const applyPose = () => {
+      const back = dist / hypot
+      launchPos.copy(shipPos)
+        .addScaledVector(forward, -back)
+        .addScaledVector(worldUp, back * profile.heightOverBack)
+        .addScaledVector(right, back * profile.sideOverBack)
+      launchLook.copy(shipPos)
+        .addScaledVector(forward, lookAhead)
+        .addScaledVector(worldUp, lookLift)
+      dummy.fov = launchFov
+      dummy.position.copy(launchPos)
+      dummy.lookAt(launchLook)
+      dummy.updateProjectionMatrix()
+      dummy.updateMatrixWorld(true)
+    }
+
+    for (let i = 0; i < 10; i++) {
+      applyPose()
+      let minX = Infinity
+      let maxX = -Infinity
+      let minY = Infinity
+      let maxY = -Infinity
+      for (const local of hullCorners) {
+        cornerWorld.copy(local).applyQuaternion(shipQuat).add(shipPos)
+        ndc.copy(cornerWorld).project(dummy)
+        if (!Number.isFinite(ndc.x + ndc.y)) continue
+        minX = Math.min(minX, ndc.x)
+        maxX = Math.max(maxX, ndc.x)
+        minY = Math.min(minY, ndc.y)
+        maxY = Math.max(maxY, ndc.y)
+      }
+      if (!Number.isFinite(minX)) break
+
+      const widthFrac = (maxX - minX) * 0.5
+      const cy = 0.5 - (minY + maxY) * 0.25
+      const clippedBottom = minY < profile.bottomNdc
+      const clipped = minX < -0.9 || maxX > 0.9 || maxY > 0.92 || clippedBottom
+
+      if (clippedBottom) {
+        lookAhead = Math.max(lookAheadMin, lookAhead * 0.78)
+        lookLift = Math.max(hull.height * 0.3, lookLift * 0.88)
+        dist = Math.min(distMax, dist * 1.07)
+        continue
+      }
+      if (clipped) {
+        dist = Math.min(distMax, dist * 1.08)
+        continue
+      }
+
+      if (widthFrac > 0.02) {
+        const next = dist * (widthFrac / profile.widthTarget)
+        dist = THREE.MathUtils.clamp(dist + (next - dist) * 0.55, distMin, distMax)
+      }
+
+      if (cy < profile.cyTarget - 0.04) {
+        lookAhead = Math.min(lookAheadMax, lookAhead + hull.length * 0.06)
+        lookLift = Math.min(hull.height * 5, lookLift + hull.height * 0.2)
+      } else if (cy > profile.cyTarget + 0.05) {
+        lookAhead = Math.max(lookAheadMin, lookAhead - hull.length * 0.08)
+        lookLift = Math.max(hull.height * 0.3, lookLift - hull.height * 0.18)
+      }
+
+      ndc.copy(BLACK_HOLE_POS).project(dummy)
+      if (Number.isFinite(ndc.y)) {
+        const bhCy = 0.5 - ndc.y * 0.5
+        if (bhCy > 0.44 && !clippedBottom) {
+          lookAhead = Math.min(lookAheadMax, lookAhead + hull.length * 0.05)
+        }
+      }
+
+      lookAhead = THREE.MathUtils.clamp(lookAhead, lookAheadMin, lookAheadMax)
+      lookLift = THREE.MathUtils.clamp(lookLift, hull.height * 0.3, hull.height * 5)
+    }
+
+    applyPose()
     dummy.up.copy(worldUp)
     dummy.lookAt(launchLook)
     launchQuat.copy(dummy.quaternion)
@@ -148,7 +288,6 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
   }
 
   function holdLaunch(shipPos: THREE.Vector3, shipQuat: THREE.Quaternion): void {
-    void shipQuat
     phase = 'launch'
     blendT = 0
     wasThrusted = false
