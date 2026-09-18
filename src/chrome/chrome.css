@@ -328,11 +328,14 @@
     border: 1px solid var(--card-border);
     background: var(--card-surface);
     box-shadow: var(--card-inset), var(--shadow-card);
+    /* Transform is owned by GSAP on [data-card] entrance. A CSS transform
+       transition here lagged that tween and the cards jumped twice; nothing
+       else on the card animates transform (hover is the ::before sheen).
+       Permanent will-change promoted every card to its own layer and
+       flickered them while scrolling. */
     transition:
-      transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
       background 0.4s ease,
       box-shadow 0.4s ease;
-    will-change: transform;
   }
 
   /* Soft cursor sheen. The old version drew a hard diagonal streak plus a
@@ -1079,6 +1082,17 @@
 /* --- Anchor-nav offset: keep the fixed header off section headings --- */
 section[id] {
   scroll-margin-top: 80px;
+}
+
+/* Hide outermost scroll-reveal targets until GSAP plays them once.
+   Nested [data-reveal] inside a card/reveal inherit the parent's fade —
+   hiding those too left them stuck at 0 when the parent was the only
+   trigger. Reduced motion keeps them visible (see useIntro). */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal]:not([data-revealed]):not(:is([data-reveal] [data-reveal], [data-card] [data-reveal])),
+  [data-card]:not([data-revealed]) {
+    opacity: 0;
+  }
 }
 @media (min-width: 768px) {
   section[id] {

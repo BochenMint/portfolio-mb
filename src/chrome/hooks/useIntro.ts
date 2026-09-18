@@ -1,7 +1,29 @@
 import { useLayoutEffect } from 'react'
 import { gsap, ScrollTrigger } from '../../animation/gsap'
 
-/** Entrance + scroll reveals for the Chrome edition. Motion-safe by default. */
+const REVEAL_SEL = '[data-reveal], [data-card]'
+
+function outermost(selector: string) {
+  return gsap.utils.toArray<HTMLElement>(selector).filter((el) => {
+    const parent = el.parentElement
+    if (!parent) return true
+    return !parent.closest('[data-reveal], [data-card]')
+  })
+}
+
+function markRevealed(els: HTMLElement[]) {
+  for (const el of els) el.setAttribute('data-revealed', '')
+}
+
+/**
+ * Entrance + scroll reveals for the Chrome edition.
+ *
+ * `fromTo(..., { y, opacity: 0 })` on enter was the flash: modules sat at
+ * opacity 1 below the fold, then the trigger slammed them to 0 / +y and
+ * tweened back. Nested `[data-reveal]` inside `[data-card]` compounded that
+ * jump. Outermost targets start hidden, play once via `to()`, and ignore a
+ * second onEnter (Lenis + pin refresh).
+ */
 export function useIntro(ready: boolean) {
   useLayoutEffect(() => {
     if (!ready) return
@@ -22,6 +44,7 @@ export function useIntro(ready: boolean) {
               yPercent: 0,
               clearProps: 'transform',
             })
+            document.querySelectorAll(REVEAL_SEL).forEach((el) => el.setAttribute('data-revealed', ''))
             return
           }
 
@@ -73,27 +96,60 @@ export function useIntro(ready: boolean) {
             ease: 'power3.out',
           })
 
-          ScrollTrigger.batch('[data-reveal]', {
+          const reveals = outermost('[data-reveal]')
+          const cards = outermost('[data-card]')
+          gsap.set(reveals, { y: 28, opacity: 0 })
+          gsap.set(cards, { y: 48, opacity: 0 })
+
+          const play = (batch: Element[], duration: number) => {
+            const els = (batch as HTMLElement[]).filter((el) => !el.hasAttribute('data-revealed'))
+            if (!els.length) return
+            markRevealed(els)
+            const passed = els.filter((el) => el.getBoundingClientRect().bottom <= 0)
+            const onscreen = els.filter((el) => el.getBoundingClientRect().bottom > 0)
+            if (passed.length) {
+              gsap.set(passed, { opacity: 1, y: 0, clearProps: 'transform,willChange' })
+            }
+            if (!onscreen.length) return
+            gsap.to(onscreen, {
+              y: 0,
+              opacity: 1,
+              duration,
+              stagger: 0.07,
+              ease: 'power3.out',
+              overwrite: true,
+              onComplete() {
+                gsap.set(onscreen, { clearProps: 'transform,willChange' })
+              },
+            })
+          }
+
+          ScrollTrigger.batch(reveals, {
             start: 'top 90%',
-            onEnter: (batch) =>
-              gsap.fromTo(
-                batch,
-                { y: 28, opacity: 0 },
-                { y: 0, opacity: 1, duration: 0.8, stagger: 0.07, ease: 'power3.out', overwrite: true },
-              ),
+            onEnter: (batch) => play(batch, 0.8),
             once: true,
           })
 
-          ScrollTrigger.batch('[data-card]', {
+          ScrollTrigger.batch(cards, {
             start: 'top 88%',
-            onEnter: (batch) =>
-              gsap.fromTo(
-                batch,
-                { y: 48, opacity: 0 },
-                { y: 0, opacity: 1, duration: 0.9, stagger: 0.08, ease: 'power3.out', overwrite: true },
-              ),
+            onEnter: (batch) => play(batch, 0.9),
             once: true,
           })
+
+          const catchup = () => {
+            const line = window.innerHeight * 0.9
+            play(
+              reveals.filter((el) => !el.hasAttribute('data-revealed') && el.getBoundingClientRect().top < line),
+              0.8,
+            )
+            play(
+              cards.filter((el) => !el.hasAttribute('data-revealed') && el.getBoundingClientRect().top < line),
+              0.9,
+            )
+          }
+          ScrollTrigger.addEventListener('update', catchup)
+          window.addEventListener('scroll', catchup, { passive: true })
+          catchup()
 
           gsap.to('[data-progress-bar]', {
             scaleX: 1,
@@ -105,6 +161,14 @@ export function useIntro(ready: boolean) {
               scrub: 0.3,
             },
           })
+
+          const safety = window.setTimeout(catchup, 2500)
+
+          return () => {
+            window.clearTimeout(safety)
+            window.removeEventListener('scroll', catchup)
+            ScrollTrigger.removeEventListener('update', catchup)
+          }
         },
       )
     })

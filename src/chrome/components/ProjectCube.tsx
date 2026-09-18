@@ -4,6 +4,14 @@ import type { Face } from '../data/faces'
 import type { Locale } from '../i18n/types'
 import { supportsWebGL } from '../webgl'
 import { BrandMark } from './BrandMark'
+import {
+  FACE_COUNT,
+  indexFromOrientation,
+  nearestSnap,
+  nextAutoplayIndex,
+  orientationForIndex,
+  PITCH_LIMIT,
+} from './cubeOrientation'
 import './cube.css'
 
 type Props = {
@@ -45,63 +53,25 @@ const CANVAS_H_RATIO = 1.25
 // Rx * Ry * v — yaw first in local space, pitch second in world space —
 // which is exactly the trackball feel we want, so the group's rotation
 // can be set directly with no quaternion bookkeeping.
+//
+// Autoplay is yaw-only (see nextAutoplayIndex). Pitch stays a manual
+// gesture: dots, arrows, drag. Pitching the whole cube ±90° turns every
+// remaining screenshot onto its side.
 // ---------------------------------------------------------------------
 
-const FACE_COUNT = 6
-/** Index → the face's outward normal in the cube's own space. */
-const FACE_NORMALS: ReadonlyArray<readonly [number, number, number]> = [
-  [0, 0, 1], // 0 front  (+Z)
-  [1, 0, 0], // 1 right  (+X)
-  [0, 0, -1], // 2 back   (-Z)
-  [-1, 0, 0], // 3 left   (-X)
-  [0, 1, 0], // 4 top    (+Y)
-  [0, -1, 0], // 5 bottom (-Y)
-]
-const PITCH_LIMIT = 90
 /** Rubber-band budget past ±90° while dragging; the clamp is asymptotic. */
 const PITCH_OVERSHOOT = 14
 /** Past this much pitch, releasing a drag settles on the top/bottom face. */
 const PITCH_SNAP_THRESHOLD = 45
 
-const DEG = Math.PI / 180
-
 /**
- * How strongly a face points at the camera after the orientation is applied:
- * the world-space Z of its normal. The camera sits on +Z (12° above), so the
- * largest value wins. Kept as plain trigonometry rather than three.js maths so
- * the static fallback — which never builds a scene — derives the same active
- * index from the same numbers.
+ * Extra clockwise rotation of the baked screenshot, per face index, so the
+ * content is upright once orientationForIndex has brought that face to the
+ * camera. RoundedBoxGeometry rewrites BoxGeometry's UVs — V on +Y/+X-style
+ * faces no longer matches the "image-up along -Z" the comments below assume —
+ * which is why the bottom/top screenshots landed at 90° or 180°.
  */
-function facingZ(normal: readonly [number, number, number], yawDeg: number, pitchDeg: number) {
-  const yaw = yawDeg * DEG
-  const pitch = pitchDeg * DEG
-  const [nx, ny, nz] = normal
-  // Ry(yaw) then Rx(pitch); only the resulting Z is needed.
-  const z1 = -nx * Math.sin(yaw) + nz * Math.cos(yaw)
-  return ny * Math.sin(pitch) + z1 * Math.cos(pitch)
-}
-
-function indexFromOrientation(yawDeg: number, pitchDeg: number) {
-  let best = 0
-  let bestZ = -Infinity
-  for (let i = 0; i < FACE_COUNT; i += 1) {
-    const z = facingZ(FACE_NORMALS[i], yawDeg, pitchDeg)
-    if (z > bestZ) {
-      bestZ = z
-      best = i
-    }
-  }
-  return best
-}
-
-/** The yaw/pitch pair that squares face `index` up to the camera, reached from
- *  the current orientation by the shortest route. */
-function orientationForIndex(index: number, yawDeg: number) {
-  if (index >= 4) {
-    return { yaw: nearestSnap(yawDeg), pitch: index === 4 ? PITCH_LIMIT : -PITCH_LIMIT }
-  }
-  return { yaw: nearestRotForIndex(yawDeg, ((index % 4) + 4) % 4), pitch: 0 }
-}
+const FACE_CONTENT_ROT_DEG = [0, 0, 0, 0, 180, 90] as const
 
 /** Asymptotic rubber band: pitch can be dragged past ±90° but never reaches
  *  ±(90 + PITCH_OVERSHOOT), so the cube can't be tumbled onto its back. */
@@ -109,20 +79,6 @@ function softClampPitch(pitch: number) {
   const over = Math.abs(pitch) - PITCH_LIMIT
   if (over <= 0) return pitch
   return Math.sign(pitch) * (PITCH_LIMIT + (PITCH_OVERSHOOT * over) / (over + PITCH_OVERSHOOT))
-}
-
-function nearestRotForIndex(currentRot: number, index: number) {
-  const target = -index * 90
-  const currentMod = ((currentRot % 360) + 360) % 360
-  const targetMod = ((target % 360) + 360) % 360
-  let delta = targetMod - currentMod
-  if (delta > 180) delta -= 360
-  if (delta < -180) delta += 360
-  return currentRot + delta
-}
-
-function nearestSnap(rot: number) {
-  return Math.round(rot / 90) * 90
 }
 
 /** The six faces a cube shows, padded by repetition if a project ships fewer. */
@@ -273,6 +229,13 @@ function drawContainImage(ctx: CanvasRenderingContext2D, img: HTMLImageElement) 
   const dw = iw * scale
   const dh = ih * scale
   ctx.drawImage(img, x + (size - dw) / 2, y + (size - dh) / 2, dw, dh)
+}
+
+function applyFaceContentRotation(tex: { center: { set: (x: number, y: number) => void }; rotation: number }, faceIndex: number) {
+  const deg = FACE_CONTENT_ROT_DEG[faceIndex] ?? 0
+  if (!deg) return
+  tex.center.set(0.5, 0.5)
+  tex.rotation = (deg * Math.PI) / 180
 }
 
 /** Base-color map: white outside the screen (tinted by material.color to
@@ -615,6 +578,8 @@ async function buildScene(
       maskMap.anisotropy = maxAniso
       brandMaps.push(colorMap, maskMap)
       brandSlots.forEach((slot) => {
+        applyFaceContentRotation(colorMap, faceSlots.indexOf(slot))
+        applyFaceContentRotation(maskMap, faceSlots.indexOf(slot))
         slot.material.map = colorMap
         slot.material.metalnessMap = maskMap
         slot.material.roughnessMap = maskMap
@@ -626,7 +591,7 @@ async function buildScene(
 
   async function applyFaceTextures(theme: ThemeName) {
     await Promise.all(
-      faceSlots.map(async (slot) => {
+      faceSlots.map(async (slot, faceIndex) => {
         if (!slot.face || slot.face.kind === 'brand') return
         const src = theme === 'light' && slot.face.light ? slot.face.light : slot.face.file
         if (!src) return
@@ -654,6 +619,7 @@ async function buildScene(
           tex.generateMipmaps = true
           tex.wrapS = THREE.ClampToEdgeWrapping
           tex.wrapT = THREE.ClampToEdgeWrapping
+          applyFaceContentRotation(tex, faceIndex)
           tex.needsUpdate = true
           if (slot.texture) slot.texture.dispose()
           slot.texture = tex
@@ -1159,9 +1125,8 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
   }, [stopMomentum, stopTween])
 
   // --- Auto-rotate -------------------------------------------------------
-  // Walks the full six-face cycle (lateral ring, then the brand plate on top,
-  // then the bottom face) rather than only the yaw ring, so every face gets
-  // shown to a visitor who never touches the cube.
+  // Yaw ring only. Pitching to the top plate or bottom screenshot turns
+  // every remaining screen onto its side; those faces stay on the dots.
   useEffect(() => {
     const tick = () => {
       autoTimerRef.current = window.setTimeout(() => {
@@ -1174,7 +1139,7 @@ export function ProjectCube({ projectId, title, faces, locale, eagerFront }: Pro
           momentumRafRef.current === null &&
           sceneRef.current
         ) {
-          goToIndex(activeIndexRef.current + 1)
+          goToIndex(nextAutoplayIndex(activeIndexRef.current, rotRef.current))
         }
         tick()
       }, AUTO_ROTATE_MS)
