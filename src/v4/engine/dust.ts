@@ -177,6 +177,7 @@ export function createDustField(lowPower: boolean): DustField {
     transparent: true,
     opacity: 0,
     depthWrite: false,
+    depthTest: true,
     blending: THREE.AdditiveBlending,
   })
 

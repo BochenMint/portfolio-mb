@@ -51,6 +51,8 @@ export type World = {
   forEachMoonCollider(fn: (position: THREE.Vector3, radius: number) => void): void
   setBlackHoleLayerVisible(layer: BlackHoleLayer, visible: boolean): void
   getBlackHoleLayerState(): ReturnType<BlackHole['getLayerState']>
+  getBlackHoleRadii(): ReturnType<BlackHole['getRadii']>
+  getBlackHoleDiskFrame(): ReturnType<BlackHole['getDiskFrame']>
   setBlackHoleDebugBounds(on: boolean): void
   dispose(): void
 }
@@ -135,6 +137,14 @@ export async function createWorld(scene: THREE.Scene, assets: WorldAssets): Prom
 
     getBlackHoleLayerState() {
       return blackHole.getLayerState()
+    },
+
+    getBlackHoleRadii() {
+      return blackHole.getRadii()
+    },
+
+    getBlackHoleDiskFrame() {
+      return blackHole.getDiskFrame()
     },
 
     setBlackHoleDebugBounds(on) {

@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { BLACK_HOLE_POS } from '../engine/world-anchors'
 
 // Classic chase in SHIP space: +Y = dorsal, +Z = aft (forward is local -Z).
 // World-up height was a frog trap — nose-up pitch puts "behind" below the keel.
@@ -19,14 +18,13 @@ const THRUST_PULLBACK_LERP = 4.5
 const OFFSET_LERP_RATE = 10
 const OFFSET_ANG_BOOST = 16
 
-/** Cinematic start — world-space shot, not a chase. Camera sits close behind
- * the hull so the ship reads in the lower third; the hole stays a controlled
- * disk, not a full-frame matte. */
-const LAUNCH_BACK = 22
-const LAUNCH_HEIGHT = 12
-const LAUNCH_SIDE = 4.5
-const LAUNCH_LOOK_PULL = 14
-const LAUNCH_LOOK_LIFT = 2
+/** Cinematic start — ship-local 3/4 rear/top (aft + dorsal + slight starboard).
+ * SIDE/BACK ≈ 0.3 so both gondolas read; a large SIDE was a side-on pencil. */
+const LAUNCH_BACK = 50
+const LAUNCH_HEIGHT = 18
+const LAUNCH_SIDE = 13
+const LAUNCH_LOOK_AHEAD = 400
+const LAUNCH_LOOK_LIFT = 6
 const LAUNCH_FOV = 50
 const LAUNCH_BLEND_S = 0.95
 
@@ -66,13 +64,14 @@ function launchFit(aspect: number): {
   pull: number
   lookLift: number
 } {
-  // Portrait: extra back + a downward look so hull sits above the start dock
-  // and the hammerhead is not cropped.
+  // Portrait is a different shot: extra back so the shadow+disk keep a
+  // margin on the short axis, and a milder look-down so the hull sits
+  // above the bottom start dock. Do not reuse the desktop pose.
   if (aspect > 0 && aspect < 0.62) {
-    return { back: 2.35, height: 1.28, side: 0.18, fov: 58, pull: 0.55, lookLift: -14 }
+    return { back: 1.95, height: 1.08, side: 0.68, fov: 55, pull: 0.78, lookLift: 6 }
   }
   if (aspect > 0 && aspect < 0.85) {
-    return { back: 2.05, height: 1.18, side: 0.26, fov: 56, pull: 0.65, lookLift: -11 }
+    return { back: 1.55, height: 1.12, side: 0.78, fov: 53, pull: 0.88, lookLift: 2 }
   }
   return { back: 1, height: 1, side: 1, fov: LAUNCH_FOV, pull: 1, lookLift: 0 }
 }
@@ -91,7 +90,6 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
   const smoothedLocal = new THREE.Vector3(CHASE_SIDE, CHASE_HEIGHT, CHASE_BACK)
   const deflect = new THREE.Vector3()
   const viewDir = new THREE.Vector3()
-  const radial = new THREE.Vector3()
   const right = new THREE.Vector3()
   const launchPos = new THREE.Vector3()
   const launchLook = new THREE.Vector3()
@@ -111,22 +109,25 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
   camera.fov = FOV_MIN
   camera.updateProjectionMatrix()
 
-  function poseLaunch(shipPos: THREE.Vector3): void {
+  function poseLaunch(shipPos: THREE.Vector3, shipQuat: THREE.Quaternion): void {
     const fit = launchFit(camera.aspect)
-    radial.copy(shipPos).sub(BLACK_HOLE_POS)
-    if (radial.lengthSq() < 1e-6) radial.set(0, 0, 1)
-    radial.normalize()
-    right.crossVectors(worldUp, radial)
-    if (right.lengthSq() < 1e-8) right.set(1, 0, 0)
+    // Ship-local 3/4: -Z is the nose, so aft is +Z / -forward. World-radial
+    // offset was a side profile whenever the hull wasn't pointing at the hole.
+    forward.set(0, 0, -1).applyQuaternion(shipQuat)
+    safeNormalize(forward, fwdFallback)
+    shipUp.set(0, 1, 0).applyQuaternion(shipQuat)
+    safeNormalize(shipUp, upFallback)
+    right.set(1, 0, 0).applyQuaternion(shipQuat)
+    if (right.lengthSq() < 1e-8) right.crossVectors(forward, worldUp)
     right.normalize()
 
     launchPos.copy(shipPos)
-      .addScaledVector(radial, LAUNCH_BACK * fit.back)
+      .addScaledVector(forward, -LAUNCH_BACK * fit.back)
       .addScaledVector(worldUp, LAUNCH_HEIGHT * fit.height)
       .addScaledVector(right, LAUNCH_SIDE * fit.side)
 
     launchLook.copy(shipPos)
-      .addScaledVector(radial, -LAUNCH_LOOK_PULL * fit.pull)
+      .addScaledVector(forward, LAUNCH_LOOK_AHEAD * fit.pull)
       .addScaledVector(worldUp, LAUNCH_LOOK_LIFT + fit.lookLift)
     launchFov = fit.fov
 
@@ -154,7 +155,7 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
     pullbackSmoothed = 0
     deflect.set(0, 0, 0)
     smoothedLocal.set(CHASE_SIDE, CHASE_HEIGHT, CHASE_BACK)
-    poseLaunch(shipPos)
+    poseLaunch(shipPos, shipQuat)
     applyLaunch()
   }
 
@@ -243,7 +244,7 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
 
       if (!wasThrusted) {
         wasThrusted = true
-        poseLaunch(shipPos)
+        poseLaunch(shipPos, shipQuat)
         fromPos.copy(camera.position)
         fromQuat.copy(camera.quaternion)
         if (flags.reducedMotion) {

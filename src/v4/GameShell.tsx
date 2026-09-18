@@ -20,20 +20,19 @@ import { createGameOverOverlay } from './ui/gameOverOverlay'
 import { createCompletionOverlay } from './ui/completionOverlay'
 import { projects } from '../i18n/live'
 
-// Establishing shot: outside the accretion disk, offset sideways so the hull
-// does not sit on the silhouette. Far enough that Rs covers ~30% of the
-// desktop short axis; close enough to the hull that the ship reads in the
-// lower third.
-const START_POSITION = new THREE.Vector3(186, -42, 648)
+// Establishing shot: r≈730 so Rs ~31% of the desktop short axis at FOV 50.
+// Nose mostly at the hole so a ship-local aft camera is 3/4 rear, not a
+// tangent side-on pencil. Slight yaw keeps one gondola closer.
+const START_POSITION = new THREE.Vector3(205, -36, 700)
 const START_QUATERNION = (() => {
   const radial = START_POSITION.clone().normalize()
   const tangent = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), radial).normalize()
   const toHole = radial.clone().negate()
-  // Keep pitch toward the hole. Flattening Y parked the silhouette above
-  // the chase frustum so the start screen was hull-only against empty sky.
-  const forward = tangent.clone().multiplyScalar(0.2).addScaledVector(toHole, 0.8)
+  const forward = tangent.clone().multiplyScalar(0.18).addScaledVector(toHole, 0.82)
   forward.normalize()
-  const dummy = new THREE.Object3D()
+  // PerspectiveCamera.lookAt aims -Z (the ship's nose). Object3D.lookAt aims +Z
+  // and previously parked the 3/4 "aft" camera in front of the hammerhead.
+  const dummy = new THREE.PerspectiveCamera()
   dummy.up.set(0, 1, 0)
   dummy.lookAt(forward)
   return dummy.quaternion.clone()
@@ -70,8 +69,11 @@ type V4Debug = {
   getScreenAabbs(): {
     ship: { left: number; top: number; right: number; bottom: number }
     bh: { left: number; top: number; right: number; bottom: number }
+    disk: { left: number; top: number; right: number; bottom: number }
+    prompt: { left: number; top: number; right: number; bottom: number } | null
     viewport: { w: number; h: number }
   }
+  getComposition(): Record<string, unknown>
   /** Dev/preview-only — move the hull without pinning the chase camera. */
   setShipPos(pos: [number, number, number]): void
   getCameraPhase(): 'launch' | 'blend' | 'chase' | 'debug-teleport'
@@ -91,6 +93,7 @@ type V4Debug = {
       sphereHitsBeforeShip: boolean
     }
     layers: ReturnType<World['getBlackHoleLayerState']>
+    radii: ReturnType<World['getBlackHoleRadii']>
   }
   setBhLayer(layer: BlackHoleLayer, visible: boolean): void
   getBhLayers(): ReturnType<World['getBlackHoleLayerState']>
@@ -357,11 +360,32 @@ export function GameShell() {
             }
           },
           getScreenAabbs() {
+            return window.__v4!.getComposition().aabbs as ReturnType<V4Debug['getScreenAabbs']>
+          },
+          getComposition() {
             const cam = engineInstance.camera
+            cam.updateMatrixWorld()
+            cam.updateProjectionMatrix()
             const canvas = engineInstance.renderer.domElement
             const w = canvas.clientWidth
             const h = canvas.clientHeight
-            const projectBox = (box: THREE.Box3) => {
+            const short = Math.min(w, h)
+            const marginNeed = 0.07 * short
+            type Rect = { left: number; top: number; right: number; bottom: number }
+            const emptyRect = (): Rect => ({ left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity })
+            const include = (rect: Rect, sx: number, sy: number) => {
+              rect.left = Math.min(rect.left, sx)
+              rect.right = Math.max(rect.right, sx)
+              rect.top = Math.min(rect.top, sy)
+              rect.bottom = Math.max(rect.bottom, sy)
+            }
+            const projectPoint = (p: THREE.Vector3, rect: Rect) => {
+              const c = p.clone().project(cam)
+              if (!Number.isFinite(c.x + c.y)) return
+              include(rect, (c.x * 0.5 + 0.5) * w, (-c.y * 0.5 + 0.5) * h)
+            }
+            const projectBox = (box: THREE.Box3): Rect => {
+              const rect = emptyRect()
               const corners = [
                 new THREE.Vector3(box.min.x, box.min.y, box.min.z),
                 new THREE.Vector3(box.min.x, box.min.y, box.max.z),
@@ -372,31 +396,101 @@ export function GameShell() {
                 new THREE.Vector3(box.max.x, box.max.y, box.min.z),
                 new THREE.Vector3(box.max.x, box.max.y, box.max.z),
               ]
-              let left = Infinity
-              let top = Infinity
-              let right = -Infinity
-              let bottom = -Infinity
-              for (const c of corners) {
-                c.project(cam)
-                const sx = (c.x * 0.5 + 0.5) * w
-                const sy = (-c.y * 0.5 + 0.5) * h
-                left = Math.min(left, sx)
-                right = Math.max(right, sx)
-                top = Math.min(top, sy)
-                bottom = Math.max(bottom, sy)
-              }
-              return { left, top, right, bottom }
+              for (const c of corners) projectPoint(c, rect)
+              return rect
             }
+            const marginsOf = (rect: Rect) => ({
+              left: rect.left,
+              top: rect.top,
+              right: w - rect.right,
+              bottom: h - rect.bottom,
+            })
+            const overlap = (a: Rect, b: Rect) =>
+              a.left < b.right - 1 && a.right > b.left + 1 && a.top < b.bottom - 1 && a.bottom > b.top + 1
+            const inflate = (rect: Rect, px: number): Rect => ({
+              left: rect.left - px,
+              top: rect.top - px,
+              right: rect.right + px,
+              bottom: rect.bottom + px,
+            })
+
             const shipBox = new THREE.Box3().setFromObject(shipInstance.group)
-            const bhSize = EVENT_HORIZON_R * 2
-            const bhBox = new THREE.Box3().setFromCenterAndSize(
-              BLACK_HOLE_POS,
-              new THREE.Vector3(bhSize, bhSize, bhSize),
-            )
+            const ship = projectBox(shipBox)
+
+            const radii = worldInstance.getBlackHoleRadii()
+            const diskFrame = worldInstance.getBlackHoleDiskFrame()
+            const distBh = cam.position.distanceTo(BLACK_HOLE_POS)
+            const ndcBh = BLACK_HOLE_POS.clone().project(cam)
+            const shadowCx = (ndcBh.x * 0.5 + 0.5) * w
+            const shadowCy = (-ndcBh.y * 0.5 + 0.5) * h
+            const fovRad = THREE.MathUtils.degToRad(cam.fov)
+            const denom = Math.sqrt(Math.max(distBh * distBh - radii.apparentShadow * radii.apparentShadow, 1))
+            const shadowR = (radii.apparentShadow / denom) / Math.tan(fovRad / 2) * (h * 0.5)
+            const shadow: Rect = {
+              left: shadowCx - shadowR,
+              top: shadowCy - shadowR,
+              right: shadowCx + shadowR,
+              bottom: shadowCy + shadowR,
+            }
+
+            const disk = emptyRect()
+            for (let i = 0; i < 48; i++) {
+              const a = (i / 48) * Math.PI * 2
+              const p = BLACK_HOLE_POS.clone()
+                .addScaledVector(diskFrame.u, Math.cos(a) * diskFrame.outer)
+                .addScaledVector(diskFrame.v, Math.sin(a) * diskFrame.outer)
+              projectPoint(p, disk)
+            }
+
+            const canvasRect = canvas.getBoundingClientRect()
+            const promptEl = hudContainer.querySelector<HTMLElement>('.v4-hud__start-prompt')
+            let prompt: Rect | null = null
+            if (promptEl && !promptEl.classList.contains('is-hidden')) {
+              const pr = promptEl.getBoundingClientRect()
+              prompt = {
+                left: pr.left - canvasRect.left,
+                top: pr.top - canvasRect.top,
+                right: pr.right - canvasRect.left,
+                bottom: pr.bottom - canvasRect.top,
+              }
+            }
+
+            const shipMargins = marginsOf(ship)
+            const shadowMargins = marginsOf(shadow)
+            const diskMargins = marginsOf(disk)
+            const shipWidthFrac = (ship.right - ship.left) / w
+            const shipCy = (ship.top + ship.bottom) * 0.5 / h
+            const shadowCyNorm = shadowCy / h
+            const pad = 6
+            const overlaps = {
+              shipPrompt: prompt ? overlap(inflate(ship, pad), prompt) : false,
+              promptShadow: prompt ? overlap(inflate(shadow, pad), prompt) : false,
+              promptDisk: prompt ? overlap(inflate(disk, pad), prompt) : false,
+            }
+            const desktop = w >= 900
+            const marginFloor = desktop ? marginNeed : 0.05 * short
+            const pass = {
+              shadowInFrame:
+                shadowMargins.left >= marginFloor &&
+                shadowMargins.right >= marginFloor &&
+                shadowMargins.top >= marginFloor &&
+                shadowMargins.bottom >= marginFloor,
+              diskSignificantWidth: disk.right - disk.left > shadowR * 3.6 && diskMargins.left > 4 && diskMargins.right > 4,
+              shipWidth: shipWidthFrac >= 0.3 && shipWidthFrac <= 0.45,
+              shipLower: shipCy > 0.55,
+              bhUpper: shadowCyNorm < 0.42,
+              noPromptOverlap: !overlaps.shipPrompt && !overlaps.promptShadow && !overlaps.promptDisk,
+            }
+
             return {
-              ship: projectBox(shipBox),
-              bh: projectBox(bhBox),
-              viewport: { w, h },
+              viewport: { w, h, short, marginNeed, aspect: w / h },
+              aabbs: { ship, bh: shadow, disk, prompt, viewport: { w, h } },
+              shadow: { cx: shadowCx, cy: shadowCy, r: shadowR, rect: shadow, margins: shadowMargins, fracShort: (shadowR * 2) / short },
+              disk: { rect: disk, margins: diskMargins, widthFrac: (disk.right - disk.left) / w },
+              ship: { rect: ship, margins: shipMargins, widthFrac: shipWidthFrac, cy: shipCy },
+              prompt,
+              overlaps,
+              pass,
             }
           },
           setShipPos(pos) {
@@ -448,6 +542,7 @@ export function GameShell() {
                 sphereHitsBeforeShip: tHorizon !== null && tHorizon < distCamShip - 0.05,
               },
               layers: worldInstance.getBlackHoleLayerState(),
+              radii: worldInstance.getBlackHoleRadii(),
             }
           },
           setBhLayer(layer, visible) {

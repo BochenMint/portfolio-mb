@@ -128,8 +128,9 @@ export function createStarfield(lowPower: boolean): Starfield {
 
   const points = new THREE.Points(geo, mat)
   points.frustumCulled = false
-  // Drawn before the black-hole impostor (renderOrder 1) so the impostor's
-  // lensed background cleanly overdraws stars behind it.
+  // Transparent, depthWrite off. Stars on the 1600u shell sit behind the
+  // horizon sphere (depth-rejected in the silhouette). Dust in front of
+  // the hole is sealed by black-hole-aperture-seal (RO 6), not by this.
   points.renderOrder = 0
   points.name = 'starfield-twinkle'
 

@@ -181,9 +181,10 @@
 
 .v4-hud__start-prompt {
   position: absolute;
-  top: 36%;
-  left: 84%;
-  transform: translate(-50%, -50%);
+  top: auto;
+  left: 50%;
+  bottom: max(1.6rem, env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
   font-size: clamp(0.85rem, 2.8vw, 1rem);
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -214,6 +215,16 @@
   visibility: hidden;
   pointer-events: none;
   animation: none;
+}
+
+@media (min-width: 900px) {
+  .v4-hud__start-prompt {
+    left: auto;
+    right: max(1.5rem, env(safe-area-inset-right, 0px));
+    bottom: 11%;
+    transform: none;
+    text-align: right;
+  }
 }
 
 .v4-hud__start-keys {
@@ -1259,14 +1270,14 @@
 
 @media (orientation: landscape) and (max-height: 430px) {
   .v4-hud__start-prompt {
-    top: 58%;
-    left: 78%;
-    bottom: auto;
-    transform: translate(-50%, -50%);
+    top: auto;
+    left: 50%;
+    bottom: max(0.45rem, env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
     width: auto;
-    max-width: min(42vw, 18rem);
+    max-width: min(70vw, 22rem);
     font-size: 0.75rem;
-    padding: 0.65rem 0.9rem;
+    padding: 0.55rem 0.9rem;
   }
   .v4-touch__stick-zone {
     bottom: max(1rem, env(safe-area-inset-bottom, 0px));
