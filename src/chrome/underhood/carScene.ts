@@ -84,6 +84,9 @@ const DEG = Math.PI / 180
  * the distance is what stays put, so the car stops breathing as it turns.
  */
 const HERO_FILL: [number, number] = [1.0, 0.98]
+/** Phone slot is short; fill like object-contain so the live car matches the poster. */
+const HERO_FILL_COMPACT: [number, number] = [0.82, 0.78]
+const HERO_COMPACT_MQ = '(max-width: 1023px)'
 const SECTION_FILL: [number, number] = [0.99, 0.98]
 /** ±3° of pointer lean in the section, which the fit has to have already paid for. */
 const LEAN = 3 * DEG
@@ -213,6 +216,8 @@ export async function createCarScene(
   const { mode } = opts
   const reduced = opts.reduced ?? false
   const interactive = mode === 'explode'
+  const heroFill = (): [number, number] =>
+    mode === 'hero' && window.matchMedia(HERO_COMPACT_MQ).matches ? HERO_FILL_COMPACT : HERO_FILL
 
   const [THREE, { GLTFLoader }, { DRACOLoader }, { RoomEnvironment }, { mergeVertices }] =
     await Promise.all([
@@ -502,7 +507,7 @@ export async function createCarScene(
    * the frame smoothly instead of snapping it.
    */
   function refit() {
-    const fill = mode === 'hero' ? HERO_FILL : SECTION_FILL
+    const fill = mode === 'hero' ? heroFill() : SECTION_FILL
     const el = baseElevation()
     // A debug close-up aims somewhere else entirely, so it only has to pay for
     // the one angle it is pinned to; a plain angle override still gets the
@@ -1164,7 +1169,7 @@ export async function createCarScene(
       },
       metrics() {
         const h = renderer.domElement.clientHeight || 1
-        const fill = mode === 'hero' ? HERO_FILL : SECTION_FILL
+        const fill = mode === 'hero' ? heroFill() : SECTION_FILL
         return {
           // What this one angle would have cost on its own — the price of
           // holding the distance still across the whole sweep.

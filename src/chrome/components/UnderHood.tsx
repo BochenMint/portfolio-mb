@@ -178,8 +178,8 @@ export function UnderHood() {
           // Desktop pins the stage and stretches one viewport-ish slice per
           // chapter. Mobile must not pin: on the live phone the stage jumping
           // to position:fixed produced a CLS of 1.0 and the page yanked up.
-          // The section's own height (auto, not 100svh) is the scroll runway;
-          // sticky canvas keeps the car in view while the copy moves.
+          // The section's own height (auto, not 100svh) is the scroll runway.
+          // Mobile is normal flow — sticky + opaque host ate chapter titles.
           end: desktop
             ? () => `+=${Math.round(total * per * window.innerHeight)}`
             : 'bottom top',
@@ -388,11 +388,12 @@ export function UnderHood() {
     <section ref={sectionRef} id="pod-maska" className="relative">
       <div ref={stageRef} className="uh-stage px-5 pt-20 pb-8 md:px-10 lg:pt-16 lg:pb-8">
         <div className="mx-auto grid w-full max-w-7xl gap-6 lg:h-[min(88svh,780px)] lg:grid-cols-12 lg:gap-x-12">
-          {/* Canvas first in the DOM: on a phone it is the sticky top of the
-              chapter, and on the desktop grid it is placed into column 6. */}
+          {/* Canvas first in the DOM so the desktop grid can place it in
+              column 6. On a phone it is in-flow above the copy — pin and
+              sticky both ate headings, so neither runs below 1024px. */}
           <div
             ref={canvasHostRef}
-            className="uh-canvas-host sticky top-[72px] z-[1] h-[40svh] w-full min-w-0 bg-[var(--bg)] lg:static lg:top-auto lg:z-auto lg:col-span-7 lg:col-start-6 lg:h-full lg:bg-transparent"
+            className="uh-canvas-host relative h-[min(40svh,280px)] w-full min-w-0 lg:col-span-7 lg:col-start-6 lg:h-full"
           >
             <canvas ref={canvasRef} className="uh-canvas" aria-hidden />
           </div>

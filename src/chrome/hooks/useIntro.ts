@@ -41,15 +41,29 @@ export function useIntro(ready: boolean) {
             ease: 'power3.out',
             delay: 0.45,
           })
-          gsap.from('[data-hero-object]', {
-            opacity: 0,
-            scale: 0.92,
-            y: 30,
-            duration: 1.4,
-            ease: 'power3.out',
-            delay: 0.2,
-            clearProps: 'transform,opacity',
-          })
+          // Touch: opacity only. Translate/scale on an overflow-visible host
+          // walked the car ~11px into the lead during the 1.4s intro.
+          const coarse = window.matchMedia('(pointer: coarse)').matches
+          gsap.from(
+            '[data-hero-object]',
+            coarse
+              ? {
+                  opacity: 0,
+                  duration: 0.8,
+                  ease: 'power3.out',
+                  delay: 0.2,
+                  clearProps: 'opacity',
+                }
+              : {
+                  opacity: 0,
+                  scale: 0.92,
+                  y: 30,
+                  duration: 1.4,
+                  ease: 'power3.out',
+                  delay: 0.2,
+                  clearProps: 'transform,opacity',
+                },
+          )
           gsap.from('[data-stat]', {
             scrollTrigger: { trigger: '[data-stats]', start: 'top 85%' },
             y: 24,

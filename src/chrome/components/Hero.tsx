@@ -10,7 +10,7 @@ export function Hero() {
   const meta = [site.responseTime, site.location, c.hero.projectsFromLabel(site.minBudget)]
 
   return (
-    <section className="studio-bg chrome-hero relative overflow-hidden px-5 pt-24 pb-16 md:px-10 md:pt-40 md:pb-24">
+    <section className="studio-bg chrome-hero relative overflow-hidden">
       {/* CSS-only graphite dusk. Dark theme only — see chrome.css. */}
       <div aria-hidden className="chrome-hero-ambient">
         <div className="chrome-hero-ambient__shift" />
@@ -60,7 +60,7 @@ export function Hero() {
             {c.hero.lead}
           </p>
 
-          <div data-hero-fade className="mt-6 flex flex-wrap items-center gap-3 md:mt-10">
+          <div data-hero-fade className="chrome-hero-cta-row flex flex-wrap items-center gap-3">
             <LinkButton
               href={ctaHref}
               external={!!site.calendly}
