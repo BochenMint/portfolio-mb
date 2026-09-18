@@ -7,7 +7,6 @@ import {
   EffectComposer,
   EffectPass,
   HueSaturationEffect,
-  NoiseEffect,
   RenderPass,
   VignetteEffect,
 } from 'postprocessing'
@@ -44,6 +43,71 @@ export type Engine = {
 const SKYBOX_8K = '/v4/assets/skybox-8k.jpg'
 const SKYBOX_4K = '/v4/assets/skybox-4k.jpg'
 const SKYBOX_2K = '/v4/assets/skybox-2k.jpg'
+
+type NavigatorConnection = { saveData?: boolean }
+type NavigatorWithOptionalNetwork = Navigator & {
+  connection?: NavigatorConnection
+  userAgentData?: { mobile?: boolean }
+}
+
+function connectionSaveData(): boolean {
+  if (typeof navigator === 'undefined') return false
+  return Boolean((navigator as NavigatorWithOptionalNetwork).connection?.saveData)
+}
+
+/** Phones must not pay 8K GPU memory. Do not key this off `effectiveType`. */
+function isMobileClient(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const nav = navigator as NavigatorWithOptionalNetwork
+  if (nav.userAgentData?.mobile === true) return true
+  // Chrome device-mode often leaves userAgentData.mobile=false while rewriting UA.
+  return /iPhone|iPod|Android.+Mobile/i.test(navigator.userAgent)
+}
+
+function skyUrlCandidates(maxTextureSize: number, constrainBytes: boolean): string[] {
+  if (constrainBytes) return [SKYBOX_2K]
+  if (maxTextureSize >= 8192) return [SKYBOX_8K, SKYBOX_4K, SKYBOX_2K]
+  if (maxTextureSize >= 4096) {
+    console.warn(`[v4] GPU maxTextureSize=${maxTextureSize} < 8192; sky fallback ${SKYBOX_4K}`)
+    return [SKYBOX_4K, SKYBOX_2K]
+  }
+  console.warn(`[v4] GPU maxTextureSize=${maxTextureSize} < 4096; sky fallback ${SKYBOX_2K}`)
+  return [SKYBOX_2K]
+}
+
+async function loadSkyTexture(
+  loader: THREE.TextureLoader,
+  urls: string[],
+): Promise<{ texture: THREE.Texture; url: string }> {
+  let lastError: unknown
+  for (const url of urls) {
+    try {
+      const texture = await loader.loadAsync(url)
+      return { texture, url }
+    } catch (err) {
+      lastError = err
+      console.error(`[v4] sky texture failed to load: ${url}`, err)
+    }
+  }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error(`[v4] sky texture failed to load: ${urls.join(' → ')}`)
+}
+
+function configureEquirectSky(tex: THREE.Texture): void {
+  tex.mapping = THREE.EquirectangularReflectionMapping
+  tex.colorSpace = THREE.SRGBColorSpace
+  // Distant equirect dome is sampled near 1:1. Mipmaps average neighbouring
+  // longitudes into haze and, at the atan2 wrap, a vertical seam.
+  tex.generateMipmaps = false
+  tex.minFilter = THREE.LinearFilter
+  tex.magFilter = THREE.LinearFilter
+  tex.wrapS = THREE.RepeatWrapping
+  tex.wrapT = THREE.ClampToEdgeWrapping
+  // Anisotropy only filters minified mip chains — a no-op without mips.
+  tex.anisotropy = 1
+  tex.needsUpdate = true
+}
 
 /** Camera never leaves ±~1000u of the origin (planets sit at 400–900u), so a
  * fixed dome this large always encloses the viewpoint. Must stay inside the
@@ -158,32 +222,26 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   scene.add(camera)
 
   // ─── Skybox: equirect background + PMREM env for PBR reflections ───────────
-  // First paint loads the 4K background on desktop tier (2K on low-power);
-  // `scheduleSkyUpgrade` below swaps the dome — and the black hole shader
-  // that lenses the same texture object — up to the full 8K once the scene
-  // is idle, so the initial load never pays for the crisp-Milky-Way version.
-  // The PMREM env — which gets prefiltered down to low-frequency mips anyway
-  // — never needs more than 2K on any tier; a 4K source only cost bandwidth
-  // for identical output. The background texture is ALSO what the black hole
-  // shader lenses, so the impostor stays pixel-continuous with the real sky.
+  // Desktop/high-power loads the 8K equirect BEFORE the loading overlay hides,
+  // so the first revealed frame is the real sky — not a 4K stand-in that later
+  // swaps on idle. Mobile / lowPower / saveData stay on 2K. GPU maxTextureSize
+  // < 8192 never even attempts 8K (explicit console fallback, then 4K → 2K).
+  // PMREM is prefiltered to low-frequency mips; 2K source is enough on every tier.
   const texLoader = new THREE.TextureLoader(manager)
-  const maxAniso = Math.min(renderer.capabilities.getMaxAnisotropy(), 8)
-
-  const skyboxUrl = lowPower ? SKYBOX_2K : SKYBOX_4K
-  const envSrcUrl = SKYBOX_2K
-  const skyTexPromise = texLoader.loadAsync(skyboxUrl)
+  const constrainSkyBytes = lowPower || connectionSaveData() || isMobileClient()
+  const skyCandidates = skyUrlCandidates(renderer.capabilities.maxTextureSize, constrainSkyBytes)
   const envSrcPromise: Promise<THREE.Texture | null> =
-    skyboxUrl === envSrcUrl ? Promise.resolve(null) : texLoader.loadAsync(envSrcUrl)
-  const skyTex = await skyTexPromise
-  const envSrcTex = await envSrcPromise
-  skyTex.mapping = THREE.EquirectangularReflectionMapping
-  skyTex.colorSpace = THREE.SRGBColorSpace
-  skyTex.anisotropy = maxAniso
-  // Repeat na osi U — warunek konieczny bezszwowego próbkowania na styku 0/1
-  // (dual-sample trick w SKY_FRAG i w blackHole.ts wybiera próbkę o mniejszej
-  // pochodnej UV, co eliminuje mipmapowy „szew" na nieciągłości atan2).
-  skyTex.wrapS = THREE.RepeatWrapping
-  skyTex.needsUpdate = true
+    skyCandidates[0] === SKYBOX_2K
+      ? Promise.resolve(null)
+      : texLoader.loadAsync(SKYBOX_2K).catch((err: unknown) => {
+          console.error(`[v4] env sky texture failed to load: ${SKYBOX_2K}`, err)
+          return null
+        })
+  const [{ texture: skyTex, url: skyUrl }, envSrcTex] = await Promise.all([
+    loadSkyTexture(texLoader, skyCandidates),
+    envSrcPromise,
+  ])
+  configureEquirectSky(skyTex)
 
   // The background is rendered by OUR OWN sky dome (below) rather than
   // scene.background: three converts an equirect background to an internal
@@ -208,43 +266,21 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   // The 2K env source has served its purpose once PMREM is baked.
   envSrcTex?.dispose()
 
-  // Set by dispose(), declared here so the idle sky upgrade below (and
-  // nothing else) can check it before touching a torn-down texture/renderer.
-  let engineDisposed = false
-
-  // ─── Progressive sky upgrade — 4K → 8K once idle ───────────────────────────
-  // `skyTex` is the SAME Texture instance the dome's `uSky` uniform and
-  // `createBlackHole`'s `uSky` uniform both hold a reference to (see
-  // world/index.ts / world/blackHole.ts), so swapping its `.image` in place —
-  // rather than creating a new Texture — upgrades both consumers for free,
-  // with no extra plumbing and no risk of the two ever showing different
-  // resolutions. Low-power skips this entirely: it is already at 2K/2K and
-  // has no idle budget to spend on a bigger download.
-  // A 4.4 MB texture is worth it on a desktop with a real connection and
-  // nowhere near worth it on a phone on mobile data, which is exactly what
-  // the Network Information API exists to tell us: 4g (or nothing said at
-  // all, on browsers that do not implement it) gets the upgrade, everything
-  // slower and anyone who has asked their browser to save data keeps the 4K.
-  const conn = (
-    navigator as Navigator & { connection?: { effectiveType?: string; saveData?: boolean } }
-  ).connection
-  const wantsBytes = !conn?.saveData && (conn?.effectiveType ?? '4g') === '4g'
-  if (!lowPower && wantsBytes) {
-    const scheduleIdle = (cb: () => void): number => {
-      if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
-        return window.requestIdleCallback(cb, { timeout: 4000 })
-      }
-      return window.setTimeout(cb, 2000)
+  if (verificationMode) {
+    const img = skyTex.image as { width?: number; height?: number } | undefined
+    ;(window as Window & { __v4Sky?: unknown }).__v4Sky = {
+      url: skyUrl,
+      imageWidth: img?.width ?? 0,
+      imageHeight: img?.height ?? 0,
+      generateMipmaps: skyTex.generateMipmaps,
+      minFilter: skyTex.minFilter,
+      magFilter: skyTex.magFilter,
+      wrapS: skyTex.wrapS,
+      colorSpace: skyTex.colorSpace,
+      anisotropy: skyTex.anisotropy,
+      maxTextureSize: renderer.capabilities.maxTextureSize,
+      constrained: constrainSkyBytes,
     }
-    scheduleIdle(() => {
-      if (engineDisposed) return
-      const upgradeLoader = new THREE.ImageLoader()
-      upgradeLoader.load(SKYBOX_8K, (img) => {
-        if (engineDisposed) return
-        skyTex.image = img
-        skyTex.needsUpdate = true
-      })
-    })
   }
 
   // ─── Lighting — starlight fill + sun spec + cool rim + warm disk bounce ──
@@ -267,37 +303,26 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
   const starfield: Starfield = createStarfield(lowPower)
   scene.add(starfield.object)
 
-  // ─── Postprocessing — cinematic grade ──────────────────────────────────────
-  // Bloom (engines/stars glow, hull stays matte) + a tasteful film-grade stack:
-  // grain + vignette + filmic desaturated contrast on every tier, chromatic
-  // aberration added only on desktop (an extra per-fragment sample offset).
-  // All effects are merged into ONE EffectPass — postprocessing.js compiles a
-  // single combined fragment shader for every effect handed to one pass, so
-  // this stays a single extra draw call regardless of how many effects run.
+  // ─── Postprocessing — keep bloom/grade, stop eating the sky ────────────────
+  // Baseline (desktop 1440×900, 8K already on GPU, drawingBuffer 2160×1350):
+  // NoiseEffect 0.05 sandpapered dark space; vignette 0.3/0.62 crushed MW
+  // edges to black; contrast 0.08 + sat −0.06 turned dust lanes into blobs;
+  // bloom 0.28 @ threshold 0.96 haloed the galactic core. Grain is gone.
+  // Bloom stays for engines / photon-ring (still above 0.985 after ACES).
   const composer = new EffectComposer(renderer, { multisampling: lowPower ? 0 : 4 })
   composer.addPass(new RenderPass(scene, camera))
   const bloom = new BloomEffect({
-    // Disk/photon-ring sit near white after ACES; a low threshold + mipmap
-    // kernel smeared that gold band straight through the event-horizon disk.
-    // Engines/stars still bloom — they remain well above this cut.
-    intensity: reducedMotion ? 0.14 : lowPower ? 0.22 : 0.28,
-    luminanceThreshold: 0.96,
-    luminanceSmoothing: 0.08,
+    intensity: reducedMotion ? 0.1 : lowPower ? 0.12 : 0.16,
+    luminanceThreshold: 0.985,
+    luminanceSmoothing: 0.06,
     mipmapBlur: true,
   })
 
-  // Film grain — premultiplied so it reads stronger against dark space and
-  // stays subtle over bright disk/bloom highlights. Kept at the low end of
-  // the 0.05–0.08 target range on lowPower (less visible noise to resolve).
-  const grain = new NoiseEffect({ premultiply: true })
-  grain.blendMode.opacity.value = reducedMotion ? 0 : lowPower ? 0.03 : 0.05
+  const vignette = new VignetteEffect({ offset: 0.52, darkness: 0.22 })
+  const contrast = new BrightnessContrastEffect({ contrast: 0.02, brightness: 0 })
+  const desaturate = new HueSaturationEffect({ saturation: -0.02 })
 
-  const vignette = new VignetteEffect({ offset: 0.3, darkness: 0.62 })
-
-  const contrast = new BrightnessContrastEffect({ contrast: 0.08, brightness: 0.01 })
-  const desaturate = new HueSaturationEffect({ saturation: -0.06 })
-
-  const cinematicEffects: Effect[] = [bloom, contrast, desaturate, grain, vignette]
+  const cinematicEffects: Effect[] = [bloom, contrast, desaturate, vignette]
   if (!lowPower && !reducedMotion) {
     // Chromatic aberration — tiny lens-edge color fringing. radialModulation
     // concentrates it at the frame edges (clean center, filmic fringe at the
@@ -377,7 +402,6 @@ export async function createEngine(canvas: HTMLCanvasElement, opts: EngineOption
     },
 
     dispose() {
-      engineDisposed = true
       running = false
       clearTimeout(raf)
       cancelAnimationFrame(raf)
