@@ -133,7 +133,7 @@ export async function createHangarShipScene(
   const manager = new THREE.LoadingManager()
 
   try {
-    ship = await buildShipV2(manager, envMap)
+    ship = await buildShipV2(manager, envMap, renderer)
   } catch {
     ship = null
   }

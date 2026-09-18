@@ -13,6 +13,8 @@ import * as THREE from 'three'
  * family of cross-sections we can ease between per station without any
  * discontinuity in vertex count.
  */
+export type RingShape = 'superellipse' | 'hexagon' | 'diamond'
+
 export type RingProfile = {
   halfWidth: number
   /** Top half-height (above the section center). */
@@ -29,6 +31,10 @@ export type RingProfile = {
   /** Optional distinct exponent for the bottom quadrants — higher = flatter
    * belly. Defaults to `roundnessY` (then `roundness`). */
   roundnessBottom?: number
+  /** Cross-section family. Default superellipse (stealth chines via n<2). */
+  shape?: RingShape
+  /** 0 = sharp polygon, 1 = full Lamé. Hex/diamond only. */
+  cornerBlend?: number
 }
 
 export type LoftSection = RingProfile & {
@@ -43,7 +49,7 @@ export type LoftSection = RingProfile & {
  * With per-axis exponents this is no longer a strict Lamé curve but a smooth
  * per-quadrant blend — continuous across the axis crossings because each
  * axis term vanishes exactly there. */
-export function ringPoint(theta: number, p: RingProfile): [number, number] {
+function lamePoint(theta: number, p: RingProfile): [number, number] {
   const c = Math.cos(theta)
   const s = Math.sin(theta)
   const nx = Math.max(p.roundness, 1.001)
@@ -54,6 +60,57 @@ export function ringPoint(theta: number, p: RingProfile): [number, number] {
   const x = Math.sign(c) * Math.pow(Math.abs(c), 2 / nx) * p.halfWidth
   const y = Math.sign(s) * Math.pow(Math.abs(s), 2 / ny) * hh
   return [x, y]
+}
+
+function polygonRayPoint(theta: number, verts: [number, number][]): [number, number] {
+  const rx = Math.cos(theta)
+  const ry = Math.sin(theta)
+  const n = verts.length
+  for (let i = 0; i < n; i++) {
+    const ax = verts[i][0]
+    const ay = verts[i][1]
+    const bx = verts[(i + 1) % n][0]
+    const by = verts[(i + 1) % n][1]
+    const dx = bx - ax
+    const dy = by - ay
+    const det = rx * -dy - -dx * ry
+    if (Math.abs(det) < 1e-10) continue
+    const t = (-ax * dy + dx * ay) / det
+    const u = (rx * ay - ax * ry) / det
+    if (t > 1e-8 && u >= -1e-5 && u <= 1 + 1e-5) return [rx * t, ry * t]
+  }
+  return [rx * 0.01, ry * 0.01]
+}
+
+function hexagonVerts(hw: number, hh: number, hhBot: number): [number, number][] {
+  const verts: [number, number][] = []
+  for (let i = 0; i < 6; i++) {
+    const a = (i + 0.5) * (Math.PI / 3)
+    const h = Math.sin(a) >= 0 ? hh : hhBot
+    verts.push([Math.cos(a) * hw, Math.sin(a) * h])
+  }
+  return verts
+}
+
+function diamondVerts(hw: number, hh: number, hhBot: number): [number, number][] {
+  return [
+    [hw, 0],
+    [0, hh],
+    [-hw, 0],
+    [0, -hhBot],
+  ]
+}
+
+export function ringPoint(theta: number, p: RingProfile): [number, number] {
+  const lame = lamePoint(theta, p)
+  const shape = p.shape ?? 'superellipse'
+  if (shape === 'superellipse') return lame
+  const hhBot = p.halfHeightBottom ?? p.halfHeight
+  const verts = shape === 'diamond' ? diamondVerts(p.halfWidth, p.halfHeight, hhBot) : hexagonVerts(p.halfWidth, p.halfHeight, hhBot)
+  const poly = polygonRayPoint(theta, verts)
+  const mix = THREE.MathUtils.clamp(p.cornerBlend ?? 0.08, 0, 1)
+  if (mix <= 0) return poly
+  return [poly[0] + (lame[0] - poly[0]) * mix, poly[1] + (lame[1] - poly[1]) * mix]
 }
 
 /** Side-wall tube only (no caps) — smooth vertex normals along the tube. */

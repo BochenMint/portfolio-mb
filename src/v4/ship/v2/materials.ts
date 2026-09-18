@@ -1,104 +1,105 @@
 import * as THREE from 'three'
 import { createPanelTexture } from './panelTexture'
+import { createHullStudioEnv, type HullStudioEnv } from './studioEnv'
 
 export type ShipMaterials = {
-  /** Dark Alliance hull — charcoal metal with readable spec, not chrome or clay. */
-  steel: THREE.MeshPhysicalMaterial
-  gunmetal: THREE.MeshPhysicalMaterial
-  /** Dark slate accent — flank / dorsal stripes, never white ceramic. */
+  /** Graphite hull — ~70% of the silhouette. */
+  graphite: THREE.MeshPhysicalMaterial
+  /** Chrome leading edges / chines only. */
+  chrome: THREE.MeshPhysicalMaterial
+  /** Ceramic heat tiles around nozzles. */
   ceramic: THREE.MeshPhysicalMaterial
   glass: THREE.MeshPhysicalMaterial
-  blade: THREE.MeshPhysicalMaterial
+  /** Heat-stained nozzle throats. */
+  heat: THREE.MeshPhysicalMaterial
   dispose(): void
 }
 
-/** Dark opaque PBR — enough env to catch the disk/Milky Way as rim, not clay. */
-export function createShipMaterials(envMap: THREE.Texture | null): ShipMaterials {
-  const panelBase = createPanelTexture()
+function assignEnv(mat: THREE.MeshPhysicalMaterial, map: THREE.Texture | null, intensity: number) {
+  if (!map) return
+  mat.envMap = map
+  mat.envMapIntensity = intensity
+}
 
+/** Dual-env PBR: graphite may read the space PMREM as a blurred rim;
+ * chrome/glass always use a local studio so they cannot pick up star sparkle. */
+export function createShipMaterials(
+  spaceEnvMap: THREE.Texture | null,
+  renderer?: THREE.WebGLRenderer | null,
+): ShipMaterials {
+  const studio: HullStudioEnv = createHullStudioEnv(renderer ?? null)
+  const graphiteEnv = spaceEnvMap ?? studio.map
+  const chromeEnv = studio.map ?? spaceEnvMap
+
+  const panelBase = createPanelTexture()
   const hullPanelTex = panelBase.clone()
   hullPanelTex.image = panelBase.image
-  hullPanelTex.repeat.set(8, 2)
+  hullPanelTex.repeat.set(6, 2)
   hullPanelTex.needsUpdate = true
 
-  const accentPanelTex = panelBase.clone()
-  accentPanelTex.image = panelBase.image
-  accentPanelTex.repeat.set(5, 4)
-  accentPanelTex.needsUpdate = true
-
-  const steel = new THREE.MeshPhysicalMaterial({
-    color: 0x5a6574,
-    metalness: 0.78,
-    roughness: 0.32,
+  const graphite = new THREE.MeshPhysicalMaterial({
+    color: 0x2a2e36,
+    metalness: 0.9,
+    roughness: 0.27,
     roughnessMap: hullPanelTex,
-    envMapIntensity: 0.95,
-    clearcoat: 0.22,
-    clearcoatRoughness: 0.34,
+    clearcoat: 0.08,
+    clearcoatRoughness: 0.46,
   })
+  assignEnv(graphite, graphiteEnv, 0.58)
 
-  const gunmetal = new THREE.MeshPhysicalMaterial({
-    color: 0x1e232c,
-    metalness: 0.72,
-    roughness: 0.36,
-    roughnessMap: accentPanelTex,
-    envMapIntensity: 0.58,
-    clearcoat: 0.12,
-    clearcoatRoughness: 0.4,
+  const chrome = new THREE.MeshPhysicalMaterial({
+    color: 0xe4e7ec,
+    metalness: 1,
+    roughness: 0.12,
+    clearcoat: 0.28,
+    clearcoatRoughness: 0.16,
   })
+  assignEnv(chrome, chromeEnv, 1.08)
 
   const ceramic = new THREE.MeshPhysicalMaterial({
-    color: 0x2a313c,
-    metalness: 0.28,
-    roughness: 0.48,
-    roughnessMap: accentPanelTex,
-    envMapIntensity: 0.4,
-    clearcoat: 0.1,
-    clearcoatRoughness: 0.45,
+    color: 0x3a322c,
+    metalness: 0.32,
+    roughness: 0.56,
+    clearcoat: 0.06,
+    clearcoatRoughness: 0.5,
   })
+  assignEnv(ceramic, graphiteEnv, 0.28)
 
   const glass = new THREE.MeshPhysicalMaterial({
-    color: 0x071018,
-    metalness: 0.22,
-    roughness: 0.06,
-    clearcoat: 1,
-    clearcoatRoughness: 0.06,
-    emissive: new THREE.Color(0x0a2030),
-    emissiveIntensity: 0.28,
-    envMapIntensity: 0.7,
+    color: 0x0a1218,
+    metalness: 0.18,
+    roughness: 0.08,
+    clearcoat: 0.72,
+    clearcoatRoughness: 0.1,
+    emissive: new THREE.Color(0x061018),
+    emissiveIntensity: 0.12,
   })
+  assignEnv(glass, chromeEnv, 0.82)
 
-  const blade = new THREE.MeshPhysicalMaterial({
-    color: 0x2c333e,
-    metalness: 0.74,
-    roughness: 0.34,
-    envMapIntensity: 0.55,
-    clearcoat: 0.14,
-    clearcoatRoughness: 0.4,
+  const heat = new THREE.MeshPhysicalMaterial({
+    color: 0x1a120e,
+    metalness: 0.72,
+    roughness: 0.4,
+    emissive: new THREE.Color(0x2a1408),
+    emissiveIntensity: 0.18,
   })
-
-  if (envMap) {
-    steel.envMap = envMap
-    gunmetal.envMap = envMap
-    ceramic.envMap = envMap
-    glass.envMap = envMap
-    blade.envMap = envMap
-  }
+  assignEnv(heat, graphiteEnv, 0.32)
 
   return {
-    steel,
-    gunmetal,
+    graphite,
+    chrome,
     ceramic,
     glass,
-    blade,
+    heat,
     dispose() {
-      steel.dispose()
-      gunmetal.dispose()
+      graphite.dispose()
+      chrome.dispose()
       ceramic.dispose()
       glass.dispose()
-      blade.dispose()
+      heat.dispose()
       panelBase.dispose()
       hullPanelTex.dispose()
-      accentPanelTex.dispose()
+      studio.dispose()
     },
   }
 }
@@ -107,8 +108,8 @@ export function createNavLightMaterial(color: number): THREE.MeshStandardMateria
   return new THREE.MeshStandardMaterial({
     color,
     emissive: new THREE.Color(color),
-    emissiveIntensity: 0.35,
-    roughness: 0.6,
+    emissiveIntensity: 0.42,
+    roughness: 0.55,
     metalness: 0,
   })
 }

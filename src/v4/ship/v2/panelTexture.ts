@@ -9,7 +9,7 @@ import * as THREE from 'three'
  * downloaded textures, matches the "generated canvas texture" spec.
  */
 export function createPanelTexture(): THREE.CanvasTexture {
-  const size = 1024
+  const size = 512
   const canvas = document.createElement('canvas')
   canvas.width = size
   canvas.height = size

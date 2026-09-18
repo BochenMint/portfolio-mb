@@ -62,6 +62,10 @@ type V4Debug = {
   haltShip(): void
   /** Dev/preview-only — procedural vs CC0 GLB hull source. */
   getHullSource(): string
+  getHullStats(): { tris: number; drawCalls: number; length: number; span: number; height: number } | null
+  frameHull(kind: 'rear' | 'top' | 'threeQuarter' | 'side'): void
+  releaseDebugCam(): void
+  getRenderInfo(): { triangles: number; calls: number }
   /** Dev/preview-only — hide the hull so BH/planet probes aren't blocked by it. */
   setShipVisible(visible: boolean): void
   getChaseInfo(): { heightDot: number; backDot: number; dist: number; upDot: number }
@@ -170,7 +174,7 @@ export function GameShell() {
       }
       engine = engineInstance
 
-      const shipInstance = await buildShipV2(manager, engineInstance.envMap)
+      const shipInstance = await buildShipV2(manager, engineInstance.envMap, engineInstance.renderer)
       if (cancelled) {
         shipInstance.dispose()
         engineInstance.dispose()
@@ -343,6 +347,38 @@ export function GameShell() {
           },
           getHullSource() {
             return (shipInstance.group.userData.hullSource as string | undefined) ?? 'unknown'
+          },
+          getHullStats() {
+            const stats = shipInstance.group.userData.hullStats as
+              | { tris: number; drawCalls: number; length: number; span: number; height: number }
+              | undefined
+            return stats ?? null
+          },
+          frameHull(kind) {
+            debugFreeCam = true
+            const shipPos = shipInstance.group.position
+            const q = shipInstance.group.quaternion
+            const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(q)
+            const up = new THREE.Vector3(0, 1, 0).applyQuaternion(q)
+            const right = new THREE.Vector3(1, 0, 0).applyQuaternion(q)
+            const look = shipPos.clone()
+            if (kind === 'rear') {
+              debugCamPos.copy(shipPos).addScaledVector(fwd, -38).addScaledVector(up, 7)
+            } else if (kind === 'top') {
+              debugCamPos.copy(shipPos).addScaledVector(up, 32).addScaledVector(fwd, 1)
+            } else if (kind === 'side') {
+              debugCamPos.copy(shipPos).addScaledVector(right, 36).addScaledVector(up, 4)
+            } else {
+              debugCamPos.copy(shipPos).addScaledVector(fwd, -26).addScaledVector(up, 11).addScaledVector(right, 16)
+            }
+            debugLookAt.copy(look)
+          },
+          releaseDebugCam() {
+            debugFreeCam = false
+          },
+          getRenderInfo() {
+            const r = engineInstance.renderer.info.render
+            return { triangles: r.triangles, calls: r.calls }
           },
           setShipVisible(visible) {
             shipInstance.group.visible = visible
