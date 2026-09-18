@@ -8,7 +8,8 @@ import { createTouchControls } from './ship/touchControls'
 import { createCameraRig } from './ship/camera-rig'
 import { createHud } from './ui/hud'
 import { createWorld, type World } from './world'
-import { BLACK_HOLE_POS, PLANET_SLOTS, type PlanetId } from './engine/world-anchors'
+import { BLACK_HOLE_HORIZON_R, BLACK_HOLE_POS, PLANET_SLOTS, type PlanetId } from './engine/world-anchors'
+import { type BlackHoleLayer } from './world/blackHole'
 import { applyBlackHoleGravity, EVENT_HORIZON_R, gravityAccelAt } from './engine/gravity'
 import { getLeaderboard, saveLeaderboardEntry } from './engine/leaderboard'
 import { getPanelImages } from './engine/panelImages'
@@ -20,9 +21,10 @@ import { createCompletionOverlay } from './ui/completionOverlay'
 import { projects } from '../i18n/live'
 
 // Establishing shot: outside the accretion disk, offset sideways so the hull
-// does not sit on the silhouette. Disk tilt is a few degrees from edge-on
-// (world/blackHole.ts) so the hole reads as a filled shadow, not Saturn.
-const START_POSITION = new THREE.Vector3(158, -70, 534)
+// does not sit on the silhouette. Far enough that Rs covers ~30% of the
+// desktop short axis; close enough to the hull that the ship reads in the
+// lower third.
+const START_POSITION = new THREE.Vector3(186, -42, 648)
 const START_QUATERNION = (() => {
   const radial = START_POSITION.clone().normalize()
   const tangent = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), radial).normalize()
@@ -72,6 +74,27 @@ type V4Debug = {
   }
   /** Dev/preview-only — move the hull without pinning the chase camera. */
   setShipPos(pos: [number, number, number]): void
+  getCameraPhase(): 'launch' | 'blend' | 'chase' | 'debug-teleport'
+  getProbe(): {
+    phase: 'launch' | 'blend' | 'chase' | 'debug-teleport'
+    hasThrusted: boolean
+    camera: { pos: [number, number, number]; fwd: [number, number, number] }
+    ship: [number, number, number]
+    bh: [number, number, number]
+    distShipBh: number
+    distCamShip: number
+    distCamBh: number
+    camSpace: { shipFwd: number; bhFwd: number; closer: 'ship' | 'bh' | 'equal' }
+    rayThroughShip: {
+      tShip: number
+      tHorizon: number | null
+      sphereHitsBeforeShip: boolean
+    }
+    layers: ReturnType<World['getBlackHoleLayerState']>
+  }
+  setBhLayer(layer: BlackHoleLayer, visible: boolean): void
+  getBhLayers(): ReturnType<World['getBlackHoleLayerState']>
+  showBounds(on: boolean): void
 }
 
 declare global {
@@ -292,7 +315,12 @@ export function GameShell() {
       let debugFreeCam = false
       const debugCamPos = new THREE.Vector3()
       const debugLookAt = new THREE.Vector3()
+      let shipBoxHelper: THREE.BoxHelper | null = null
       if (new URLSearchParams(window.location.search).has('debug')) {
+        shipBoxHelper = new THREE.BoxHelper(shipInstance.group, 0xffcc44)
+        shipBoxHelper.name = 'ship-debug-bounds'
+        shipBoxHelper.visible = false
+        engineInstance.scene.add(shipBoxHelper)
         window.__v4 = {
           teleport(pos, lookAt) {
             debugFreeCam = true
@@ -376,6 +404,65 @@ export function GameShell() {
             controlsInstance.state.velocity.set(0, 0, 0)
             controlsInstance.state.angularVelocity.set(0, 0, 0)
           },
+          getCameraPhase() {
+            return debugFreeCam ? 'debug-teleport' : cameraRig.getPhase()
+          },
+          getProbe() {
+            const cam = engineInstance.camera
+            const shipPos = controlsInstance.state.position
+            const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion)
+            const toShip = shipPos.clone().sub(cam.position)
+            const toBh = BLACK_HOLE_POS.clone().sub(cam.position)
+            const distCamShip = toShip.length()
+            const distCamBh = toBh.length()
+            const shipFwd = toShip.dot(fwd)
+            const bhFwd = toBh.dot(fwd)
+            const closer = Math.abs(shipFwd - bhFwd) < 0.5 ? 'equal' : shipFwd < bhFwd ? 'ship' : 'bh'
+            const rd = toShip.clone().normalize()
+            const oc = cam.position.clone().sub(BLACK_HOLE_POS)
+            const b = oc.dot(rd)
+            const c = oc.lengthSq() - BLACK_HOLE_HORIZON_R * BLACK_HOLE_HORIZON_R
+            const disc = b * b - c
+            let tHorizon: number | null = null
+            if (disc >= 0) {
+              const tNear = -b - Math.sqrt(disc)
+              const tFar = -b + Math.sqrt(disc)
+              tHorizon = tNear > 0.02 ? tNear : tFar > 0.02 ? tFar : null
+            }
+            return {
+              phase: debugFreeCam ? 'debug-teleport' : cameraRig.getPhase(),
+              hasThrusted: controlsInstance.state.hasThrusted,
+              camera: {
+                pos: [cam.position.x, cam.position.y, cam.position.z],
+                fwd: [fwd.x, fwd.y, fwd.z],
+              },
+              ship: [shipPos.x, shipPos.y, shipPos.z],
+              bh: [BLACK_HOLE_POS.x, BLACK_HOLE_POS.y, BLACK_HOLE_POS.z],
+              distShipBh: shipPos.distanceTo(BLACK_HOLE_POS),
+              distCamShip,
+              distCamBh,
+              camSpace: { shipFwd, bhFwd, closer },
+              rayThroughShip: {
+                tShip: distCamShip,
+                tHorizon,
+                sphereHitsBeforeShip: tHorizon !== null && tHorizon < distCamShip - 0.05,
+              },
+              layers: worldInstance.getBlackHoleLayerState(),
+            }
+          },
+          setBhLayer(layer, visible) {
+            worldInstance.setBlackHoleLayerVisible(layer, visible)
+          },
+          getBhLayers() {
+            return worldInstance.getBlackHoleLayerState()
+          },
+          showBounds(on) {
+            worldInstance.setBlackHoleDebugBounds(on)
+            if (shipBoxHelper) {
+              shipBoxHelper.visible = on
+              if (on) shipBoxHelper.update()
+            }
+          },
         }
       }
 
@@ -405,6 +492,7 @@ export function GameShell() {
             controlsInstance.state.bankAngle = 0
           }
           shipInstance.group.position.copy(controlsInstance.state.position)
+          if (shipBoxHelper?.visible) shipBoxHelper.update()
           // Physics quat is roll-free; cosmetic bank is mesh-only so the
           // chase cam cannot inherit a leftover twist.
           visualBankQ.setFromAxisAngle(visualBankAxis, controlsInstance.state.bankAngle)

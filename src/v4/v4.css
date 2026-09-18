@@ -181,8 +181,8 @@
 
 .v4-hud__start-prompt {
   position: absolute;
-  top: 58%;
-  left: 76%;
+  top: 36%;
+  left: 84%;
   transform: translate(-50%, -50%);
   font-size: clamp(0.85rem, 2.8vw, 1rem);
   letter-spacing: 0.06em;

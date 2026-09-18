@@ -19,14 +19,15 @@ const THRUST_PULLBACK_LERP = 4.5
 const OFFSET_LERP_RATE = 10
 const OFFSET_ANG_BOOST = 16
 
-/** Cinematic start — world-space shot, not a chase. Camera sits outside the
- * ship on the BH radial so the hull stays between the lens and the hole. */
-const LAUNCH_BACK = 54
-const LAUNCH_HEIGHT = 30
-const LAUNCH_SIDE = 12
-const LAUNCH_LOOK_PULL = 76
+/** Cinematic start — world-space shot, not a chase. Camera sits close behind
+ * the hull so the ship reads in the lower third; the hole stays a controlled
+ * disk, not a full-frame matte. */
+const LAUNCH_BACK = 22
+const LAUNCH_HEIGHT = 12
+const LAUNCH_SIDE = 4.5
+const LAUNCH_LOOK_PULL = 14
 const LAUNCH_LOOK_LIFT = 2
-const LAUNCH_FOV = 56
+const LAUNCH_FOV = 50
 const LAUNCH_BLEND_S = 0.95
 
 const DEFLECT_PER_RATE = 0.45
@@ -45,6 +46,7 @@ export type CameraRig = {
   ): void
   /** Deterministic return to the staged start shot (reset / boot). */
   holdLaunch(shipPos: THREE.Vector3, shipQuat: THREE.Quaternion): void
+  getPhase(): 'launch' | 'blend' | 'chase'
 }
 
 const worldUp = new THREE.Vector3(0, 1, 0)
@@ -64,12 +66,13 @@ function launchFit(aspect: number): {
   pull: number
   lookLift: number
 } {
-  // Portrait: extra back + a downward look so hull sits above the start dock.
+  // Portrait: extra back + a downward look so hull sits above the start dock
+  // and the hammerhead is not cropped.
   if (aspect > 0 && aspect < 0.62) {
-    return { back: 1.42, height: 1.08, side: 0.48, fov: 62, pull: 0.82, lookLift: -8 }
+    return { back: 2.35, height: 1.28, side: 0.18, fov: 58, pull: 0.55, lookLift: -14 }
   }
   if (aspect > 0 && aspect < 0.85) {
-    return { back: 1.24, height: 1.02, side: 0.62, fov: 60, pull: 0.9, lookLift: -4 }
+    return { back: 2.05, height: 1.18, side: 0.26, fov: 56, pull: 0.65, lookLift: -11 }
   }
   return { back: 1, height: 1, side: 1, fov: LAUNCH_FOV, pull: 1, lookLift: 0 }
 }
@@ -229,6 +232,9 @@ export function createCameraRig(camera: THREE.PerspectiveCamera): CameraRig {
 
   return {
     holdLaunch,
+    getPhase() {
+      return phase
+    },
     update(dt, shipPos, shipQuat, thrustLevel, _shipBankAngle, angularVelocity, flags) {
       if (!flags.hasThrusted) {
         holdLaunch(shipPos, shipQuat)

@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { PLANET_SLOTS } from '../engine/world-anchors'
-import { createBlackHole, type BlackHole } from './blackHole'
+import { createBlackHole, type BlackHole, type BlackHoleLayer } from './blackHole'
 import { createPlanetMint, type Planet } from './planetMint'
 import { createPlanetPlumm } from './planetPlumm'
 import { createPlanetIdrive } from './planetIdrive'
@@ -49,6 +49,9 @@ export type World = {
   /** Dev/preview-only — see meteors.ts's debugForceSpawn. */
   debugForceMeteor(kind?: 'meteor' | 'comet'): void
   forEachMoonCollider(fn: (position: THREE.Vector3, radius: number) => void): void
+  setBlackHoleLayerVisible(layer: BlackHoleLayer, visible: boolean): void
+  getBlackHoleLayerState(): ReturnType<BlackHole['getLayerState']>
+  setBlackHoleDebugBounds(on: boolean): void
   dispose(): void
 }
 
@@ -124,6 +127,18 @@ export async function createWorld(scene: THREE.Scene, assets: WorldAssets): Prom
 
     debugForceMeteor(kind) {
       meteors.debugForceSpawn(kind)
+    },
+
+    setBlackHoleLayerVisible(layer, visible) {
+      blackHole.setLayerVisible(layer, visible)
+    },
+
+    getBlackHoleLayerState() {
+      return blackHole.getLayerState()
+    },
+
+    setBlackHoleDebugBounds(on) {
+      blackHole.setDebugBounds(on)
     },
 
     forEachMoonCollider(fn) {
