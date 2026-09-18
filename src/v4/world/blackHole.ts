@@ -17,10 +17,12 @@ import { BLACK_HOLE_HORIZON_R, BLACK_HOLE_POS } from '../engine/world-anchors'
  *  2. Near-side disk — RingGeometry far away; ray-plane proxy sphere when
  *     the camera is inside the disk bounding sphere (a paper-thin ring
  *     would be sliced by the near plane into a straight board edge).
- *     NEVER discard the far hemisphere with dot(rel,toCam): that cut a
- *     wide disk in half through the hole. Far-side occultation is the
- *     shadow-sphere ray test only. Radiance fades to 0 before DISK_OUTER;
- *     the mesh continues to DISK_GEO_OUTER as a guard band.
+ *     Far-side Euclidean continuation (Saturn hoop behind the hole) is
+ *     faded in the disk plane toward the camera, not by a world-space
+ *     hemisphere discard (that cut a chord / chopped the offset-camera
+ *     arm). Far-side light is the analytical polar arcs on the impostor.
+ *     Radiance fades to 0 before DISK_OUTER; the mesh continues to
+ *     DISK_GEO_OUTER as a guard band.
  *  3. Transparent dust / starfield / meteors (RO 0–4, depthWrite OFF).
  *     Dust lives in a 180u box around the camera, so it ALWAYS passes the
  *     horizon depth test and paints streaks onto the silhouette. Starfield
@@ -31,8 +33,12 @@ import { BLACK_HOLE_HORIZON_R, BLACK_HOLE_POS } from '../engine/world-anchors'
  *     (or disk) already wrote a closer depth. This is the mathematical
  *     occlusion test — renderOrder only picks the queue slot after dust
  *     and before additive lensing.
- *  5. Additive lensing shell (RO 7) — photon ring + far-side wrap. Interior
- *     of the apparent shadow is discarded (no sky, no polar fill).
+ *  5. Additive lensing IMPOSTOR (RO 7) — camera-facing quad, coverage only.
+ *     Per-pixel rays come from camera basis + gl_FragCoord, NEVER from
+ *     interpolated vWorldPos on a tessellated sphere (that filled triangles
+ *     — the hard-block "łopaty"). Interior of the apparent shadow is
+ *     discarded. Additive, depthTest on, no gl_FragDepth, no opaque core.
+ *     Quad edge sits outside the influence radius; alpha hits 0 before it.
  *
  * Radii: the visible mesh stays at physical Rs. Growing the black sphere
  * was rejected. Scale comes from a wide, optically thin disk.
@@ -55,21 +61,34 @@ const DISK_OUTER = APPARENT_SHADOW_R * 3.05
 const DISK_GEO_OUTER = DISK_OUTER * 1.38
 /** Near edge-on from the equatorial launch camera — thin optical thickness. */
 const DISK_TILT_DEG = 7.5
-const MARCH_START_R = DISK_OUTER * 1.04
+/** Sky-warp amplitude. Analytical, not a marched geodesic. */
 const BEND_K = 0.94
-/** HARD CAP: the march loop below is `for (int i = 0; i < 48; i++)` — uSteps
- * must stay <= 47 or the step-budget early-out never fires. */
-const STEPS_HIGH = 48
-const STEPS_LOW = 24
-/** Modest shell: limb wrap + photon ring. Must not fill the frame. */
-const LENS_SHELL_R = APPARENT_SHADOW_R * 1.72
+/** High/low sample counts for the far-side radial integral (not a march). */
+const ARC_SAMPLES_HIGH = 4
+const ARC_SAMPLES_LOW = 2
+/** Influence radius of the camera-facing impostor. Photon ring + local sky
+ * warp live inside this; the Euclidean disk is larger and is a separate mesh.
+ * Geometry is a quad of half-size INFLUENCE — edge is outside the falloff. */
+const LENS_INFLUENCE_R = APPARENT_SHADOW_R * 1.78
+/** Keep the exported radius name so debug probes do not break. */
+const LENS_SHELL_R = LENS_INFLUENCE_R
+
+/** Polar-periodic disk noise: never feed linear atan() into value noise.
+ * Domain is (radius, cos(θ−ωt), sin(θ−ωt)) so fbm is C∞ in angle. */
+const DISK_PERIODIC_GLSL = /* glsl */ `
+  vec2 diskSpun(float cu, float cv, float rad, float omega, float time) {
+    vec2 dir = vec2(cu, cv) / max(rad, 1.0e-4);
+    float ca = cos(time * omega);
+    float sa = sin(time * omega);
+    return vec2(dir.x * ca + dir.y * sa, -dir.x * sa + dir.y * ca);
+  }
+`
 
 const VERT = /* glsl */ `
-  varying vec3 vWorldPos;
+  varying vec2 vUv;
   void main() {
-    vec4 wp = modelMatrix * vec4(position, 1.0);
-    vWorldPos = wp.xyz;
-    gl_Position = projectionMatrix * viewMatrix * wp;
+    vUv = uv;
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
   }
 `
 
@@ -83,19 +102,27 @@ const FRAG = /* glsl */ `
   uniform float uPhotonWidth;
   uniform float uDiskInner;
   uniform float uDiskOuter;
+  uniform float uInfluenceR;
   uniform vec3 uDiskU;
   uniform vec3 uDiskV;
   uniform vec3 uDiskN;
   uniform float uTime;
   uniform float uBendK;
-  uniform int uSteps;
-  uniform float uMarchStartR;
+  uniform int uArcSamples;
   uniform sampler2D uSky;
   uniform float uSkyRot;
+  uniform vec3 uCamPos;
+  uniform vec3 uCamRight;
+  uniform vec3 uCamUp;
+  uniform vec3 uCamFwd;
+  uniform vec2 uResolution;
+  uniform float uTanHalfFov;
+  uniform float uAspect;
 
-  varying vec3 vWorldPos;
+  varying vec2 vUv;
 
   ${NOISE_GLSL}
+  ${DISK_PERIODIC_GLSL}
 
   const float PI = 3.141592653589793;
 
@@ -133,17 +160,14 @@ const FRAG = /* glsl */ `
     if (rad <= uDiskInner || rad >= uDiskOuter) return vec3(0.0);
 
     float tRad = (rad - uDiskInner) / (uDiskOuter - uDiskInner);
-    float ang = atan(cv, cu);
-
     float omega = 2.0 / pow(rad / uDiskInner, 1.5);
-    float flowAngle = ang - uTime * omega;
-    vec2 flow = vec2(sin(flowAngle), cos(flowAngle));
-
-    float streak = fbm2(vec2(rad * 0.08, ang * 0.55) + flow * 3.1, 5);
-    float streak2 = fbm2(vec2(rad * 0.18, ang * 1.1) + flow * 5.8, 4);
+    vec2 spun = diskSpun(cu, cv, rad, omega, uTime);
+    float streak = fbm3(vec3(rad * 0.08, spun * 3.4), 5);
+    float streak2 = fbm3(vec3(rad * 0.18, spun * 6.2), 4);
     float streakMix = smoothstep(0.22, 0.78, mix(streak, streak2, 0.34));
 
-    vec3 tangent = normalize(-sin(ang) * uDiskU + cos(ang) * uDiskV);
+    vec2 dir = vec2(cu, cv) / max(rad, 1.0e-4);
+    vec3 tangent = normalize(-dir.y * uDiskU + dir.x * uDiskV);
     float approach = dot(tangent, -d);
     float beam = mix(0.36, 1.58, smoothstep(-0.55, 0.55, approach));
     vec3 temp = diskTemperatureColor(tRad);
@@ -160,105 +184,83 @@ const FRAG = /* glsl */ `
     return temp * brightness * imageFalloff;
   }
 
+  vec3 cameraRay() {
+    vec2 ndc = (gl_FragCoord.xy / max(uResolution, vec2(1.0))) * 2.0 - 1.0;
+    return normalize(
+      uCamFwd
+      + ndc.x * uTanHalfFov * uAspect * uCamRight
+      + ndc.y * uTanHalfFov * uCamUp
+    );
+  }
+
   void main() {
-    vec3 ro = cameraPosition;
-    vec3 rd = normalize(vWorldPos - ro);
-    vec3 w0 = ro - uBHPos;
+    vec2 q = vUv * 2.0 - 1.0;
+    float qR = length(q);
+    if (qR > 0.98) discard;
+    float qFade = 1.0 - smoothstep(0.84, 0.96, qR);
 
-    float b2Early = dot(w0, w0) - pow(dot(w0, rd), 2.0);
-    float closestREarly = sqrt(max(b2Early, 0.0));
+    vec3 rd = cameraRay();
+    vec3 w0 = uCamPos - uBHPos;
 
-    // Apparent shadow interior: zero emissive. Seal already painted black.
-    // Photon ring lives just outside this cutoff.
-    if (closestREarly < uShadowR * 0.995) discard;
+    float b2 = dot(w0, w0) - pow(dot(w0, rd), 2.0);
+    float b = sqrt(max(b2, 0.0));
 
-    vec3 oc = w0;
-    float bIsec = dot(oc, rd);
-    float cIsec = dot(oc, oc) - uMarchStartR * uMarchStartR;
-    float discIsec = bIsec * bIsec - cIsec;
+    // Apparent shadow interior: additive never paints the core.
+    if (b < uShadowR * 0.995) discard;
+    if (b > uInfluenceR * 0.92) discard;
 
-    if (discIsec < 0.0) discard;
-
-    float tEntry = -bIsec - sqrt(discIsec);
-    vec3 p = (tEntry > 0.0 ? ro + rd * tEntry : ro) - uBHPos;
-    vec3 d = rd;
-    vec3 hvec = cross(p, d);
-    float h2 = dot(hvec, hvec);
-    float bendScale = 1.5 * uHorizonR * h2 * uBendK;
-
-    vec3 accum = vec3(0.0);
-    int diskHits = 0;
-
-    for (int i = 0; i < 48; i++) {
-      if (i >= uSteps) break;
-
-      float r = length(p);
-
-      if (r < uHorizonR) break;
-      if (r > uMarchStartR * 1.02 && dot(d, p) > 0.0) break;
-
-      float ds = clamp(r * 0.16, 0.45, 6.0);
-      float r2 = r * r;
-      vec3 accel = p * (-bendScale / (r2 * r2 * r));
-      vec3 newD = d + accel * ds;
-
-      vec3 prevP = p;
-      p += newD * ds;
-      d = newD;
-
-      float prevZ = dot(prevP, uDiskN);
-      float curZ = dot(p, uDiskN);
-      if (diskHits < 3 && prevZ * curZ < 0.0) {
-        float tt = prevZ / (prevZ - curZ);
-        vec3 crossP = mix(prevP, p, tt);
-        float cu = dot(crossP, uDiskU);
-        float cv = dot(crossP, uDiskV);
-        float rad = length(vec2(cu, cv));
-        if (rad > uDiskInner && rad < uDiskOuter) {
-          diskHits += 1;
-          bool nearSide = dot(crossP, w0) > 0.0;
-          if (!nearSide) {
-            float imageFalloff = diskHits == 1 ? 0.95 : (diskHits == 2 ? 0.48 : 0.22);
-            accum += shadeDiskCrossing(crossP, d, imageFalloff);
-          }
-        }
-      }
-    }
+    float inflFade = 1.0 - smoothstep(uInfluenceR * 0.70, uInfluenceR * 0.88, b);
 
     vec3 peri = w0 - rd * dot(w0, rd);
     float periLen = length(peri);
-    float polar = periLen > 1e-4 ? abs(dot(peri / periLen, uDiskN)) : 1.0;
+    vec3 periN = periLen > 1e-4 ? peri / periLen : uDiskN;
+    float polar = abs(dot(periN, uDiskN));
 
-    float rim = exp(-pow((closestREarly - uPhotonR) / uPhotonWidth, 2.0));
-    // Side-on Doppler: approaching limb hotter, receding quieter. Polar
-    // boosts the ring but never fills the interior (already discarded).
-    vec3 az = periLen > 1e-4 ? normalize(peri - uDiskN * dot(peri, uDiskN)) : uDiskU;
+    vec3 inPlane = peri - uDiskN * dot(peri, uDiskN);
+    vec3 camPlane = w0 - uDiskN * dot(w0, uDiskN);
+    vec3 az = length(inPlane) > 1e-3
+      ? normalize(inPlane)
+      : (length(camPlane) > 1e-3 ? normalize(camPlane) : uDiskU);
+    vec3 farAz = az;
+    if (dot(farAz, w0) > 0.0) farAz = -farAz;
+
     vec3 tangent = normalize(cross(uDiskN, az));
     float approach = dot(tangent, -rd);
+
+    vec3 accum = vec3(0.0);
+
+    // Thin photon rim around the whole silhouette — not a decorative hoop.
+    float rim = exp(-pow((b - uPhotonR) / uPhotonWidth, 2.0));
     rim *= mix(0.28, 1.0, smoothstep(-0.45, 0.45, approach));
-    rim *= 0.72 + 0.28 * (1.0 - smoothstep(0.15, 0.8, polar));
+    rim *= 0.62 + 0.38 * (1.0 - smoothstep(0.18, 0.82, polar));
 
-    // Far-side secondary image sitting ON the limb, above/below the shadow —
-    // not a concentric hoop and not a fill inside the aperture.
-    float polarCap = smoothstep(0.28, 0.7, polar);
-    float limb = exp(-pow((closestREarly - uPhotonR) / (uPhotonWidth * 2.4), 2.0));
-    float capW = polarCap * limb;
-    if (capW > 0.05) {
-      vec3 farP = az * (uDiskInner * 1.35);
-      if (dot(farP, w0) > 0.0) farP = -farP;
-      accum += shadeDiskCrossing(farP, d, capW * 0.7);
+    // Far-side Einstein arcs: Gaussian in impact-parameter (analytic, planar
+    // coverage so this CAN be wider than a sphere-triangle without filling
+    // fans) gated to high polar so it cannot become a gold ring.
+    float polarCap = smoothstep(0.18, 0.56, polar);
+    float limb = exp(-pow((b - uPhotonR) / (uPhotonWidth * 5.4), 2.0));
+    float capW = polarCap * limb * inflFade;
+    if (capW > 0.04) {
+      float sampleW = capW * (1.15 / float(max(uArcSamples, 1)));
+      for (int i = 0; i < 4; i++) {
+        if (i >= uArcSamples) break;
+        float tRad = 0.07 + float(i) * 0.14;
+        vec3 farP = farAz * mix(uDiskInner, uDiskOuter, tRad);
+        accum += shadeDiskCrossing(farP, rd, sampleW);
+      }
     }
 
-    // Bent sky only in a polar annulus outside the shadow. Additive and
-    // polar-gated so it cannot paint the aperture or a Saturn hoop.
-    float warpW = polarCap
-      * (1.0 - smoothstep(uPhotonR * 1.08, uPhotonR * 1.55, closestREarly))
-      * smoothstep(uShadowR * 0.995, uPhotonR, closestREarly);
+    // Local radial sky warp around the photon sphere. Signed (bent − unbent)
+    // so it cannot stamp a halo. Falloff hits 0 before the impostor edge.
+    float warpW = smoothstep(uShadowR * 1.002, uPhotonR * 1.05, b)
+      * (1.0 - smoothstep(uPhotonR * 1.18, uInfluenceR * 0.82, b));
     if (warpW > 0.02) {
-      accum += sampleSky(d) * warpW * 0.42;
+      float defl = uBendK * 0.20 * (uHorizonR / max(b, uPhotonR));
+      vec3 bent = normalize(rd - periN * defl * warpW);
+      accum += (sampleSky(bent) - sampleSky(rd)) * warpW * 0.62;
     }
 
-    vec3 color = accum + vec3(1.0, 0.969, 0.91) * rim * 0.48;
+    vec3 color = (accum + vec3(1.0, 0.969, 0.91) * rim * 0.40) * qFade * inflFade;
     if (dot(color, vec3(0.3, 0.55, 0.15)) < 0.01) discard;
 
     gl_FragColor = vec4(color, 1.0);
@@ -287,10 +289,12 @@ const DISK_FRAG = /* glsl */ `
   uniform float uTime;
   uniform float uCamNear;
   uniform float uRayPlane;
+  uniform float uHideFar;
   uniform mat4 uViewProj;
   varying vec3 vWorldPos;
 
   ${NOISE_GLSL}
+  ${DISK_PERIODIC_GLSL}
 
   vec3 diskTemperatureColor(float t) {
     vec3 hot = vec3(0.99, 0.94, 0.84);
@@ -309,15 +313,14 @@ const DISK_FRAG = /* glsl */ `
     if (rad <= uDiskInner || rad >= uDiskOuter) return vec3(0.0);
 
     float tRad = (rad - uDiskInner) / (uDiskOuter - uDiskInner);
-    float ang = atan(cv, cu);
     float omega = 2.0 / pow(rad / uDiskInner, 1.5);
-    float flowAngle = ang - uTime * omega;
-    vec2 flow = vec2(sin(flowAngle), cos(flowAngle));
-    float streak = fbm2(vec2(rad * 0.055, ang * 0.55) + flow * 3.1, 5);
-    float streak2 = fbm2(vec2(rad * 0.14, ang * 1.1) + flow * 5.8, 4);
+    vec2 spun = diskSpun(cu, cv, rad, omega, uTime);
+    float streak = fbm3(vec3(rad * 0.055, spun * 3.4), 5);
+    float streak2 = fbm3(vec3(rad * 0.14, spun * 6.2), 4);
     float streakMix = smoothstep(0.22, 0.78, mix(streak, streak2, 0.34));
 
-    vec3 tangent = normalize(-sin(ang) * uDiskU + cos(ang) * uDiskV);
+    vec2 dir = vec2(cu, cv) / max(rad, 1.0e-4);
+    vec3 tangent = normalize(-dir.y * uDiskU + dir.x * uDiskV);
     float approach = dot(tangent, -rd);
     float beam = mix(0.36, 1.55, smoothstep(-0.55, 0.55, approach));
     vec3 temp = diskTemperatureColor(tRad);
@@ -372,6 +375,28 @@ const DISK_FRAG = /* glsl */ `
 
     float nearFade = smoothstep(uCamNear * 3.0, uCamNear * 14.0, tHit);
     vec3 color = shadeDiskHit(hit, rd) * nearFade;
+
+    // Hide the Euclidean FAR half of the ring (Saturn continuation behind
+    // the hole) so analytical polar arcs own that light. Split is in the
+    // DISK PLANE toward the camera — not a world hemisphere (that chopped
+    // the left arm when the camera was offset, and cut a chord in close
+    // flight). Degenerate when looking face-on (top-down keeps the full ring).
+    if (uHideFar > 0.5) {
+      vec3 camRel = cameraPosition - uBHPos;
+      float camDist = length(camRel);
+      float faceOn = camDist > 1.0 ? abs(dot(camRel / camDist, uDiskN)) : 1.0;
+      vec3 camInDisk = camRel - uDiskN * dot(camRel, uDiskN);
+      float cil = length(camInDisk);
+      // Face-on (top/down): keep the full ring. Edge-on: hide the Euclidean
+      // far half so polar arcs own that light. Threshold is on camera vs
+      // disk normal — in-plane leftover from a 7.5° tilt must not cut a
+      // semicircle.
+      if (faceOn < 0.68 && cil > uShadowR * 0.5) {
+        float alongN = dot(rel, camInDisk / cil) / max(rad, 1.0);
+        color *= smoothstep(-0.42, -0.04, alongN);
+      }
+    }
+
     if (dot(color, vec3(0.3, 0.55, 0.15)) < 0.008) discard;
 
     gl_FragColor = vec4(color, 1.0);
@@ -442,14 +467,18 @@ function layerState(mesh: THREE.Mesh, name: string): BlackHoleLayerState {
   }
 }
 
-export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): BlackHole {
+export function createBlackHole(
+  skyTex: THREE.Texture,
+  lowPower: boolean,
+  renderer: THREE.WebGLRenderer,
+): BlackHole {
   const tilt = THREE.MathUtils.degToRad(DISK_TILT_DEG)
   const diskN = new THREE.Vector3(0, Math.cos(tilt), Math.sin(tilt)).normalize()
   const diskU = new THREE.Vector3(1, 0, 0)
   const diskV = new THREE.Vector3().crossVectors(diskN, diskU).normalize()
   diskU.crossVectors(diskV, diskN).normalize()
 
-  const lensGeo = new THREE.SphereGeometry(LENS_SHELL_R, 64, 48)
+  const lensGeo = new THREE.PlaneGeometry(2, 2)
   const lensMat = new THREE.ShaderMaterial({
     uniforms: {
       uBHPos: { value: BLACK_HOLE_POS.clone() },
@@ -459,15 +488,22 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
       uPhotonWidth: { value: PHOTON_RING_WIDTH },
       uDiskInner: { value: DISK_INNER },
       uDiskOuter: { value: DISK_OUTER },
+      uInfluenceR: { value: LENS_INFLUENCE_R },
       uDiskU: { value: diskU },
       uDiskV: { value: diskV },
       uDiskN: { value: diskN },
       uTime: { value: 0 },
       uBendK: { value: BEND_K },
-      uSteps: { value: lowPower ? STEPS_LOW : STEPS_HIGH },
-      uMarchStartR: { value: MARCH_START_R },
+      uArcSamples: { value: lowPower ? ARC_SAMPLES_LOW : ARC_SAMPLES_HIGH },
       uSky: { value: skyTex },
       uSkyRot: { value: 0 },
+      uCamPos: { value: new THREE.Vector3() },
+      uCamRight: { value: new THREE.Vector3() },
+      uCamUp: { value: new THREE.Vector3() },
+      uCamFwd: { value: new THREE.Vector3() },
+      uResolution: { value: new THREE.Vector2(1, 1) },
+      uTanHalfFov: { value: 1 },
+      uAspect: { value: 1 },
     },
     vertexShader: VERT,
     fragmentShader: FRAG,
@@ -484,6 +520,7 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
   // After the seal. Additive — cannot stamp black on a closer hull.
   lensing.renderOrder = 7
   lensing.name = 'black-hole-lensing'
+  lensing.scale.setScalar(LENS_INFLUENCE_R)
 
   const horizonGeo = new THREE.SphereGeometry(HORIZON_MESH_R, 64, 48)
   const horizonMat = new THREE.MeshBasicMaterial({
@@ -521,7 +558,7 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
   seal.renderOrder = 6
   seal.frustumCulled = false
 
-  const diskGeo = new THREE.RingGeometry(DISK_INNER, DISK_GEO_OUTER, 160, 10)
+  const diskGeo = new THREE.RingGeometry(DISK_INNER, DISK_GEO_OUTER, 192, 12)
   const diskMat = new THREE.ShaderMaterial({
     uniforms: {
       uBHPos: { value: BLACK_HOLE_POS.clone() },
@@ -534,6 +571,7 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
       uTime: { value: 0 },
       uCamNear: { value: 0.8 },
       uRayPlane: { value: 0 },
+      uHideFar: { value: 1 },
       uViewProj: { value: new THREE.Matrix4() },
     },
     vertexShader: DISK_VERT,
@@ -585,6 +623,9 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
 
   const rel = new THREE.Vector3()
   const camFwd = new THREE.Vector3()
+  const camRight = new THREE.Vector3()
+  const camUp = new THREE.Vector3()
+  const drawSize = new THREE.Vector2()
 
   return {
     object: root,
@@ -601,11 +642,26 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
 
       rel.copy(BLACK_HOLE_POS).sub(camera.position)
       camFwd.set(0, 0, -1).applyQuaternion(camera.quaternion)
+      camRight.set(1, 0, 0).applyQuaternion(camera.quaternion)
+      camUp.set(0, 1, 0).applyQuaternion(camera.quaternion)
       const depth = rel.dot(camFwd)
       const camDist = rel.length()
       const tooClose = camDist < HORIZON_MESH_R + 4
-      const shellAroundCam = depth < LENS_SHELL_R + 8 || camDist < LENS_SHELL_R + 4
-      if (!lensing.userData.forceHidden) lensing.visible = !shellAroundCam
+
+      ;(lensMat.uniforms.uCamPos.value as THREE.Vector3).copy(camera.position)
+      ;(lensMat.uniforms.uCamFwd.value as THREE.Vector3).copy(camFwd)
+      ;(lensMat.uniforms.uCamRight.value as THREE.Vector3).copy(camRight)
+      ;(lensMat.uniforms.uCamUp.value as THREE.Vector3).copy(camUp)
+      lensMat.uniforms.uTanHalfFov.value = Math.tan(THREE.MathUtils.degToRad(camera.fov) * 0.5)
+      lensMat.uniforms.uAspect.value = camera.aspect
+      renderer.getDrawingBufferSize(drawSize)
+      ;(lensMat.uniforms.uResolution.value as THREE.Vector2).copy(drawSize)
+
+      // Billboard faces the camera. Coverage mesh only — lighting is per-pixel
+      // from gl_FragCoord, so two triangles cannot fill fans.
+      lensing.lookAt(camera.position)
+
+      if (!lensing.userData.forceHidden) lensing.visible = !tooClose && depth > 4
       if (!seal.userData.forceHidden) seal.visible = !tooClose
 
       const diskHidden = Boolean(diskMesh.userData.forceHidden)
@@ -626,6 +682,9 @@ export function createBlackHole(skyTex: THREE.Texture, lowPower: boolean): Black
         diskProxy.visible = false
         diskMat.side = THREE.DoubleSide
       }
+      // Far-side Euclidean hide stays on in proxy mode: the split is in the
+      // disk plane through the hole, so it does not board-cut the near half.
+      diskMat.uniforms.uHideFar.value = 1
     },
     setLayerVisible(layer, visible) {
       if (layer === 'horizon') {

@@ -86,7 +86,7 @@ export async function createWorld(scene: THREE.Scene, assets: WorldAssets): Prom
     tex.anisotropy = maxAnisotropy
   }
 
-  const blackHole: BlackHole = createBlackHole(skyTex, lowPower)
+  const blackHole: BlackHole = createBlackHole(skyTex, lowPower, renderer)
   scene.add(blackHole.object)
 
   const meteors: MeteorField = createMeteorField()
