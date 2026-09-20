@@ -68,7 +68,21 @@ type V4Debug = {
   getRenderInfo(): { triangles: number; calls: number }
   /** Dev/preview-only — hide the hull so BH/planet probes aren't blocked by it. */
   setShipVisible(visible: boolean): void
-  getChaseInfo(): { heightDot: number; backDot: number; dist: number; upDot: number }
+  getChaseInfo(): { heightDot: number; backDot: number; sideDot: number; dist: number; upDot: number }
+  getShipMaterialReport(): Array<{
+    mesh: string
+    type: string
+    color: string | null
+    metalness: number | null
+    roughness: number | null
+    envMap: boolean
+    envMapIntensity: number | null
+    envMapUuid: string | null
+    sceneEnvUuid: string | null
+    usesStudioNotSky: boolean
+    emissive: string | null
+    emissiveIntensity: number | null
+  }>
   /** Dev/preview-only — screen-space AABBs for overlap QA. */
   getScreenAabbs(): {
     ship: { left: number; top: number; right: number; bottom: number }
@@ -366,13 +380,13 @@ export function GameShell() {
             const right = new THREE.Vector3(1, 0, 0).applyQuaternion(q)
             const look = shipPos.clone()
             if (kind === 'rear') {
-              debugCamPos.copy(shipPos).addScaledVector(fwd, -38).addScaledVector(up, 7)
+              debugCamPos.copy(shipPos).addScaledVector(fwd, -46).addScaledVector(up, 9)
             } else if (kind === 'top') {
-              debugCamPos.copy(shipPos).addScaledVector(up, 32).addScaledVector(fwd, 1)
+              debugCamPos.copy(shipPos).addScaledVector(up, 44).addScaledVector(fwd, 2)
             } else if (kind === 'side') {
-              debugCamPos.copy(shipPos).addScaledVector(right, 36).addScaledVector(up, 4)
+              debugCamPos.copy(shipPos).addScaledVector(right, 40).addScaledVector(up, 5)
             } else {
-              debugCamPos.copy(shipPos).addScaledVector(fwd, -26).addScaledVector(up, 11).addScaledVector(right, 16)
+              debugCamPos.copy(shipPos).addScaledVector(fwd, -28).addScaledVector(up, 12).addScaledVector(right, 18)
             }
             debugLookAt.copy(look)
           },
@@ -391,12 +405,43 @@ export function GameShell() {
             const rel = cam.position.clone().sub(shipInstance.group.position)
             const shipUp = new THREE.Vector3(0, 1, 0).applyQuaternion(shipInstance.group.quaternion)
             const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(shipInstance.group.quaternion)
+            const right = new THREE.Vector3(1, 0, 0).applyQuaternion(shipInstance.group.quaternion)
             return {
               heightDot: rel.dot(shipUp),
               backDot: -rel.dot(fwd),
+              sideDot: rel.dot(right),
               dist: rel.length(),
               upDot: shipUp.dot(new THREE.Vector3(0, 1, 0)),
             }
+          },
+          getShipMaterialReport() {
+            const sceneEnv = engineInstance.scene.environment
+            const sceneUuid = sceneEnv?.uuid ?? null
+            const rows: ReturnType<V4Debug['getShipMaterialReport']> = []
+            shipInstance.group.traverse((obj) => {
+              if (!(obj instanceof THREE.Mesh) || !obj.visible) return
+              const mats = Array.isArray(obj.material) ? obj.material : [obj.material]
+              for (const m of mats) {
+                if (!m || !('color' in m)) continue
+                const mat = m as THREE.MeshPhysicalMaterial
+                const envUuid = mat.envMap?.uuid ?? null
+                rows.push({
+                  mesh: obj.name || obj.parent?.name || '',
+                  type: mat.type,
+                  color: mat.color?.getHexString?.() ?? null,
+                  metalness: mat.metalness ?? null,
+                  roughness: mat.roughness ?? null,
+                  envMap: Boolean(mat.envMap),
+                  envMapIntensity: mat.envMapIntensity ?? null,
+                  envMapUuid: envUuid,
+                  sceneEnvUuid: sceneUuid,
+                  usesStudioNotSky: Boolean(envUuid && envUuid !== sceneUuid),
+                  emissive: mat.emissive?.getHexString?.() ?? null,
+                  emissiveIntensity: mat.emissiveIntensity ?? null,
+                })
+              }
+            })
+            return rows
           },
           getScreenAabbs() {
             return window.__v4!.getComposition().aabbs as ReturnType<V4Debug['getScreenAabbs']>

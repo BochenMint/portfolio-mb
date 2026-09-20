@@ -19,17 +19,26 @@ const ENGINE_COLOR_FULL = new THREE.Color(0x5aa8c8)
 const LIGHT_IDLE_INTENSITY = 2.2
 const LIGHT_FULL_INTENSITY = 12
 
-const PLUME_LENGTH_IDLE = 0.45
-const PLUME_LENGTH_FULL = 4.6
-const PLUME_RADIUS_IDLE = 0.11
-const PLUME_RADIUS_FULL = 0.3
+const PLUME_LENGTH_IDLE = 0.55
+const PLUME_LENGTH_FULL = 5.2
+const PLUME_RADIUS_IDLE = 0.16
+const PLUME_RADIUS_FULL = 0.42
 const PLUME_COLOR_CORE = new THREE.Color(0xe8f4ff)
 const PLUME_COLOR_MID = new THREE.Color(0x2eb8e8)
 
-function createPlumeGeometry(): THREE.ConeGeometry {
-  const geo = new THREE.ConeGeometry(1, 1, 20, 12, true)
-  geo.translate(0, 0.5, 0)
-  geo.rotateX(Math.PI / 2)
+function createDiamondPlumeGeometry(): THREE.BufferGeometry {
+  const hw = 1
+  const hh = 0.38
+  const positions = new Float32Array([
+    hw, 0, 0, 0, hh, 0, -hw, 0, 0, 0, -hh, 0, 0, 0, 1,
+  ])
+  const indices = [
+    0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4, 0, 3, 1, 1, 3, 2,
+  ]
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+  geo.setIndex(indices)
+  geo.computeVertexNormals()
   return geo
 }
 
@@ -107,8 +116,8 @@ export function createEngineFx(attachPoints: THREE.Vector3[]): EngineFx {
   group.name = 'engine-fx'
 
   const nozzleGeo = new THREE.BufferGeometry()
-  const nw = 0.34
-  const nh = 0.15
+  const nw = 0.48
+  const nh = 0.16
   nozzleGeo.setAttribute(
     'position',
     new THREE.Float32BufferAttribute([0, nh, 0, nw, 0, 0, 0, -nh, 0, -nw, 0, 0], 3),
@@ -137,13 +146,15 @@ export function createEngineFx(attachPoints: THREE.Vector3[]): EngineFx {
 
   const glowSprites: THREE.Sprite[] = []
   const engineLights: THREE.PointLight[] = []
-  const plumeGeo = createPlumeGeometry()
-  const plumes: { mesh: THREE.Mesh; mat: THREE.ShaderMaterial }[] = []
+  const plumeGeo = createDiamondPlumeGeometry()
+  const plumes: { mesh: THREE.Mesh; mat: THREE.ShaderMaterial; rx: number; ry: number; rz: number }[] = []
 
   attachPoints.forEach((pos, idx) => {
     const nozzle = new THREE.Mesh(nozzleGeo, nozzleMat)
     nozzle.position.copy(pos)
     nozzle.rotation.y = 0
+    const center = idx === attachPoints.length - 1 && attachPoints.length > 2
+    nozzle.scale.set(center ? 0.72 : 1, center ? 0.72 : 1, 1)
     group.add(nozzle)
 
     const sprite = new THREE.Sprite(glowMat)
@@ -170,10 +181,13 @@ export function createEngineFx(attachPoints: THREE.Vector3[]): EngineFx {
     })
     const plumeMesh = new THREE.Mesh(plumeGeo, plumeMat)
     plumeMesh.position.copy(pos).add(new THREE.Vector3(0, 0, 0.04))
-    plumeMesh.scale.set(PLUME_RADIUS_IDLE, PLUME_RADIUS_IDLE, PLUME_LENGTH_IDLE)
+    const rx = center ? 0.72 : 1.15
+    const ry = center ? 0.55 : 0.7
+    const rz = center ? 0.78 : 1
+    plumeMesh.scale.set(PLUME_RADIUS_IDLE * rx, PLUME_RADIUS_IDLE * ry, PLUME_LENGTH_IDLE * rz)
     plumeMesh.renderOrder = 5
     group.add(plumeMesh)
-    plumes.push({ mesh: plumeMesh, mat: plumeMat })
+    plumes.push({ mesh: plumeMesh, mat: plumeMat, rx, ry, rz })
 
     const light = new THREE.PointLight(ENGINE_COLOR_IDLE.getHex(), LIGHT_IDLE_INTENSITY, 40, 2)
     light.position.copy(pos).add(new THREE.Vector3(0, 0, 1))
@@ -209,8 +223,8 @@ export function createEngineFx(attachPoints: THREE.Vector3[]): EngineFx {
       const plumeLength = THREE.MathUtils.lerp(PLUME_LENGTH_IDLE, PLUME_LENGTH_FULL, t)
       const plumeRadius = THREE.MathUtils.lerp(PLUME_RADIUS_IDLE, PLUME_RADIUS_FULL, t)
       for (const plume of plumes) {
-        plume.mesh.visible = t > 0.04
-        plume.mesh.scale.set(plumeRadius, plumeRadius, plumeLength)
+        plume.mesh.visible = t > 0.02
+        plume.mesh.scale.set(plumeRadius * plume.rx, plumeRadius * plume.ry, plumeLength * plume.rz)
         plume.mat.uniforms.uTime.value = elapsed
         plume.mat.uniforms.uThrust.value = t
       }

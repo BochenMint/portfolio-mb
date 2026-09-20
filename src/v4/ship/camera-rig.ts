@@ -2,19 +2,13 @@ import * as THREE from 'three'
 import { BLACK_HOLE_POS } from '../engine/world-anchors'
 
 // Classic chase in SHIP space: +Y = dorsal, +Z = aft (forward is local -Z).
-// World-up height was a frog trap — nose-up pitch puts "behind" below the keel.
-// Hull is ~34u (procedural) / ~28u (GLB). BACK must stay ≥1.6× the long hull
-// so the nacelles cannot eat the frame or hide the hole AFTER launch.
-const CHASE_SIDE = 0.15
-const CHASE_HEIGHT = 6.8
-const CHASE_BACK = 56
-const LOOK_AHEAD = 48
-const LOOK_HEIGHT = 2.4
+// Dead-rear (side 0.15 / back 56) made the kite read as a T/chair at ~13% width.
+// Shoulder ~15° shows length and the diamond wedge at 25–38% width.
 const FOV_MIN = 55
 const FOV_MAX = 60
 const FOV_MIN_PORTRAIT = 58
 const FOV_MAX_PORTRAIT = 62
-const THRUST_PULLBACK = 6.5
+const THRUST_PULLBACK = 5.2
 const THRUST_PULLBACK_LERP = 4.5
 const OFFSET_LERP_RATE = 10
 const OFFSET_ANG_BOOST = 16
@@ -74,6 +68,19 @@ function readHull(fit?: HullFit | null): HullFit {
     span: Number.isFinite(span) && (span as number) > 2 ? (span as number) : DEFAULT_HULL.span,
     height: Number.isFinite(height) && (height as number) > 1 ? (height as number) : DEFAULT_HULL.height,
   }
+}
+
+function chaseLayoutFor(
+  hull: HullFit,
+  aspect: number,
+): { side: number; height: number; back: number; lookAhead: number; lookHeight: number } {
+  const portrait = aspect > 0 && aspect < 0.85
+  const back = hull.length * (portrait ? 1.22 : 1.08)
+  const side = back * (portrait ? 0.16 : 0.22)
+  const height = Math.max(hull.height * 2.55, portrait ? 7.6 : 8.4)
+  const lookAhead = hull.length * (portrait ? 0.55 : 0.58)
+  const lookHeight = hull.height * 0.42
+  return { side, height, back, lookAhead, lookHeight }
 }
 
 function launchProfile(aspect: number): {
@@ -142,7 +149,8 @@ export function createCameraRig(camera: THREE.PerspectiveCamera, hullFit?: HullF
   const forward = new THREE.Vector3()
   const shipUp = new THREE.Vector3()
   const localOffset = new THREE.Vector3()
-  const smoothedLocal = new THREE.Vector3(CHASE_SIDE, CHASE_HEIGHT, CHASE_BACK)
+  const restChase = chaseLayoutFor(hull, 1.6)
+  const smoothedLocal = new THREE.Vector3(restChase.side, restChase.height, restChase.back)
   const deflect = new THREE.Vector3()
   const viewDir = new THREE.Vector3()
   const right = new THREE.Vector3()
@@ -293,7 +301,8 @@ export function createCameraRig(camera: THREE.PerspectiveCamera, hullFit?: HullF
     wasThrusted = false
     pullbackSmoothed = 0
     deflect.set(0, 0, 0)
-    smoothedLocal.set(CHASE_SIDE, CHASE_HEIGHT, CHASE_BACK)
+    const rest = chaseLayoutFor(hull, camera.aspect > 0.05 ? camera.aspect : 1.6)
+    smoothedLocal.set(rest.side, rest.height, rest.back)
     poseLaunch(shipPos, shipQuat)
     applyLaunch()
   }
@@ -326,10 +335,11 @@ export function createCameraRig(camera: THREE.PerspectiveCamera, hullFit?: HullF
     pullbackSmoothed +=
       (pullbackTarget - pullbackSmoothed) * (1 - Math.exp(-THRUST_PULLBACK_LERP * safeDt))
 
+    const layout = chaseLayoutFor(hull, camera.aspect > 0.05 ? camera.aspect : 1.6)
     localOffset.set(
-      CHASE_SIDE + deflect.x,
-      CHASE_HEIGHT + deflect.y,
-      CHASE_BACK + pullbackSmoothed,
+      layout.side + deflect.x,
+      layout.height + deflect.y,
+      layout.back + pullbackSmoothed,
     )
     const offsetK = 1 - Math.exp(-(OFFSET_LERP_RATE + angSpeed * OFFSET_ANG_BOOST) * safeDt)
     smoothedLocal.lerp(localOffset, offsetK)
@@ -341,7 +351,7 @@ export function createCameraRig(camera: THREE.PerspectiveCamera, hullFit?: HullF
     shipUp.set(0, 1, 0).applyQuaternion(shipQuat)
     safeNormalize(shipUp, upFallback)
 
-    lookTarget.copy(shipPos).addScaledVector(forward, LOOK_AHEAD).addScaledVector(shipUp, LOOK_HEIGHT)
+    lookTarget.copy(shipPos).addScaledVector(forward, layout.lookAhead).addScaledVector(shipUp, layout.lookHeight)
 
     dummy.position.copy(desiredPos)
     viewDir.copy(lookTarget).sub(desiredPos)

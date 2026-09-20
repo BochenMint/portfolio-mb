@@ -18,52 +18,51 @@ const RADIAL_SEGMENTS = 28
 const STATIONS = 44
 
 const HULL_HALF_WIDTH: Keyframe[] = [
-  [0, 0.16],
-  [0.08, 0.34],
-  [0.18, 0.7],
-  [0.32, 1.28],
-  [0.48, 2.15],
-  [0.6, 3.15],
-  [0.67, 3.72],
-  [0.78, 3.38],
-  [0.9, 2.78],
-  [1, 2.48],
+  [0, 0.14],
+  [0.08, 0.38],
+  [0.18, 0.82],
+  [0.32, 1.55],
+  [0.48, 2.42],
+  [0.62, 3.35],
+  [0.74, 3.55],
+  [0.86, 3.28],
+  [0.94, 2.95],
+  [1, 2.72],
 ]
 
 const HULL_HALF_HEIGHT_TOP: Keyframe[] = [
-  [0, 0.1],
-  [0.12, 0.36],
-  [0.3, 0.68],
-  [0.5, 0.98],
-  [0.67, 1.18],
-  [0.86, 0.82],
-  [1, 0.44],
+  [0, 0.12],
+  [0.12, 0.42],
+  [0.3, 0.82],
+  [0.5, 1.18],
+  [0.68, 1.36],
+  [0.86, 1.12],
+  [1, 0.92],
 ]
 
 const HULL_HALF_HEIGHT_BOT: Keyframe[] = [
-  [0, 0.08],
-  [0.16, 0.26],
-  [0.4, 0.48],
-  [0.67, 0.62],
-  [1, 0.3],
+  [0, 0.1],
+  [0.16, 0.32],
+  [0.4, 0.62],
+  [0.68, 0.82],
+  [1, 0.7],
 ]
 
 const HULL_NX: Keyframe[] = [
-  [0, 1.22],
-  [0.3, 1.28],
-  [0.67, 1.32],
-  [1, 1.4],
+  [0, 1.16],
+  [0.4, 1.18],
+  [1, 1.22],
 ]
 
 const HULL_NY_TOP: Keyframe[] = [
-  [0, 2.05],
-  [0.4, 2.2],
-  [1, 2.35],
+  [0, 1.45],
+  [0.5, 1.55],
+  [1, 1.62],
 ]
 
 const HULL_NY_BOT: Keyframe[] = [
-  [0, 2.4],
-  [1, 2.85],
+  [0, 1.5],
+  [1, 1.7],
 ]
 
 function hullProfileAt(t: number): RingProfile & { centerX: number; centerY: number } {
@@ -74,8 +73,10 @@ function hullProfileAt(t: number): RingProfile & { centerX: number; centerY: num
     roundness: sampleKeyframes(HULL_NX, t),
     roundnessY: sampleKeyframes(HULL_NY_TOP, t),
     roundnessBottom: sampleKeyframes(HULL_NY_BOT, t),
+    shape: 'diamond',
+    cornerBlend: 0.14,
     centerX: 0,
-    centerY: 0.04,
+    centerY: 0.06,
   }
 }
 
@@ -312,18 +313,18 @@ function buildNeedleTipGeometry(): THREE.BufferGeometry {
   return loftSolid(sections, 10)
 }
 
-const GONDOLA_Z0 = 4.6
-const GONDOLA_Z1 = 16.55
-const GONDOLA_STATIONS = 18
+const GONDOLA_Z0 = 1.8
+const GONDOLA_Z1 = 16.45
+const GONDOLA_STATIONS = 16
 
 function gondolaX(sign: 1 | -1, z: number, t: number): number {
   const hw = hullSurfaceAt(z).halfWidth
-  const hold = THREE.MathUtils.lerp(0.08, 0.22, t)
-  return sign * (hw * 0.86 + hold)
+  return sign * (hw * 0.58 + THREE.MathUtils.lerp(0.02, 0.16, t))
 }
 
 function gondolaY(z: number): number {
-  return hullSurfaceAt(z).centerY - 0.2
+  const s = hullSurfaceAt(z)
+  return s.centerY - (s.halfHeightBottom ?? s.halfHeight) * 0.18
 }
 
 function buildGondolaGeometry(sign: 1 | -1): THREE.BufferGeometry {
@@ -332,23 +333,49 @@ function buildGondolaGeometry(sign: 1 | -1): THREE.BufferGeometry {
     const t = i / (GONDOLA_STATIONS - 1)
     const z = THREE.MathUtils.lerp(GONDOLA_Z0, GONDOLA_Z1, t)
     let hw: number
-    if (t < 0.16) hw = THREE.MathUtils.lerp(0.16, 0.5, t / 0.16)
-    else if (t < 0.78) hw = THREE.MathUtils.lerp(0.5, 0.58, (t - 0.16) / 0.62)
-    else hw = THREE.MathUtils.lerp(0.58, 0.52, (t - 0.78) / 0.22)
-    const hh = hw * 0.78
+    if (t < 0.18) hw = THREE.MathUtils.lerp(0.12, 0.62, t / 0.18)
+    else if (t < 0.82) hw = THREE.MathUtils.lerp(0.62, 0.78, (t - 0.18) / 0.64)
+    else hw = THREE.MathUtils.lerp(0.78, 0.7, (t - 0.82) / 0.18)
+    const hh = hw * 0.38
     sections.push({
       z,
       centerX: gondolaX(sign, z, t),
       centerY: gondolaY(z),
       halfWidth: hw,
       halfHeight: hh,
-      halfHeightBottom: hh * 0.9,
-      roundness: 1.35,
-      shape: 'hexagon',
-      cornerBlend: 0.1,
+      halfHeightBottom: hh * 0.92,
+      roundness: 1.22,
+      shape: 'diamond',
+      cornerBlend: 0.05,
     })
   }
   return loftSolid(sections, 12)
+}
+
+function buildStrakeGeometry(sign: 1 | -1): THREE.BufferGeometry {
+  const z0 = -9.2
+  const z1 = 15.6
+  const stations = 14
+  const sections: LoftSection[] = []
+  for (let i = 0; i < stations; i++) {
+    const t = i / (stations - 1)
+    const z = THREE.MathUtils.lerp(z0, z1, t)
+    const s = hullSurfaceAt(z)
+    const hw = t < 0.2 ? THREE.MathUtils.lerp(0.08, 0.28, t / 0.2) : t < 0.75 ? THREE.MathUtils.lerp(0.28, 0.4, (t - 0.2) / 0.55) : THREE.MathUtils.lerp(0.4, 0.22, (t - 0.75) / 0.25)
+    const hh = hw * 0.48
+    sections.push({
+      z,
+      centerX: sign * (s.halfWidth * 0.96),
+      centerY: s.centerY - (s.halfHeightBottom ?? s.halfHeight) * 0.08,
+      halfWidth: hw,
+      halfHeight: hh,
+      halfHeightBottom: hh * 0.9,
+      roundness: 1.2,
+      shape: 'diamond',
+      cornerBlend: 0.06,
+    })
+  }
+  return loftSolid(sections, 10)
 }
 
 function buildRhombicNozzle(width: number, height: number, depth: number): THREE.BufferGeometry {
@@ -420,38 +447,40 @@ export function buildShipHull(envMap: THREE.Texture | null, renderer?: THREE.Web
   take(buildFangGeometry(-1), 'graphite')
   take(buildNeedleGeometry(), 'graphite')
   take(buildNeedleTipGeometry(), 'chrome')
+  take(buildStrakeGeometry(1), 'graphite')
+  take(buildStrakeGeometry(-1), 'graphite')
   take(buildGondolaGeometry(1), 'graphite')
   take(buildGondolaGeometry(-1), 'graphite')
   take(buildCanopyGeometry(), 'glass')
 
-  take(buildHullBandGeometry(-HALF_LEN + 1.6, HALF_LEN - 1.8, -11, 11, 0.02, 22, 5), 'chrome')
-  take(buildHullBandGeometry(-HALF_LEN + 1.6, HALF_LEN - 1.8, 169, 191, 0.02, 22, 5), 'chrome')
-  take(buildHullBandGeometry(-HALF_LEN + 0.2, -HALF_LEN + 3.2, 32, 62, 0.024, 10, 4), 'chrome')
-  take(buildHullBandGeometry(-HALF_LEN + 0.2, -HALF_LEN + 3.2, 118, 148, 0.024, 10, 4), 'chrome')
+  take(buildHullBandGeometry(-HALF_LEN + 1.2, HALF_LEN - 1.4, -10, 10, 0.028, 22, 5), 'chrome')
+  take(buildHullBandGeometry(-HALF_LEN + 1.2, HALF_LEN - 1.4, 170, 190, 0.028, 22, 5), 'chrome')
+  take(buildHullBandGeometry(-HALF_LEN + 0.15, -HALF_LEN + 3.6, 28, 58, 0.03, 10, 4), 'chrome')
+  take(buildHullBandGeometry(-HALF_LEN + 0.15, -HALF_LEN + 3.6, 122, 152, 0.03, 10, 4), 'chrome')
 
-  const keel = buildFinGeometry(1.52, 4.8, 0.55, 2.4, 0.07)
-  keel.translate(0, hullSurfaceAt(4.2).halfHeight + 0.02, 4.2)
+  const keel = buildFinGeometry(0.78, 6.2, 0.42, 2.8, 0.065)
+  keel.translate(0, hullSurfaceAt(3.4).halfHeight + 0.02, 3.4)
   take(keel, 'graphite')
-  const keelEdge = buildFinGeometry(1.5, 0.42, 0.12, 0.18, 0.045)
-  keelEdge.translate(0, hullSurfaceAt(2.4).halfHeight + 0.04, 2.2)
+  const keelEdge = buildFinGeometry(0.74, 0.38, 0.1, 0.16, 0.04)
+  keelEdge.translate(0, hullSurfaceAt(1.6).halfHeight + 0.04, 1.4)
   take(keelEdge, 'chrome')
 
-  const canard = buildFinGeometry(1.28, 1.35, 0.22, 0.7, 0.045)
+  const canard = buildFinGeometry(0.48, 0.95, 0.16, 0.52, 0.04)
   const canardStbd = canard.clone()
   canardStbd.rotateZ(-Math.PI / 2)
-  canardStbd.rotateY(-0.16)
-  canardStbd.translate(0.82, 0.06, -11.2)
+  canardStbd.rotateY(-0.22)
+  canardStbd.translate(0.55, 0.04, -12.4)
   const canardPort = mirrorX(canardStbd)
   canard.dispose()
-  take(canardStbd, 'chrome')
-  take(canardPort, 'chrome')
+  take(canardStbd, 'graphite')
+  take(canardPort, 'graphite')
 
   take(buildFangTipGeometry(1), 'chrome')
   take(buildFangTipGeometry(-1), 'chrome')
 
-  const nozzleDepth = 0.72
-  const nozzleW = 0.78
-  const nozzleH = 0.36
+  const nozzleDepth = 0.68
+  const nozzleW = 1.08
+  const nozzleH = 0.34
   const nozzleAttachPoints: THREE.Vector3[] = []
 
   for (const sign of [1, -1] as const) {
@@ -462,20 +491,26 @@ export function buildShipHull(envMap: THREE.Texture | null, renderer?: THREE.Web
     const sleeve = buildRhombicNozzle(nozzleW, nozzleH, nozzleDepth)
     sleeve.translate(x, y, z)
     take(sleeve, 'ceramic')
-    const throat = buildRhombicNozzle(nozzleW * 0.72, nozzleH * 0.7, 0.12)
-    throat.translate(x, y, z + nozzleDepth * 0.88)
+    const lip = buildRhombicNozzle(nozzleW * 1.06, nozzleH * 1.08, 0.08)
+    lip.translate(x, y, z + nozzleDepth * 0.9)
+    take(lip, 'chrome')
+    const throat = buildRhombicNozzle(nozzleW * 0.7, nozzleH * 0.62, 0.14)
+    throat.translate(x, y, z + nozzleDepth * 0.82)
     take(throat, 'heat')
-    nozzleAttachPoints.push(new THREE.Vector3(x, y, z + nozzleDepth + 0.04))
+    nozzleAttachPoints.push(new THREE.Vector3(x, y, z + nozzleDepth + 0.05))
   }
 
-  const slotZ = HALF_LEN - 0.35
-  const slot = buildRhombicNozzle(0.52, 0.18, 0.55)
-  slot.translate(0, -0.02, slotZ)
+  const slotZ = HALF_LEN - 0.28
+  const slot = buildRhombicNozzle(0.7, 0.22, 0.58)
+  slot.translate(0, -0.08, slotZ)
   take(slot, 'ceramic')
-  const slotThroat = buildRhombicNozzle(0.36, 0.12, 0.1)
-  slotThroat.translate(0, -0.02, slotZ + 0.42)
+  const slotLip = buildRhombicNozzle(0.74, 0.24, 0.07)
+  slotLip.translate(0, -0.08, slotZ + 0.48)
+  take(slotLip, 'chrome')
+  const slotThroat = buildRhombicNozzle(0.48, 0.14, 0.12)
+  slotThroat.translate(0, -0.08, slotZ + 0.4)
   take(slotThroat, 'heat')
-  nozzleAttachPoints.push(new THREE.Vector3(0, -0.02, slotZ + 0.58))
+  nozzleAttachPoints.push(new THREE.Vector3(0, -0.08, slotZ + 0.62))
 
   const ownedGeometries: THREE.BufferGeometry[] = []
   const slotMat: Record<Slot, THREE.MeshPhysicalMaterial> = {
