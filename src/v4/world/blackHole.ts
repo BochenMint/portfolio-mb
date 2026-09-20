@@ -58,7 +58,7 @@ const DISK_INNER = APPARENT_SHADOW_R * 1.08
 const DISK_OUTER = APPARENT_SHADOW_R * 3.05
 /** Support mesh larger than the visible outer radius so the tessellated
  * rim is never in frame. Visible radiance hits 0 before this. */
-const DISK_GEO_OUTER = DISK_OUTER * 1.38
+const DISK_GEO_OUTER = DISK_OUTER * 1.58
 /** Near edge-on from the equatorial launch camera — thin optical thickness. */
 const DISK_TILT_DEG = 7.5
 /** Sky-warp amplitude. Analytical, not a marched geodesic. */
@@ -282,6 +282,7 @@ const DISK_FRAG = /* glsl */ `
   uniform vec3 uBHPos;
   uniform float uDiskInner;
   uniform float uDiskOuter;
+  uniform float uDiskGeoOuter;
   uniform float uShadowR;
   uniform vec3 uDiskU;
   uniform vec3 uDiskV;
@@ -310,7 +311,7 @@ const DISK_FRAG = /* glsl */ `
     float cu = dot(rel, uDiskU);
     float cv = dot(rel, uDiskV);
     float rad = length(vec2(cu, cv));
-    if (rad <= uDiskInner || rad >= uDiskOuter) return vec3(0.0);
+    if (rad <= uDiskInner || rad >= uDiskGeoOuter) return vec3(0.0);
 
     float tRad = (rad - uDiskInner) / (uDiskOuter - uDiskInner);
     float omega = 2.0 / pow(rad / uDiskInner, 1.5);
@@ -332,10 +333,9 @@ const DISK_FRAG = /* glsl */ `
     float bandD = smoothstep(0.72, 0.82, tRad) * (1.0 - smoothstep(0.92, 1.0, tRad));
     float bands = bandA * 1.05 + bandB * 0.82 + bandC * 0.62 + bandD * 0.42;
     float innerFade = smoothstep(0.0, 0.04, tRad);
-    // Radiance dies before the visible outer radius; the mesh continues to
-    // DISK_GEO_OUTER so a tessellated rim cannot appear as a hard board edge.
-    float outerFade = 1.0 - smoothstep(0.72, 0.98, tRad);
-    float brightness = (0.2 + streakMix * 0.6) * beam * (0.24 + bands) * innerFade * outerFade;
+    float outerFade = 1.0 - smoothstep(0.42, 0.86, tRad);
+    float guardFade = 1.0 - smoothstep(uDiskOuter * 0.78, uDiskGeoOuter * 0.995, rad);
+    float brightness = (0.2 + streakMix * 0.6) * beam * (0.24 + bands) * innerFade * outerFade * guardFade;
     return temp * brightness;
   }
 
@@ -361,7 +361,7 @@ const DISK_FRAG = /* glsl */ `
     float cu = dot(rel, uDiskU);
     float cv = dot(rel, uDiskV);
     float rad = length(vec2(cu, cv));
-    if (rad <= uDiskInner || rad >= uDiskOuter) discard;
+    if (rad <= uDiskInner || rad >= uDiskGeoOuter) discard;
 
     vec3 oc = cameraPosition - uBHPos;
     float bOc = dot(oc, rd);
@@ -387,17 +387,23 @@ const DISK_FRAG = /* glsl */ `
       float faceOn = camDist > 1.0 ? abs(dot(camRel / camDist, uDiskN)) : 1.0;
       vec3 camInDisk = camRel - uDiskN * dot(camRel, uDiskN);
       float cil = length(camInDisk);
-      // Face-on (top/down): keep the full ring. Edge-on: hide the Euclidean
-      // far half so polar arcs own that light. Threshold is on camera vs
-      // disk normal — in-plane leftover from a 7.5° tilt must not cut a
-      // semicircle.
+      // Face-on: full ring. Edge-on: fade the Euclidean far arc in ANGLE space
+      // (not a diameter chord) so the outer rim never gets a vertical board-cut.
       if (faceOn < 0.68 && cil > uShadowR * 0.5) {
-        float alongN = dot(rel, camInDisk / cil) / max(rad, 1.0);
-        color *= smoothstep(-0.42, -0.04, alongN);
+        float ang = atan(cv, cu);
+        float camAng = atan(dot(camInDisk, uDiskV), dot(camInDisk, uDiskU));
+        float dAng = atan(sin(ang - camAng), cos(ang - camAng));
+        float farFade = smoothstep(-2.45, -1.35, dAng);
+        float aa = fwidth(dAng) * 3.0;
+        farFade = smoothstep(-2.45 - aa, -1.35 + aa, dAng);
+        color *= farFade;
       }
     }
 
-    if (dot(color, vec3(0.3, 0.55, 0.15)) < 0.008) discard;
+    float rimGuard = 1.0 - smoothstep(uDiskOuter * 0.9, uDiskGeoOuter * 0.995, rad);
+    color *= rimGuard;
+
+    if (dot(color, vec3(0.3, 0.55, 0.15)) < 0.004) discard;
 
     gl_FragColor = vec4(color, 1.0);
     ${TONE_OUTPUT_GLSL}
@@ -558,12 +564,13 @@ export function createBlackHole(
   seal.renderOrder = 6
   seal.frustumCulled = false
 
-  const diskGeo = new THREE.RingGeometry(DISK_INNER, DISK_GEO_OUTER, 192, 12)
+  const diskGeo = new THREE.RingGeometry(DISK_INNER, DISK_GEO_OUTER, 256, 20)
   const diskMat = new THREE.ShaderMaterial({
     uniforms: {
       uBHPos: { value: BLACK_HOLE_POS.clone() },
       uDiskInner: { value: DISK_INNER },
       uDiskOuter: { value: DISK_OUTER },
+      uDiskGeoOuter: { value: DISK_GEO_OUTER },
       uShadowR: { value: APPARENT_SHADOW_R },
       uDiskU: { value: diskU },
       uDiskV: { value: diskV },
@@ -591,7 +598,7 @@ export function createBlackHole(
   // Bounding sphere for close-in flight: the paper-thin ring would cross the
   // camera near plane (straight knife edge). Ray-plane on this sphere keeps
   // rasterized faces away from the clip, with depth written at the real hit.
-  const diskProxyGeo = new THREE.SphereGeometry(DISK_GEO_OUTER, 64, 48)
+  const diskProxyGeo = new THREE.SphereGeometry(DISK_GEO_OUTER, 96, 64)
   const diskProxy = new THREE.Mesh(diskProxyGeo, diskMat)
   diskProxy.name = 'black-hole-disk-proxy'
   diskProxy.renderOrder = 1
