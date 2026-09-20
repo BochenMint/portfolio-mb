@@ -141,7 +141,7 @@ import{n as e,r as t,t as n}from"./jsx-runtime-i9uBjpvk.js";import{n as r,o as i
       <a href="/v4/assets/ATTRIBUTION.md" target="_blank" rel="noopener">Assety i licencje</a>
       <a href="${bn}">&larr; klasyczne portfolio</a>
     </div>
-  `,e.appendChild(s);let c=s.querySelector(`.v4-hud__speed-value`),l=s.querySelector(`.v4-hud__thrust-fill`),u=s.querySelector(`.v4-hud__legend`),d=s.querySelector(`.v4-hud__start-prompt`);i&&t.onLaunch&&d.addEventListener(`pointerdown`,e=>{e.preventDefault(),t.onLaunch?.()});let f=s.querySelector(`.v4-hud__timer`),p=s.querySelector(`.v4-hud__warning`),m=Array.from(s.querySelectorAll(`.v4-hud__pip`)),h=s.querySelector(`.v4-hud__fps`),g=performance.now(),_=0,v=0,y=Sn*54,b=y*.78,x=!1,S=0,C=!1;function w(){window.clearTimeout(S),S=window.setTimeout(()=>{u.classList.remove(`is-visible`),u.setAttribute(`aria-hidden`,`true`)},xn)}return{update(e){if(c.textContent=String(Math.round(e.speed)).padStart(2,`0`),l.style.transform=`scaleX(${Math.max(0,Math.min(1,e.thrust))})`,e.hasThrusted&&!x&&(x=!0,d.classList.add(`is-hidden`),u.classList.add(`is-visible`),u.setAttribute(`aria-hidden`,`false`),w()),f.textContent=mn(e.missionMs),h){let e=performance.now(),t=e-g;if(g=e,t>.75&&t<250){let e=1e3/t;_=v===0?e:_*.88+e*.12,v+=1,v>=8&&_>=1&&(h.hidden=!1,h.textContent=`${Math.round(_)} fps`)}}C=C?e.gravityAccel>b:e.gravityAccel>y,p.classList.toggle(`is-visible`,C);for(let t of m){let n=t.dataset.planet;t.classList.toggle(`is-found`,e.discovered.has(n))}},reset(){x=!1,C=!1,window.clearTimeout(S),d.classList.remove(`is-hidden`),u.classList.remove(`is-visible`),u.setAttribute(`aria-hidden`,`true`),p.classList.remove(`is-visible`)},dispose(){window.clearTimeout(S),s.remove()}}}var wn=108,Tn=wn,En=wn,Dn=Tn,On=Tn*1.012,kn=.92,An=Tn*1.08,jn=Tn*3.05,Mn=jn*1.38,Nn=7.5,Pn=.94,Fn=4,In=2,Ln=Tn*1.78,Rn=Ln,zn=`
+  `,e.appendChild(s);let c=s.querySelector(`.v4-hud__speed-value`),l=s.querySelector(`.v4-hud__thrust-fill`),u=s.querySelector(`.v4-hud__legend`),d=s.querySelector(`.v4-hud__start-prompt`);i&&t.onLaunch&&d.addEventListener(`pointerdown`,e=>{e.preventDefault(),t.onLaunch?.()});let f=s.querySelector(`.v4-hud__timer`),p=s.querySelector(`.v4-hud__warning`),m=Array.from(s.querySelectorAll(`.v4-hud__pip`)),h=s.querySelector(`.v4-hud__fps`),g=performance.now(),_=0,v=0,y=Sn*54,b=y*.78,x=!1,S=0,C=!1;function w(){window.clearTimeout(S),S=window.setTimeout(()=>{u.classList.remove(`is-visible`),u.setAttribute(`aria-hidden`,`true`)},xn)}return{update(e){if(c.textContent=String(Math.round(e.speed)).padStart(2,`0`),l.style.transform=`scaleX(${Math.max(0,Math.min(1,e.thrust))})`,e.hasThrusted&&!x&&(x=!0,d.classList.add(`is-hidden`),u.classList.add(`is-visible`),u.setAttribute(`aria-hidden`,`false`),w()),f.textContent=mn(e.missionMs),h){let e=performance.now(),t=e-g;if(g=e,t>.75&&t<250){let e=1e3/t;_=v===0?e:_*.88+e*.12,v+=1,v>=8&&_>=1&&(h.hidden=!1,h.textContent=`${Math.round(_)} fps`)}}C=C?e.gravityAccel>b:e.gravityAccel>y,p.classList.toggle(`is-visible`,C);for(let t of m){let n=t.dataset.planet;t.classList.toggle(`is-found`,e.discovered.has(n))}},reset(){x=!1,C=!1,window.clearTimeout(S),d.classList.remove(`is-hidden`),u.classList.remove(`is-visible`),u.setAttribute(`aria-hidden`,`true`),p.classList.remove(`is-visible`)},dispose(){window.clearTimeout(S),s.remove()}}}var wn=108,Tn=wn,En=wn,Dn=Tn,On=Tn*1.012,kn=.92,An=Tn*1.08,jn=Tn*3.05,Mn=jn*1.58,Nn=7.5,Pn=.94,Fn=4,In=2,Ln=Tn*1.78,Rn=Ln,zn=`
   vec2 diskSpun(float cu, float cv, float rad, float omega, float time) {
     vec2 dir = vec2(cu, cv) / max(rad, 1.0e-4);
     float ca = cos(time * omega);
@@ -340,6 +340,7 @@ import{n as e,r as t,t as n}from"./jsx-runtime-i9uBjpvk.js";import{n as r,o as i
   uniform vec3 uBHPos;
   uniform float uDiskInner;
   uniform float uDiskOuter;
+  uniform float uDiskGeoOuter;
   uniform float uShadowR;
   uniform vec3 uDiskU;
   uniform vec3 uDiskV;
@@ -368,7 +369,7 @@ import{n as e,r as t,t as n}from"./jsx-runtime-i9uBjpvk.js";import{n as r,o as i
     float cu = dot(rel, uDiskU);
     float cv = dot(rel, uDiskV);
     float rad = length(vec2(cu, cv));
-    if (rad <= uDiskInner || rad >= uDiskOuter) return vec3(0.0);
+    if (rad <= uDiskInner || rad >= uDiskGeoOuter) return vec3(0.0);
 
     float tRad = (rad - uDiskInner) / (uDiskOuter - uDiskInner);
     float omega = 2.0 / pow(rad / uDiskInner, 1.5);
@@ -390,10 +391,9 @@ import{n as e,r as t,t as n}from"./jsx-runtime-i9uBjpvk.js";import{n as r,o as i
     float bandD = smoothstep(0.72, 0.82, tRad) * (1.0 - smoothstep(0.92, 1.0, tRad));
     float bands = bandA * 1.05 + bandB * 0.82 + bandC * 0.62 + bandD * 0.42;
     float innerFade = smoothstep(0.0, 0.04, tRad);
-    // Radiance dies before the visible outer radius; the mesh continues to
-    // DISK_GEO_OUTER so a tessellated rim cannot appear as a hard board edge.
-    float outerFade = 1.0 - smoothstep(0.72, 0.98, tRad);
-    float brightness = (0.2 + streakMix * 0.6) * beam * (0.24 + bands) * innerFade * outerFade;
+    float outerFade = 1.0 - smoothstep(0.42, 0.86, tRad);
+    float guardFade = 1.0 - smoothstep(uDiskOuter * 0.78, uDiskGeoOuter * 0.995, rad);
+    float brightness = (0.2 + streakMix * 0.6) * beam * (0.24 + bands) * innerFade * outerFade * guardFade;
     return temp * brightness;
   }
 
@@ -419,7 +419,7 @@ import{n as e,r as t,t as n}from"./jsx-runtime-i9uBjpvk.js";import{n as r,o as i
     float cu = dot(rel, uDiskU);
     float cv = dot(rel, uDiskV);
     float rad = length(vec2(cu, cv));
-    if (rad <= uDiskInner || rad >= uDiskOuter) discard;
+    if (rad <= uDiskInner || rad >= uDiskGeoOuter) discard;
 
     vec3 oc = cameraPosition - uBHPos;
     float bOc = dot(oc, rd);
@@ -445,17 +445,23 @@ import{n as e,r as t,t as n}from"./jsx-runtime-i9uBjpvk.js";import{n as r,o as i
       float faceOn = camDist > 1.0 ? abs(dot(camRel / camDist, uDiskN)) : 1.0;
       vec3 camInDisk = camRel - uDiskN * dot(camRel, uDiskN);
       float cil = length(camInDisk);
-      // Face-on (top/down): keep the full ring. Edge-on: hide the Euclidean
-      // far half so polar arcs own that light. Threshold is on camera vs
-      // disk normal — in-plane leftover from a 7.5° tilt must not cut a
-      // semicircle.
+      // Face-on: full ring. Edge-on: fade the Euclidean far arc in ANGLE space
+      // (not a diameter chord) so the outer rim never gets a vertical board-cut.
       if (faceOn < 0.68 && cil > uShadowR * 0.5) {
-        float alongN = dot(rel, camInDisk / cil) / max(rad, 1.0);
-        color *= smoothstep(-0.42, -0.04, alongN);
+        float ang = atan(cv, cu);
+        float camAng = atan(dot(camInDisk, uDiskV), dot(camInDisk, uDiskU));
+        float dAng = atan(sin(ang - camAng), cos(ang - camAng));
+        float farFade = smoothstep(-2.45, -1.35, dAng);
+        float aa = fwidth(dAng) * 3.0;
+        farFade = smoothstep(-2.45 - aa, -1.35 + aa, dAng);
+        color *= farFade;
       }
     }
 
-    if (dot(color, vec3(0.3, 0.55, 0.15)) < 0.008) discard;
+    float rimGuard = 1.0 - smoothstep(uDiskOuter * 0.9, uDiskGeoOuter * 0.995, rad);
+    color *= rimGuard;
+
+    if (dot(color, vec3(0.3, 0.55, 0.15)) < 0.004) discard;
 
     gl_FragColor = vec4(color, 1.0);
     ${be}
@@ -467,7 +473,7 @@ import{n as e,r as t,t as n}from"./jsx-runtime-i9uBjpvk.js";import{n as r,o as i
       gl_FragDepth = gl_FragCoord.z;
     }
   }
-`;function Wn(e,t){let n=e.material;return{name:t,visible:e.visible,renderOrder:e.renderOrder,depthTest:n.depthTest,depthWrite:n.depthWrite,transparent:n.transparent,blending:n.blending,side:n.side}}function Gn(e,t,n){let r=O.degToRad(Nn),i=new v(0,Math.cos(r),Math.sin(r)).normalize(),a=new v(1,0,0),o=new v().crossVectors(i,a).normalize();a.crossVectors(o,i).normalize();let s=new P(2,2),c=new A({uniforms:{uBHPos:{value:Z.clone()},uHorizonR:{value:En},uShadowR:{value:Tn},uPhotonR:{value:On},uPhotonWidth:{value:kn},uDiskInner:{value:An},uDiskOuter:{value:jn},uInfluenceR:{value:Ln},uDiskU:{value:a},uDiskV:{value:o},uDiskN:{value:i},uTime:{value:0},uBendK:{value:Pn},uArcSamples:{value:t?In:Fn},uSky:{value:e},uSkyRot:{value:0},uCamPos:{value:new v},uCamRight:{value:new v},uCamUp:{value:new v},uCamFwd:{value:new v},uResolution:{value:new B(1,1)},uTanHalfFov:{value:1},uAspect:{value:1}},vertexShader:Bn,fragmentShader:Vn,depthTest:!0,depthWrite:!1,transparent:!0,blending:2,toneMapped:!0,side:0}),u=new b(s,c);u.frustumCulled=!1,u.renderOrder=7,u.name=`black-hole-lensing`,u.scale.setScalar(Ln);let d=new N(Dn,64,48),f=new l({color:0,toneMapped:!1,depthWrite:!0,depthTest:!0,transparent:!1,fog:!1});f.colorWrite=!0;let p=new b(d,f);p.name=`black-hole-horizon`,p.renderOrder=0,p.frustumCulled=!1;let m=new l({color:0,toneMapped:!1,depthTest:!0,depthWrite:!1,depthFunc:3,transparent:!0,opacity:1,blending:1,fog:!1,side:0}),h=new b(d,m);h.name=`black-hole-aperture-seal`,h.renderOrder=6,h.frustumCulled=!1;let g=new ne(An,Mn,192,12),_=new A({uniforms:{uBHPos:{value:Z.clone()},uDiskInner:{value:An},uDiskOuter:{value:jn},uShadowR:{value:Tn},uDiskU:{value:a},uDiskV:{value:o},uDiskN:{value:i},uTime:{value:0},uCamNear:{value:.8},uRayPlane:{value:0},uHideFar:{value:1},uViewProj:{value:new k}},vertexShader:Hn,fragmentShader:Un,depthTest:!0,depthWrite:!0,transparent:!1,toneMapped:!0,side:2}),y=new b(g,_);y.name=`black-hole-disk`,y.renderOrder=1,y.quaternion.setFromUnitVectors(new v(0,0,1),i),y.frustumCulled=!1;let x=new N(Mn,64,48),S=new b(x,_);S.name=`black-hole-disk-proxy`,S.renderOrder=1,S.visible=!1,S.frustumCulled=!1;let C=new K;C.name=`black-hole`,C.position.copy(Z),C.add(p),C.add(y),C.add(S),C.add(h),C.add(u);let w=new K;w.name=`black-hole-debug-bounds`,w.visible=!1;let T=new b(new N(Dn,32,24),new l({color:4521932,wireframe:!0,depthTest:!1,toneMapped:!1}));T.name=`black-hole-horizon-wire`;let E=new L(Dn*1.6);E.name=`black-hole-axes`,w.add(T),w.add(E),C.add(w);let D=new v,j=new v,M=new v,F=new v,I=new B;return{object:C,update(e,t,r){c.uniforms.uTime.value=t,c.uniforms.uSkyRot.value=t*Ce,r.updateMatrixWorld(),_.uniforms.uTime.value=t,_.uniforms.uCamNear.value=r.near,_.uniforms.uViewProj.value.multiplyMatrices(r.projectionMatrix,r.matrixWorldInverse),D.copy(Z).sub(r.position),j.set(0,0,-1).applyQuaternion(r.quaternion),M.set(1,0,0).applyQuaternion(r.quaternion),F.set(0,1,0).applyQuaternion(r.quaternion);let i=D.dot(j),a=D.length(),o=a<Dn+4;c.uniforms.uCamPos.value.copy(r.position),c.uniforms.uCamFwd.value.copy(j),c.uniforms.uCamRight.value.copy(M),c.uniforms.uCamUp.value.copy(F),c.uniforms.uTanHalfFov.value=Math.tan(O.degToRad(r.fov)*.5),c.uniforms.uAspect.value=r.aspect,n.getDrawingBufferSize(I),c.uniforms.uResolution.value.copy(I),u.lookAt(r.position),u.userData.forceHidden||(u.visible=!o&&i>4),h.userData.forceHidden||(h.visible=!o);let s=!!y.userData.forceHidden,l=a<Mn+16;s?(y.visible=!1,S.visible=!1):l?(_.uniforms.uRayPlane.value=1,y.visible=!1,S.visible=!0,_.side=+(a<Mn-1)):(_.uniforms.uRayPlane.value=0,y.visible=!0,S.visible=!1,_.side=2),_.uniforms.uHideFar.value=1},setLayerVisible(e,t){e===`horizon`?(p.visible=t,h.userData.forceHidden||(h.visible=t)):e===`lensing`?(u.userData.forceHidden=!t,u.visible=t):e===`seal`?(h.userData.forceHidden=!t,h.visible=t):(y.userData.forceHidden=!t,y.visible=t,S.visible=!1)},getLayerState(){return{horizon:Wn(p,p.name),seal:Wn(h,h.name),lensing:Wn(u,u.name),disk:Wn(y,y.name)}},getRadii(){return{physicalRs:wn,apparentShadow:Tn,photonRing:On,diskInner:An,diskOuter:jn,diskGeoOuter:Mn,lensShell:Rn}},getDiskFrame(){return{u:a.clone(),v:o.clone(),n:i.clone(),inner:An,outer:jn}},setDebugBounds(e){w.visible=e},dispose(){s.dispose(),c.dispose(),d.dispose(),f.dispose(),m.dispose(),g.dispose(),x.dispose(),_.dispose(),T.geometry.dispose(),T.material.dispose(),E.geometry.dispose(),E.material.dispose()}}}var Kn=`
+`;function Wn(e,t){let n=e.material;return{name:t,visible:e.visible,renderOrder:e.renderOrder,depthTest:n.depthTest,depthWrite:n.depthWrite,transparent:n.transparent,blending:n.blending,side:n.side}}function Gn(e,t,n){let r=O.degToRad(Nn),i=new v(0,Math.cos(r),Math.sin(r)).normalize(),a=new v(1,0,0),o=new v().crossVectors(i,a).normalize();a.crossVectors(o,i).normalize();let s=new P(2,2),c=new A({uniforms:{uBHPos:{value:Z.clone()},uHorizonR:{value:En},uShadowR:{value:Tn},uPhotonR:{value:On},uPhotonWidth:{value:kn},uDiskInner:{value:An},uDiskOuter:{value:jn},uInfluenceR:{value:Ln},uDiskU:{value:a},uDiskV:{value:o},uDiskN:{value:i},uTime:{value:0},uBendK:{value:Pn},uArcSamples:{value:t?In:Fn},uSky:{value:e},uSkyRot:{value:0},uCamPos:{value:new v},uCamRight:{value:new v},uCamUp:{value:new v},uCamFwd:{value:new v},uResolution:{value:new B(1,1)},uTanHalfFov:{value:1},uAspect:{value:1}},vertexShader:Bn,fragmentShader:Vn,depthTest:!0,depthWrite:!1,transparent:!0,blending:2,toneMapped:!0,side:0}),u=new b(s,c);u.frustumCulled=!1,u.renderOrder=7,u.name=`black-hole-lensing`,u.scale.setScalar(Ln);let d=new N(Dn,64,48),f=new l({color:0,toneMapped:!1,depthWrite:!0,depthTest:!0,transparent:!1,fog:!1});f.colorWrite=!0;let p=new b(d,f);p.name=`black-hole-horizon`,p.renderOrder=0,p.frustumCulled=!1;let m=new l({color:0,toneMapped:!1,depthTest:!0,depthWrite:!1,depthFunc:3,transparent:!0,opacity:1,blending:1,fog:!1,side:0}),h=new b(d,m);h.name=`black-hole-aperture-seal`,h.renderOrder=6,h.frustumCulled=!1;let g=new ne(An,Mn,256,20),_=new A({uniforms:{uBHPos:{value:Z.clone()},uDiskInner:{value:An},uDiskOuter:{value:jn},uDiskGeoOuter:{value:Mn},uShadowR:{value:Tn},uDiskU:{value:a},uDiskV:{value:o},uDiskN:{value:i},uTime:{value:0},uCamNear:{value:.8},uRayPlane:{value:0},uHideFar:{value:1},uViewProj:{value:new k}},vertexShader:Hn,fragmentShader:Un,depthTest:!0,depthWrite:!0,transparent:!1,toneMapped:!0,side:2}),y=new b(g,_);y.name=`black-hole-disk`,y.renderOrder=1,y.quaternion.setFromUnitVectors(new v(0,0,1),i),y.frustumCulled=!1;let x=new N(Mn,96,64),S=new b(x,_);S.name=`black-hole-disk-proxy`,S.renderOrder=1,S.visible=!1,S.frustumCulled=!1;let C=new K;C.name=`black-hole`,C.position.copy(Z),C.add(p),C.add(y),C.add(S),C.add(h),C.add(u);let w=new K;w.name=`black-hole-debug-bounds`,w.visible=!1;let T=new b(new N(Dn,32,24),new l({color:4521932,wireframe:!0,depthTest:!1,toneMapped:!1}));T.name=`black-hole-horizon-wire`;let E=new L(Dn*1.6);E.name=`black-hole-axes`,w.add(T),w.add(E),C.add(w);let D=new v,j=new v,M=new v,F=new v,I=new B;return{object:C,update(e,t,r){c.uniforms.uTime.value=t,c.uniforms.uSkyRot.value=t*Ce,r.updateMatrixWorld(),_.uniforms.uTime.value=t,_.uniforms.uCamNear.value=r.near,_.uniforms.uViewProj.value.multiplyMatrices(r.projectionMatrix,r.matrixWorldInverse),D.copy(Z).sub(r.position),j.set(0,0,-1).applyQuaternion(r.quaternion),M.set(1,0,0).applyQuaternion(r.quaternion),F.set(0,1,0).applyQuaternion(r.quaternion);let i=D.dot(j),a=D.length(),o=a<Dn+4;c.uniforms.uCamPos.value.copy(r.position),c.uniforms.uCamFwd.value.copy(j),c.uniforms.uCamRight.value.copy(M),c.uniforms.uCamUp.value.copy(F),c.uniforms.uTanHalfFov.value=Math.tan(O.degToRad(r.fov)*.5),c.uniforms.uAspect.value=r.aspect,n.getDrawingBufferSize(I),c.uniforms.uResolution.value.copy(I),u.lookAt(r.position),u.userData.forceHidden||(u.visible=!o&&i>4),h.userData.forceHidden||(h.visible=!o);let s=!!y.userData.forceHidden,l=a<Mn+16;s?(y.visible=!1,S.visible=!1):l?(_.uniforms.uRayPlane.value=1,y.visible=!1,S.visible=!0,_.side=+(a<Mn-1)):(_.uniforms.uRayPlane.value=0,y.visible=!0,S.visible=!1,_.side=2),_.uniforms.uHideFar.value=1},setLayerVisible(e,t){e===`horizon`?(p.visible=t,h.userData.forceHidden||(h.visible=t)):e===`lensing`?(u.userData.forceHidden=!t,u.visible=t):e===`seal`?(h.userData.forceHidden=!t,h.visible=t):(y.userData.forceHidden=!t,y.visible=t,S.visible=!1)},getLayerState(){return{horizon:Wn(p,p.name),seal:Wn(h,h.name),lensing:Wn(u,u.name),disk:Wn(y,y.name)}},getRadii(){return{physicalRs:wn,apparentShadow:Tn,photonRing:On,diskInner:An,diskOuter:jn,diskGeoOuter:Mn,lensShell:Rn}},getDiskFrame(){return{u:a.clone(),v:o.clone(),n:i.clone(),inner:An,outer:jn}},setDebugBounds(e){w.visible=e},dispose(){s.dispose(),c.dispose(),d.dispose(),f.dispose(),m.dispose(),g.dispose(),x.dispose(),_.dispose(),T.geometry.dispose(),T.material.dispose(),E.geometry.dispose(),E.material.dispose()}}}var Kn=`
   precision highp float;
 
   uniform sampler2D uEarthTex;
