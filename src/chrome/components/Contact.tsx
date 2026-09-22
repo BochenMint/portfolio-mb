@@ -40,7 +40,7 @@ export function Contact() {
           </div>
 
           {/* Studio object — chrome sphere on black, blends into the ink background */}
-          <div aria-hidden className="r-card relative mt-12 hidden h-[260px] overflow-hidden lg:block">
+          <div aria-hidden className="studio-object r-card relative mt-12 hidden h-[260px] overflow-hidden lg:block">
             <img
               src="/chrome/sphere.webp"
               width={1000}
@@ -50,9 +50,7 @@ export function Contact() {
               decoding="async"
               className="studio-object-img h-full w-full object-cover"
               style={{ objectPosition: '72% 40%' }}
-            />
-            <div className="studio-object-fade pointer-events-none absolute inset-0" />
-          </div>
+            />          </div>
         </div>
 
         <LeadForm />
