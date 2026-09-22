@@ -58,7 +58,7 @@ function LangSwitch({ className = '' }: { className?: string }) {
       aria-current={locale === value ? 'page' : undefined}
       aria-label={`${t.langSwitch.ariaLabel}: ${label}`}
       className={`rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-[0.06em] transition-colors ${
-        locale === value ? 'bg-white text-ink' : 'text-silver-2 hover:text-white'
+        locale === value ? 'bg-white text-ink' : 'text-silver hover:text-white'
       }`}
     >
       {label}

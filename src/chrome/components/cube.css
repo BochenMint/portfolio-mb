@@ -111,8 +111,13 @@
   width: 100%;
   border-radius: calc(var(--size) * 0.15);
   corner-shape: var(--corner, superellipse(1.7));
-  object-fit: cover;
+  /* Contain, like the WebGL face texture (drawContainImage): cover sliced
+     ~5% off each side of the near-square captures, starting with the
+     page's own logo and navigation. The spare strip sits at the bottom on
+     the screen glass. */
+  object-fit: contain;
   object-position: top;
+  background: #0b0c0e;
   display: block;
 }
 /* The brand plate has no screenshot behind it: the mark sits directly on the
