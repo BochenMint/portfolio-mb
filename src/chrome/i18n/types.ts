@@ -48,6 +48,20 @@ export type ChromeCopy = {
     openDomainLabel: string
     factEvidenceLabel: string
   }
+  apps: {
+    categoryKicker: string
+    categoriesLabel: string
+    categorySystems: string
+    categoryMobile: string
+    eyebrow: string
+    title: string
+    lead: string
+    platforms: string
+    shotsLabel: (title: string) => string
+    storeAppStore: string
+    storePlay: string
+    cta: string
+  }
   cases: {
     eyebrow: string
     title: string

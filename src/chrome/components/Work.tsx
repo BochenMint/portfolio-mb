@@ -5,6 +5,7 @@ import { useLocale } from '../i18n/context'
 import { FactsStrip } from './FactsStrip'
 import { ProjectCube } from './ProjectCube'
 import { Arrow, LinkButton, SectionHeader } from './primitives'
+import { WorkCategories } from './WorkCategories'
 
 function Tags({ tags }: { tags: string[] }) {
   return (
@@ -108,6 +109,7 @@ export function Work() {
   return (
     <section id="realizacje" className="px-5 py-24 md:px-10 md:py-32">
       <div className="mx-auto max-w-6xl">
+        <WorkCategories current="systems" />
         <SectionHeader eyebrow={c.work.eyebrow} title={c.work.title} lead={c.work.lead} />
 
         <div className="mt-8 divide-y divide-line">

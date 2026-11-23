@@ -6,6 +6,7 @@ import { Contact } from './components/Contact'
 import { FAQ } from './components/FAQ'
 import { Footer } from './components/Footer'
 import { Hero } from './components/Hero'
+import { MobileApps } from './components/MobileApps'
 import { Nav } from './components/Nav'
 import { Preloader } from './components/Preloader'
 import { Pricing } from './components/Pricing'
@@ -78,6 +79,7 @@ function AppShell() {
           <UnderHood />
           <Band />
           <Work />
+          <MobileApps />
           <CaseStudies />
           <Services />
           <Process />

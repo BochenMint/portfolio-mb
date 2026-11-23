@@ -50,8 +50,21 @@ export function useLenis() {
 
     ScrollTrigger.addEventListener('refresh', onRefresh)
     ScrollTrigger.refresh()
+    // Lenis only intercepts anchor clicks. A fresh load of /#aplikacje
+    // otherwise stays at the top, because taking over the scroller drops
+    // the browser's own jump to the hash.
+    const scrollToHash = () => {
+      const hash = window.location.hash
+      if (!/^#[A-Za-z][\w-]*$/.test(hash)) return
+      if (!document.querySelector(hash)) return
+      lenis.scrollTo(hash, { immediate: true })
+    }
+    scrollToHash()
 
-    const onLoad = () => ScrollTrigger.refresh()
+    const onLoad = () => {
+      ScrollTrigger.refresh()
+      scrollToHash()
+    }
     window.addEventListener('load', onLoad)
     document.fonts?.ready.then(() => ScrollTrigger.refresh())
 

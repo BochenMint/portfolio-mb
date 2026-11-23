@@ -28,6 +28,7 @@ import {
   servicesUa,
   siteUa,
 } from './content.ua'
+import { mobileApps, mobileAppsEn, mobileAppsUa } from './mobileApps'
 import type { Locale } from '../i18n/types'
 
 export type LocalizedContent = {
@@ -39,6 +40,7 @@ export type LocalizedContent = {
   process: typeof process
   marqueeItems: typeof marqueeItems
   qualificationFields: typeof qualificationFields
+  mobileApps: typeof mobileApps
 }
 
 /**
@@ -58,6 +60,7 @@ export function getContent(locale: Locale): LocalizedContent {
       process: processUa,
       marqueeItems: marqueeItemsUa,
       qualificationFields: qualificationFieldsUa,
+      mobileApps: mobileAppsUa,
     }
   }
 
@@ -71,6 +74,7 @@ export function getContent(locale: Locale): LocalizedContent {
       process: processEn,
       marqueeItems: marqueeItemsEn,
       qualificationFields: qualificationFieldsEn,
+      mobileApps: mobileAppsEn,
     }
   }
 
@@ -83,5 +87,6 @@ export function getContent(locale: Locale): LocalizedContent {
     process,
     marqueeItems,
     qualificationFields,
+    mobileApps,
   }
 }

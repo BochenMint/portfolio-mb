@@ -1138,3 +1138,18 @@ section[id] {
   margin-top: 0.3rem;
   cursor: help;
 }
+
+/* Store screenshots in the mobile-apps category. The frame is the
+   screenshot itself — no fake handset — so the radius matches the
+   rest of the chrome geometry and the scrollbar stays out of the way
+   on the sideways strip. */
+.app-shots {
+  scrollbar-width: none;
+}
+.app-shots::-webkit-scrollbar {
+  display: none;
+}
+.app-shot {
+  border-radius: 22px;
+  corner-shape: var(--corner);
+}
